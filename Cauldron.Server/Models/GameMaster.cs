@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -64,7 +65,7 @@ namespace Cauldron.Server.Models
 
         public RuleBook RuleBook { get; }
 
-        private readonly Logger logger;
+        private readonly ILogger logger;
 
         private readonly CardFactory cardFactory;
 
@@ -87,10 +88,10 @@ namespace Cauldron.Server.Models
 
         public IEnumerable<CardDef> CardPool => this.cardFactory.CardPool;
 
-        private readonly Func<Guid, TargetCardType, Guid> AskCardAction;
+        private readonly Func<Guid, IReadOnlyList<Guid>, Guid> AskCardAction;
 
-        public GameMaster(RuleBook ruleBook, CardFactory cardFactory, Logger logger,
-            Func<Guid, TargetCardType, Guid> askCardAction)
+        public GameMaster(RuleBook ruleBook, CardFactory cardFactory, ILogger logger,
+            Func<Guid, IReadOnlyList<Guid>, Guid> askCardAction)
         {
             this.RuleBook = ruleBook;
             this.cardFactory = cardFactory;
@@ -142,7 +143,7 @@ namespace Cauldron.Server.Models
         public void DestroyCard(Card card)
         {
             var player = this.PlayersById[card.OwnerId];
-            this.logger.Information($"破壊：{player.Name}-{this.logger.LogText(card)}");
+            this.logger.LogInformation($"破壊：{player.Name}-{card}");
 
             this.DoEffect(card, CardEffectType.OnDestroy);
 
@@ -168,14 +169,14 @@ namespace Cauldron.Server.Models
         {
             if (card.EffectsByType.TryGetValue(effectType, out var effect))
             {
-                this.logger.Information($"効果：{this.logger.LogText(card)}-{effectType.ToString()}");
+                this.logger.LogInformation($"効果：{card}-{effectType}");
                 effect.Execute(this, card);
             }
         }
 
         public void Buff(Card creatureCard, int powerBuff, int toughnessBuff)
         {
-            this.logger.Information($"修整：{this.logger.LogText(creatureCard)}-[{powerBuff},{toughnessBuff}]");
+            this.logger.LogInformation($"修整：{creatureCard}-[{powerBuff},{toughnessBuff}]");
 
             if (creatureCard.Type != CardType.Creature)
             {
@@ -248,18 +249,18 @@ namespace Cauldron.Server.Models
         {
             player.Hands.Add(addCard);
 
-            this.logger.Information($"手札に追加: {addCard.Name}");
+            this.logger.LogInformation($"手札に追加: {addCard.Name}");
             var handsLog = string.Join(",", player.Hands.AllCards.Select(c => c.Name));
-            this.logger.Information($"手札: {handsLog}");
+            this.logger.LogInformation($"手札: {handsLog}");
         }
 
         public void RemoveHand(Player player, Card removeCard)
         {
             player.Hands.Remove(removeCard);
 
-            this.logger.Information($"手札を捨てる: {removeCard.Name}");
+            this.logger.LogInformation($"手札を捨てる: {removeCard.Name}");
             var handsLog = string.Join(",", player.Hands.AllCards.Select(c => c.Name));
-            this.logger.Information($"手札: {handsLog}");
+            this.logger.LogInformation($"手札: {handsLog}");
         }
 
         public GameEnvironment CreateEnvironment(Guid playerId)
@@ -330,7 +331,7 @@ namespace Cauldron.Server.Models
                 card.TurnCountInField++;
             }
 
-            this.logger.Information($"ターン開始：{this.CurrentPlayer.Name}-[HP:{this.CurrentPlayer.Hp}/{this.CurrentPlayer.MaxHp}][MP:{this.CurrentPlayer.MaxMp}][ターン:{this.PlayerTurnCountById[this.CurrentPlayer.Id]}({this.AllTurnCount})]");
+            this.logger.LogInformation($"ターン開始：{this.CurrentPlayer.Name}-[HP:{this.CurrentPlayer.Hp}/{this.CurrentPlayer.MaxHp}][MP:{this.CurrentPlayer.MaxMp}][ターン:{this.PlayerTurnCountById[this.CurrentPlayer.Id]}({this.AllTurnCount})]");
 
             // ターン開始時の効果を処理
             var copyList = this.OnStartTurnEffectsCards.ToArray();
@@ -373,7 +374,7 @@ namespace Cauldron.Server.Models
 
             var endTurnPlayer = this.CurrentPlayer;
 
-            this.logger.Information($"ターンエンド：{endTurnPlayer.Name}");
+            this.logger.LogInformation($"ターンエンド：{endTurnPlayer.Name}");
 
             // ターン終了時の効果を処理
             // 処理中にOnEndTurnEffectsCards が変更される可能性がある
@@ -418,7 +419,7 @@ namespace Cauldron.Server.Models
             var player = this.PlayersById[playerId];
             var playingCard = player.Hands.GetById(handCardId);
 
-            this.logger.Information($"プレイ：{player.Name}-{this.logger.LogText(playingCard)}");
+            this.logger.LogInformation($"プレイ：{player.Name}-{playingCard}");
 
             // プレイ不能
             if (!this.IsPlayable(player, playingCard))
@@ -485,9 +486,27 @@ namespace Cauldron.Server.Models
             return (true, "");
         }
 
+        private Guid[] FetchChoiceCandidates(Guid playerId, TargetCardType targetCardType)
+        {
+            return targetCardType switch
+            {
+                TargetCardType.OpponentCreature
+                    => this.GetOpponent(playerId).Field.AllCards.Where(c => c.Type == CardType.Creature).Select(c => c.Id).ToArray(),
+                TargetCardType.YourCreature
+                    => this.PlayersById[playerId].Field.AllCards.Where(c => c.Type == CardType.Creature).Select(c => c.Id).ToArray(),
+                _ => new Guid[0]
+            };
+        }
+
         public Card AskCard(Guid playerId, TargetCardType targetType)
         {
-            var targetCardId = this.AskCardAction(playerId, targetType);
+            var candidates = this.FetchChoiceCandidates(playerId, targetType);
+            if (candidates.Length == 0)
+            {
+                return null;
+            }
+
+            var targetCardId = this.AskCardAction(playerId, candidates);
 
             switch (targetType)
             {
@@ -551,7 +570,7 @@ namespace Cauldron.Server.Models
             //playingCard.OwnerId = player.Id;
             var playingCard = this.cardFactory.GetById(cardId);
 
-            this.logger.Information($"特殊プレイ：{player.Name}-{this.logger.LogText(playingCard)}");
+            this.logger.LogInformation($"特殊プレイ：{player.Name}-{playingCard}");
 
             // プレイ不能
             if (!this.IsPlayableDirect(player, playingCard))
@@ -620,7 +639,7 @@ namespace Cauldron.Server.Models
             var card = player.Field.GetById(cardId);
             var damagePlayer = this.PlayersById[damagePlayerId];
 
-            this.logger.Information($"アタック（プレイヤー）：{player.Name}-{this.logger.LogText(card)} > {damagePlayer.Name}");
+            this.logger.LogInformation($"アタック（プレイヤー）：{player.Name}-{card} > {damagePlayer.Name}");
 
             if (!CanAttack(card, damagePlayer))
             {
@@ -659,7 +678,7 @@ namespace Cauldron.Server.Models
 
             var damagePlayer = this.PlayersById[damagePlayerId];
 
-            this.logger.Information($"ダメージ：{damage} > {damagePlayer.Name}");
+            this.logger.LogInformation($"ダメージ：{damage} > {damagePlayer.Name}");
 
             damagePlayer.Damage(damage);
 
@@ -673,7 +692,7 @@ namespace Cauldron.Server.Models
         {
             var damagePlayer = this.PlayersById[damagePlayerId];
 
-            this.logger.Information($"ダメージ：{damage} > {damagePlayer.Name}");
+            this.logger.LogInformation($"ダメージ：{damage} > {damagePlayer.Name}");
 
             damagePlayer.Damage(damage);
         }
@@ -705,7 +724,7 @@ namespace Cauldron.Server.Models
             var attackPlayer = this.PlayersById[attackCard.OwnerId];
             var guardPlayer = this.PlayersById[guardCard.OwnerId];
 
-            this.logger.Information($"アタック（クリーチャー）：{attackPlayer.Name}-{this.logger.LogText(attackCard)} > {guardPlayer.Name}-{this.logger.LogText(guardCard)}");
+            this.logger.LogInformation($"アタック（クリーチャー）：{attackPlayer.Name}-{attackCard} > {guardPlayer.Name}-{guardCard}");
 
             if (!CanAttack(attackCard, guardCard, this.CreateEnvironment(playerId)))
             {
@@ -751,7 +770,7 @@ namespace Cauldron.Server.Models
 
             var creatureCard = this.cardFactory.GetById(creatureCardId);
 
-            this.logger.Information($"ダメージ：{damage} > {this.logger.LogText(creatureCard)}");
+            this.logger.LogInformation($"ダメージ：{damage} > {creatureCard}");
 
             creatureCard.Damage(damage);
 
@@ -775,7 +794,7 @@ namespace Cauldron.Server.Models
                 throw new Exception($"指定されたカードはクリーチャーではありません。: {creatureCard.Name}");
             }
 
-            this.logger.Information($"ダメージ：{damage} > {this.logger.LogText(creatureCard)}");
+            this.logger.LogInformation($"ダメージ：{damage} > {creatureCard}");
 
             creatureCard.Damage(damage);
 

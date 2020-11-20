@@ -4,6 +4,7 @@ using Cauldron.Server.Models;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ namespace Cauldron.Server
             cardFactory.SetCardPool(new CardPool().Load());
 
             var gameId = new GameMasterRepository()
-                .Add(request.RuleBook, cardFactory, new Logger(), this.AskCard);
+                .Add(request.RuleBook, cardFactory, this._logger, this.AskCard);
 
             //var deckIds = request.Deck
             //    .Select(deckId => Guid.Parse(deckId));
@@ -52,9 +53,9 @@ namespace Cauldron.Server
             });
         }
 
-        private Guid AskCard(Guid playerId, TargetCardType a)
+        private Guid AskCard(Guid playerId, IReadOnlyList<Guid> candidates)
         {
-            return default;
+            return candidates[0];
         }
 
         public override Task<CloseGameReply> CloseGame(CloseGameRequest request, ServerCallContext context)

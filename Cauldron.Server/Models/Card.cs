@@ -80,5 +80,15 @@ namespace Cauldron.Server.Models
                 ? effect
                 : null;
         }
+
+        public override string ToString()
+        {
+            return this.Type switch
+            {
+                CardType.Artifact => $"{this.Name}[{this.Cost}]",
+                CardType.Sorcery => $"{this.Name}[{this.Cost}]",
+                _ => $"{this.Name}[{this.Cost},{this.Power},{this.Toughness}]",
+            };
+        }
     }
 }

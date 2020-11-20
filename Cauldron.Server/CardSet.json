@@ -45,163 +45,111 @@
             "abilities": [ "stealth", "cover" ]
         },
         {
-            "name": "スライム",
-            "flavorText": "テストクリーチャー",
-            "type": "creature",
-            "cost": 2,
-            "power": 1,
-            "toughness": 1,
-            "effectText": "onplay summon サンプルセット.スライム"
-        },
-        {
-            "name": "ネズミ",
-            "flavorText": "相手プレイヤーに1ダメージ",
-            "type": "creature",
-            "cost": 1,
-            "power": 1,
-            "toughness": 1,
-            "effectText": "ondestroy damage player specify opponent 1"
-        },
-        {
-            "name": "ネズミ2",
-            "flavorText": "ランダムな相手クリーチャーに1ダメージ",
-            "type": "creature",
-            "cost": 1,
-            "power": 1,
-            "toughness": 1,
-            "effectText": "ondestroy damage creature random opponentfield 1"
-        },
-        {
-            "name": "天使の像",
-            "flavorText": "毎ターン開始時にターンプレイヤーに１ダメージ",
-            "type": "artifact",
-            "cost": 4,
-            "effectText": "onstartturn damage player specify turnowner 1"
-        },
-        {
-            "name": "ウォーターフェアリー",
-            "flavorText": "テストクリーチャー",
-            "type": "creature",
-            "cost": 1,
-            "power": 1,
-            "toughness": 1,
-            "effectText": "ondestroy add youhand サンプルセット.フェアリー"
-        },
-        {
-            "name": "ホワイトジェネラル",
-            "flavorText": "テストクリーチャー",
-            "type": "creature",
-            "cost": 4,
-            "power": 2,
-            "toughness": 2,
-            "effectText": "onplay buff random youfield 2 0"
-        },
-        {
-            "name": "セージコマンダー",
-            "flavorText": "テストクリーチャー",
-            "type": "creature",
-            "cost": 6,
-            "power": 3,
-            "toughness": 3,
-            "effectText": "onplay buff all youfield 1 0"
-        },
-        {
-            "name": "王家の御旗",
-            "flavorText": "テストアーティファクト",
-            "type": "artifact",
-            "cost": 4,
-            "effectText": "onplay buff all youfield 1 0;oneveryplay buff that 1 0"
-        },
-        {
             "name": "王家の御旗",
             "flavorText": "テストアーティファクト",
             "type": "artifact",
             "cost": 4,
             "effect": [
                 {
-                    "timing": "onplay",
+                    "timing": {
+                        "event": "play",
+                        "target": "this",
+                        "at": "once"
+                    },
                     "action": [
                         {
-                            "name": "destroy",
-                            "choose": {
-                                "how": "random",
-                                "target": [ "creature", "artifact" ],
-                                "zone": "opponentfield",
-                                "num": 1
+                            "destroy": {
+                                "choice": {
+                                    "how": "random",
+                                    "target": [ "creature", "artifact" ],
+                                    "zone": "opponentfield",
+                                    "num": 1
+                                }
                             }
                         },
                         {
-                            "name": "damage",
-                            "damageValue": 1,
-                            "choose": {
-                                "how": "random",
-                                "target": [ "opponent" ],
-                                //"zone": "opponentfield",
-                                "num": 1
+                            "damage": {
+                                "value": 1,
+                                "choice": {
+                                    "how": "random",
+                                    "target": [ "opponent" ],
+                                    "zone": "opponentfield",
+                                    "num": 1
+                                }
                             }
                         },
                         {
-                            "name": "add",
-                            "card": {
-                                "name": "サンプルセット.フェアリー",
-                                "num": 1,
-                                //"cost": "=4",
-                                "zone": "pool"
-                            },
-                            "zone": "youfield"
-                        },
-                        {
-                            "name": "add",
-                            "card": {
-                                "name": "",
-                                "num": 1,
-                                "cost": "=4",
-                                "zone": "pool"
-                            },
-                            "zone": "youfield"
-                        },
-                        {
-                            "name": "buff",
-                            "power": 1,
-                            "toughness": 1,
-                            "choose": {
-                                "how": "random",
-                                "target": [ "creature" ],
-                                "zone": "youfield",
-                                "num": 1
+                            "add": {
+                                "card": {
+                                    "name": "サンプルセット.フェアリー",
+                                    "num": 1,
+                                    "cost": "=4",
+                                    "zone": "pool"
+                                },
+                                "zone": "youfield"
                             }
                         },
                         {
-                            "name": "discard",
-                            "choose": {
-                                "how": "random",
-                                "target": [ "creature" ],
-                                "zone": "youhand",
-                                "num": 1
+                            "add": {
+                                "card": {
+                                    "name": "",
+                                    "num": 1,
+                                    "cost": "=4",
+                                    "zone": "pool"
+                                },
+                                "zone": "youfield"
                             }
                         },
                         {
-                            "name": "discard",
-                            "choose": {
-                                "how": "all",
-                                "target": [ "creature" ],
-                                "zone": [ "youhand", "opponenthand" ]
+                            "modify": {
+                                "power": 1,
+                                "toughness": 1,
+                                "choice": {
+                                    "how": "random",
+                                    "target": [ "creature" ],
+                                    "zone": "youfield",
+                                    "num": 1
+                                }
+                            }
+                        },
+                        {
+                            "discard": {
+                                "choice": {
+                                    "how": "random",
+                                    "target": [ "creature" ],
+                                    "zone": "youhand",
+                                    "num": 1
+                                }
+                            }
+                        },
+                        {
+                            "discard": {
+                                "choice": {
+                                    "how": "all",
+                                    "target": [ "creature" ],
+                                    "zone": [ "youhand", "opponenthand" ]
+                                }
                             }
                         }
                     ]
                 },
                 {
-                    "timing": "oneveryplay",
+                    "timing": {
+                        "event": "play",
+                        "target": "other",
+                        "at": "every"
+                    },
                     "action": [
                         {
-                            "name": "buff",
-                            "power": 1,
-                            "toughness": 0,
-                            "choose": {
-                                "how": "specify",
-                                "target": [ "it" ],
-                                //"zone": "opponentfield",
-                                //"num": 1
+                            "buff": {
+                                "power": 1,
+                                "toughness": 0,
+                                "choice": {
+                                    "how": "specify",
+                                    "target": [ "it" ],
+                                    "zone": "opponentfield",
+                                    "num": 1
+                                }
                             }
                         }
                     ]

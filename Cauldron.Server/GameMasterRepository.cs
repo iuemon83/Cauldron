@@ -1,4 +1,5 @@
 ﻿using Cauldron.Server.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -8,8 +9,8 @@ namespace Cauldron.Server
     {
         public static readonly Dictionary<Guid, GameMaster> gameMasterListByGameId = new Dictionary<Guid, GameMaster>();
 
-        public Guid Add(Cauldron.Grpc.Models.RuleBook ruleBook, CardFactory cardFactory, Logger logger,
-            Func<Guid, TargetCardType, Guid> askCardAction)
+        public Guid Add(Cauldron.Grpc.Models.RuleBook ruleBook, CardFactory cardFactory, ILogger logger,
+            Func<Guid, IReadOnlyList<Guid>, Guid> askCardAction)
         {
             var id = Guid.NewGuid();
             var cruleBook = new RuleBook()

@@ -10,83 +10,88 @@ namespace Cauldron.Server.Models
         public CardDef[] Load()
         {
             var jsonFilePath = "cardset.json";
-            var cardSet = this.LoadFromFile(jsonFilePath);
+            var cardSet = new CardSet()
+            {
+                Name = "sample",
+                Cards = new CardDefJson[0]
+            };
+            //var cardSet = this.LoadFromFile(jsonFilePath);
 
-            //var fairy = CardDef.TokenCard(1, "フェアリー", "テストクリーチャー", 1, 1);
+            var fairy = CardDef.TokenCard(1, $"{cardSet.Name}.フェアリー", "フェアリー", "テストクリーチャー", 1, 1);
 
-            //var goblin = CardDef.CreatureCard(1, "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(1, $"{cardSet.Name}.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
 
-            //var mouse = CardDef.CreatureCard(1, $"{cardSet.Name}.ネズミ", "ネズミ", "テストクリーチャー", 1, 1, effects: new[]
-            //{
-            //    // 死亡時、相手に1ダメージ
-            //    new CardEffect(CardEffectType.OnDestroy, (gameMaster, ownerCard) =>
-            //    {
-            //        var opponent = gameMaster.GetOpponent(ownerCard.OwnerId);
-            //        gameMaster.HitPlayer(opponent.Id, 1);
-            //    })
-            //});
+            var mouse = CardDef.CreatureCard(1, $"{cardSet.Name}.ネズミ", "ネズミ", "テストクリーチャー", 1, 1, effects: new[]
+            {
+                // 死亡時、相手に1ダメージ
+                new CardEffect(CardEffectType.OnDestroy, (gameMaster, ownerCard) =>
+                {
+                    var opponent = gameMaster.GetOpponent(ownerCard.OwnerId);
+                    gameMaster.HitPlayer(opponent.Id, 1);
+                })
+            });
 
-            //var ninja = CardDef.CreatureCard(1, "忍者", "テストクリーチャー", 1, 1, new[] { CreatureAbility.Stealth });
+            var ninja = CardDef.CreatureCard(1, $"{cardSet.Name}.忍者", "忍者", "テストクリーチャー", 1, 1, new[] { CreatureAbility.Stealth });
 
-            //var waterFairy = CardDef.CreatureCard(1, $"{cardSet.Name}.ウォーターフェアリー", "ウォーターフェアリー", "テストクリーチャー", 1, 1, effects: new[]
-            //{
-            //    // 破壊時、フェアリー１枚を手札に加える
-            //    new CardEffect(CardEffectType.OnDestroy, (gameMaster, ownerCard) =>
-            //    {
-            //        var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-            //        var newCard = gameMaster.GenerateNewCard($"{cardSet.Name}.フェアリー",owner.Id);
-            //        //newCard.OwnerId = owner.Id;
-            //        gameMaster.AddHand(owner, newCard);
-            //    }),
-            //});
+            var waterFairy = CardDef.CreatureCard(1, $"{cardSet.Name}.ウォーターフェアリー", "ウォーターフェアリー", "テストクリーチャー", 1, 1, effects: new[]
+            {
+                // 破壊時、フェアリー１枚を手札に加える
+                new CardEffect(CardEffectType.OnDestroy, (gameMaster, ownerCard) =>
+                {
+                    var owner = gameMaster.PlayersById[ownerCard.OwnerId];
+                    var newCard = gameMaster.GenerateNewCard($"{cardSet.Name}.フェアリー",owner.Id);
+                    //newCard.OwnerId = owner.Id;
+                    gameMaster.AddHand(owner, newCard);
+                }),
+            });
 
-            //CardDef slime = null;
-            //slime = CardDef.CreatureCard(2, $"{cardSet.Name}.スライム", "スライム", "テストクリーチャー", 1, 1, effects: new[]
-            //{
-            //    // 召喚時、スライムを一体召喚
-            //    new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
-            //    {
-            //        var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-            //        var playingCard = gameMaster.GenerateNewCard(slime.Id,owner.Id);
-            //        //playingCard.OwnerId = owner.Id;
-            //        gameMaster.PlayDirect(ownerCard.OwnerId, playingCard.Id);
-            //    }),
-            //});
+            CardDef slime = null;
+            slime = CardDef.CreatureCard(2, $"{cardSet.Name}.スライム", "スライム", "テストクリーチャー", 1, 1, effects: new[]
+            {
+                // 召喚時、スライムを一体召喚
+                new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
+                {
+                    var owner = gameMaster.PlayersById[ownerCard.OwnerId];
+                    var playingCard = gameMaster.GenerateNewCard(slime.Id,owner.Id);
+                    //playingCard.OwnerId = owner.Id;
+                    gameMaster.PlayDirect(ownerCard.OwnerId, playingCard.Id);
+                }),
+            });
 
-            //var knight = CardDef.CreatureCard(2, "ナイト", "テストクリーチャー", 1, 2, new[] { CreatureAbility.Cover });
-            //var ninjaKnight = CardDef.CreatureCard(3, "忍者ナイト", "テストクリーチャー", 1, 2, new[] { CreatureAbility.Cover, CreatureAbility.Stealth });
+            var knight = CardDef.CreatureCard(2, $"{cardSet.Name}.ナイト", "ナイト", "テストクリーチャー", 1, 2, new[] { CreatureAbility.Cover });
+            var ninjaKnight = CardDef.CreatureCard(3, $"{cardSet.Name}.忍者ナイト", "忍者ナイト", "テストクリーチャー", 1, 2, new[] { CreatureAbility.Cover, CreatureAbility.Stealth });
 
-            //var whiteGeneral = CardDef.CreatureCard(4, $"{cardSet.Name}.ホワイトジェネラル", "ホワイトジェネラル", "テストクリーチャー", 2, 2, effects: new[]
-            //{
-            //    // 召喚時、自分のクリーチャー一体を+2/+0
-            //    new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
-            //    {
-            //        var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-            //        var candidates = owner.Field.AllCards
-            //            .Where(c => c.Type == CardType.Creature || c.Type == CardType.Token)
-            //            .ToArray();
-            //        var targetCreature = Program.RandomPick(candidates);
-            //        if(targetCreature == default) return;
+            var whiteGeneral = CardDef.CreatureCard(4, $"{cardSet.Name}.ホワイトジェネラル", "ホワイトジェネラル", "テストクリーチャー", 2, 2, effects: new[]
+            {
+                // 召喚時、自分のクリーチャー一体を+2/+0
+                new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
+                {
+                    var owner = gameMaster.PlayersById[ownerCard.OwnerId];
+                    var candidates = owner.Field.AllCards
+                        .Where(c => c.Type == CardType.Creature || c.Type == CardType.Token)
+                        .ToArray();
+                    var targetCreature = Program.RandomPick(candidates);
+                    if(targetCreature == default) return;
 
-            //        gameMaster.Buff(targetCreature, 2, 0);
-            //    }),
-            //});
+                    gameMaster.Buff(targetCreature, 2, 0);
+                }),
+            });
 
-            //var commander = CardDef.CreatureCard(6, $"{cardSet.Name}.セージコマンダー", "セージコマンダー", "テストクリーチャー", 3, 3, effects: new[]
-            //{
-            //    // 召喚時、自分のクリーチャーすべてを+1/+1
-            //    new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
-            //    {
-            //        var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-            //        var candidates = owner.Field.AllCards
-            //            .Where(c => c.Type == CardType.Creature || c.Type == CardType.Token);
+            var commander = CardDef.CreatureCard(6, $"{cardSet.Name}.セージコマンダー", "セージコマンダー", "テストクリーチャー", 3, 3, effects: new[]
+            {
+                // 召喚時、自分のクリーチャーすべてを+1/+1
+                new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
+                {
+                    var owner = gameMaster.PlayersById[ownerCard.OwnerId];
+                    var candidates = owner.Field.AllCards
+                        .Where(c => c.Type == CardType.Creature || c.Type == CardType.Token);
 
-            //        foreach(var targetCreature in candidates)
-            //        {
-            //            gameMaster.Buff(targetCreature, 1, 1);
-            //        }
-            //    }),
-            //});
+                    foreach(var targetCreature in candidates)
+                    {
+                        gameMaster.Buff(targetCreature, 1, 1);
+                    }
+                }),
+            });
 
             var angel = CardDef.ArtifactCard(2, $"{cardSet.Name}.天使の像", "天使の像", "テストアーティファクト", new[]
             {
@@ -209,6 +214,11 @@ namespace Cauldron.Server.Models
                             .Count(c => c.Type == CardType.Creature || c.Type == CardType.Token);
 
                         Card targetCreature = gameMaster.AskCard(owner.Id, TargetCardType.OpponentCreature);
+                        if(targetCreature == null)
+                        {
+                            // 対象が存在しない場合はなにもしない
+                            return;
+                        }
 
                         gameMaster.HitCreature(targetCreature.Id, damage);
                     }),
@@ -227,20 +237,26 @@ namespace Cauldron.Server.Models
                     {
                         var owner = gameMaster.PlayersById[ownerCard.OwnerId];
                         var targetCreature = gameMaster.AskCard(owner.Id, TargetCardType.YourCreature);
+                        if(targetCreature == null)
+                        {
+                            // 対象が存在しない場合はなにもしない
+                            return;
+                        }
 
                         gameMaster.Buff(targetCreature, 2, 2);
                     }),
                 });
 
             var manual = new[] {
-                //fairy, goblin, slime, mouse, waterFairy,
-                //ninja, knight, ninjaKnight, whiteGeneral,
-                angel, devil, fortuneSpring, 
+                fairy, goblin, slime, mouse, waterFairy,
+                ninja, knight, ninjaKnight, whiteGeneral,
+                angel, devil, fortuneSpring,
                 //flag,
-                //shock, shippu, buf
+                shock,
+                shippu, buf
             };
 
-            return cardSet.AsCardDefs().ToArray();
+            //return cardSet.AsCardDefs().ToArray();
 
             return cardSet.AsCardDefs()
                 .Concat(manual)

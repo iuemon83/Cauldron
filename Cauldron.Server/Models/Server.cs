@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,10 +12,10 @@ namespace Cauldron.Server.Models
         private readonly Dictionary<Guid, Action> startTurnNoticeListByPlayerId
             = new Dictionary<Guid, Action>();
 
-        private readonly Dictionary<Guid, Func<TargetCardType, Guid>> askCardActionsByPlayerId
-            = new Dictionary<Guid, Func<TargetCardType, Guid>>();
+        private readonly Dictionary<Guid, Func<IReadOnlyList<Guid>, Guid>> askCardActionsByPlayerId
+            = new Dictionary<Guid, Func<IReadOnlyList<Guid>, Guid>>();
 
-        public Server(Logger logger)
+        public Server(ILogger logger)
         {
             var ruleBook = new RuleBook();
             var cardFactory = new CardFactory();
@@ -25,14 +26,14 @@ namespace Cauldron.Server.Models
             this.gameMaster = new GameMaster(ruleBook, cardFactory, logger, this.AskCard);
         }
 
-        public Guid AskCard(Guid playerId, TargetCardType targetCardType)
+        public Guid AskCard(Guid playerId, IReadOnlyList<Guid> candidates)
         {
             if (!this.askCardActionsByPlayerId.TryGetValue(playerId, out var action))
             {
                 throw new Exception("");
             }
 
-            return action(targetCardType);
+            return action(candidates);
         }
 
         public void StartTurnNotice(Guid playerId, Action action)
@@ -46,7 +47,7 @@ namespace Cauldron.Server.Models
                 .Where(c => c.Type != CardType.Token);
         }
 
-        public Guid RegisterPlayer(string name, IEnumerable<Guid> deckGuidList, Func<TargetCardType, Guid> askCardAction)
+        public Guid RegisterPlayer(string name, IEnumerable<Guid> deckGuidList, Func<IReadOnlyList<Guid>, Guid> askCardAction)
         {
             var playerId = this.gameMaster.CreateNewPlayer(name, deckGuidList);
 
