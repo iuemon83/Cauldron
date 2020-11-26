@@ -6,7 +6,7 @@ namespace Cauldron.Server.Models
 {
     public class CardDef
     {
-        public static CardDef CreatureCard(int cost, string fullName, string name, string flavorText, int power, int toughness, IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect2> effects = null)
+        public static CardDef CreatureCard(int cost, string fullName, string name, string flavorText, int power, int toughness, IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect> effects = null)
         {
             return new CardDef()
             {
@@ -18,11 +18,11 @@ namespace Cauldron.Server.Models
                 BasePower = power,
                 BaseToughness = toughness,
                 Abilities = abilities?.ToList() ?? new List<CreatureAbility>(),
-                Effects = effects?.ToArray() ?? new CardEffect2[0]
+                Effects = effects?.ToArray() ?? new CardEffect[0]
             };
         }
 
-        public static CardDef ArtifactCard(int cost, string fullName, string name, string flavorText, IEnumerable<CardEffect2> effects = null)
+        public static CardDef ArtifactCard(int cost, string fullName, string name, string flavorText, IEnumerable<CardEffect> effects = null)
         {
             return new CardDef()
             {
@@ -31,11 +31,11 @@ namespace Cauldron.Server.Models
                 FullName = fullName,
                 Name = name,
                 FlavorText = flavorText,
-                Effects = effects?.ToArray() ?? new CardEffect2[0]
+                Effects = effects?.ToArray() ?? new CardEffect[0]
             };
         }
 
-        public static CardDef SorceryCard(int cost, string fullName, string name, string flavorText, CardRequireToPlay require = null, IEnumerable<CardEffect2> effects = null)
+        public static CardDef SorceryCard(int cost, string fullName, string name, string flavorText, CardRequireToPlay require = null, IEnumerable<CardEffect> effects = null)
         {
             return new CardDef()
             {
@@ -45,10 +45,10 @@ namespace Cauldron.Server.Models
                 Name = name,
                 FlavorText = flavorText,
                 Require = require ?? new CardRequireToPlay(),
-                Effects = effects?.ToArray() ?? new CardEffect2[0]
+                Effects = effects?.ToArray() ?? new CardEffect[0]
             };
         }
-        public static CardDef TokenCard(int cost, string fullName, string name, string flavorText, int power, int toughness, IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect2> effects = null)
+        public static CardDef TokenCard(int cost, string fullName, string name, string flavorText, int power, int toughness, IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect> effects = null)
         {
             return new CardDef()
             {
@@ -60,7 +60,7 @@ namespace Cauldron.Server.Models
                 BasePower = power,
                 BaseToughness = toughness,
                 Abilities = abilities?.ToList() ?? new List<CreatureAbility>(),
-                Effects = effects?.ToArray() ?? new CardEffect2[0]
+                Effects = effects?.ToArray() ?? new CardEffect[0]
             };
         }
 
@@ -83,7 +83,7 @@ namespace Cauldron.Server.Models
 
         public CardRequireToPlay Require { get; set; } = new CardRequireToPlay(_ => true);
 
-        public IReadOnlyList<CardEffect2> Effects { get; set; } = new CardEffect2[0];
+        public IReadOnlyList<CardEffect> Effects { get; set; } = new CardEffect[0];
 
         /// <summary>
         /// 攻撃可能となるまでのターン数

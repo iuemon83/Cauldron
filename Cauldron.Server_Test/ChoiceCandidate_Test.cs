@@ -33,7 +33,7 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 2, 2,
                 effects: new[]
                 {
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -126,7 +126,7 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 3, 3,
                 effects: new[]
                 {
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -216,7 +216,7 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 1, 1,
                 effects: new[]
                 {
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -305,7 +305,7 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 1, 1,
                 effects: new[]
                 {
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -382,7 +382,7 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 1, 1,
                 effects: new[]
                 {
-                    new CardEffect2(){
+                    new CardEffect(){
                         Timing = new EffectTiming()
                         {
                             Destroy = new EffectTimingDestroyEvent(){
@@ -457,7 +457,7 @@ namespace Cauldron.Server_Test
                 new[]
                 {
                     // ターン開始時、カレントプレイヤーに1ダメージ
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {

@@ -38,7 +38,7 @@ namespace Cauldron.Server.Models
 
         //public Dictionary<CardEffectType, CardEffect> EffectsByType { get; set; } = new Dictionary<CardEffectType, CardEffect>();
 
-        public List<CardEffect2> Effects { get; set; } = new List<CardEffect2>();
+        public List<CardEffect> Effects { get; set; } = new List<CardEffect>();
 
         /// <summary>
         /// 攻撃可能となるまでのターン数
@@ -69,7 +69,7 @@ namespace Cauldron.Server.Models
             //this.EffectsByType = cardDef.Effects.ToDictionary(effect => effect.Type);
         }
 
-        public void AddEffect(CardEffect2 effect)
+        public void AddEffect(CardEffect effect)
         {
             //this.EffectsByType.Add(effect.Type, effect);
             this.Effects.Add(effect);

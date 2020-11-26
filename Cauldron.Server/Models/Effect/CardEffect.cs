@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Cauldron.Server.Models
 {
-    public class CardEffect2
+    public class CardEffect
     {
         public EffectTiming Timing { get; set; }
 

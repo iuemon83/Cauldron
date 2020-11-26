@@ -31,7 +31,7 @@ namespace Cauldron.Server_Test
             var testAction = new TestEffectAction();
             var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
                 effects: new[]{
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -86,7 +86,7 @@ namespace Cauldron.Server_Test
             var testAction = new TestEffectAction();
             var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
                 effects: new[]{
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -141,7 +141,7 @@ namespace Cauldron.Server_Test
             var testAction = new TestEffectAction();
             var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
                 effects: new[]{
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -196,7 +196,7 @@ namespace Cauldron.Server_Test
             var testAction = new TestEffectAction();
             var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
                 effects: new[]{
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -251,7 +251,7 @@ namespace Cauldron.Server_Test
             var testAction = new TestEffectAction();
             var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
                 effects: new[]{
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -306,7 +306,7 @@ namespace Cauldron.Server_Test
             var testAction = new TestEffectAction();
             var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
                 effects: new[]{
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -361,7 +361,7 @@ namespace Cauldron.Server_Test
             var testAction = new TestEffectAction();
             var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
                 effects: new[]{
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -409,7 +409,7 @@ namespace Cauldron.Server_Test
             var testAction = new TestEffectAction();
             var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
                 effects: new[]{
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {

@@ -15,7 +15,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     // 召喚時、スライムを一体召喚
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -78,7 +78,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     // 召喚時、スライムを2体召喚
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -143,7 +143,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     // 死亡時、相手プレイヤーに1ダメージ
-                    new CardEffect2(){
+                    new CardEffect(){
                         Timing = new EffectTiming()
                         {
                             Destroy = new EffectTimingDestroyEvent(){
@@ -216,7 +216,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     // 破壊時、フェアリー１枚を手札に加える
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -304,7 +304,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     // 召喚時、自分のクリーチャーをランダムで一体を+2/+1
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -386,7 +386,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     // 召喚時、自分のクリーチャーすべてを+1/+2
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -473,7 +473,7 @@ namespace Cauldron.Server_Test
                 new[]
                 {
                     // ターン終了時、ランダムな相手クリーチャー一体に1ダメージ。その後このカードを破壊
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -578,7 +578,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     // 使用時、相手かランダムな相手クリーチャー一体に2ダメージ
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -660,7 +660,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     // 使用時、対象の自分クリーチャーを+2/+2
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -737,7 +737,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     // 使用時、すべての自分クリーチャーを+1/+0
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -771,7 +771,7 @@ namespace Cauldron.Server_Test
                         }
                     },
                     // 自分クリーチャーのプレイ時+1/+0
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {

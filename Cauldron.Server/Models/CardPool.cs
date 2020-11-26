@@ -26,7 +26,7 @@ namespace Cauldron.Server.Models
                 effects: new[]
                 {
                     // 死亡時、相手に1ダメージ
-                    new CardEffect2(){
+                    new CardEffect(){
                         Timing = new EffectTiming()
                         {
                             Destroy = new EffectTimingDestroyEvent(){
@@ -58,7 +58,7 @@ namespace Cauldron.Server.Models
                 effects: new[]
                 {
                     // 破壊時、フェアリー１枚を手札に加える
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -99,7 +99,7 @@ namespace Cauldron.Server.Models
                 effects: new[]
                 {
                     // 召喚時、スライムを一体召喚
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -143,7 +143,7 @@ namespace Cauldron.Server.Models
                 effects: new[]
                 {
                     // 召喚時、自分のクリーチャーをランダムで一体を+2/+0
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -184,7 +184,7 @@ namespace Cauldron.Server.Models
                 effects: new[]
                 {
                     // 召喚時、自分のクリーチャーすべてを+1/+1
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -224,7 +224,7 @@ namespace Cauldron.Server.Models
                 new[]
                 {
                     // ターン開始時、カレントプレイヤーに1ダメージ
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -254,7 +254,7 @@ namespace Cauldron.Server.Models
                 new[]
                 {
                     // ターン終了時、ランダムな相手クリーチャー一体に1ダメージ。その後このカードを破壊
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -310,7 +310,7 @@ namespace Cauldron.Server.Models
                 new[]
                 {
                     // ターン終了時、ランダムな自分のクリーチャー一体を+1/+0
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -351,7 +351,7 @@ namespace Cauldron.Server.Models
                 effects: new[]
                 {
                     // 使用時、すべての自分クリーチャーを+1/+0
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -385,7 +385,7 @@ namespace Cauldron.Server.Models
                         }
                     },
                     // 自分クリーチャーのプレイ時+1/+0
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -425,7 +425,7 @@ namespace Cauldron.Server.Models
                 effects: new[]
                 {
                     // 使用時、相手かランダムな相手クリーチャー一体に2ダメージ
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -470,7 +470,7 @@ namespace Cauldron.Server.Models
                 effects: new[]
                 {
                     // 使用時、対象の自分クリーチャーを+2/+2
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
@@ -516,7 +516,7 @@ namespace Cauldron.Server.Models
                 effects: new[]
                 {
                     // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
-                    new CardEffect2()
+                    new CardEffect()
                     {
                         Timing = new EffectTiming()
                         {
