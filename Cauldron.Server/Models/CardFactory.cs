@@ -12,6 +12,7 @@ namespace Cauldron.Server.Models
 
         private Dictionary<Guid, Card> CardsById { get; } = new Dictionary<Guid, Card>();
 
+        public IEnumerable<Card> GetAllCards => this.CardsById.Values;
 
         public IEnumerable<CardDef> CardPool => this.CardDefListById.Values;
 

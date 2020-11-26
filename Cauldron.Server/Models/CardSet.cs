@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Cauldron.Server.Models
 {
@@ -11,23 +10,25 @@ namespace Cauldron.Server.Models
 
         public IEnumerable<CardDef> AsCardDefs()
         {
-            return this.Cards.Select(c =>
-            {
-                return c.Type switch
-                {
-                    CardType.Creature => CardDef.CreatureCard(
-                        c.Cost, $"{this.Name}.{c.Name}", c.Name,
-                        c.FlavorText, c.Power, c.Toughness, c.Abilities,
-                        CardEffectParser.Parse(c.EffectText)),
+            return new CardDef[0];
 
-                    CardType.Artifact => CardDef.ArtifactCard(
-                        c.Cost, $"{this.Name}.{c.Name}", c.Name,
-                        c.FlavorText,
-                        CardEffectParser.Parse(c.EffectText)),
+            //return this.Cards.Select(c =>
+            //{
+            //    return c.Type switch
+            //    {
+            //        CardType.Creature => CardDef.CreatureCard(
+            //            c.Cost, $"{this.Name}.{c.Name}", c.Name,
+            //            c.FlavorText, c.Power, c.Toughness, c.Abilities,
+            //            CardEffectParser.Parse(c.EffectText)),
 
-                    _ => null
-                };
-            });
+            //        CardType.Artifact => CardDef.ArtifactCard(
+            //            c.Cost, $"{this.Name}.{c.Name}", c.Name,
+            //            c.FlavorText,
+            //            CardEffectParser.Parse(c.EffectText)),
+
+            //        _ => null
+            //    };
+            //});
         }
     }
 }

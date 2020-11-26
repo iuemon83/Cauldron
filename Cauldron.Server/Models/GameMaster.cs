@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Cauldron.Server.Models.Effect;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Cauldron_Test")]
@@ -15,7 +17,7 @@ namespace Cauldron.Server.Models
                 // クリーチャーでなければ攻撃できない
                 && attackCard.Type == CardType.Creature
                 // 召喚酔いでない
-                && !attackCard.IsSummoningSickness
+                && attackCard.TurnCountToCanAttack <= attackCard.TurnCountInField
                 // 攻撃不能状態でない
                 && !attackCard.Abilities.Contains(CreatureAbility.CantAttack)
                 ;
@@ -81,17 +83,23 @@ namespace Cauldron.Server.Models
 
         public int AllTurnCount => this.PlayerTurnCountById.Sum(x => x.Value);
 
-        private List<Card> OnStartTurnEffectsCards { get; } = new List<Card>();
-        private List<Card> OnEndTurnEffectsCards { get; } = new List<Card>();
-        private List<Card> OnEveryPlayEffectsCards { get; } = new List<Card>();
-        private List<Card> OnEveryDestroyEffectsCards { get; } = new List<Card>();
+        // イベント
+        private readonly Subject<EffectEventArgs> PlayEvent = new Subject<EffectEventArgs>();
+        private readonly Subject<EffectEventArgs> DestroyEvent = new Subject<EffectEventArgs>();
+        private readonly Subject<EffectEventArgs> StartTurnEvent = new Subject<EffectEventArgs>();
+        private readonly Subject<EffectEventArgs> EndTurnEvent = new Subject<EffectEventArgs>();
+
+        /// <summary>
+        /// カードの効果の解除リスト。キーはカードのID
+        /// </summary>
+        private readonly Dictionary<Guid, List<IDisposable>> EffectDisposerListByCardId = new Dictionary<Guid, List<IDisposable>>();
 
         public IEnumerable<CardDef> CardPool => this.cardFactory.CardPool;
 
-        private readonly Func<Guid, IReadOnlyList<Guid>, Guid> AskCardAction;
+        private readonly Func<Guid, ChoiceResult, int, ChoiceResult> AskCardAction;
 
         public GameMaster(RuleBook ruleBook, CardFactory cardFactory, ILogger logger,
-            Func<Guid, IReadOnlyList<Guid>, Guid> askCardAction)
+            Func<Guid, ChoiceResult, int, ChoiceResult> askCardAction)
         {
             this.RuleBook = ruleBook;
             this.cardFactory = cardFactory;
@@ -140,37 +148,27 @@ namespace Cauldron.Server.Models
                 .First(player => player.Id != playerId);
         }
 
-        public void DestroyCard(Card card)
+        /// <summary>
+        /// 指定したカードを破壊します。
+        /// </summary>
+        /// <param name="cardToDestroy"></param>
+        public void DestroyCard(Card cardToDestroy)
         {
-            var player = this.PlayersById[card.OwnerId];
-            this.logger.LogInformation($"破壊：{player.Name}-{card}");
+            var player = this.PlayersById[cardToDestroy.OwnerId];
+            this.logger.LogInformation($"破壊：{player.Name}-{cardToDestroy}");
 
-            this.DoEffect(card, CardEffectType.OnDestroy);
+            player.Field.Destroy(cardToDestroy);
 
-            player.Field.Destroy(card);
+            // カードの破壊イベント
+            this.DestroyEvent.OnNext(new EffectEventArgs() { EffectType = GameEvent.OnDestroy, GameMaster = this, Source = cardToDestroy });
 
-            // 各プレイ時の効果を処理
-            var copyList = this.OnEveryDestroyEffectsCards.ToArray();
-            foreach (var c in copyList)
+            // 破壊されたカードの効果を削除
+            if (this.EffectDisposerListByCardId.TryGetValue(cardToDestroy.Id, out var dList))
             {
-                if (this.OnEveryDestroyEffectsCards.Contains(c))
+                foreach (var d in dList)
                 {
-                    this.DoEffect(c, CardEffectType.OnEveryDestroy);
+                    d.Dispose();
                 }
-            }
-
-            this.OnStartTurnEffectsCards.Remove(card);
-            this.OnEndTurnEffectsCards.Remove(card);
-            this.OnEveryPlayEffectsCards.Remove(card);
-            this.OnEveryDestroyEffectsCards.Remove(card);
-        }
-
-        public void DoEffect(Card card, CardEffectType effectType)
-        {
-            if (card.EffectsByType.TryGetValue(effectType, out var effect))
-            {
-                this.logger.LogInformation($"効果：{card}-{effectType}");
-                effect.Execute(this, card);
             }
         }
 
@@ -282,25 +280,8 @@ namespace Cauldron.Server.Models
 
         public GameEnvironment GetEnvironment(Guid playerId)
         {
-            //return this.Resolve(playerId, () => new CommandResult());
-
             return this.CreateEnvironment(playerId);
         }
-
-        //public CommandResult Resolve(Guid playerId, Func<CommandResult> action)
-        //{
-        //    var result = action();
-
-        //    if (this.GameOver)
-        //    {
-        //        var winner = this.GetWinner();
-        //        this.logger.Information($"勝者：{winner.Name}");
-        //    }
-
-        //    result.GameEnvironment = this.CreateEnvironment(playerId);
-
-        //    return result;
-        //}
 
         public (bool IsSucceeded, string errorMessage) StartTurn(Guid playerId)
         {
@@ -309,16 +290,8 @@ namespace Cauldron.Server.Models
                 return (false, "すでにゲームが終了しています。");
             }
 
-            //return this.Resolve(playerId, () =>
-            //{
             if (playerId != this.CurrentPlayer.Id)
             {
-                //return new CommandResult()
-                //{
-                //    IsSucceeded = false,
-                //    ErrorMessage = "このプレイヤーのターンではありません。"
-                //};
-
                 return (false, "このプレイヤーのターンではありません。");
             }
 
@@ -331,22 +304,11 @@ namespace Cauldron.Server.Models
                 card.TurnCountInField++;
             }
 
-            this.logger.LogInformation($"ターン開始：{this.CurrentPlayer.Name}-[HP:{this.CurrentPlayer.Hp}/{this.CurrentPlayer.MaxHp}][MP:{this.CurrentPlayer.MaxMp}][ターン:{this.PlayerTurnCountById[this.CurrentPlayer.Id]}({this.AllTurnCount})]");
+            this.logger.LogInformation($"ターン開始：{this.CurrentPlayer.Name}-[HP:{this.CurrentPlayer.Hp}/{this.CurrentPlayer.MaxHp}][MP:{this.CurrentPlayer.MaxMp}][ターン:{this.PlayerTurnCountById[this.CurrentPlayer.Id]}({this.AllTurnCount})]----------------------------");
 
-            // ターン開始時の効果を処理
-            var copyList = this.OnStartTurnEffectsCards.ToArray();
-            foreach (var card in copyList)
-            {
-                if (this.OnStartTurnEffectsCards.Contains(card))
-                {
-                    this.DoEffect(card, CardEffectType.OnStartTurn);
-                }
-            }
+            this.StartTurnEvent.OnNext(new EffectEventArgs() { EffectType = GameEvent.OnStartTurn, GameMaster = this });
 
             this.CurrentPlayer.Draw();
-
-            //return new CommandResult() { IsSucceeded = true };
-            //});
 
             return (true, "");
         }
@@ -358,44 +320,29 @@ namespace Cauldron.Server.Models
                 return (false, "すでにゲームが終了しています。");
             }
 
-            //return this.Resolve(playerId, () =>
-            //{
             if (playerId != this.CurrentPlayer.Id)
             {
-                //return new CommandResult()
-                //{
-                //    IsSucceeded = false,
-                //    ErrorMessage = "このプレイヤーのターンではありません。"
-                //};
-
                 return (false, "このプレイヤーのターンではありません。");
-
             }
 
             var endTurnPlayer = this.CurrentPlayer;
 
             this.logger.LogInformation($"ターンエンド：{endTurnPlayer.Name}");
 
-            // ターン終了時の効果を処理
-            // 処理中にOnEndTurnEffectsCards が変更される可能性がある
-            var copyList = this.OnEndTurnEffectsCards.ToArray();
-            foreach (var card in copyList)
-            {
-                if (this.OnEndTurnEffectsCards.Contains(card))
-                {
-                    this.DoEffect(card, CardEffectType.OnEndTurn);
-                }
-            }
+            this.EndTurnEvent.OnNext(new EffectEventArgs() { EffectType = GameEvent.OnEndTurn, GameMaster = this });
 
             this.CurrentPlayer = this.NextPlayer;
             this.NextPlayer = this.GetOpponent(this.CurrentPlayer.Id);
 
-            //    return new CommandResult() { IsSucceeded = true };
-            //});
-
             return (true, "");
         }
 
+        /// <summary>
+        /// 手札のカードをプレイします
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <param name="handCardId"></param>
+        /// <returns></returns>
         public (bool IsSucceeded, string errorMessage) PlayFromHand(Guid playerId, Guid handCardId)
         {
             if (this.GameOver)
@@ -403,16 +350,8 @@ namespace Cauldron.Server.Models
                 return (false, "すでにゲームが終了しています。");
             }
 
-            //return this.Resolve(playerId, () =>
-            //{
             if (playerId != this.CurrentPlayer.Id)
             {
-                //return new CommandResult()
-                //{
-                //    IsSucceeded = false,
-                //    ErrorMessage = "このプレイヤーのターンではありません。"
-                //};
-
                 return (false, "このプレイヤーのターンではありません。");
             }
 
@@ -424,8 +363,6 @@ namespace Cauldron.Server.Models
             // プレイ不能
             if (!this.IsPlayable(player, playingCard))
             {
-                //return new CommandResult() { IsSucceeded = false, ErrorMessage = "プレイ不能" };
-
                 return (false, "プレイ不能");
             }
 
@@ -444,103 +381,94 @@ namespace Cauldron.Server.Models
                     break;
             }
 
-            // 各プレイ時の効果を処理
-            var copyList = this.OnEveryPlayEffectsCards.ToArray();
-            foreach (var card in copyList)
-            {
-                if (this.OnEveryPlayEffectsCards.Contains(card))
+            // イベント登録
+            var list = playingCard.Effects
+                .SelectMany(effect =>
                 {
-                    this.DoEffect(card, CardEffectType.OnEveryPlay);
-                }
-            }
+                    var l = new List<IDisposable>();
 
-            this.DoEffect(playingCard, CardEffectType.OnPlay);
+                    if (effect.MatchTiming(GameEvent.OnStartTurn))
+                    {
+                        l.Add(this.StartTurnEvent.Subscribe(effect.Execute(playingCard)));
+                    }
 
-            var onStartTurnEffect = playingCard.GetEffenct(CardEffectType.OnStartTurn);
-            if (onStartTurnEffect != null)
+                    if (effect.MatchTiming(GameEvent.OnEndTurn))
+                    {
+                        l.Add(this.EndTurnEvent.Subscribe(effect.Execute(playingCard)));
+                    }
+
+                    if (effect.MatchTiming(GameEvent.OnPlay))
+                    {
+                        l.Add(this.PlayEvent.Subscribe(effect.Execute(playingCard)));
+                    }
+
+                    if (effect.MatchTiming(GameEvent.OnDestroy))
+                    {
+                        l.Add(this.DestroyEvent.Subscribe(effect.Execute(playingCard)));
+                    }
+
+                    return l;
+                })
+                .ToList();
+
+            // 解除リストにも登録
+            if (list.Any())
             {
-                this.OnStartTurnEffectsCards.Add(playingCard);
+                this.EffectDisposerListByCardId.Add(playingCard.Id, list);
             }
 
-            var onEndTurnEffect = playingCard.GetEffenct(CardEffectType.OnEndTurn);
-            if (onEndTurnEffect != null)
-            {
-                this.OnEndTurnEffectsCards.Add(playingCard);
-            }
-
-            var onEveryPlayEffect = playingCard.GetEffenct(CardEffectType.OnEveryPlay);
-            if (onEveryPlayEffect != null)
-            {
-                this.OnEveryPlayEffectsCards.Add(playingCard);
-            }
-
-            var onEveryDestroyEffect = playingCard.GetEffenct(CardEffectType.OnEveryDestroy);
-            if (onEveryDestroyEffect != null)
-            {
-                this.OnEveryDestroyEffectsCards.Add(playingCard);
-            }
-
-            //return new CommandResult() { IsSucceeded = true };
-            //});
+            // イベント発行
+            this.PlayEvent.OnNext(new EffectEventArgs() { EffectType = GameEvent.OnPlay, GameMaster = this, Source = playingCard });
 
             return (true, "");
         }
 
-        private Guid[] FetchChoiceCandidates(Guid playerId, TargetCardType targetCardType)
+        /// <summary>
+        /// プレイヤーにカードを選択させます。
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <param name="choiceCandidates"></param>
+        /// <param name="choiceNum"></param>
+        /// <returns></returns>
+        public ChoiceResult AskCard(Guid playerId, ChoiceResult choiceCandidates, int choiceNum)
         {
-            return targetCardType switch
-            {
-                TargetCardType.OpponentCreature
-                    => this.GetOpponent(playerId).Field.AllCards.Where(c => c.Type == CardType.Creature).Select(c => c.Id).ToArray(),
-                TargetCardType.YourCreature
-                    => this.PlayersById[playerId].Field.AllCards.Where(c => c.Type == CardType.Creature).Select(c => c.Id).ToArray(),
-                _ => new Guid[0]
-            };
-        }
+            var choiceResult = this.AskCardAction(playerId, choiceCandidates, choiceNum);
+            return choiceResult;
 
-        public Card AskCard(Guid playerId, TargetCardType targetType)
-        {
-            var candidates = this.FetchChoiceCandidates(playerId, targetType);
-            if (candidates.Length == 0)
-            {
-                return null;
-            }
+            //TODO ほんとは不正なIDが指定されていないかの確認が必要
+            //switch (targetType)
+            //{
+            //    case TargetCardType.YourCreature:
+            //        {
+            //            var you = this.PlayersById[playerId];
+            //            var targetCard = you.Field.GetById(targetCardId);
+            //            if (targetCard == null)
+            //            {
+            //                throw new Exception("指定されたカードが正しくない");
+            //            }
 
-            var targetCardId = this.AskCardAction(playerId, candidates);
+            //            return targetCard;
+            //        }
 
-            switch (targetType)
-            {
-                case TargetCardType.YourCreature:
-                    {
-                        var you = this.PlayersById[playerId];
-                        var targetCard = you.Field.GetById(targetCardId);
-                        if (targetCard == null)
-                        {
-                            throw new Exception("指定されたカードが正しくない");
-                        }
+            //    case TargetCardType.OpponentCreature:
+            //        {
+            //            var opponent = this.GetOpponent(playerId);
+            //            var targetCard = opponent.Field.GetById(targetCardId);
+            //            if (targetCard == null)
+            //            {
+            //                throw new Exception("指定されたカードが正しくない");
+            //            }
 
-                        return targetCard;
-                    }
+            //            return targetCard;
+            //        }
 
-                case TargetCardType.OpponentCreature:
-                    {
-                        var opponent = this.GetOpponent(playerId);
-                        var targetCard = opponent.Field.GetById(targetCardId);
-                        if (targetCard == null)
-                        {
-                            throw new Exception("指定されたカードが正しくない");
-                        }
-
-                        return targetCard;
-                    }
-
-                default:
-                    throw new InvalidOperationException("サポートされていない");
-            }
+            //    default:
+            //        throw new InvalidOperationException("サポートされていない");
+            //}
         }
 
         /// <summary>
-        /// 新規に生成されるカードをプレイ（召喚時に効果で召喚とか）
+        /// 新規に生成されるカードをプレイ（効果で召喚とか）
         /// </summary>
         /// <param name="playerId"></param>
         /// <param name="cardId"></param>
@@ -552,22 +480,12 @@ namespace Cauldron.Server.Models
                 return (false, "すでにゲームが終了しています。");
             }
 
-            //return this.Resolve(playerId, () =>
-            //{
             if (playerId != this.CurrentPlayer.Id)
             {
-                //return new CommandResult()
-                //{
-                //    IsSucceeded = false,
-                //    ErrorMessage = "このプレイヤーのターンではありません。"
-                //};
-
                 return (false, "このプレイヤーのターンではありません。");
             }
 
             var player = this.PlayersById[playerId];
-            //var playingCard = this.CardFactory.CreateNew(cardId);
-            //playingCard.OwnerId = player.Id;
             var playingCard = this.cardFactory.GetById(cardId);
 
             this.logger.LogInformation($"特殊プレイ：{player.Name}-{playingCard}");
@@ -575,14 +493,8 @@ namespace Cauldron.Server.Models
             // プレイ不能
             if (!this.IsPlayableDirect(player, playingCard))
             {
-                //return new CommandResult() { IsSucceeded = false, ErrorMessage = "プレイ不能" };
-
                 return (false, "プレイ不能");
             }
-
-            //this.CurrentPlayer.UseMp(playingCard.Cost);
-
-            //player.Hands.Remove(playingCard);
 
             switch (playingCard.Type)
             {
@@ -595,26 +507,16 @@ namespace Cauldron.Server.Models
                     break;
             }
 
-            //this.DoEffect(playingCard, CardEffectType.OnPlay);
-
-            //var onStartTurnEffect = playingCard.GetEffenct(CardEffectType.OnStartTurn);
-            //if (onStartTurnEffect != null)
-            //{
-            //    this.OnStartTurnEffectsCards.Add(playingCard);
-            //}
-
-            //var onEndTurnEffect = playingCard.GetEffenct(CardEffectType.OnEndTurn);
-            //if (onEndTurnEffect != null)
-            //{
-            //    this.OnEndTurnEffectsCards.Add(playingCard);
-            //}
-
-            //    return new CommandResult() { IsSucceeded = true };
-            //});
-
             return (true, "");
         }
 
+        /// <summary>
+        /// プレイヤーに攻撃します。
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <param name="cardId"></param>
+        /// <param name="damagePlayerId"></param>
+        /// <returns></returns>
         public (bool IsSucceeded, string errorMessage) AttackToPlayer(Guid playerId, Guid cardId, Guid damagePlayerId)
         {
             if (this.GameOver)
@@ -622,16 +524,8 @@ namespace Cauldron.Server.Models
                 return (false, "すでにゲームが終了しています。");
             }
 
-            //return this.Resolve(playerId, () =>
-            //{
             if (playerId != this.CurrentPlayer.Id)
             {
-                //return new CommandResult()
-                //{
-                //    IsSucceeded = false,
-                //    ErrorMessage = "このプレイヤーのターンではありません。"
-                //};
-
                 return (false, "このプレイヤーのターンではありません。");
             }
 
@@ -643,15 +537,10 @@ namespace Cauldron.Server.Models
 
             if (!CanAttack(card, damagePlayer))
             {
-                //return new CommandResult() { IsSucceeded = false, ErrorMessage = "攻撃不能" };
-
                 return (false, "攻撃不能");
             }
 
             this.HitPlayer(damagePlayer.Id, card.Power);
-
-            //return new CommandResult() { IsSucceeded = true };
-            //});
 
             return (true, "");
         }
@@ -663,16 +552,8 @@ namespace Cauldron.Server.Models
                 return (false, "すでにゲームが終了しています。");
             }
 
-            //return this.Resolve(playerId, () =>
-            //{
             if (playerId != this.CurrentPlayer.Id)
             {
-                //return new CommandResult()
-                //{
-                //    IsSucceeded = false,
-                //    ErrorMessage = "このプレイヤーのターンではありません。"
-                //};
-
                 return (false, "このプレイヤーのターンではありません。");
             }
 
@@ -681,9 +562,6 @@ namespace Cauldron.Server.Models
             this.logger.LogInformation($"ダメージ：{damage} > {damagePlayer.Name}");
 
             damagePlayer.Damage(damage);
-
-            //    return new CommandResult() { IsSucceeded = true };
-            //});
 
             return (true, "");
         }
@@ -704,16 +582,8 @@ namespace Cauldron.Server.Models
                 return (false, "すでにゲームが終了しています。");
             }
 
-            //return this.Resolve(playerId, () =>
-            //{
             if (playerId != this.CurrentPlayer.Id)
             {
-                //return new CommandResult()
-                //{
-                //    IsSucceeded = false,
-                //    ErrorMessage = "このプレイヤーのターンではありません。"
-                //};
-
                 return (false, "このプレイヤーのターンではありません。");
 
             }
@@ -728,8 +598,6 @@ namespace Cauldron.Server.Models
 
             if (!CanAttack(attackCard, guardCard, this.CreateEnvironment(playerId)))
             {
-                //return new CommandResult() { IsSucceeded = false, ErrorMessage = "攻撃不能" };
-
                 return (false, "攻撃不能");
             }
 
@@ -745,7 +613,6 @@ namespace Cauldron.Server.Models
 
             result = this.HitCreature(playerId, attackCard.Id, guardCard.Power);
             return result;
-            //});
         }
 
         public (bool IsSucceeded, string errorMessage) HitCreature(Guid playerId, Guid creatureCardId, int damage)
@@ -755,16 +622,8 @@ namespace Cauldron.Server.Models
                 return (false, "すでにゲームが終了しています。");
             }
 
-            //return this.Resolve(playerId, () =>
-            //{
             if (playerId != this.CurrentPlayer.Id)
             {
-                //return new CommandResult()
-                //{
-                //    IsSucceeded = false,
-                //    ErrorMessage = "このプレイヤーのターンではありません。"
-                //};
-
                 return (false, "このプレイヤーのターンではありません。");
             }
 
@@ -778,9 +637,6 @@ namespace Cauldron.Server.Models
             {
                 this.DestroyCard(creatureCard);
             }
-
-            //    return new CommandResult() { IsSucceeded = true };
-            //});
 
             return (true, "");
         }
@@ -801,6 +657,136 @@ namespace Cauldron.Server.Models
             if (creatureCard.Toughness <= 0)
             {
                 this.DestroyCard(creatureCard);
+            }
+        }
+
+        public IReadOnlyList<Card> ChoiceCandidateCards(Card ownerCard, Choice choice, Card eventSource)
+        {
+            return choice.CardCondition.ZoneCondition switch
+            {
+                ZoneType.All => this.cardFactory.GetAllCards
+                    .Where(c => choice.CardCondition.IsMatch(ownerCard, c, eventSource))
+                    .ToArray(),
+                ZoneType.Field => this.PlayersById.Values.SelectMany(p => p.Field.AllCards)
+                    .Where(c => choice.CardCondition.IsMatch(ownerCard, c, eventSource))
+                    .ToArray(),
+                ZoneType.YouField => this.PlayersById[ownerCard.OwnerId].Field.AllCards
+                    .Where(c => choice.CardCondition.IsMatch(ownerCard, c, eventSource))
+                    .ToArray(),
+                ZoneType.OpponentField => this.GetOpponent(ownerCard.OwnerId).Field.AllCards
+                    .Where(c => choice.CardCondition.IsMatch(ownerCard, c, eventSource))
+                    .ToArray(),
+                _ => new Card[0],
+            };
+        }
+
+        public IReadOnlyList<CardDef> ChoiceCandidateCardDefs(Choice choice)
+        {
+            return choice.CardCondition.ZoneCondition switch
+            {
+                ZoneType.All => this.cardFactory.CardPool
+                    .Where(cdef => choice.CardCondition.IsMatch(cdef))
+                    .SelectMany(cdef => Enumerable.Repeat(cdef, choice.NumPicks))
+                    .ToArray(),
+                ZoneType.CardPool => this.cardFactory.CardPool
+                    .Where(cdef => choice.CardCondition.IsMatch(cdef))
+                    .SelectMany(cdef => Enumerable.Repeat(cdef, choice.NumPicks))
+                    .ToArray(),
+                _ => new CardDef[0],
+            };
+        }
+
+        public ChoiceResult ChoiceCandidates(Card ownerCard, Choice choice, Card eventSource)
+        {
+            var playerIdList = new List<Guid>();
+            var cardList = new List<Card>();
+            var cardDefList = new List<CardDef>();
+            foreach (var c in choice.Candidates)
+            {
+                switch (c)
+                {
+                    case Choice.ChoiceCandidateType.AllPlayer:
+                        playerIdList.AddRange(this.PlayersById.Values.Select(p => p.Id));
+                        break;
+
+                    case Choice.ChoiceCandidateType.OwnerPlayer:
+                        playerIdList.Add(ownerCard.OwnerId);
+                        break;
+
+                    case Choice.ChoiceCandidateType.OtherOwnerPlayer:
+                        playerIdList.Add(this.GetOpponent(ownerCard.OwnerId).Id);
+                        break;
+
+                    case Choice.ChoiceCandidateType.TurnPlayer:
+                        playerIdList.Add(this.CurrentPlayer.Id);
+                        break;
+
+                    case Choice.ChoiceCandidateType.OtherTurnPlayer:
+                        playerIdList.Add(this.NextPlayer.Id);
+                        break;
+
+                    case Choice.ChoiceCandidateType.Card:
+                        cardList.AddRange(this.ChoiceCandidateCards(ownerCard, choice, eventSource));
+                        cardDefList.AddRange(this.ChoiceCandidateCardDefs(choice));
+                        break;
+                }
+            }
+
+            return new ChoiceResult()
+            {
+                PlayerIdList = playerIdList,
+                CardList = cardList,
+                CardDefList = cardDefList,
+            };
+        }
+
+        public ChoiceResult ChoiceCards(Card ownerCard, Choice choice, Card eventSource)
+        {
+            var choiceCandidates = this.ChoiceCandidates(ownerCard, choice, eventSource);
+
+            switch (choice.How)
+            {
+                case Choice.ChoiceHow.All:
+                    return choiceCandidates;
+
+                case Choice.ChoiceHow.Choose:
+                    return this.AskCard(ownerCard.OwnerId, choiceCandidates, choice.NumPicks);
+
+                case Choice.ChoiceHow.Random:
+                    var totalCount = choiceCandidates.PlayerIdList.Count + choiceCandidates.CardList.Count + choiceCandidates.CardDefList.Count;
+                    var totalIndexList = Enumerable.Range(0, totalCount).ToArray();
+                    var pickedIndexList = Program.RandomPick(totalIndexList, choice.NumPicks);
+
+                    var randomPickedPlayerIdList = new List<Guid>();
+                    var randomPickedCardList = new List<Card>();
+                    var randomPickedCardDefList = new List<CardDef>();
+                    foreach (var pickedIndex in pickedIndexList)
+                    {
+                        if (pickedIndex < choiceCandidates.PlayerIdList.Count)
+                        {
+                            randomPickedPlayerIdList.Add(choiceCandidates.PlayerIdList[pickedIndex]);
+                        }
+                        else if (pickedIndex < choiceCandidates.PlayerIdList.Count + choiceCandidates.CardList.Count)
+                        {
+                            var cardIndex = pickedIndex - choiceCandidates.PlayerIdList.Count;
+                            randomPickedCardList.Add(choiceCandidates.CardList[cardIndex]);
+                        }
+                        else
+                        {
+                            var cardIndex = pickedIndex - choiceCandidates.PlayerIdList.Count - choiceCandidates.CardList.Count;
+                            randomPickedCardDefList.Add(choiceCandidates.CardDefList[cardIndex]);
+                        }
+                    }
+
+                    return new ChoiceResult()
+                    {
+                        PlayerIdList = randomPickedPlayerIdList,
+                        CardList = randomPickedCardList,
+                        CardDefList = randomPickedCardDefList
+                    };
+
+                default:
+                    throw new Exception($"how={choice.How}");
             }
         }
     }

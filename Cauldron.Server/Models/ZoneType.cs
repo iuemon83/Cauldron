@@ -2,6 +2,8 @@
 {
     public enum ZoneType
     {
+        All,
+        CardPool,
         Field,
         YouField,
         OpponentField,

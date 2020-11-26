@@ -36,11 +36,19 @@ namespace Cauldron.Server.Models
 
         public CardRequireToPlay Require = new CardRequireToPlay();
 
-        public Dictionary<CardEffectType, CardEffect> EffectsByType { get; set; } = new Dictionary<CardEffectType, CardEffect>();
+        //public Dictionary<CardEffectType, CardEffect> EffectsByType { get; set; } = new Dictionary<CardEffectType, CardEffect>();
 
+        public List<CardEffect2> Effects { get; set; } = new List<CardEffect2>();
+
+        /// <summary>
+        /// 攻撃可能となるまでのターン数
+        /// </summary>
+        public int TurnCountToCanAttack { get; set; }
+
+        /// <summary>
+        /// フィールドに出てからのターン数
+        /// </summary>
         public int TurnCountInField { get; set; }
-
-        public bool IsSummoningSickness => this.TurnCountInField < 1;
 
         public Card(CardDef cardDef)
         {
@@ -56,12 +64,15 @@ namespace Cauldron.Server.Models
 
             this.Abilities = cardDef.Abilities;
             this.Require = cardDef.Require;
-            this.EffectsByType = cardDef.Effects.ToDictionary(effect => effect.Type);
+            this.Effects = cardDef.Effects.ToList();
+            this.TurnCountToCanAttack = cardDef.TurnCountToCanAttack;
+            //this.EffectsByType = cardDef.Effects.ToDictionary(effect => effect.Type);
         }
 
-        public void AddEffect(CardEffect effect)
+        public void AddEffect(CardEffect2 effect)
         {
-            this.EffectsByType.Add(effect.Type, effect);
+            //this.EffectsByType.Add(effect.Type, effect);
+            this.Effects.Add(effect);
         }
 
         public void Damage(Card card)
@@ -74,11 +85,19 @@ namespace Cauldron.Server.Models
             this.ToughnessBuff -= Math.Max(0, damage);
         }
 
-        public CardEffect GetEffenct(CardEffectType effectType)
+        //public CardEffect GetEffenct(CardEffectType effectType)
+        //{
+        //    return this.EffectsByType.TryGetValue(effectType, out var effect)
+        //        ? effect
+        //        : null;
+        //}
+
+        public void DoEffect(GameEvent effectType, GameMaster gameMaster)
         {
-            return this.EffectsByType.TryGetValue(effectType, out var effect)
-                ? effect
-                : null;
+            foreach (var effect in this.Effects)
+            {
+                effect.Execute(effectType, gameMaster, this, this);
+            }
         }
 
         public override string ToString()

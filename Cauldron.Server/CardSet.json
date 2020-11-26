@@ -52,9 +52,17 @@
             "effect": [
                 {
                     "timing": {
-                        "event": "play",
-                        "target": "this",
-                        "at": "once"
+                        "play": {
+                            "target": "this"
+                        },
+                        "destroy": {
+                            "target": "this"
+                        },
+                        "startTurn": {
+                            "num": 1
+                        },
+                        "endTurn": {
+                        }
                     },
                     "action": [
                         {
@@ -135,9 +143,15 @@
                 },
                 {
                     "timing": {
-                        "event": "play",
-                        "target": "other",
-                        "at": "every"
+                        "play": {
+                            "target": "other"
+                        },
+                        "destroy": {
+                            "target": "other"
+                        },
+                        "modify": {
+                            "target": "other"
+                        }
                     },
                     "action": [
                         {
@@ -145,9 +159,11 @@
                                 "power": 1,
                                 "toughness": 0,
                                 "choice": {
-                                    "how": "specify",
-                                    "target": [ "it" ],
-                                    "zone": "opponentfield",
+                                    "candidate": [ "player", "ownerPlayer", "otherPlayer", "card", "it" ],
+                                    "how": "random",
+                                    "cardCondition": {
+                                        "zone": "opponentfield"
+                                    },
                                     "num": 1
                                 }
                             }

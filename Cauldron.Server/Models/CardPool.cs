@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Cauldron.Server.Models.Effect;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -21,207 +22,443 @@ namespace Cauldron.Server.Models
 
             var goblin = CardDef.CreatureCard(1, $"{cardSet.Name}.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
 
-            var mouse = CardDef.CreatureCard(1, $"{cardSet.Name}.ネズミ", "ネズミ", "テストクリーチャー", 1, 1, effects: new[]
-            {
-                // 死亡時、相手に1ダメージ
-                new CardEffect(CardEffectType.OnDestroy, (gameMaster, ownerCard) =>
+            var mouse = CardDef.CreatureCard(1, $"{cardSet.Name}.ネズミ", "ネズミ", "テストクリーチャー", 1, 1,
+                effects: new[]
                 {
-                    var opponent = gameMaster.GetOpponent(ownerCard.OwnerId);
-                    gameMaster.HitPlayer(opponent.Id, 1);
-                })
-            });
+                    // 死亡時、相手に1ダメージ
+                    new CardEffect2(){
+                        Timing = new EffectTiming()
+                        {
+                            Destroy = new EffectTimingDestroyEvent(){
+                                Owner = EffectTimingDestroyEvent.EventOwner.This
+                            }
+                        },
+                        Actions =new []
+                        {
+                            new EffectAction()
+                            {
+                                Damage = new EffectActionDamage()
+                                {
+                                    Value = 1,
+                                    Choice = new Choice()
+                                    {
+                                        Candidates =new[]{ Choice.ChoiceCandidateType.OtherOwnerPlayer },
+                                        NumPicks=1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                );
 
             var ninja = CardDef.CreatureCard(1, $"{cardSet.Name}.忍者", "忍者", "テストクリーチャー", 1, 1, new[] { CreatureAbility.Stealth });
 
-            var waterFairy = CardDef.CreatureCard(1, $"{cardSet.Name}.ウォーターフェアリー", "ウォーターフェアリー", "テストクリーチャー", 1, 1, effects: new[]
-            {
-                // 破壊時、フェアリー１枚を手札に加える
-                new CardEffect(CardEffectType.OnDestroy, (gameMaster, ownerCard) =>
+            var waterFairy = CardDef.CreatureCard(1, $"{cardSet.Name}.ウォーターフェアリー", "ウォーターフェアリー", "テストクリーチャー", 1, 1,
+                effects: new[]
                 {
-                    var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-                    var newCard = gameMaster.GenerateNewCard($"{cardSet.Name}.フェアリー",owner.Id);
-                    //newCard.OwnerId = owner.Id;
-                    gameMaster.AddHand(owner, newCard);
-                }),
-            });
+                    // 破壊時、フェアリー１枚を手札に加える
+                    new CardEffect2()
+                    {
+                        Timing = new EffectTiming()
+                        {
+                            Destroy = new EffectTimingDestroyEvent()
+                            {
+                                Owner = EffectTimingDestroyEvent.EventOwner.This
+                            }
+                        },
+                        Actions = new[]
+                        {
+                            new EffectAction()
+                            {
+                                AddCard = new EffectActionAddCard()
+                                {
+                                    ZoneToAddCard = ZoneType.YouHand,
+                                    Choice = new Choice()
+                                    {
+                                        Candidates =new[]{ Choice.ChoiceCandidateType.Card },
+                                        CardCondition = new CardCondition()
+                                        {
+                                            NameCondition = new TextCondition()
+                                            {
+                                                Value = fairy.FullName,
+                                                Compare = TextCondition.ConditionCompare.Equality
+                                            }
+                                        },
+                                        How = Choice.ChoiceHow.All,
+                                        NumPicks=1,
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                );
 
-            CardDef slime = null;
-            slime = CardDef.CreatureCard(2, $"{cardSet.Name}.スライム", "スライム", "テストクリーチャー", 1, 1, effects: new[]
-            {
-                // 召喚時、スライムを一体召喚
-                new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
+            var slime = CardDef.CreatureCard(2, $"{cardSet.Name}.スライム", "スライム", "テストクリーチャー", 1, 1,
+                effects: new[]
                 {
-                    var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-                    var playingCard = gameMaster.GenerateNewCard(slime.Id,owner.Id);
-                    //playingCard.OwnerId = owner.Id;
-                    gameMaster.PlayDirect(ownerCard.OwnerId, playingCard.Id);
-                }),
-            });
+                    // 召喚時、スライムを一体召喚
+                    new CardEffect2()
+                    {
+                        Timing = new EffectTiming()
+                        {
+                            Play = new EffectTimingPlayEvent()
+                            {
+                                Source = EffectTimingPlayEvent.EventSource.This
+                            }
+                        },
+                        Actions = new[]
+                        {
+                            new EffectAction()
+                            {
+                                AddCard = new EffectActionAddCard()
+                                {
+                                    ZoneToAddCard = ZoneType.YouField,
+                                    Choice = new Choice()
+                                    {
+                                        Candidates =new[]{ Choice.ChoiceCandidateType.Card },
+                                        CardCondition = new CardCondition()
+                                        {
+                                            NameCondition = new TextCondition()
+                                            {
+                                                Value = $"{cardSet.Name}.スライム",
+                                                Compare = TextCondition.ConditionCompare.Equality
+                                            }
+                                        },
+                                        How = Choice.ChoiceHow.All,
+                                        NumPicks = 1,
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                );
 
             var knight = CardDef.CreatureCard(2, $"{cardSet.Name}.ナイト", "ナイト", "テストクリーチャー", 1, 2, new[] { CreatureAbility.Cover });
             var ninjaKnight = CardDef.CreatureCard(3, $"{cardSet.Name}.忍者ナイト", "忍者ナイト", "テストクリーチャー", 1, 2, new[] { CreatureAbility.Cover, CreatureAbility.Stealth });
 
-            var whiteGeneral = CardDef.CreatureCard(4, $"{cardSet.Name}.ホワイトジェネラル", "ホワイトジェネラル", "テストクリーチャー", 2, 2, effects: new[]
-            {
-                // 召喚時、自分のクリーチャー一体を+2/+0
-                new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
+            var whiteGeneral = CardDef.CreatureCard(4, $"{cardSet.Name}.ホワイトジェネラル", "ホワイトジェネラル", "テストクリーチャー", 2, 2,
+                effects: new[]
                 {
-                    var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-                    var candidates = owner.Field.AllCards
-                        .Where(c => c.Type == CardType.Creature || c.Type == CardType.Token)
-                        .ToArray();
-                    var targetCreature = Program.RandomPick(candidates);
-                    if(targetCreature == default) return;
-
-                    gameMaster.Buff(targetCreature, 2, 0);
-                }),
-            });
-
-            var commander = CardDef.CreatureCard(6, $"{cardSet.Name}.セージコマンダー", "セージコマンダー", "テストクリーチャー", 3, 3, effects: new[]
-            {
-                // 召喚時、自分のクリーチャーすべてを+1/+1
-                new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
-                {
-                    var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-                    var candidates = owner.Field.AllCards
-                        .Where(c => c.Type == CardType.Creature || c.Type == CardType.Token);
-
-                    foreach(var targetCreature in candidates)
+                    // 召喚時、自分のクリーチャーをランダムで一体を+2/+0
+                    new CardEffect2()
                     {
-                        gameMaster.Buff(targetCreature, 1, 1);
-                    }
-                }),
-            });
-
-            var angel = CardDef.ArtifactCard(2, $"{cardSet.Name}.天使の像", "天使の像", "テストアーティファクト", new[]
-            {
-                // ターン開始時、カレントプレイヤーに1ダメージ
-                new CardEffect(CardEffectType.OnStartTurn, (gameMaster, ownerCard) =>
-                {
-                    var player = gameMaster.CurrentPlayer;
-                    gameMaster.HitPlayer(player.Id, 1);
-                }),
-            });
-
-            var devil = CardDef.ArtifactCard(1, $"{cardSet.Name}.悪魔の像", "悪魔の像", "テストアーティファクト", new[]
-            {
-                // ターン終了時、相手クリーチャーに1ダメージ。その後このカードを破壊
-                new CardEffect(CardEffectType.OnEndTurn, (gameMaster, ownerCard) =>
-                {
-                    var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-                    var opponent = gameMaster.GetOpponent(owner.Id);
-                    var candidates =opponent.Field.AllCards
-                        .Where(c=>c.Type == CardType.Creature)
-                        .ToArray();
-
-                    if(candidates.Any())
-                    {
-                        var targetCreatureCard = candidates[Program.Random.Next(candidates.Length)];
-                        if(targetCreatureCard != null)
+                        Timing = new EffectTiming()
                         {
-                            gameMaster.HitCreature(targetCreatureCard.Id, 1);
+                            Play = new EffectTimingPlayEvent()
+                            {
+                                Source = EffectTimingPlayEvent.EventSource.This
+                            }
+                        },
+                        Actions = new[]
+                        {
+                            new EffectAction()
+                            {
+                                ModifyCard = new EffectActionModifyCard()
+                                {
+                                    Choice = new Choice()
+                                    {
+                                        Candidates=new[]{ Choice.ChoiceCandidateType.Card },
+                                        CardCondition = new CardCondition()
+                                        {
+                                            ZoneCondition = ZoneType.YouField,
+                                            TypeCondition = new CardTypeCondition()
+                                            {
+                                                Value = new[]{ CardType.Creature },
+                                            },
+                                        },
+                                        NumPicks = 1,
+                                        How = Choice.ChoiceHow.Random
+                                    },
+                                    Power = 2
+                                }
+                            }
                         }
                     }
+                }
+                );
 
-                    gameMaster.DestroyCard(ownerCard);
-                }),
-            });
-
-            var fortuneSpring = CardDef.ArtifactCard(2, $"{cardSet.Name}.運命の泉", "運命の泉", "テストアーティファクト", new[]
-            {
-                // ターン終了時、自分のクリーチャーをランダムで+1/+0
-                new CardEffect(CardEffectType.OnEndTurn, (gameMaster, ownerCard) =>
+            var commander = CardDef.CreatureCard(6, $"{cardSet.Name}.セージコマンダー", "セージコマンダー", "テストクリーチャー", 3, 3,
+                effects: new[]
                 {
-                    // カードのオーナーのみ
-                    if(gameMaster.CurrentPlayer.Id != ownerCard.OwnerId) return;
-
-                    var candidates = gameMaster.CurrentPlayer.Field.AllCards
-                        .Where(c => c.Type == CardType.Creature)
-                        .ToArray();
-
-                    if(!candidates.Any())return;
-
-                    var card = candidates[Program.Random.Next(candidates.Length)];
-                    if(card != null)
+                    // 召喚時、自分のクリーチャーすべてを+1/+1
+                    new CardEffect2()
                     {
-                        gameMaster.Buff(card,1,0);
+                        Timing = new EffectTiming()
+                        {
+                            Play = new EffectTimingPlayEvent()
+                            {
+                                Source = EffectTimingPlayEvent.EventSource.This
+                            }
+                        },
+                        Actions = new[]
+                        {
+                            new EffectAction()
+                            {
+                                ModifyCard = new EffectActionModifyCard()
+                                {
+                                    Choice = new Choice()
+                                    {
+                                        Candidates =new[]{ Choice.ChoiceCandidateType.Card },
+                                        CardCondition = new CardCondition()
+                                        {
+                                            TypeCondition = new CardTypeCondition()
+                                            {
+                                                Value =new[]{ CardType.Creature },
+                                            }
+                                        },
+                                        How = Choice.ChoiceHow.All,
+                                    },
+                                    Power=1,
+                                    Toughness=1
+                                }
+                            }
+                        }
                     }
-                }),
-            });
+                }
+                );
 
-            //var flag = CardDef.ArtifactCard(4, $"{cardSet.Name}.王家の御旗", "王家の御旗", "テストソーサリー",
-            //    effects: new[]
-            //    {
-            //        // 使用時、すべての自分クリーチャーを+1/+0
-            //        new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
-            //        {
-            //            var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-            //            var targets = owner.Field.AllCards
-            //                .Where(card => card.Type == CardType.Creature);
+            var angel = CardDef.ArtifactCard(2, $"{cardSet.Name}.天使の像", "天使の像", "テストアーティファクト",
+                new[]
+                {
+                    // ターン開始時、カレントプレイヤーに1ダメージ
+                    new CardEffect2()
+                    {
+                        Timing = new EffectTiming()
+                        {
+                            StartTurn = new EffectTimingStartTurnEvent()
+                            {
+                                Source = EffectTimingStartTurnEvent.EventSource.Both,
+                            }
+                        },
+                        Actions = new []{
+                            new EffectAction()
+                            {
+                                Damage = new EffectActionDamage()
+                                {
+                                    Choice = new Choice()
+                                    {
+                                        Candidates =new[]{ Choice.ChoiceCandidateType.TurnPlayer }
+                                    },
+                                    Value = 1
+                                }
+                            }
+                        }
+                    }
+                }
+                );
 
-            //            foreach(var target in targets)
-            //            {
-            //                gameMaster.Buff(target, 1, 0);
-            //            }
-            //        }),
-            //        // 自分クリーチャーのプレイ時+1/+0
-            //        new CardEffect(CardEffectType.OnEveryPlay, (gameMaster, playingCard) =>
-            //        {
-            //            if(playingCard.Type == CardType.Creature)
-            //            {
-            //                gameMaster.Buff(playingCard, 1, 0);
-            //            }
-            //        }),
-            //    });
+            var devil = CardDef.ArtifactCard(1, $"{cardSet.Name}.悪魔の像", "悪魔の像", "テストアーティファクト",
+                new[]
+                {
+                    // ターン終了時、ランダムな相手クリーチャー一体に1ダメージ。その後このカードを破壊
+                    new CardEffect2()
+                    {
+                        Timing = new EffectTiming()
+                        {
+                            EndTurn = new EffectTimingEndTurnEvent()
+                            {
+                                Source = EffectTimingEndTurnEvent.EventSource.Both,
+                            }
+                        },
+                        Actions = new[]
+                        {
+                            new EffectAction()
+                            {
+                                Damage = new EffectActionDamage()
+                                {
+                                    Value=1,
+                                    Choice = new Choice()
+                                    {
+                                        How = Choice.ChoiceHow.Random,
+                                        Candidates = new[]{Choice.ChoiceCandidateType.Card},
+                                        CardCondition= new CardCondition()
+                                        {
+                                            ZoneCondition = ZoneType.OpponentField,
+                                            TypeCondition=new CardTypeCondition()
+                                            {
+                                                Value = new[]{CardType.Creature}
+                                            }
+                                        },
+                                        NumPicks=1
+                                    }
+                                }
+                            },
+                            new EffectAction()
+                            {
+                                DestroyCard = new EffectActionDestroyCard()
+                                {
+                                    Choice = new Choice()
+                                    {
+                                        Candidates = new[]{ Choice.ChoiceCandidateType.Card },
+                                        How = Choice.ChoiceHow.All,
+                                        CardCondition = new CardCondition()
+                                        {
+                                            Context = CardCondition.CardConditionContext.Me,
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                );
+
+            var fortuneSpring = CardDef.ArtifactCard(2, $"{cardSet.Name}.運命の泉", "運命の泉", "テストアーティファクト",
+                new[]
+                {
+                    // ターン終了時、ランダムな自分のクリーチャー一体を+1/+0
+                    new CardEffect2()
+                    {
+                        Timing = new EffectTiming()
+                        {
+                            EndTurn = new EffectTimingEndTurnEvent()
+                            {
+                                Source = EffectTimingEndTurnEvent.EventSource.Owner
+                            }
+                        },
+                        Actions = new[]
+                        {
+                            new EffectAction()
+                            {
+                                ModifyCard = new EffectActionModifyCard()
+                                {
+                                    Choice = new Choice()
+                                    {
+                                        Candidates = new[]{ Choice.ChoiceCandidateType.Card},
+                                        CardCondition=  new CardCondition()
+                                        {
+                                            ZoneCondition= ZoneType.YouField,
+                                            TypeCondition = new CardTypeCondition()
+                                            {
+                                                Value = new[]{ CardType.Creature}
+                                            }
+                                        },
+                                        NumPicks=1,
+                                        How= Choice.ChoiceHow.Random
+                                    },
+                                    Power=1,
+                                }
+                            }
+                        }
+                    }
+                }
+                );
+
+            var flag = CardDef.ArtifactCard(4, $"{cardSet.Name}.王家の御旗", "王家の御旗", "テストソーサリー",
+                effects: new[]
+                {
+                    // 使用時、すべての自分クリーチャーを+1/+0
+                    new CardEffect2()
+                    {
+                        Timing = new EffectTiming()
+                        {
+                            Play = new EffectTimingPlayEvent()
+                            {
+                                Source = EffectTimingPlayEvent.EventSource.This,
+                            }
+                        },
+                        Actions = new[]
+                        {
+                            new EffectAction(){
+                                ModifyCard = new EffectActionModifyCard()
+                                {
+                                    Power = 1,
+                                    Toughness = 0,
+                                    Choice = new Choice()
+                                    {
+                                        Candidates = new[]{ Choice.ChoiceCandidateType.Card },
+                                        How = Choice.ChoiceHow.All,
+                                        CardCondition = new CardCondition()
+                                        {
+                                            ZoneCondition = ZoneType.YouField,
+                                            TypeCondition = new CardTypeCondition()
+                                            {
+                                                Value = new[]{ CardType.Creature }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    // 自分クリーチャーのプレイ時+1/+0
+                    new CardEffect2()
+                    {
+                        Timing = new EffectTiming()
+                        {
+                            Play = new EffectTimingPlayEvent()
+                            {
+                                Source = EffectTimingPlayEvent.EventSource.Other,
+                            }
+                        },
+                        Actions = new[]
+                        {
+                            new EffectAction(){
+                                ModifyCard = new EffectActionModifyCard()
+                                {
+                                    Power = 1,
+                                    Toughness = 0,
+                                    Choice = new Choice()
+                                    {
+                                        Candidates = new[]{ Choice.ChoiceCandidateType.Card },
+                                        How = Choice.ChoiceHow.All,
+                                        CardCondition = new CardCondition()
+                                        {
+                                            ZoneCondition = ZoneType.YouField,
+                                            TypeCondition = new CardTypeCondition()
+                                            {
+                                                Value = new[]{ CardType.Creature }
+                                            },
+                                            Context = CardCondition.CardConditionContext.EventSource,
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
 
             var shock = CardDef.SorceryCard(1, $"{cardSet.Name}.ショック", "ショック", "テストソーサリー",
                 effects: new[]
                 {
-                    // 使用時、相手かクリーチャーのランダムに2ダメージ
-                    new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
+                    // 使用時、相手かランダムな相手クリーチャー一体に2ダメージ
+                    new CardEffect2()
                     {
-                        var opponent = gameMaster.GetOpponent(ownerCard.OwnerId);
-                        var candidates = opponent.Field.AllCards
-                            .Where(c => c.Type == CardType.Creature || c.Type == CardType.Token)
-                            .ToArray();
-                        var randIndex = Program.Random.Next(candidates.Length + 1);
-
-                        if(randIndex <candidates.Length)
+                        Timing = new EffectTiming()
                         {
-                            var creatureCard = candidates[randIndex];
-                            gameMaster.HitCreature(creatureCard.Id, 2);
-                        }
-                        else
+                            Play = new EffectTimingPlayEvent()
+                            {
+                                Source = EffectTimingPlayEvent.EventSource.This
+                            }
+                        },
+                        Actions = new[]
                         {
-                            gameMaster.HitPlayer(opponent.Id, 2);
+                            new EffectAction()
+                            {
+                                Damage=  new EffectActionDamage()
+                                {
+                                    Choice = new Choice()
+                                    {
+                                        Candidates = new []{Choice.ChoiceCandidateType.Card, Choice.ChoiceCandidateType.OtherOwnerPlayer},
+                                        NumPicks= 1,
+                                        How= Choice.ChoiceHow.Random,
+                                        CardCondition = new CardCondition()
+                                        {
+                                            TypeCondition = new CardTypeCondition()
+                                            {
+                                                Value = new []{CardType.Creature}
+                                            },
+                                            ZoneCondition = ZoneType.OpponentField,
+                                        }
+                                    },
+                                    Value=2
+                                }
+                            }
                         }
-                    }),
-                });
-
-            var shippu = CardDef.SorceryCard(2, $"{cardSet.Name}.疾風怒濤", "疾風怒濤", "テストソーサリー",
-                require: new CardRequireToPlay(environment =>
-                {
-                    return environment.Opponent.Field.AllCards
-                        .Any(c => c.Type == CardType.Creature || c.Type == CardType.Token);
-                }),
-                effects: new[]
-                {
-                    // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
-                    new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
-                    {
-                        var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-                        var damage = owner.Field.AllCards
-                            .Count(c => c.Type == CardType.Creature || c.Type == CardType.Token);
-
-                        Card targetCreature = gameMaster.AskCard(owner.Id, TargetCardType.OpponentCreature);
-                        if(targetCreature == null)
-                        {
-                            // 対象が存在しない場合はなにもしない
-                            return;
-                        }
-
-                        gameMaster.HitCreature(targetCreature.Id, damage);
-                    }),
+                    },
                 });
 
             var buf = CardDef.SorceryCard(3, $"{cardSet.Name}.武装強化", "武装強化", "テストソーサリー",
@@ -233,27 +470,120 @@ namespace Cauldron.Server.Models
                 effects: new[]
                 {
                     // 使用時、対象の自分クリーチャーを+2/+2
-                    new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
+                    new CardEffect2()
                     {
-                        var owner = gameMaster.PlayersById[ownerCard.OwnerId];
-                        var targetCreature = gameMaster.AskCard(owner.Id, TargetCardType.YourCreature);
-                        if(targetCreature == null)
+                        Timing = new EffectTiming()
                         {
-                            // 対象が存在しない場合はなにもしない
-                            return;
+                            Play = new EffectTimingPlayEvent()
+                            {
+                                Source= EffectTimingPlayEvent.EventSource.This
+                            }
+                        },
+                        Actions= new[]
+                        {
+                            new EffectAction(){
+                                ModifyCard=new EffectActionModifyCard()
+                                {
+                                    Power=2,
+                                    Toughness=2,
+                                    Choice =new Choice()
+                                    {
+                                        How= Choice.ChoiceHow.Choose,
+                                        NumPicks=1,
+                                        Candidates =new []{Choice.ChoiceCandidateType.Card },
+                                        CardCondition=new CardCondition()
+                                        {
+                                            ZoneCondition= ZoneType.YouField,
+                                            TypeCondition =new CardTypeCondition()
+                                            {
+                                                Value= new[]{CardType.Creature, CardType.Token }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
+                    }
+                }
+                );
 
-                        gameMaster.Buff(targetCreature, 2, 2);
-                    }),
-                });
+            var shippu = CardDef.SorceryCard(2, $"{cardSet.Name}.疾風怒濤", "疾風怒濤", "テストソーサリー",
+                require: new CardRequireToPlay(environment =>
+                {
+                    return environment.Opponent.Field.AllCards
+                        .Any(c => c.Type == CardType.Creature || c.Type == CardType.Token);
+                }),
+                effects: new[]
+                {
+                    // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
+                    new CardEffect2()
+                    {
+                        Timing = new EffectTiming()
+                        {
+                            Play = new EffectTimingPlayEvent()
+                            {
+                                Source = EffectTimingPlayEvent.EventSource.This
+                            }
+                        },
+                        Actions = new[]
+                        {
+                            new EffectAction()
+                            {
+                                Damage = new EffectActionDamage()
+                                {
+                                    Choice = new Choice()
+                                    {
+                                        How=  Choice.ChoiceHow.Choose,
+                                        NumPicks=1,
+                                        Candidates = new[]{Choice.ChoiceCandidateType.Card },
+                                        CardCondition = new CardCondition()
+                                        {
+                                            ZoneCondition= ZoneType.OpponentField,
+                                            TypeCondition = new CardTypeCondition()
+                                            {
+                                                Value = new []{CardType.Creature, CardType.Token}
+                                            }
+                                        }
+                                    },
+                                    Value=1
+                                }
+                            }
+                        }
+                    }
+                }
+                //effects: new[]
+                //{
+                //    // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
+                //    new CardEffect(CardEffectType.OnPlay, (gameMaster, ownerCard) =>
+                //    {
+                //        var owner = gameMaster.PlayersById[ownerCard.OwnerId];
+                //        var damage = owner.Field.AllCards
+                //            .Count(c => c.Type == CardType.Creature || c.Type == CardType.Token);
+
+                //        Card targetCreature = gameMaster.AskCard(owner.Id, TargetCardType.OpponentCreature);
+                //        if(targetCreature == null)
+                //        {
+                //            // 対象が存在しない場合はなにもしない
+                //            return;
+                //        }
+
+                //        gameMaster.HitCreature(targetCreature.Id, damage);
+                //    }),
+                //}
+                );
 
             var manual = new[] {
-                fairy, goblin, slime, mouse, waterFairy,
+                fairy,
+                goblin,
+                slime,
+                mouse,
+                waterFairy,
                 ninja, knight, ninjaKnight, whiteGeneral,
                 angel, devil, fortuneSpring,
-                //flag,
+                flag,
                 shock,
-                shippu, buf
+                buf,
+                //shippu
             };
 
             //return cardSet.AsCardDefs().ToArray();

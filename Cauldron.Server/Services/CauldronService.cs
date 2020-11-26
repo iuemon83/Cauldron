@@ -1,10 +1,10 @@
 using Cauldron.Grpc.Api;
 using Cauldron.Grpc.Models;
 using Cauldron.Server.Models;
+using Cauldron.Server.Models.Effect;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -53,9 +53,22 @@ namespace Cauldron.Server
             });
         }
 
-        private Guid AskCard(Guid playerId, IReadOnlyList<Guid> candidates)
+        private ChoiceResult AskCard(Guid playerId, ChoiceResult choiceResult, int numPicks)
         {
-            return candidates[0];
+            var pickedPlayers = choiceResult.PlayerIdList.Take(numPicks).ToArray();
+            numPicks -= pickedPlayers.Length;
+
+            var pickedCards = choiceResult.CardList.Take(numPicks).ToArray();
+            numPicks -= pickedCards.Length;
+
+            var pickedCarddefs = choiceResult.CardDefList.Take(numPicks).ToArray();
+
+            return new ChoiceResult()
+            {
+                PlayerIdList = pickedPlayers,
+                CardList = pickedCards,
+                CardDefList = pickedCarddefs
+            };
         }
 
         public override Task<CloseGameReply> CloseGame(CloseGameRequest request, ServerCallContext context)
