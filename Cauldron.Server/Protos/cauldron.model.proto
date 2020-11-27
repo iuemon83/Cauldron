@@ -43,6 +43,7 @@ message CardDef {
   Type cardType = 7;
   repeated Ability abilities = 8;
   int32 cost = 9;
+  bool isToken=10;
 }
 
 message Card {

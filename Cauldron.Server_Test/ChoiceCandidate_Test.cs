@@ -11,7 +11,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void ランダムな自分クリーチャー1体()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -30,7 +30,7 @@ namespace Cauldron.Server_Test
                 How = Choice.ChoiceHow.Random
             };
 
-            var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 2, 2,
+            var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 2, 2, false,
                 effects: new[]
                 {
                     new CardEffect()
@@ -61,8 +61,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -105,7 +105,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 自分のクリーチャーすべて()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -123,7 +123,7 @@ namespace Cauldron.Server_Test
                 How = Choice.ChoiceHow.All,
             };
 
-            var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 3, 3,
+            var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 3, 3, false,
                 effects: new[]
                 {
                     new CardEffect()
@@ -154,8 +154,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -193,10 +193,10 @@ namespace Cauldron.Server_Test
         [Fact]
         public void カードプールから名前指定で一枚()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
-            var fairy = CardDef.TokenCard(0, $"test.フェアリー", "フェアリー", "テストクリーチャー", 1, 1);
+            var fairy = CardDef.CreatureCard(0, $"test.フェアリー", "フェアリー", "テストクリーチャー", 1, 1, true);
 
             var testChoice = new Choice()
             {
@@ -213,7 +213,7 @@ namespace Cauldron.Server_Test
                 NumPicks = 1,
             };
 
-            var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 1, 1,
+            var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 1, 1, false,
                 effects: new[]
                 {
                     new CardEffect()
@@ -244,8 +244,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -282,10 +282,10 @@ namespace Cauldron.Server_Test
         [Fact]
         public void カードプールから名前指定で2枚()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
-            var fairy = CardDef.TokenCard(0, $"test.フェアリー", "フェアリー", "テストクリーチャー", 1, 1);
+            var fairy = CardDef.CreatureCard(0, $"test.フェアリー", "フェアリー", "テストクリーチャー", 1, 1, false);
 
             var testChoice = new Choice()
             {
@@ -302,7 +302,7 @@ namespace Cauldron.Server_Test
                 NumPicks = 2,
             };
 
-            var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 1, 1,
+            var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 1, 1, false,
                 effects: new[]
                 {
                     new CardEffect()
@@ -333,8 +333,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -371,7 +371,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 相手プレイヤーが選択される()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -379,7 +379,7 @@ namespace Cauldron.Server_Test
                 Candidates = new[] { Choice.ChoiceCandidateType.OtherOwnerPlayer },
                 NumPicks = 1
             };
-            var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 1, 1,
+            var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 1, 1, false,
                 effects: new[]
                 {
                     new CardEffect(){
@@ -408,8 +408,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -446,14 +446,14 @@ namespace Cauldron.Server_Test
         [Fact]
         public void ターン中のプレイヤーが選択される()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
             var testChoice = new Choice()
             {
                 Candidates = new[] { Choice.ChoiceCandidateType.TurnPlayer }
             };
-            var testCardDef = CardDef.ArtifactCard(0, $"test.test", "test", "test",
+            var testCardDef = CardDef.ArtifactCard(0, $"test.test", "test", "test", false,
                 new[]
                 {
                     // ターン開始時、カレントプレイヤーに1ダメージ
@@ -485,8 +485,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -531,7 +531,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void ランダムな相手クリーチャー一体()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -548,7 +548,7 @@ namespace Cauldron.Server_Test
                 },
                 NumPicks = 1
             };
-            var testCardDef = CardDef.ArtifactCard(0, $"test.test", "test", "test");
+            var testCardDef = CardDef.ArtifactCard(0, $"test.test", "test", "test", false);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
@@ -556,8 +556,8 @@ namespace Cauldron.Server_Test
             // 以下テスト
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -594,7 +594,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 相手プレイヤーかランダムな相手クリーチャー1体()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -611,7 +611,7 @@ namespace Cauldron.Server_Test
                     ZoneCondition = ZoneType.OpponentField,
                 }
             };
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1);
+            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1, false);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
@@ -619,8 +619,8 @@ namespace Cauldron.Server_Test
             // 以下テスト
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -658,7 +658,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 対象の相手クリーチャー1体()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -671,11 +671,11 @@ namespace Cauldron.Server_Test
                     ZoneCondition = ZoneType.OpponentField,
                     TypeCondition = new CardTypeCondition()
                     {
-                        Value = new[] { CardType.Creature, CardType.Token }
+                        Value = new[] { CardType.Creature }
                     }
                 }
             };
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1);
+            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1, false);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
@@ -694,8 +694,8 @@ namespace Cauldron.Server_Test
             // 以下テスト
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), testAskCardAction);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -732,7 +732,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 対象の自分クリーチャー1体()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -746,11 +746,11 @@ namespace Cauldron.Server_Test
                     ZoneCondition = ZoneType.YouField,
                     TypeCondition = new CardTypeCondition()
                     {
-                        Value = new[] { CardType.Creature, CardType.Token }
+                        Value = new[] { CardType.Creature, }
                     }
                 }
             };
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1);
+            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1, false);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
@@ -770,8 +770,8 @@ namespace Cauldron.Server_Test
             // 以下テスト
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), testAskCardAction);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -802,7 +802,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 自分自身を選択する()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -814,7 +814,7 @@ namespace Cauldron.Server_Test
                     Context = CardCondition.CardConditionContext.Me,
                 }
             };
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1);
+            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1, false);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
@@ -822,8 +822,8 @@ namespace Cauldron.Server_Test
             // 以下テスト
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -853,7 +853,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void イベントソースを選択する()
         {
-            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, false);
             goblin.TurnCountToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -865,7 +865,7 @@ namespace Cauldron.Server_Test
                     Context = CardCondition.CardConditionContext.EventSource,
                 }
             };
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1);
+            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1, false);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
@@ -873,8 +873,8 @@ namespace Cauldron.Server_Test
             // 以下テスト
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 

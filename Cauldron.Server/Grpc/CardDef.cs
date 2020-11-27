@@ -16,6 +16,7 @@ namespace Cauldron.Grpc.Models
             this.Cost = source.BaseCost;
             this.CardType = Enum.Parse<Types.Type>(source.Type.ToString());
             //this.EffectText = source.Effects;
+            this.IsToken = source.IsToken;
         }
 
         //public Server.Models.CardDef ToServerModel()

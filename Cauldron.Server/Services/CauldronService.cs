@@ -116,12 +116,17 @@ namespace Cauldron.Server
             var deckIds = request.DeckCardIds.Select(deckId => Guid.Parse(deckId));
 
             var gameMaster = new GameMasterRepository().GetById(gameId);
-            var newPlayerId = gameMaster.CreateNewPlayer(request.PlayerName, deckIds);
 
-            return Task.FromResult(new EnterGameReply()
+            var (status, newPlayerId) = gameMaster.CreateNewPlayer(request.PlayerName, deckIds);
+            return status switch
             {
-                PlayerId = newPlayerId.ToString()
-            });
+                GameMasterStatusCode.OK => Task.FromResult(new EnterGameReply()
+                {
+                    PlayerId = newPlayerId.ToString()
+                }),
+                GameMasterStatusCode.IsIncludedTokensInDeck => throw new RpcException(new Status(StatusCode.InvalidArgument, "deck include token")),
+                _ => throw new RpcException(new Status(StatusCode.Unknown, "unknown error")),
+            };
         }
 
         private GameContext CreateGameContext(Guid gameId, Guid PlayerId)

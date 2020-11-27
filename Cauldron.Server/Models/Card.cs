@@ -20,6 +20,8 @@ namespace Cauldron.Server.Models
 
         public string FlavorText { get; set; } = "";
 
+        public bool IsToken { get; set; }
+
         public CardType Type { get; set; }
 
         public int BasePower { get; set; } = 0;
@@ -55,6 +57,7 @@ namespace Cauldron.Server.Models
             this.Id = Guid.NewGuid();
             this.CardDefId = cardDef.Id;
             this.BaseCost = cardDef.BaseCost;
+            this.IsToken = cardDef.IsToken;
             this.Type = cardDef.Type;
             this.Name = cardDef.Name;
             this.FlavorText = cardDef.FlavorText;

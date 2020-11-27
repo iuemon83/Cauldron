@@ -22,8 +22,6 @@
         /// </summary>
         Sorcery,
 
-        Token,
-
         Counter,
     }
 }

@@ -107,16 +107,23 @@ namespace Cauldron.Server.Models
             this.AskCardAction = askCardAction;
         }
 
-        public Guid CreateNewPlayer(string name, IEnumerable<Guid> deckCardDefIdList)
+        public (GameMasterStatusCode, Guid) CreateNewPlayer(string name, IEnumerable<Guid> deckCardDefIdList)
         {
             var newId = Guid.NewGuid();
             var deckCards = deckCardDefIdList.Select(id => this.cardFactory.CreateNew(id)).ToArray();
+
+            // 提示されたデッキにトークンが含まれていてはいけない
+            if (deckCards.Any(c => c.IsToken))
+            {
+                return (GameMasterStatusCode.IsIncludedTokensInDeck, default);
+            }
+
             var player = new Player(newId, name, this.RuleBook.InitialPlayerHp, this.RuleBook, deckCards);
             this.PlayersById.Add(newId, player);
 
             this.PlayerTurnCountById.Add(newId, 0);
 
-            return newId;
+            return (GameMasterStatusCode.OK, newId);
         }
 
         public void Start(Guid firstPlayerId)
@@ -194,7 +201,6 @@ namespace Cauldron.Server.Models
         {
             return card.Type == CardType.Artifact
                 || card.Type == CardType.Creature
-                || card.Type == CardType.Token
                 ;
         }
 

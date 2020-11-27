@@ -6,11 +6,12 @@ namespace Cauldron.Server.Models
 {
     public class CardDef
     {
-        public static CardDef CreatureCard(int cost, string fullName, string name, string flavorText, int power, int toughness, IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect> effects = null)
+        public static CardDef CreatureCard(int cost, string fullName, string name, string flavorText, int power, int toughness, bool isToken = false, IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect> effects = null)
         {
             return new CardDef()
             {
                 BaseCost = cost,
+                IsToken = isToken,
                 Type = CardType.Creature,
                 FullName = fullName,
                 Name = name,
@@ -22,11 +23,12 @@ namespace Cauldron.Server.Models
             };
         }
 
-        public static CardDef ArtifactCard(int cost, string fullName, string name, string flavorText, IEnumerable<CardEffect> effects = null)
+        public static CardDef ArtifactCard(int cost, string fullName, string name, string flavorText, bool isToken = false, IEnumerable<CardEffect> effects = null)
         {
             return new CardDef()
             {
                 BaseCost = cost,
+                IsToken = isToken,
                 Type = CardType.Artifact,
                 FullName = fullName,
                 Name = name,
@@ -48,21 +50,6 @@ namespace Cauldron.Server.Models
                 Effects = effects?.ToArray() ?? new CardEffect[0]
             };
         }
-        public static CardDef TokenCard(int cost, string fullName, string name, string flavorText, int power, int toughness, IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect> effects = null)
-        {
-            return new CardDef()
-            {
-                BaseCost = cost,
-                Type = CardType.Token,
-                FullName = fullName,
-                Name = name,
-                FlavorText = flavorText,
-                BasePower = power,
-                BaseToughness = toughness,
-                Abilities = abilities?.ToList() ?? new List<CreatureAbility>(),
-                Effects = effects?.ToArray() ?? new CardEffect[0]
-            };
-        }
 
         public Guid Id { get; }
 
@@ -73,6 +60,8 @@ namespace Cauldron.Server.Models
         public string Name { get; set; } = "";
 
         public string FlavorText { get; set; } = "";
+
+        public bool IsToken { get; set; }
 
         public CardType Type { get; set; }
 

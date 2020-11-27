@@ -57,8 +57,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(slime.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(slime.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(slime.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(slime.Id, 40));
 
             testGameMaster.Start(player1Id);
             TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.CurrentPlayer.Hands.AllCards[0].Id));
@@ -120,8 +120,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(slime.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(slime.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(slime.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(slime.Id, 40));
 
             testGameMaster.Start(player1Id);
             TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.CurrentPlayer.Hands.AllCards[0].Id));
@@ -174,8 +174,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(mouse.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(mouse.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(mouse.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(mouse.Id, 40));
 
             testGameMaster.Start(player1Id);
             testGameMaster.StartTurn(player1Id);
@@ -210,7 +210,7 @@ namespace Cauldron.Server_Test
         {
             var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
             goblin.TurnCountToCanAttack = 0;
-            var fairy = CardDef.TokenCard(0, $"test.フェアリー", "フェアリー", "テストクリーチャー", 1, 1);
+            var fairy = CardDef.CreatureCard(0, $"test.フェアリー", "フェアリー", "テストクリーチャー", 1, 1, isToken: true);
             var waterFairy = CardDef.CreatureCard(0, $"test.ウォーターフェアリー", "ウォーターフェアリー", "テストクリーチャー", 1, 1,
 
                 effects: new[]
@@ -258,8 +258,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(waterFairy.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(waterFairy.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(waterFairy.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(waterFairy.Id, 40));
 
             // ウォーターフェアリーを出す
             testGameMaster.Start(player1Id);
@@ -348,8 +348,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCreature.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCreature.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCreature.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCreature.Id, 40));
 
             // ゴブリン出してから効果クリーチャーを出す
             testGameMaster.Start(player1Id);
@@ -429,8 +429,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCreature.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCreature.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCreature.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCreature.Id, 40));
 
             // ゴブリン２体出してから効果クリーチャーを出す
             testGameMaster.Start(player1Id);
@@ -470,7 +470,7 @@ namespace Cauldron.Server_Test
             goblin.TurnCountToCanAttack = 0;
 
             var testCardDef = CardDef.ArtifactCard(0, $"test.test", "test", "test",
-                new[]
+                effects: new[]
                 {
                     // ターン終了時、ランダムな相手クリーチャー一体に1ダメージ。その後このカードを破壊
                     new CardEffect()
@@ -530,8 +530,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -620,8 +620,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -686,7 +686,7 @@ namespace Cauldron.Server_Test
                                             ZoneCondition= ZoneType.YouField,
                                             TypeCondition =new CardTypeCondition()
                                             {
-                                                Value= new[]{CardType.Creature, CardType.Token }
+                                                Value= new[]{CardType.Creature, }
                                             }
                                         }
                                     }
@@ -711,8 +711,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), testAskCardAction);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 
@@ -813,8 +813,8 @@ namespace Cauldron.Server_Test
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null);
 
-            var player1Id = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var player2Id = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
 
             testGameMaster.Start(player1Id);
 

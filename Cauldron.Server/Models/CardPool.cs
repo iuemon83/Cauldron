@@ -18,7 +18,7 @@ namespace Cauldron.Server.Models
             };
             //var cardSet = this.LoadFromFile(jsonFilePath);
 
-            var fairy = CardDef.TokenCard(1, $"{cardSet.Name}.フェアリー", "フェアリー", "テストクリーチャー", 1, 1);
+            var fairy = CardDef.CreatureCard(1, $"{cardSet.Name}.フェアリー", "フェアリー", "テストクリーチャー", 1, 1, isToken: true);
 
             var goblin = CardDef.CreatureCard(1, $"{cardSet.Name}.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2);
 
@@ -52,7 +52,7 @@ namespace Cauldron.Server.Models
                 }
                 );
 
-            var ninja = CardDef.CreatureCard(1, $"{cardSet.Name}.忍者", "忍者", "テストクリーチャー", 1, 1, new[] { CreatureAbility.Stealth });
+            var ninja = CardDef.CreatureCard(1, $"{cardSet.Name}.忍者", "忍者", "テストクリーチャー", 1, 1, abilities: new[] { CreatureAbility.Stealth });
 
             var waterFairy = CardDef.CreatureCard(1, $"{cardSet.Name}.ウォーターフェアリー", "ウォーターフェアリー", "テストクリーチャー", 1, 1,
                 effects: new[]
@@ -136,8 +136,8 @@ namespace Cauldron.Server.Models
                 }
                 );
 
-            var knight = CardDef.CreatureCard(2, $"{cardSet.Name}.ナイト", "ナイト", "テストクリーチャー", 1, 2, new[] { CreatureAbility.Cover });
-            var ninjaKnight = CardDef.CreatureCard(3, $"{cardSet.Name}.忍者ナイト", "忍者ナイト", "テストクリーチャー", 1, 2, new[] { CreatureAbility.Cover, CreatureAbility.Stealth });
+            var knight = CardDef.CreatureCard(2, $"{cardSet.Name}.ナイト", "ナイト", "テストクリーチャー", 1, 2, abilities: new[] { CreatureAbility.Cover });
+            var ninjaKnight = CardDef.CreatureCard(3, $"{cardSet.Name}.忍者ナイト", "忍者ナイト", "テストクリーチャー", 1, 2, abilities: new[] { CreatureAbility.Cover, CreatureAbility.Stealth });
 
             var whiteGeneral = CardDef.CreatureCard(4, $"{cardSet.Name}.ホワイトジェネラル", "ホワイトジェネラル", "テストクリーチャー", 2, 2,
                 effects: new[]
@@ -163,6 +163,7 @@ namespace Cauldron.Server.Models
                                         Candidates=new[]{ Choice.ChoiceCandidateType.Card },
                                         CardCondition = new CardCondition()
                                         {
+                                            Context = CardCondition.CardConditionContext.Others,
                                             ZoneCondition = ZoneType.YouField,
                                             TypeCondition = new CardTypeCondition()
                                             {
@@ -221,7 +222,7 @@ namespace Cauldron.Server.Models
                 );
 
             var angel = CardDef.ArtifactCard(2, $"{cardSet.Name}.天使の像", "天使の像", "テストアーティファクト",
-                new[]
+                effects: new[]
                 {
                     // ターン開始時、カレントプレイヤーに1ダメージ
                     new CardEffect()
@@ -251,7 +252,7 @@ namespace Cauldron.Server.Models
                 );
 
             var devil = CardDef.ArtifactCard(1, $"{cardSet.Name}.悪魔の像", "悪魔の像", "テストアーティファクト",
-                new[]
+                effects: new[]
                 {
                     // ターン終了時、ランダムな相手クリーチャー一体に1ダメージ。その後このカードを破壊
                     new CardEffect()
@@ -307,7 +308,7 @@ namespace Cauldron.Server.Models
                 );
 
             var fortuneSpring = CardDef.ArtifactCard(2, $"{cardSet.Name}.運命の泉", "運命の泉", "テストアーティファクト",
-                new[]
+                effects: new[]
                 {
                     // ターン終了時、ランダムな自分のクリーチャー一体を+1/+0
                     new CardEffect()
@@ -465,7 +466,7 @@ namespace Cauldron.Server.Models
                 require: new CardRequireToPlay(environment =>
                 {
                     return environment.You.Field.AllCards
-                        .Any(c => c.Type == CardType.Creature || c.Type == CardType.Token);
+                        .Any(c => c.Type == CardType.Creature);
                 }),
                 effects: new[]
                 {
@@ -496,7 +497,7 @@ namespace Cauldron.Server.Models
                                             ZoneCondition= ZoneType.YouField,
                                             TypeCondition =new CardTypeCondition()
                                             {
-                                                Value= new[]{CardType.Creature, CardType.Token }
+                                                Value= new[]{CardType.Creature, }
                                             }
                                         }
                                     }
@@ -511,7 +512,7 @@ namespace Cauldron.Server.Models
                 require: new CardRequireToPlay(environment =>
                 {
                     return environment.Opponent.Field.AllCards
-                        .Any(c => c.Type == CardType.Creature || c.Type == CardType.Token);
+                        .Any(c => c.Type == CardType.Creature);
                 }),
                 effects: new[]
                 {
@@ -541,7 +542,7 @@ namespace Cauldron.Server.Models
                                             ZoneCondition= ZoneType.OpponentField,
                                             TypeCondition = new CardTypeCondition()
                                             {
-                                                Value = new []{CardType.Creature, CardType.Token}
+                                                Value = new []{CardType.Creature, }
                                             }
                                         }
                                     },
