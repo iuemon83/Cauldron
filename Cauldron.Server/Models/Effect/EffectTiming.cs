@@ -2,17 +2,17 @@
 
 namespace Cauldron.Server.Models.Effect
 {
-    public class EffectTiming
+    public record EffectTiming(
+        EffectTimingStartTurnEvent StartTurn = null,
+        EffectTimingEndTurnEvent EndTurn = null,
+        EffectTimingPlayEvent Play = null,
+        EffectTimingDestroyEvent Destroy = null,
+        EffectTimingDamageBeforeEvent DamageBefore = null,
+        EffectTimingDamageAfterEvent DamageAfter = null,
+        EffectTimingBattleBeforeEvent BattleBefore = null,
+        EffectTimingBattleAfterEvent BattleAfter = null
+        )
     {
-        public EffectTimingStartTurnEvent StartTurn { get; set; }
-        public EffectTimingEndTurnEvent EndTurn { get; set; }
-        public EffectTimingPlayEvent Play { get; set; }
-        public EffectTimingDestroyEvent Destroy { get; set; }
-        public EffectTimingDamageBeforeEvent DamageBefore { get; set; }
-        public EffectTimingDamageAfterEvent DamageAfter { get; set; }
-        public EffectTimingBattleBeforeEvent BattleBefore { get; set; }
-        public EffectTimingBattleAfterEvent BattleAfter { get; set; }
-
         public bool Match(GameEvent gameEvent)
         {
             return gameEvent switch

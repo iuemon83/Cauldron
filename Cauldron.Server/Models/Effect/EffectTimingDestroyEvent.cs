@@ -2,15 +2,13 @@
 
 namespace Cauldron.Server.Models.Effect
 {
-    public class EffectTimingDestroyEvent
+    public record EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource Source)
     {
         public enum EventSource
         {
             This,
             Other
         }
-
-        public EventSource Source { get; set; }
 
         public bool Match(Card ownerCard, Card source)
         {

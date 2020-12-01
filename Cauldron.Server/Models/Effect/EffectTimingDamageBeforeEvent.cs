@@ -1,6 +1,10 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
-    public class EffectTimingDamageBeforeEvent
+    public record EffectTimingDamageBeforeEvent(
+        EffectTimingDamageBeforeEvent.EventSource Source,
+        PlayerCondition PlayerCondition = null,
+        CardCondition CardCondition = null
+        )
     {
         public enum EventSource
         {
@@ -9,29 +13,11 @@
             Guard,
         }
 
-        public EventSource Source { get; set; }
-
-        public PlayerCondition PlayerCondition { get; set; }
-
-        public CardCondition CardCondition { get; set; }
-
         public bool IsMatch(Card effectOwnerCard, EffectEventArgs eventArgs)
         {
             var playerMatch = this.PlayerIsMatch(effectOwnerCard, eventArgs);
 
             var cardMatch = this.CardIsMatch(effectOwnerCard, eventArgs);
-
-            //var playerMatch = sourcePlayer != null
-            //    && (this.PlayerCondition?.IsMatch(effectOwnerCard, sourcePlayer, eventArgs) ?? false);
-
-            //var sourceCard = this.Source == EventSource.Attack
-            //    ? eventArgs.DamageContext.AttackCard
-            //    : eventArgs.DamageContext.GuardCard;
-
-            //eventArgs.SourceCard = sourceCard;
-
-            //var cardMatch = sourceCard != null
-            //    && (this.CardCondition?.IsMatch(effectOwnerCard, sourceCard, eventArgs) ?? false);
 
             return playerMatch || cardMatch;
         }

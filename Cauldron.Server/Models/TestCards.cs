@@ -16,12 +16,9 @@ namespace Cauldron.Server.Models
             {
                     // 死亡時、相手に1ダメージ
                     new CardEffect(){
-                        Timing = new EffectTiming()
-                        {
-                            Destroy = new EffectTimingDestroyEvent(){
-                                Source = EffectTimingDestroyEvent.EventSource.This
-                            }
-                        },
+                        Timing = new EffectTiming(
+                            Destroy:new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
+                        ),
                         Actions =new []
                         {
                             new EffectAction()
@@ -51,13 +48,9 @@ namespace Cauldron.Server.Models
                     // 破壊時、フェアリー１枚を手札に加える
                     new CardEffect()
                     {
-                        Timing = new EffectTiming()
-                        {
-                            Destroy = new EffectTimingDestroyEvent()
-                            {
-                                Source = EffectTimingDestroyEvent.EventSource.This
-                            }
-                        },
+                        Timing = new EffectTiming(
+                            Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
+                        ),
                         Actions = new[]
                         {
                             new EffectAction()
@@ -93,10 +86,7 @@ namespace Cauldron.Server.Models
                     {
                         Timing = new EffectTiming()
                         {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source = EffectTimingPlayEvent.EventSource.This
-                            }
+                            Play = new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         },
                         Actions = new[]
                         {
@@ -136,10 +126,7 @@ namespace Cauldron.Server.Models
                     {
                         Timing = new EffectTiming()
                         {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source = EffectTimingPlayEvent.EventSource.This
-                            }
+                            Play = new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         },
                         Actions = new[]
                         {
@@ -177,10 +164,7 @@ namespace Cauldron.Server.Models
                     {
                         Timing = new EffectTiming()
                         {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source = EffectTimingPlayEvent.EventSource.This
-                            }
+                            Play = new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         },
                         Actions = new[]
                         {
@@ -247,13 +231,9 @@ namespace Cauldron.Server.Models
                     // ターン終了時、ランダムな相手クリーチャー一体に1ダメージ。その後このカードを破壊
                     new CardEffect()
                     {
-                        Timing = new EffectTiming()
-                        {
-                            EndTurn = new EffectTimingEndTurnEvent()
-                            {
-                                Source = EffectTimingEndTurnEvent.EventSource.Both,
-                            }
-                        },
+                        Timing = new EffectTiming(
+                            EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.Both)
+                        ),
                         Actions = new[]
                         {
                             new EffectAction()
@@ -301,13 +281,9 @@ namespace Cauldron.Server.Models
                     // ターン終了時、ランダムな自分のクリーチャー一体を+1/+0
                     new CardEffect()
                     {
-                        Timing = new EffectTiming()
-                        {
-                            EndTurn = new EffectTimingEndTurnEvent()
-                            {
-                                Source = EffectTimingEndTurnEvent.EventSource.Owner
-                            }
-                        },
+                        Timing = new EffectTiming(
+                            EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.Owner)
+                        ),
                         Actions = new[]
                         {
                             new EffectAction()
@@ -343,10 +319,7 @@ namespace Cauldron.Server.Models
                     {
                         Timing = new EffectTiming()
                         {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source = EffectTimingPlayEvent.EventSource.This,
-                            }
+                            Play = new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         },
                         Actions = new[]
                         {
@@ -376,10 +349,7 @@ namespace Cauldron.Server.Models
                     {
                         Timing = new EffectTiming()
                         {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source = EffectTimingPlayEvent.EventSource.Other,
-                            }
+                            Play = new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.Other)
                         },
                         Actions = new[]
                         {
@@ -415,10 +385,7 @@ namespace Cauldron.Server.Models
                     {
                         Timing = new EffectTiming()
                         {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source = EffectTimingPlayEvent.EventSource.This
-                            }
+                            Play = new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         },
                         Actions = new[]
                         {
@@ -463,10 +430,7 @@ namespace Cauldron.Server.Models
                     {
                         Timing = new EffectTiming()
                         {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source= EffectTimingPlayEvent.EventSource.This
-                            }
+                            Play = new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         },
                         Actions= new[]
                         {
@@ -501,12 +465,10 @@ namespace Cauldron.Server.Models
                     // 自分のクリーチャーが受けるダメージを1軽減する.その後このカードを破壊する
                     new CardEffect()
                     {
-                        Timing = new EffectTiming()
-                        {
-                            DamageBefore = new EffectTimingDamageBeforeEvent()
-                            {
-                                Source = EffectTimingDamageBeforeEvent.EventSource.All,
-                                CardCondition = new CardCondition()
+                        Timing = new EffectTiming(
+                            DamageBefore: new EffectTimingDamageBeforeEvent(
+                                EffectTimingDamageBeforeEvent.EventSource.All,
+                                CardCondition: new CardCondition()
                                 {
                                     TypeCondition = new CardTypeCondition()
                                     {
@@ -515,8 +477,8 @@ namespace Cauldron.Server.Models
                                     ZoneCondition = ZoneType.YouField,
                                     Context = CardCondition.CardConditionContext.Others
                                 }
-                            }
-                        },
+                            )
+                        ),
                         Actions= new[]
                         {
                             new EffectAction()
@@ -561,16 +523,14 @@ namespace Cauldron.Server.Models
                     // 自分のプレイヤーまたはクリーチャーが受けるダメージを1軽減する.その後このカードを破壊する
                     new CardEffect()
                     {
-                        Timing = new EffectTiming()
-                        {
-                            DamageBefore = new EffectTimingDamageBeforeEvent()
-                            {
-                                Source = EffectTimingDamageBeforeEvent.EventSource.Guard,
-                                PlayerCondition = new PlayerCondition()
+                        Timing = new EffectTiming(
+                            DamageBefore: new EffectTimingDamageBeforeEvent(
+                                EffectTimingDamageBeforeEvent.EventSource.Guard,
+                                PlayerCondition: new PlayerCondition()
                                 {
                                     Type = PlayerCondition.PlayerConditionType.Owner,
                                 },
-                                CardCondition = new CardCondition()
+                                CardCondition: new CardCondition()
                                 {
                                     TypeCondition = new CardTypeCondition()
                                     {
@@ -579,8 +539,8 @@ namespace Cauldron.Server.Models
                                     ZoneCondition = ZoneType.YouField,
                                     Context = CardCondition.CardConditionContext.Others
                                 }
-                            }
-                        },
+                            )
+                        ),
                         Actions= new[]
                         {
                             new EffectAction()
@@ -629,17 +589,15 @@ namespace Cauldron.Server.Models
                     // 自分が受けるダメージを2軽減する
                     new CardEffect()
                     {
-                        Timing = new EffectTiming()
-                        {
-                            DamageBefore = new EffectTimingDamageBeforeEvent()
-                            {
-                                Source = EffectTimingDamageBeforeEvent.EventSource.Guard,
-                                CardCondition = new CardCondition()
+                        Timing = new EffectTiming(
+                            DamageBefore: new EffectTimingDamageBeforeEvent(
+                                EffectTimingDamageBeforeEvent.EventSource.Guard,
+                                CardCondition: new CardCondition()
                                 {
                                     Context = CardCondition.CardConditionContext.This
                                 }
-                            }
-                        },
+                            )
+                        ),
                         Actions= new[]
                         {
                             new EffectAction()
@@ -665,12 +623,10 @@ namespace Cauldron.Server.Models
                     // 自分の他のクリーチャーが戦闘で与えるダメージを1増加する
                     new CardEffect()
                     {
-                        Timing = new EffectTiming()
-                        {
-                            BattleBefore = new EffectTimingBattleBeforeEvent()
-                            {
-                                Source = EffectTimingBattleBeforeEvent.EventSource.Attack,
-                                CardCondition = new CardCondition()
+                        Timing = new EffectTiming(
+                            BattleBefore: new EffectTimingBattleBeforeEvent(
+                                EffectTimingBattleBeforeEvent.EventSource.Attack,
+                                CardCondition: new CardCondition()
                                 {
                                     ZoneCondition = ZoneType.YouField,
                                     TypeCondition = new CardTypeCondition()
@@ -679,8 +635,8 @@ namespace Cauldron.Server.Models
                                     },
                                     Context = CardCondition.CardConditionContext.Others,
                                 }
-                            },
-                        },
+                            )
+                        ),
                         Actions= new[]
                         {
                             new EffectAction()
@@ -719,10 +675,7 @@ namespace Cauldron.Server.Models
                     {
                         Timing = new EffectTiming()
                         {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source = EffectTimingPlayEvent.EventSource.This
-                            }
+                            Play = new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         },
                         Actions = new[]
                         {

@@ -170,7 +170,7 @@ namespace Cauldron.Server.Models
 
             // カードの破壊イベント
             this.EffectListByEvent[GameEvent.OnDestroy]
-                .OnNext(new EffectEventArgs() { EffectType = GameEvent.OnDestroy, GameMaster = this, SourceCard = cardToDestroy });
+                .OnNext(new EffectEventArgs(GameEvent.OnDestroy, this, SourceCard: cardToDestroy));
 
             // 破壊されたカードの効果を削除
             if (this.EffectDisposerListByCardId.TryGetValue(cardToDestroy.Id, out var dList))
@@ -319,7 +319,7 @@ namespace Cauldron.Server.Models
                 $"フィールド: {string.Join(",", this.ActivePlayer.Field.AllCards.Select(c => c.Name))}");
 
             this.EffectListByEvent[GameEvent.OnStartTurn]
-                .OnNext(new EffectEventArgs() { EffectType = GameEvent.OnStartTurn, GameMaster = this });
+                .OnNext(new EffectEventArgs(GameEvent.OnStartTurn, this));
 
             this.ActivePlayer.Draw();
 
@@ -343,7 +343,7 @@ namespace Cauldron.Server.Models
             this.logger.LogInformation($"ターンエンド：{endTurnPlayer.Name}");
 
             this.EffectListByEvent[GameEvent.OnEndTurn]
-                .OnNext(new EffectEventArgs() { EffectType = GameEvent.OnEndTurn, GameMaster = this });
+                .OnNext(new EffectEventArgs(GameEvent.OnEndTurn, this));
 
             this.ActivePlayer = this.NextPlayer;
             this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
@@ -517,7 +517,7 @@ namespace Cauldron.Server.Models
 
             // イベント発行
             this.EffectListByEvent[GameEvent.OnPlay]
-                .OnNext(new EffectEventArgs() { EffectType = GameEvent.OnPlay, GameMaster = this, SourceCard = playingCard });
+                .OnNext(new EffectEventArgs(GameEvent.OnPlay, this, SourceCard: playingCard));
 
             return (true, "");
         }
@@ -632,17 +632,17 @@ namespace Cauldron.Server.Models
             var card = player.Field.GetById(cardId);
             var damagePlayer = this.PlayersById[damagePlayerId];
 
-            var eventArgs = new EffectEventArgs()
-            {
-                EffectType = GameEvent.OnBattleBefore,
-                GameMaster = this,
-                BattleContext = new BattleContext()
+            var eventArgs = new EffectEventArgs(
+                GameEvent.OnBattleBefore,
+                this,
+                BattleContext: new BattleContext()
                 {
                     AttackCard = card,
                     GuardPlayer = damagePlayer,
                     Value = card.Power,
                 }
-            };
+                );
+
             this.EffectListByEvent[GameEvent.OnBattleBefore].OnNext(eventArgs);
 
             this.logger.LogInformation($"アタック（プレイヤー）：{card}({player.Name}) > {damagePlayer.Name}");
@@ -660,8 +660,8 @@ namespace Cauldron.Server.Models
             };
             this.HitPlayer(damageContext);
 
-            eventArgs.EffectType = GameEvent.OnBattle;
-            this.EffectListByEvent[GameEvent.OnBattle].OnNext(eventArgs);
+            var eventArgs2 = eventArgs with { EffectType = GameEvent.OnBattle };
+            this.EffectListByEvent[GameEvent.OnBattle].OnNext(eventArgs2);
 
             return (true, "");
         }
@@ -693,12 +693,11 @@ namespace Cauldron.Server.Models
         {
             //var damagePlayer = this.PlayersById[damagePlayerId];
 
-            var eventArgs = new EffectEventArgs()
-            {
-                EffectType = GameEvent.OnDamageBefore,
-                GameMaster = this,
-                DamageContext = damageContext
-            };
+            var eventArgs = new EffectEventArgs(
+                GameEvent.OnDamageBefore,
+                this,
+                DamageContext: damageContext
+            );
             this.EffectListByEvent[GameEvent.OnDamageBefore].OnNext(eventArgs);
 
             this.logger.LogInformation($"ダメージ：{damageContext.Value} > {damageContext.GuardPlayer.Name}");
@@ -727,17 +726,16 @@ namespace Cauldron.Server.Models
             var attackPlayer = this.PlayersById[attackCard.OwnerId];
             var guardPlayer = this.PlayersById[guardCard.OwnerId];
 
-            var eventArgs = new EffectEventArgs()
-            {
-                EffectType = GameEvent.OnBattleBefore,
-                GameMaster = this,
-                BattleContext = new BattleContext()
+            var eventArgs = new EffectEventArgs(
+                GameEvent.OnBattleBefore,
+                this,
+                BattleContext: new BattleContext()
                 {
                     AttackCard = attackCard,
                     GuardCard = guardCard,
                     Value = attackCard.Power,
-                }
-            };
+                });
+
             this.EffectListByEvent[GameEvent.OnBattleBefore].OnNext(eventArgs);
 
             this.logger.LogInformation($"アタック（クリーチャー）：{eventArgs.BattleContext.AttackCard}({attackPlayer.Name}) > {eventArgs.BattleContext.GuardCard}({guardPlayer.Name})");
@@ -770,8 +768,8 @@ namespace Cauldron.Server.Models
             };
             this.HitCreature(damageContext2);
 
-            eventArgs.EffectType = GameEvent.OnBattle;
-            this.EffectListByEvent[GameEvent.OnBattle].OnNext(eventArgs);
+            var eventArgs2 = eventArgs with { EffectType = GameEvent.OnBattle };
+            this.EffectListByEvent[GameEvent.OnBattle].OnNext(eventArgs2);
 
             return (true, "");
         }
@@ -808,12 +806,7 @@ namespace Cauldron.Server.Models
         {
             //var guardCreatureCard = this.cardFactory.GetById(guardCreatureCardId);
 
-            var eventArgs = new EffectEventArgs()
-            {
-                EffectType = GameEvent.OnDamageBefore,
-                GameMaster = this,
-                DamageContext = damageContext,
-            };
+            var eventArgs = new EffectEventArgs(GameEvent.OnDamageBefore, this, DamageContext: damageContext);
             this.EffectListByEvent[GameEvent.OnDamageBefore].OnNext(eventArgs);
 
             if (damageContext.GuardCard.Type != CardType.Creature)
@@ -857,7 +850,7 @@ namespace Cauldron.Server.Models
                 ZoneType.OpponentField => this.GetOpponent(effectOwnerCard.OwnerId).Field.AllCards
                     .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs))
                     .ToArray(),
-                _ => new Card[0],
+                _ => Array.Empty<Card>(),
             };
         }
 
@@ -873,7 +866,7 @@ namespace Cauldron.Server.Models
                     .Where(cdef => choice.NewCardCondition.IsMatch(cdef))
                     .SelectMany(cdef => Enumerable.Repeat(cdef, choice.NumPicks))
                     .ToArray(),
-                _ => new CardDef[0],
+                _ => Array.Empty<CardDef>(),
             };
         }
 
@@ -881,9 +874,9 @@ namespace Cauldron.Server.Models
         {
             return new ChoiceResult()
             {
-                PlayerList = choice.PlayerCondition == null ? new Player[0] : this.ChoiceCandidatePlayers(effectOwnerCard, choice, eventArgs),
-                CardList = choice.CardCondition == null ? new Card[0] : this.ChoiceCandidateCards(effectOwnerCard, choice, eventArgs),
-                CardDefList = choice.NewCardCondition == null ? new CardDef[0] : this.ChoiceCandidateCardDefs(choice),
+                PlayerList = choice.PlayerCondition == null ? Array.Empty<Player>() : this.ChoiceCandidatePlayers(effectOwnerCard, choice, eventArgs),
+                CardList = choice.CardCondition == null ? Array.Empty<Card>() : this.ChoiceCandidateCards(effectOwnerCard, choice, eventArgs),
+                CardDefList = choice.NewCardCondition == null ? Array.Empty<CardDef>() : this.ChoiceCandidateCardDefs(choice),
             };
         }
 

@@ -1,12 +1,10 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
-    public class EffectEventArgs
-    {
-        public GameEvent EffectType { get; set; }
-        public GameMaster GameMaster { get; set; }
-        public Player SourcePlayer { get; set; }
-        public Card SourceCard { get; set; }
-        public BattleContext BattleContext { get; set; }
-        public DamageContext DamageContext { get; set; }
-    }
+    public record EffectEventArgs(
+        GameEvent EffectType,
+        GameMaster GameMaster,
+        Player SourcePlayer = null,
+        Card SourceCard = null,
+        BattleContext BattleContext = null,
+        DamageContext DamageContext = null);
 }

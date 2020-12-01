@@ -1,6 +1,7 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
-    public class EffectTimingDamageAfterEvent : EffectTimingDamageBeforeEvent
-    {
-    }
+    public record EffectTimingDamageAfterEvent(
+        EffectTimingDamageBeforeEvent.EventSource Source,
+        PlayerCondition PlayerCondition,
+        CardCondition CardCondition) : EffectTimingDamageBeforeEvent(Source, PlayerCondition, CardCondition);
 }
