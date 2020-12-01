@@ -16,7 +16,6 @@ namespace Cauldron.Server_Test
 
             var testChoice = new Choice()
             {
-                Candidates = new[] { Choice.ChoiceCandidateType.Card },
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
@@ -80,7 +79,7 @@ namespace Cauldron.Server_Test
             // 候補の検証
             var expected = new ChoiceResult()
             {
-                PlayerIdList = Array.Empty<Guid>(),
+                PlayerList = Array.Empty<Player>(),
                 CardDefList = Array.Empty<CardDef>(),
                 CardList = new[] { goblinCard, goblinCard2 },
             };
@@ -90,8 +89,8 @@ namespace Cauldron.Server_Test
             // 抽出結果の検証
             var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, null);
             TestUtil.AssertCollection(
-                Array.Empty<Guid>(),
-                actual.PlayerIdList);
+                Array.Empty<Player>(),
+                actual.PlayerList);
 
             TestUtil.AssertCollection(
                 Array.Empty<CardDef>(),
@@ -110,7 +109,6 @@ namespace Cauldron.Server_Test
 
             var testChoice = new Choice()
             {
-                Candidates = new[] { Choice.ChoiceCandidateType.Card },
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
@@ -172,7 +170,7 @@ namespace Cauldron.Server_Test
             // 候補の検証
             var expected = new ChoiceResult()
             {
-                PlayerIdList = Array.Empty<Guid>(),
+                PlayerList = Array.Empty<Player>(),
                 CardDefList = Array.Empty<CardDef>(),
                 CardList = new[] { goblinCard, goblinCard2 },
             };
@@ -182,7 +180,7 @@ namespace Cauldron.Server_Test
             // 抽出結果の検証
             var expected2 = new ChoiceResult()
             {
-                PlayerIdList = Array.Empty<Guid>(),
+                PlayerList = Array.Empty<Player>(),
                 CardDefList = Array.Empty<CardDef>(),
                 CardList = new[] { goblinCard, goblinCard2 },
             };
@@ -200,8 +198,7 @@ namespace Cauldron.Server_Test
 
             var testChoice = new Choice()
             {
-                Candidates = new[] { Choice.ChoiceCandidateType.Card },
-                CardCondition = new CardCondition()
+                NewCardCondition = new CardCondition()
                 {
                     ZoneCondition = ZoneType.CardPool,
                     NameCondition = new TextCondition()
@@ -222,7 +219,7 @@ namespace Cauldron.Server_Test
                         {
                             Destroy = new EffectTimingDestroyEvent()
                             {
-                                Owner = EffectTimingDestroyEvent.EventOwner.This
+                                Source = EffectTimingDestroyEvent.EventSource.This
                             }
                         },
                         Actions = new[]
@@ -261,7 +258,7 @@ namespace Cauldron.Server_Test
             // 候補の検証
             var expected = new ChoiceResult()
             {
-                PlayerIdList = Array.Empty<Guid>(),
+                PlayerList = Array.Empty<Player>(),
                 CardDefList = new[] { fairy },
                 CardList = Array.Empty<Card>()
             };
@@ -271,7 +268,7 @@ namespace Cauldron.Server_Test
             // 抽出結果の検証
             var expected2 = new ChoiceResult()
             {
-                PlayerIdList = Array.Empty<Guid>(),
+                PlayerList = Array.Empty<Player>(),
                 CardDefList = new[] { fairy },
                 CardList = Array.Empty<Card>()
             };
@@ -289,8 +286,7 @@ namespace Cauldron.Server_Test
 
             var testChoice = new Choice()
             {
-                Candidates = new[] { Choice.ChoiceCandidateType.Card },
-                CardCondition = new CardCondition()
+                NewCardCondition = new CardCondition()
                 {
                     ZoneCondition = ZoneType.CardPool,
                     NameCondition = new TextCondition()
@@ -311,7 +307,7 @@ namespace Cauldron.Server_Test
                         {
                             Destroy = new EffectTimingDestroyEvent()
                             {
-                                Owner = EffectTimingDestroyEvent.EventOwner.This
+                                Source = EffectTimingDestroyEvent.EventSource.This
                             }
                         },
                         Actions = new[]
@@ -350,7 +346,7 @@ namespace Cauldron.Server_Test
             // 候補の検証
             var expected = new ChoiceResult()
             {
-                PlayerIdList = Array.Empty<Guid>(),
+                PlayerList = Array.Empty<Player>(),
                 CardDefList = new[] { fairy, fairy },
                 CardList = Array.Empty<Card>()
             };
@@ -360,7 +356,7 @@ namespace Cauldron.Server_Test
             // 抽出結果の検証
             var expected2 = new ChoiceResult()
             {
-                PlayerIdList = Array.Empty<Guid>(),
+                PlayerList = Array.Empty<Player>(),
                 CardDefList = new[] { fairy, fairy },
                 CardList = Array.Empty<Card>()
             };
@@ -376,8 +372,10 @@ namespace Cauldron.Server_Test
 
             var testChoice = new Choice()
             {
-                Candidates = new[] { Choice.ChoiceCandidateType.OtherOwnerPlayer },
-                NumPicks = 1
+                PlayerCondition = new PlayerCondition()
+                {
+                    Type = PlayerCondition.PlayerConditionType.NotOwner,
+                }
             };
             var testCardDef = CardDef.CreatureCard(0, $"test.テストクリーチャー", "テストクリーチャー", "テストクリーチャー", 1, 1, false,
                 effects: new[]
@@ -386,7 +384,7 @@ namespace Cauldron.Server_Test
                         Timing = new EffectTiming()
                         {
                             Destroy = new EffectTimingDestroyEvent(){
-                                Owner = EffectTimingDestroyEvent.EventOwner.This
+                                Source = EffectTimingDestroyEvent.EventSource.This
                             }
                         },
                         Actions =new []
@@ -425,7 +423,7 @@ namespace Cauldron.Server_Test
             // 候補の検証
             var expected = new ChoiceResult()
             {
-                PlayerIdList = new[] { player2Id },
+                PlayerList = new[] { testGameMaster.PlayersById[player2Id] },
                 CardDefList = Array.Empty<CardDef>(),
                 CardList = Array.Empty<Card>()
             };
@@ -435,7 +433,7 @@ namespace Cauldron.Server_Test
             // 抽出結果の検証
             var expected2 = new ChoiceResult()
             {
-                PlayerIdList = new[] { player2Id },
+                PlayerList = new[] { testGameMaster.PlayersById[player2Id] },
                 CardDefList = Array.Empty<CardDef>(),
                 CardList = Array.Empty<Card>()
             };
@@ -451,7 +449,10 @@ namespace Cauldron.Server_Test
 
             var testChoice = new Choice()
             {
-                Candidates = new[] { Choice.ChoiceCandidateType.TurnPlayer }
+                PlayerCondition = new PlayerCondition()
+                {
+                    Type = PlayerCondition.PlayerConditionType.Active
+                }
             };
             var testCardDef = CardDef.ArtifactCard(0, $"test.test", "test", "test", false,
                 new[]
@@ -499,15 +500,15 @@ namespace Cauldron.Server_Test
                 // 候補の検証
                 var expected = new ChoiceResult()
                 {
-                    PlayerIdList = new[] { player1Id },
+                    PlayerList = new[] { testGameMaster.PlayersById[player1Id] },
                     CardDefList = Array.Empty<CardDef>(),
                     CardList = Array.Empty<Card>()
                 };
-                var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, null);
+                var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, new EffectEventArgs() { GameMaster = testGameMaster });
                 TestUtil.AssertChoiceResult(expected, actual);
 
                 // 抽出結果の検証
-                var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, null);
+                var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, new EffectEventArgs() { GameMaster = testGameMaster });
                 TestUtil.AssertChoiceResult(expected, actual2);
 
                 return (goblinCard, testCard);
@@ -516,15 +517,15 @@ namespace Cauldron.Server_Test
             // 候補の検証
             var expected = new ChoiceResult()
             {
-                PlayerIdList = new[] { player2Id },
+                PlayerList = new[] { testGameMaster.PlayersById[player2Id] },
                 CardDefList = Array.Empty<CardDef>(),
                 CardList = Array.Empty<Card>()
             };
-            var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, null);
+            var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, new EffectEventArgs() { GameMaster = testGameMaster });
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
-            var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, null);
+            var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, new EffectEventArgs() { GameMaster = testGameMaster });
             TestUtil.AssertChoiceResult(expected, actual2);
         }
 
@@ -537,7 +538,6 @@ namespace Cauldron.Server_Test
             var testChoice = new Choice()
             {
                 How = Choice.ChoiceHow.Random,
-                Candidates = new[] { Choice.ChoiceCandidateType.Card },
                 CardCondition = new CardCondition()
                 {
                     ZoneCondition = ZoneType.OpponentField,
@@ -599,7 +599,10 @@ namespace Cauldron.Server_Test
 
             var testChoice = new Choice()
             {
-                Candidates = new[] { Choice.ChoiceCandidateType.Card, Choice.ChoiceCandidateType.OtherOwnerPlayer },
+                PlayerCondition = new PlayerCondition()
+                {
+                    Type = PlayerCondition.PlayerConditionType.NotOwner,
+                },
                 NumPicks = 1,
                 How = Choice.ChoiceHow.Random,
                 CardCondition = new CardCondition()
@@ -644,7 +647,7 @@ namespace Cauldron.Server_Test
             // 候補の検証
             var expected = new ChoiceResult()
             {
-                PlayerIdList = new[] { player1Id },
+                PlayerList = new[] { testGameMaster.PlayersById[player1Id] },
                 CardList = new[] { goblinCard, goblinCard2 }
             };
             var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, null);
@@ -665,7 +668,6 @@ namespace Cauldron.Server_Test
             {
                 How = Choice.ChoiceHow.Choose,
                 NumPicks = 1,
-                Candidates = new[] { Choice.ChoiceCandidateType.Card },
                 CardCondition = new CardCondition()
                 {
                     ZoneCondition = ZoneType.OpponentField,
@@ -739,7 +741,6 @@ namespace Cauldron.Server_Test
             {
                 How = Choice.ChoiceHow.Choose,
                 NumPicks = 1,
-                Candidates = new[] { Choice.ChoiceCandidateType.Card },
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
@@ -807,11 +808,10 @@ namespace Cauldron.Server_Test
 
             var testChoice = new Choice()
             {
-                Candidates = new[] { Choice.ChoiceCandidateType.Card },
                 How = Choice.ChoiceHow.All,
                 CardCondition = new CardCondition()
                 {
-                    Context = CardCondition.CardConditionContext.Me,
+                    Context = CardCondition.CardConditionContext.This,
                 }
             };
             var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1, false);
@@ -858,7 +858,6 @@ namespace Cauldron.Server_Test
 
             var testChoice = new Choice()
             {
-                Candidates = new[] { Choice.ChoiceCandidateType.Card },
                 How = Choice.ChoiceHow.All,
                 CardCondition = new CardCondition()
                 {
@@ -893,11 +892,11 @@ namespace Cauldron.Server_Test
             {
                 CardList = new[] { goblinCard }
             };
-            var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, goblinCard);
+            var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, new EffectEventArgs() { SourceCard = goblinCard });
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
-            var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, goblinCard);
+            var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, new EffectEventArgs() { SourceCard = goblinCard });
             TestUtil.AssertChoiceResult(expected, actual2);
         }
     }

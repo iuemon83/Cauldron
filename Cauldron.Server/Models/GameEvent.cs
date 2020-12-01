@@ -3,42 +3,52 @@
     public enum GameEvent
     {
         /// <summary>
-        /// このカードのプレイ時
+        /// カードのプレイ時
         /// </summary>
         OnPlay,
 
         /// <summary>
-        /// このカードの破壊時
+        /// カードの破壊時
         /// </summary>
         OnDestroy,
 
         /// <summary>
-        /// すべてのカードの破壊時
+        /// いずれかがダメージを受ける前
         /// </summary>
-        OnEveryDestroy,
+        OnDamageBefore,
 
         /// <summary>
-        /// すべてのカードのプレイ時
-        /// </summary>
-        OnEveryPlay,
-
-        /// <summary>
-        /// このカードの被ダメージ時
+        /// いずれかがダメージを受けるあと
         /// </summary>
         OnDamage,
 
         /// <summary>
-        /// すべてのカードの被ダメージ時
+        /// 戦闘前
         /// </summary>
-        OnEveryDamage,
+        OnBattleBefore,
 
         /// <summary>
-        /// すべてのターン開始時
+        /// 戦闘後
+        /// </summary>
+        OnBattle,
+
+        /// <summary>
+        /// カードのドロー時
+        /// </summary>
+        OnDraw,
+
+        /// <summary>
+        /// ライフの回復時
+        /// </summary>
+        OnGainLife,
+
+        /// <summary>
+        /// ターン開始時
         /// </summary>
         OnStartTurn,
 
         /// <summary>
-        /// すべてのターン終了時
+        /// ターン終了時
         /// </summary>
         OnEndTurn,
     }

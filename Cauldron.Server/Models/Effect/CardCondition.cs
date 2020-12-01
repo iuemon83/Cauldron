@@ -5,9 +5,41 @@
         public enum CardConditionContext
         {
             All,
-            Me,
+
+            /// <summary>
+            /// 自分自身
+            /// </summary>
+            This,
+
+            /// <summary>
+            /// 自分以外
+            /// </summary>
             Others,
+
+            /// <summary>
+            /// イベントの発生元
+            /// </summary>
             EventSource,
+
+            /// <summary>
+            /// 攻撃クリーチャー
+            /// </summary>
+            Attack,
+
+            /// <summary>
+            /// 防御クリーチャー
+            /// </summary>
+            Guard,
+
+            /// <summary>
+            /// ダメージの発生源
+            /// </summary>
+            DamageFrom,
+
+            /// <summary>
+            /// ダメージを受ける側
+            /// </summary>
+            DamageTo,
         }
 
         /// <summary>
@@ -22,14 +54,16 @@
         public CardTypeCondition TypeCondition { get; set; }
         public ZoneType ZoneCondition { get; set; } = ZoneType.All;
 
-        public bool IsMatch(Card ownerCard, Card card, Card eventSource)
+        public bool IsMatch(Card effectOwnerCard, Card card, EffectEventArgs eventArgs)
         {
             return
                 (this.Context switch
                 {
-                    CardConditionContext.Me => card.Id == ownerCard.Id,
-                    CardConditionContext.Others => card.Id != ownerCard.Id,
-                    CardConditionContext.EventSource => card.Id == eventSource.Id,
+                    CardConditionContext.This => card.Id == effectOwnerCard.Id,
+                    CardConditionContext.Others => card.Id != effectOwnerCard.Id,
+                    CardConditionContext.EventSource => card.Id == eventArgs.SourceCard.Id,
+                    CardConditionContext.Attack => card.Id == eventArgs.BattleContext.AttackCard.Id,
+                    CardConditionContext.Guard => card.Id == eventArgs.BattleContext.GuardCard.Id,
                     _ => true
                 })
                 && (this.CostCondition?.IsMatch(card.Cost) ?? true)

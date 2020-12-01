@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Cauldron.Server.Models.Effect
+﻿namespace Cauldron.Server.Models.Effect
 {
     public class EffectAction : IEffectAction
     {
@@ -12,25 +10,17 @@ namespace Cauldron.Server.Models.Effect
 
         public EffectActionDestroyCard DestroyCard { get; set; }
 
-        public void Execute(GameMaster gameMaster, Card ownerCard, Card eventSource)
+        public EffectActionModifyDamage ModifyDamage { get; set; }
+
+        public bool Execute(Card ownerCard, EffectEventArgs effectEventArgs)
         {
             //TODO この順番もけっこう重要
-            this.Damage?.Execute(gameMaster, ownerCard, eventSource);
-            this.AddCard?.Execute(gameMaster, ownerCard, eventSource);
-            this.ModifyCard?.Execute(gameMaster, ownerCard, eventSource);
-            this.DestroyCard?.Execute(gameMaster, ownerCard, eventSource);
-        }
-
-        public Action<EffectEventArgs> Execute(Card ownerCard)
-        {
-            return args =>
-            {
-                //TODO この順番もけっこう重要
-                this.Damage?.Execute(ownerCard, args);
-                this.AddCard?.Execute(ownerCard, args);
-                this.ModifyCard?.Execute(ownerCard, args);
-                this.DestroyCard?.Execute(ownerCard, args);
-            };
+            return
+                (this.Damage?.Execute(ownerCard, effectEventArgs) ?? false)
+                || (this.AddCard?.Execute(ownerCard, effectEventArgs) ?? false)
+                || (this.ModifyCard?.Execute(ownerCard, effectEventArgs) ?? false)
+                || (this.DestroyCard?.Execute(ownerCard, effectEventArgs) ?? false)
+                || (this.ModifyDamage?.Execute(effectEventArgs) ?? false);
         }
     }
 }

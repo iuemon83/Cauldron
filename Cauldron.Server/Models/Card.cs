@@ -88,21 +88,6 @@ namespace Cauldron.Server.Models
             this.ToughnessBuff -= Math.Max(0, damage);
         }
 
-        //public CardEffect GetEffenct(CardEffectType effectType)
-        //{
-        //    return this.EffectsByType.TryGetValue(effectType, out var effect)
-        //        ? effect
-        //        : null;
-        //}
-
-        public void DoEffect(GameEvent effectType, GameMaster gameMaster)
-        {
-            foreach (var effect in this.Effects)
-            {
-                effect.Execute(effectType, gameMaster, this, this);
-            }
-        }
-
         public override string ToString()
         {
             return this.Type switch

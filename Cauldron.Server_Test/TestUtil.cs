@@ -43,7 +43,7 @@ namespace Cauldron.Server_Test
             //    actual.CardList.Select(c => c.Id).ToArray());
 
             TestUtil.AssertChoiceResult(expected, actual,
-                expected.PlayerIdList.Count
+                expected.PlayerList.Count
                 + expected.CardDefList.Count
                 + expected.CardList.Count);
         }
@@ -51,12 +51,12 @@ namespace Cauldron.Server_Test
         public static void AssertChoiceResult(ChoiceResult candidatesExpected, ChoiceResult actual, int numOfAny)
         {
             // ぜんぶ候補に含まれている
-            Assert.True(actual.PlayerIdList.All(a => candidatesExpected.PlayerIdList.Contains(a)));
+            Assert.True(actual.PlayerList.All(a => candidatesExpected.PlayerList.Contains(a)));
             Assert.True(actual.CardDefList.All(a => candidatesExpected.CardDefList.Select(ec => ec.Id).Contains(a.Id)));
             Assert.True(actual.CardList.All(a => candidatesExpected.CardList.Select(ec => ec.Id).Contains(a.Id)));
 
             // 選ばれた数が正しい
-            var actualChoiceCount = actual.PlayerIdList.Count
+            var actualChoiceCount = actual.PlayerList.Count
                 + actual.CardDefList.Count
                 + actual.CardList.Count;
             Assert.Equal(numOfAny, actualChoiceCount);
@@ -65,7 +65,7 @@ namespace Cauldron.Server_Test
         public static Card NewCardAndPlayFromHand(GameMaster testGameMaster, Guid playerId, Guid cardDefId)
         {
             var newCard = testGameMaster.GenerateNewCard(cardDefId, playerId);
-            testGameMaster.AddHand(testGameMaster.CurrentPlayer, newCard);
+            testGameMaster.AddHand(testGameMaster.ActivePlayer, newCard);
             TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(playerId, newCard.Id));
 
             return newCard;
@@ -73,16 +73,16 @@ namespace Cauldron.Server_Test
 
         public static void Turn(GameMaster gameMaster, Action<GameMaster, Guid> turnAction)
         {
-            gameMaster.StartTurn(gameMaster.CurrentPlayer.Id);
-            turnAction(gameMaster, gameMaster.CurrentPlayer.Id);
-            gameMaster.EndTurn(gameMaster.CurrentPlayer.Id);
+            gameMaster.StartTurn(gameMaster.ActivePlayer.Id);
+            turnAction(gameMaster, gameMaster.ActivePlayer.Id);
+            gameMaster.EndTurn(gameMaster.ActivePlayer.Id);
         }
 
         public static T Turn<T>(GameMaster gameMaster, Func<GameMaster, Guid, T> turnAction)
         {
-            gameMaster.StartTurn(gameMaster.CurrentPlayer.Id);
-            var cards = turnAction(gameMaster, gameMaster.CurrentPlayer.Id);
-            gameMaster.EndTurn(gameMaster.CurrentPlayer.Id);
+            gameMaster.StartTurn(gameMaster.ActivePlayer.Id);
+            var cards = turnAction(gameMaster, gameMaster.ActivePlayer.Id);
+            gameMaster.EndTurn(gameMaster.ActivePlayer.Id);
 
             return cards;
         }

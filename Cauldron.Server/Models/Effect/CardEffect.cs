@@ -1,5 +1,4 @@
 ﻿using Cauldron.Server.Models.Effect;
-using System;
 using System.Collections.Generic;
 
 namespace Cauldron.Server.Models
@@ -10,31 +9,19 @@ namespace Cauldron.Server.Models
 
         public IReadOnlyList<IEffectAction> Actions { get; set; }
 
-        public void Execute(GameEvent effectType, GameMaster gameMaster, Card owner, Card eventSource)
+        public bool Execute(Card ownerCard, EffectEventArgs args)
         {
-            if (!this.Timing.Match(effectType, gameMaster.CurrentPlayer.Id, owner, eventSource)) return;
+            if (!this.Timing.Match(args.EffectType, args.GameMaster.ActivePlayer.Id, ownerCard, args)) return false;
 
+            var done = false;
             foreach (var action in this.Actions)
             {
-                action.Execute(gameMaster, owner, eventSource);
+                done = action.Execute(ownerCard, args) || done;
             }
+
+            return done;
         }
 
-        public Action<EffectEventArgs> Execute(Card ownerCard) => args =>
-        {
-            this.Execute(args.EffectType, args.GameMaster, ownerCard, args.Source);
-        };
-
-        public bool MatchTiming(GameEvent gameEvent)
-        {
-            return gameEvent switch
-            {
-                GameEvent.OnStartTurn => this.Timing.StartTurn != null,
-                GameEvent.OnEndTurn => this.Timing.EndTurn != null,
-                GameEvent.OnPlay => this.Timing.Play != null,
-                GameEvent.OnDestroy => this.Timing.Destroy != null,
-                _ => throw new InvalidOperationException()
-            };
-        }
+        public bool MatchTiming(GameEvent gameEvent) => this.Timing.Match(gameEvent);
     }
 }

@@ -5,21 +5,39 @@
         public int Value { get; set; }
         public Choice Choice { get; set; }
 
-        public void Execute(GameMaster gameMaster, Card ownerCard, Card eventSource)
+        public bool Execute(Card effectOwnerCard, EffectEventArgs args)
         {
-            var choiceResult = gameMaster.ChoiceCards(ownerCard, this.Choice, eventSource);
+            var choiceResult = args.GameMaster.ChoiceCards(effectOwnerCard, this.Choice, args);
 
-            foreach (var playerId in choiceResult.PlayerIdList)
+            var done = false;
+
+            foreach (var playerId in choiceResult.PlayerList)
             {
-                gameMaster.HitPlayer(playerId, this.Value);
+                var damageContext = new DamageContext()
+                {
+                    DamageSourceCard = effectOwnerCard,
+                    GuardPlayer = playerId,
+                    Value = this.Value
+                };
+                args.GameMaster.HitPlayer(damageContext);
+
+                done = true;
             }
 
             foreach (var card in choiceResult.CardList)
             {
-                gameMaster.HitCreature(card.Id, this.Value);
-            }
-        }
+                var damageContext = new DamageContext()
+                {
+                    DamageSourceCard = effectOwnerCard,
+                    GuardCard = card,
+                    Value = this.Value
+                };
+                args.GameMaster.HitCreature(damageContext);
 
-        public void Execute(Card ownerCard, EffectEventArgs args) => this.Execute(args.GameMaster, ownerCard, args.Source);
+                done = true;
+            }
+
+            return done;
+        }
     }
 }

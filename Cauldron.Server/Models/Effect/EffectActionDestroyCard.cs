@@ -7,16 +7,19 @@
     {
         public Choice Choice { get; set; }
 
-        public void Execute(GameMaster gameMaster, Card ownerCard, Card eventSource)
+        public bool Execute(Card ownerCard, EffectEventArgs args)
         {
-            var choiceResult = gameMaster.ChoiceCards(ownerCard, this.Choice, eventSource);
+            var choiceResult = args.GameMaster.ChoiceCards(ownerCard, this.Choice, args);
 
+            var done = false;
             foreach (var card in choiceResult.CardList)
             {
-                gameMaster.DestroyCard(card);
-            }
-        }
+                args.GameMaster.DestroyCard(card);
 
-        public void Execute(Card ownerCard, EffectEventArgs args) => this.Execute(args.GameMaster, ownerCard, args.Source);
+                done = true;
+            }
+
+            return done;
+        }
     }
 }

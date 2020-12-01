@@ -6,16 +6,19 @@
         public int Power { get; set; }
         public int Toughness { get; set; }
 
-        public void Execute(GameMaster gameMaster, Card ownerCard, Card eventSource)
+        public bool Execute(Card ownerCard, EffectEventArgs args)
         {
-            var targets = gameMaster.ChoiceCards(ownerCard, this.Choice, eventSource).CardList;
+            var targets = args.GameMaster.ChoiceCards(ownerCard, this.Choice, args).CardList;
 
+            var done = false;
             foreach (var card in targets)
             {
-                gameMaster.Buff(card, this.Power, this.Toughness);
-            }
-        }
+                args.GameMaster.Buff(card, this.Power, this.Toughness);
 
-        public void Execute(Card ownerCard, EffectEventArgs args) => this.Execute(args.GameMaster, ownerCard, args.Source);
+                done = true;
+            }
+
+            return done;
+        }
     }
 }

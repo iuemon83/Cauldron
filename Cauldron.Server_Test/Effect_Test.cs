@@ -33,8 +33,7 @@ namespace Cauldron.Server_Test
                                     ZoneToAddCard = ZoneType.YouField,
                                     Choice = new Choice()
                                     {
-                                        Candidates =new[]{ Choice.ChoiceCandidateType.Card },
-                                        CardCondition = new CardCondition()
+                                        NewCardCondition = new CardCondition()
                                         {
                                             NameCondition = new TextCondition()
                                             {
@@ -61,11 +60,11 @@ namespace Cauldron.Server_Test
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(slime.Id, 40));
 
             testGameMaster.Start(player1Id);
-            TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.CurrentPlayer.Hands.AllCards[0].Id));
+            TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.ActivePlayer.Hands.AllCards[0].Id));
 
             // 場には2体出ていて、ぜんぶスライム
-            Assert.Equal(2, testGameMaster.CurrentPlayer.Field.AllCards.Count);
-            foreach (var card in testGameMaster.CurrentPlayer.Field.AllCards)
+            Assert.Equal(2, testGameMaster.ActivePlayer.Field.AllCards.Count);
+            foreach (var card in testGameMaster.ActivePlayer.Field.AllCards)
             {
                 Assert.Equal(slime.Id, card.CardDefId);
             }
@@ -96,8 +95,7 @@ namespace Cauldron.Server_Test
                                     ZoneToAddCard = ZoneType.YouField,
                                     Choice = new Choice()
                                     {
-                                        Candidates =new[]{ Choice.ChoiceCandidateType.Card },
-                                        CardCondition = new CardCondition()
+                                        NewCardCondition = new CardCondition()
                                         {
                                             NameCondition = new TextCondition()
                                             {
@@ -124,11 +122,11 @@ namespace Cauldron.Server_Test
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(slime.Id, 40));
 
             testGameMaster.Start(player1Id);
-            TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.CurrentPlayer.Hands.AllCards[0].Id));
+            TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.ActivePlayer.Hands.AllCards[0].Id));
 
             // 場には3体出ていて、ぜんぶスライム
-            Assert.Equal(3, testGameMaster.CurrentPlayer.Field.AllCards.Count);
-            foreach (var card in testGameMaster.CurrentPlayer.Field.AllCards)
+            Assert.Equal(3, testGameMaster.ActivePlayer.Field.AllCards.Count);
+            foreach (var card in testGameMaster.ActivePlayer.Field.AllCards)
             {
                 Assert.Equal(slime.Id, card.CardDefId);
             }
@@ -147,7 +145,7 @@ namespace Cauldron.Server_Test
                         Timing = new EffectTiming()
                         {
                             Destroy = new EffectTimingDestroyEvent(){
-                                Owner = EffectTimingDestroyEvent.EventOwner.This
+                                Source = EffectTimingDestroyEvent.EventSource.This
                             }
                         },
                         Actions =new []
@@ -159,8 +157,10 @@ namespace Cauldron.Server_Test
                                     Value = 1,
                                     Choice = new Choice()
                                     {
-                                        Candidates =new[]{ Choice.ChoiceCandidateType.OtherOwnerPlayer },
-                                        NumPicks=1
+                                        PlayerCondition = new PlayerCondition()
+                                        {
+                                            Type = PlayerCondition.PlayerConditionType.NotOwner,
+                                        },
                                     }
                                 }
                             }
@@ -179,12 +179,12 @@ namespace Cauldron.Server_Test
 
             testGameMaster.Start(player1Id);
             testGameMaster.StartTurn(player1Id);
-            TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.CurrentPlayer.Hands.AllCards[0].Id));
+            TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.ActivePlayer.Hands.AllCards[0].Id));
             TestUtil.AssertPhase(() => testGameMaster.EndTurn(player1Id));
 
             testGameMaster.StartTurn(player2Id);
-            var newHandCard = testGameMaster.GenerateNewCard(goblin.Id, testGameMaster.CurrentPlayer.Id);
-            testGameMaster.AddHand(testGameMaster.CurrentPlayer, newHandCard);
+            var newHandCard = testGameMaster.GenerateNewCard(goblin.Id, testGameMaster.ActivePlayer.Id);
+            testGameMaster.AddHand(testGameMaster.ActivePlayer, newHandCard);
             TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player2Id, newHandCard.Id));
             TestUtil.AssertPhase(() => testGameMaster.AttackToCreature(player2Id,
                 newHandCard.Id,
@@ -192,8 +192,8 @@ namespace Cauldron.Server_Test
                 ));
 
             // 攻撃側はゴブリンが一体だけ
-            Assert.Equal(1, testGameMaster.CurrentPlayer.Field.AllCards.Count);
-            foreach (var card in testGameMaster.CurrentPlayer.Field.AllCards)
+            Assert.Equal(1, testGameMaster.ActivePlayer.Field.AllCards.Count);
+            foreach (var card in testGameMaster.ActivePlayer.Field.AllCards)
             {
                 Assert.Equal(goblin.Id, card.CardDefId);
             }
@@ -202,7 +202,7 @@ namespace Cauldron.Server_Test
             Assert.Equal(0, testGameMaster.PlayersById[player1Id].Field.AllCards.Count);
 
             // 攻撃プレイヤーに一点ダメージ
-            Assert.Equal(testGameMaster.RuleBook.MaxPlayerHp - 1, testGameMaster.CurrentPlayer.Hp);
+            Assert.Equal(testGameMaster.RuleBook.MaxPlayerHp - 1, testGameMaster.ActivePlayer.Hp);
         }
 
         [Fact]
@@ -222,7 +222,7 @@ namespace Cauldron.Server_Test
                         {
                             Destroy = new EffectTimingDestroyEvent()
                             {
-                                Owner = EffectTimingDestroyEvent.EventOwner.This
+                                Source = EffectTimingDestroyEvent.EventSource.This
                             }
                         },
                         Actions = new[]
@@ -234,8 +234,7 @@ namespace Cauldron.Server_Test
                                     ZoneToAddCard = ZoneType.YouHand,
                                     Choice = new Choice()
                                     {
-                                        Candidates =new[]{ Choice.ChoiceCandidateType.Card },
-                                        CardCondition = new CardCondition()
+                                        NewCardCondition = new CardCondition()
                                         {
                                             ZoneCondition = ZoneType.CardPool,
                                             NameCondition = new TextCondition()
@@ -264,15 +263,15 @@ namespace Cauldron.Server_Test
             // ウォーターフェアリーを出す
             testGameMaster.Start(player1Id);
             testGameMaster.StartTurn(player1Id);
-            TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.CurrentPlayer.Hands.AllCards[0].Id));
+            TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.ActivePlayer.Hands.AllCards[0].Id));
             TestUtil.AssertPhase(() => testGameMaster.EndTurn(player1Id));
 
             var beforeHands = testGameMaster.PlayersById[player1Id].Hands.AllCards.Select(c => c.Id).ToArray();
 
             // ゴブリン出してウォーターフェアリーに攻撃して破壊する
             testGameMaster.StartTurn(player2Id);
-            var newHandCard = testGameMaster.GenerateNewCard(goblin.Id, testGameMaster.CurrentPlayer.Id);
-            testGameMaster.AddHand(testGameMaster.CurrentPlayer, newHandCard);
+            var newHandCard = testGameMaster.GenerateNewCard(goblin.Id, testGameMaster.ActivePlayer.Id);
+            testGameMaster.AddHand(testGameMaster.ActivePlayer, newHandCard);
             TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player2Id, newHandCard.Id));
             TestUtil.AssertPhase(() => testGameMaster.AttackToCreature(player2Id,
                 newHandCard.Id,
@@ -280,8 +279,8 @@ namespace Cauldron.Server_Test
                 ));
 
             // 攻撃側はゴブリンが一体だけ
-            Assert.Equal(1, testGameMaster.CurrentPlayer.Field.AllCards.Count);
-            foreach (var card in testGameMaster.CurrentPlayer.Field.AllCards)
+            Assert.Equal(1, testGameMaster.ActivePlayer.Field.AllCards.Count);
+            foreach (var card in testGameMaster.ActivePlayer.Field.AllCards)
             {
                 Assert.Equal(goblin.Id, card.CardDefId);
             }
@@ -321,7 +320,6 @@ namespace Cauldron.Server_Test
                                 {
                                     Choice = new Choice()
                                     {
-                                        Candidates=new[]{ Choice.ChoiceCandidateType.Card },
                                         CardCondition = new CardCondition()
                                         {
                                             Context = CardCondition.CardConditionContext.Others,
@@ -355,15 +353,15 @@ namespace Cauldron.Server_Test
             testGameMaster.Start(player1Id);
             testGameMaster.StartTurn(player1Id);
             var goblinCard = testGameMaster.GenerateNewCard(goblin.Id, player1Id);
-            testGameMaster.AddHand(testGameMaster.CurrentPlayer, goblinCard);
+            testGameMaster.AddHand(testGameMaster.ActivePlayer, goblinCard);
             TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, goblinCard.Id));
 
-            var testCreatureCard = testGameMaster.CurrentPlayer.Hands.AllCards[0];
+            var testCreatureCard = testGameMaster.ActivePlayer.Hands.AllCards[0];
             TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testCreatureCard.Id));
 
             // 攻撃側は2体
-            Assert.Equal(2, testGameMaster.CurrentPlayer.Field.AllCards.Count);
-            foreach (var card in testGameMaster.CurrentPlayer.Field.AllCards)
+            Assert.Equal(2, testGameMaster.ActivePlayer.Field.AllCards.Count);
+            foreach (var card in testGameMaster.ActivePlayer.Field.AllCards)
             {
                 Assert.Contains(card.CardDefId, new[] { goblin.Id, testCreature.Id });
             }
@@ -403,7 +401,6 @@ namespace Cauldron.Server_Test
                                 {
                                     Choice = new Choice()
                                     {
-                                        Candidates =new[]{ Choice.ChoiceCandidateType.Card },
                                         CardCondition = new CardCondition()
                                         {
                                             Context = CardCondition.CardConditionContext.Others,
@@ -437,17 +434,17 @@ namespace Cauldron.Server_Test
             testGameMaster.StartTurn(player1Id);
             var goblinCard = testGameMaster.GenerateNewCard(goblin.Id, player1Id);
             var goblinCard2 = testGameMaster.GenerateNewCard(goblin.Id, player1Id);
-            testGameMaster.AddHand(testGameMaster.CurrentPlayer, goblinCard);
-            testGameMaster.AddHand(testGameMaster.CurrentPlayer, goblinCard2);
+            testGameMaster.AddHand(testGameMaster.ActivePlayer, goblinCard);
+            testGameMaster.AddHand(testGameMaster.ActivePlayer, goblinCard2);
             TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, goblinCard.Id));
             TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, goblinCard2.Id));
 
-            var testCreatureCard = testGameMaster.CurrentPlayer.Hands.AllCards[0];
+            var testCreatureCard = testGameMaster.ActivePlayer.Hands.AllCards[0];
             TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(player1Id, testCreatureCard.Id));
 
             // 攻撃側は3体
-            Assert.Equal(3, testGameMaster.CurrentPlayer.Field.AllCards.Count);
-            foreach (var card in testGameMaster.CurrentPlayer.Field.AllCards)
+            Assert.Equal(3, testGameMaster.ActivePlayer.Field.AllCards.Count);
+            foreach (var card in testGameMaster.ActivePlayer.Field.AllCards)
             {
                 Assert.Contains(card.CardDefId, new[] { goblin.Id, testCreature.Id });
             }
@@ -492,7 +489,6 @@ namespace Cauldron.Server_Test
                                     Choice = new Choice()
                                     {
                                         How = Choice.ChoiceHow.Random,
-                                        Candidates = new[]{Choice.ChoiceCandidateType.Card},
                                         CardCondition= new CardCondition()
                                         {
                                             ZoneCondition = ZoneType.OpponentField,
@@ -511,11 +507,10 @@ namespace Cauldron.Server_Test
                                 {
                                     Choice = new Choice()
                                     {
-                                        Candidates = new[]{ Choice.ChoiceCandidateType.Card },
                                         How = Choice.ChoiceHow.All,
                                         CardCondition = new CardCondition()
                                         {
-                                            Context = CardCondition.CardConditionContext.Me,
+                                            Context = CardCondition.CardConditionContext.This,
                                         }
                                     }
                                 }
@@ -552,7 +547,7 @@ namespace Cauldron.Server_Test
                 var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // フィールドには1枚
-                Assert.Equal(1, g.CurrentPlayer.Field.AllCards.Count);
+                Assert.Equal(1, g.ActivePlayer.Field.AllCards.Count);
 
                 // まだゴブリンはノーダメ
                 Assert.Equal(2, cards.goblinCard.Toughness);
@@ -595,7 +590,10 @@ namespace Cauldron.Server_Test
                                 {
                                     Choice = new Choice()
                                     {
-                                        Candidates = new []{Choice.ChoiceCandidateType.Card, Choice.ChoiceCandidateType.OtherOwnerPlayer},
+                                        PlayerCondition = new PlayerCondition()
+                                        {
+                                            Type = PlayerCondition.PlayerConditionType.NotOwner,
+                                        },
                                         NumPicks= 1,
                                         How= Choice.ChoiceHow.Random,
                                         CardCondition = new CardCondition()
@@ -641,7 +639,7 @@ namespace Cauldron.Server_Test
                 var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // フィールドには1枚
-                Assert.Equal(1, g.CurrentPlayer.Field.AllCards.Count);
+                Assert.Equal(1, g.ActivePlayer.Field.AllCards.Count);
 
                 // ゴブリンか相手プレイヤーにダメージ
                 Assert.True(
@@ -680,7 +678,6 @@ namespace Cauldron.Server_Test
                                     {
                                         How= Choice.ChoiceHow.Choose,
                                         NumPicks=1,
-                                        Candidates =new []{Choice.ChoiceCandidateType.Card },
                                         CardCondition=new CardCondition()
                                         {
                                             ZoneCondition= ZoneType.YouField,
@@ -755,7 +752,6 @@ namespace Cauldron.Server_Test
                                     Toughness = 0,
                                     Choice = new Choice()
                                     {
-                                        Candidates = new[]{ Choice.ChoiceCandidateType.Card },
                                         How = Choice.ChoiceHow.All,
                                         CardCondition = new CardCondition()
                                         {
@@ -789,7 +785,6 @@ namespace Cauldron.Server_Test
                                     Toughness = 0,
                                     Choice = new Choice()
                                     {
-                                        Candidates = new[]{ Choice.ChoiceCandidateType.Card },
                                         How = Choice.ChoiceHow.All,
                                         CardCondition = new CardCondition()
                                         {
@@ -838,5 +833,122 @@ namespace Cauldron.Server_Test
                 Assert.True(goblinCard3.PowerBuff == 1 && goblinCard3.ToughnessBuff == 0);
             });
         }
+
+        [Fact]
+        public void 自分クリーチャーの被ダメージを軽減する()
+        {
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 2, 2);
+            goblin.TurnCountToCanAttack = 0;
+
+            var testCardDef = TestCards.shield;
+            testCardDef.BaseCost = 0;
+
+            var testCardFactory = new CardFactory();
+            testCardFactory.SetCardPool(new[] { goblin, testCardDef });
+
+            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null);
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 先攻
+            var goblinCard = TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                var goblinCard = TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
+
+                var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                return goblinCard;
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                var goblinCard2 = TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
+                testGameMaster.AttackToCreature(pId, goblinCard2.Id, goblinCard.Id);
+
+                // 1ダメージしか受けない
+                Assert.Equal(goblinCard.BaseToughness - 1, goblinCard.Toughness);
+            });
+        }
+
+        [Fact]
+        public void 自分プレイヤーの被ダメージを軽減する()
+        {
+            var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 2, 2);
+            goblin.TurnCountToCanAttack = 0;
+
+            var testCardDef = TestCards.wall;
+            testCardDef.BaseCost = 0;
+
+            var testCardFactory = new CardFactory();
+            testCardFactory.SetCardPool(new[] { goblin, testCardDef });
+
+            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null);
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 先攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                var goblinCard = TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
+                testGameMaster.AttackToPlayer(pId, goblinCard.Id, player1Id);
+
+                // 1ダメージしか受けない
+                Assert.Equal(g.PlayersById[player1Id].MaxHp - 1, g.PlayersById[player1Id].Hp);
+            });
+        }
+
+        //[Fact]
+        //public void 自分のクリーチャーの攻撃ダメージを増加する()
+        //{
+        //    var goblin = CardDef.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 3);
+        //    goblin.TurnCountToCanAttack = 0;
+
+        //    var testCardDef = TestCards.holyKnight;
+        //    testCardDef.BaseCost = 0;
+
+        //    var testCardFactory = new CardFactory();
+        //    testCardFactory.SetCardPool(new[] { goblin, testCardDef });
+
+        //    var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null);
+
+        //    var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+        //    var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+        //    testGameMaster.Start(player1Id);
+
+        //    // 先攻
+        //    var goblinCard = TestUtil.Turn(testGameMaster, (g, pId) =>
+        //    {
+        //        return TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
+        //    });
+
+        //    // 後攻
+        //    TestUtil.Turn(testGameMaster, (g, pId) =>
+        //    {
+        //        var goblinCard2 = TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
+        //        TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+        //        // クリーチャーへ攻撃
+        //        g.AttackToCreature(pId, goblinCard2.Id, goblinCard.Id);
+        //        Assert.Equal(goblinCard.BaseToughness, goblinCard.Toughness);
+
+        //        // プレイヤーへ攻撃
+        //        g.AttackToPlayer(pId, goblinCard2.Id, player1Id);
+        //        Assert.Equal(g.PlayersById[player1Id].MaxHp, g.PlayersById[player1Id].Hp);
+        //    });
+        //}
     }
 }

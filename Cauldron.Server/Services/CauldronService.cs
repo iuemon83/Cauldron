@@ -55,7 +55,7 @@ namespace Cauldron.Server
 
         private ChoiceResult AskCard(Guid playerId, ChoiceResult choiceResult, int numPicks)
         {
-            var pickedPlayers = choiceResult.PlayerIdList.Take(numPicks).ToArray();
+            var pickedPlayers = choiceResult.PlayerList.Take(numPicks).ToArray();
             numPicks -= pickedPlayers.Length;
 
             var pickedCards = choiceResult.CardList.Take(numPicks).ToArray();
@@ -65,7 +65,7 @@ namespace Cauldron.Server
 
             return new ChoiceResult()
             {
-                PlayerIdList = pickedPlayers,
+                PlayerList = pickedPlayers,
                 CardList = pickedCards,
                 CardDefList = pickedCarddefs
             };
