@@ -1,12 +1,12 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
-    public class EffectActionModifyCard
+    public class EffectActionModifyCard : IEffectAction
     {
         public Choice Choice { get; set; }
         public int Power { get; set; }
         public int Toughness { get; set; }
 
-        public bool Execute(Card ownerCard, EffectEventArgs args)
+        public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs args)
         {
             var targets = args.GameMaster.ChoiceCards(ownerCard, this.Choice, args).CardList;
 
@@ -18,7 +18,7 @@
                 done = true;
             }
 
-            return done;
+            return (done, args);
         }
     }
 }

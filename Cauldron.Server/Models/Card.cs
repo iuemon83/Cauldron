@@ -52,6 +52,8 @@ namespace Cauldron.Server.Models
         /// </summary>
         public int TurnCountInField { get; set; }
 
+        public ZoneType Zone { get; set; }
+
         public Card(CardDef cardDef)
         {
             this.Id = Guid.NewGuid();

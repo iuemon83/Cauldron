@@ -3,25 +3,23 @@ using System.Collections.Generic;
 
 namespace Cauldron.Server.Models
 {
-    public class CardEffect
+    public record CardEffect(EffectTiming Timing, IReadOnlyList<IEffectAction> Actions)
     {
-        public EffectTiming Timing { get; set; }
-
-        public IReadOnlyList<IEffectAction> Actions { get; set; }
-
-        public bool Execute(Card ownerCard, EffectEventArgs args)
+        public (bool, EffectEventArgs) DoIfMatched(Card effectOwnerCard, EffectEventArgs args)
         {
-            if (!this.Timing.Match(args.EffectType, args.GameMaster.ActivePlayer.Id, ownerCard, args)) return false;
+            if (!this.Timing.IsMatch(effectOwnerCard, args)) return (false, args);
 
             var done = false;
+            var newArgs = args;
             foreach (var action in this.Actions)
             {
-                done = action.Execute(ownerCard, args) || done;
+                var (done2, newArgs2) = action.Execute(effectOwnerCard, newArgs);
+
+                done = done || done2;
+                newArgs = newArgs2;
             }
 
-            return done;
+            return (done, newArgs);
         }
-
-        public bool MatchTiming(GameEvent gameEvent) => this.Timing.Match(gameEvent);
     }
 }

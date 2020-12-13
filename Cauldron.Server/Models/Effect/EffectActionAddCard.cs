@@ -2,12 +2,12 @@
 
 namespace Cauldron.Server.Models.Effect
 {
-    public class EffectActionAddCard
+    public class EffectActionAddCard : IEffectAction
     {
         public Choice Choice { get; set; }
         public ZoneType ZoneToAddCard { get; set; }
 
-        public bool Execute(Card ownerCard, EffectEventArgs args)
+        public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs args)
         {
             var newCardDefs = args.GameMaster.ChoiceCards(ownerCard, this.Choice, args).CardDefList;
 
@@ -36,10 +36,10 @@ namespace Cauldron.Server.Models.Effect
                     break;
 
                 default:
-                    return false;
+                    break;
             }
 
-            return done;
+            return (done, args);
         }
     }
 }

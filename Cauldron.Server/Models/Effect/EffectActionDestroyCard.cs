@@ -3,11 +3,11 @@
     /// <summary>
     /// カード効果で、カードを破壊する処理
     /// </summary>
-    public class EffectActionDestroyCard
+    public class EffectActionDestroyCard : IEffectAction
     {
         public Choice Choice { get; set; }
 
-        public bool Execute(Card ownerCard, EffectEventArgs args)
+        public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs args)
         {
             var choiceResult = args.GameMaster.ChoiceCards(ownerCard, this.Choice, args);
 
@@ -19,7 +19,7 @@
                 done = true;
             }
 
-            return done;
+            return (done, args);
         }
     }
 }

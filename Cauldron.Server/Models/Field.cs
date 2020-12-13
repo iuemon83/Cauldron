@@ -30,7 +30,7 @@ namespace Cauldron.Server.Models
             this.CardsById.Add(card.Id, card);
         }
 
-        public void Destroy(Card card)
+        public void Remove(Card card)
         {
             this.CardsById.Remove(card.Id);
         }

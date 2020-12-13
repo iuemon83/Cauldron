@@ -1,12 +1,9 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
-    public class BattleContext
-    {
-        public Card AttackCard { get; set; }
-        public Card GuardCard { get; set; }
-
-        public Player GuardPlayer { get; set; }
-
-        public int Value { get; set; }
-    }
+    public record BattleContext(
+        Card AttackCard,
+        int Value,
+        Card GuardCard = null,
+        Player GuardPlayer = null
+        );
 }

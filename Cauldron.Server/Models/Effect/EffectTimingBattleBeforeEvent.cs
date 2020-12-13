@@ -13,7 +13,7 @@
             Guard,
         }
 
-        public bool Match(Card effectOwnerCard, EffectEventArgs eventArgs)
+        public bool IsMatch(Card effectOwnerCard, EffectEventArgs eventArgs)
         {
             var playerMatch = this.Source switch
             {

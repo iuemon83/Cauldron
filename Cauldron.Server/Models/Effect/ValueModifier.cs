@@ -2,7 +2,7 @@
 
 namespace Cauldron.Server.Models.Effect
 {
-    public class ValueModifier
+    public record ValueModifier(ValueModifier.ValueModifierOperator Operator, int Value)
     {
         public enum ValueModifierOperator
         {
@@ -11,9 +11,6 @@ namespace Cauldron.Server.Models.Effect
             Multi,
             Div,
         }
-
-        public ValueModifierOperator Operator { get; set; }
-        public int Value { get; set; }
 
         public int Modify(int value)
         {

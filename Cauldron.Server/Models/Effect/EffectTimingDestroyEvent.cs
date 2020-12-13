@@ -10,7 +10,7 @@ namespace Cauldron.Server.Models.Effect
             Other
         }
 
-        public bool Match(Card ownerCard, Card source)
+        public bool IsMatch(Card ownerCard, Card source)
         {
             return this.Source switch
             {

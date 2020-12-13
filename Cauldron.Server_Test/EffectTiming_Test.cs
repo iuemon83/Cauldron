@@ -17,13 +17,13 @@ namespace Cauldron.Server_Test
 
             public Action<Card, EffectEventArgs> Action { get; set; }
 
-            public bool Execute(Card ownerCard, EffectEventArgs effectEventArgs)
+            public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs effectEventArgs)
             {
                 this.CallCount++;
 
                 this.Action?.Invoke(ownerCard, effectEventArgs);
 
-                return true;
+                return (true, effectEventArgs);
             }
         }
 
@@ -31,19 +31,14 @@ namespace Cauldron.Server_Test
         public void すべてのターン開始時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            StartTurn = new EffectTimingStartTurnEvent()
-                            {
-                                Source = EffectTimingStartTurnEvent.EventSource.Both,
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField,
+                            StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Both)
+                        ),
+                        new[]{ testAction }
+                    )
                 });
 
             var testCardFactory = new CardFactory();
@@ -86,19 +81,12 @@ namespace Cauldron.Server_Test
         public void 自分のターン開始時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            StartTurn = new EffectTimingStartTurnEvent()
-                            {
-                                Source = EffectTimingStartTurnEvent.EventSource.Owner,
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Owner)),
+                        new[]{ testAction }
+                    )
                 });
 
             var testCardFactory = new CardFactory();
@@ -141,19 +129,12 @@ namespace Cauldron.Server_Test
         public void 相手のターン開始時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            StartTurn = new EffectTimingStartTurnEvent()
-                            {
-                                Source = EffectTimingStartTurnEvent.EventSource.Other,
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Other)),
+                        new[]{ testAction }
+                    )
                 });
 
             var testCardFactory = new CardFactory();
@@ -196,19 +177,14 @@ namespace Cauldron.Server_Test
         public void すべてのターン終了時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            EndTurn = new EffectTimingEndTurnEvent()
-                            {
-                                Source = EffectTimingEndTurnEvent.EventSource.Both,
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField,
+                            EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.Both)
+                        ),
+                        new[]{ testAction }
+                    )
                 });
 
             var testCardFactory = new CardFactory();
@@ -251,19 +227,12 @@ namespace Cauldron.Server_Test
         public void 自分のターン終了時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            EndTurn = new EffectTimingEndTurnEvent()
-                            {
-                                Source = EffectTimingEndTurnEvent.EventSource.Owner,
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, EndTurn : new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.You)),
+                        new[]{ testAction }
+                    )
                 });
 
             var testCardFactory = new CardFactory();
@@ -306,19 +275,12 @@ namespace Cauldron.Server_Test
         public void 相手のターン終了時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            EndTurn = new EffectTimingEndTurnEvent()
-                            {
-                                Source = EffectTimingEndTurnEvent.EventSource.Other,
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, EndTurn : new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.Opponent)),
+                        new[]{ testAction }
+                    )
                 });
 
             var testCardFactory = new CardFactory();
@@ -361,22 +323,15 @@ namespace Cauldron.Server_Test
         public void カードのプレイ時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source = EffectTimingPlayEvent.EventSource.This
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, Play : new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                        new[]{ testAction }
+                    )
                 });
 
-            var testNormalCardDef = CardDef.CreatureCard(0, $"test.test2", "test2", "test2", 1, 1);
+            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 1, 1);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
@@ -409,22 +364,15 @@ namespace Cauldron.Server_Test
         public void 他のカードのプレイ時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 1,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source = EffectTimingPlayEvent.EventSource.Other
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, Play : new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.Other)),
+                        new[]{ testAction }
+                    )
                 });
 
-            var testNormalCardDef = CardDef.CreatureCard(0, $"test.test2", "test2", "test2", 1, 1);
+            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 1, 1);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
@@ -457,23 +405,15 @@ namespace Cauldron.Server_Test
         public void 戦闘開始前時_すべてのクリーチャー()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 5,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            BattleBefore = new EffectTimingBattleBeforeEvent()
-                            {
-                                Source = EffectTimingBattleBeforeEvent.EventSource.All,
-                                CardCondition = new CardCondition()
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, BattleBefore : new EffectTimingBattleBeforeEvent(EffectTimingBattleBeforeEvent.EventSource.All, CardCondition : new CardCondition())),
+                        new[]{ testAction }
+                    )
                 });
 
-            var testNormalCardDef = CardDef.CreatureCard(0, $"test.test2", "test2", "test2", 1, 5);
+            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
@@ -530,26 +470,15 @@ namespace Cauldron.Server_Test
         public void 戦闘開始前時_自分が攻撃()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 5,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            BattleBefore = new EffectTimingBattleBeforeEvent()
-                            {
-                                Source = EffectTimingBattleBeforeEvent.EventSource.Attack,
-                                CardCondition = new CardCondition()
-                                {
-                                    Context = CardCondition.CardConditionContext.This
-                                }
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, BattleBefore : new EffectTimingBattleBeforeEvent(EffectTimingBattleBeforeEvent.EventSource.Attack, CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })),
+                        new[]{ testAction }
+                    )
                 });
 
-            var testNormalCardDef = CardDef.CreatureCard(0, $"test.test2", "test2", "test2", 1, 5);
+            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
@@ -603,26 +532,15 @@ namespace Cauldron.Server_Test
         public void 戦闘開始前時_自分が防御()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 5,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            BattleBefore = new EffectTimingBattleBeforeEvent()
-                            {
-                                Source = EffectTimingBattleBeforeEvent.EventSource.Guard,
-                                CardCondition = new CardCondition()
-                                {
-                                    Context = CardCondition.CardConditionContext.This
-                                }
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, BattleBefore : new EffectTimingBattleBeforeEvent(EffectTimingBattleBeforeEvent.EventSource.Guard, CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })),
+                        new[]{ testAction }
+                    )
                 });
 
-            var testNormalCardDef = CardDef.CreatureCard(0, $"test.test2", "test2", "test2", 1, 5);
+            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
@@ -676,26 +594,15 @@ namespace Cauldron.Server_Test
         public void 戦闘開始前時_他カードが攻撃()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 5,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            BattleBefore = new EffectTimingBattleBeforeEvent()
-                            {
-                                Source = EffectTimingBattleBeforeEvent.EventSource.Attack,
-                                CardCondition = new CardCondition()
-                                {
-                                    Context = CardCondition.CardConditionContext.Others
-                                }
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, BattleBefore : new EffectTimingBattleBeforeEvent(EffectTimingBattleBeforeEvent.EventSource.Attack, CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })),
+                        new[]{ testAction }
+                    )
                 });
 
-            var testNormalCardDef = CardDef.CreatureCard(0, $"test.test2", "test2", "test2", 1, 5);
+            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
@@ -741,26 +648,15 @@ namespace Cauldron.Server_Test
         public void 戦闘開始前時_他カードが防御()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 5,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            BattleBefore = new EffectTimingBattleBeforeEvent()
-                            {
-                                Source = EffectTimingBattleBeforeEvent.EventSource.Guard,
-                                CardCondition = new CardCondition()
-                                {
-                                    Context = CardCondition.CardConditionContext.Others
-                                }
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, BattleBefore : new EffectTimingBattleBeforeEvent(EffectTimingBattleBeforeEvent.EventSource.Guard, CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })),
+                        new[]{ testAction }
+                    )
                 });
 
-            var testNormalCardDef = CardDef.CreatureCard(0, $"test.test2", "test2", "test2", 1, 5);
+            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
@@ -806,23 +702,15 @@ namespace Cauldron.Server_Test
         public void 戦闘ダメージ前時_すべてのクリーチャー()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 5,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 0,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            DamageBefore = new EffectTimingDamageBeforeEvent()
-                            {
-                                Source = EffectTimingDamageBeforeEvent.EventSource.All,
-                                CardCondition = new CardCondition()
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, DamageBefore : new EffectTimingDamageBeforeEvent(EffectTimingDamageBeforeEvent.EventSource.All, CardCondition : new CardCondition())),
+                        new[]{ testAction }
+                    )
                 });
 
-            var testNormalCardDef = CardDef.CreatureCard(0, $"test.test2", "test2", "test2", 1, 5);
+            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 0);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
@@ -880,26 +768,17 @@ namespace Cauldron.Server_Test
         public void 戦闘ダメージ前時_自分が攻撃()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 5,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 0,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            DamageBefore = new EffectTimingDamageBeforeEvent()
-                            {
-                                Source = EffectTimingDamageBeforeEvent.EventSource.DamageSource,
-                                CardCondition = new CardCondition()
-                                {
-                                    Context = CardCondition.CardConditionContext.This
-                                }
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField,
+                            DamageBefore : new (EffectTimingDamageBeforeEvent.EventSource.DamageSource,
+                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })),
+                        new[]{ testAction }
+                    )
                 });
 
-            var testNormalCardDef = CardDef.CreatureCard(0, $"test.test2", "test2", "test2", 1, 5);
+            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 0);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
@@ -954,26 +833,15 @@ namespace Cauldron.Server_Test
         public void 戦闘ダメージ前時_ほかカードが防御()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 5,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 0,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            DamageBefore = new EffectTimingDamageBeforeEvent()
-                            {
-                                Source = EffectTimingDamageBeforeEvent.EventSource.Guard,
-                                CardCondition = new CardCondition()
-                                {
-                                    Context = CardCondition.CardConditionContext.Others
-                                }
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                    new CardEffect(
+                        new EffectTiming(ZoneType.YouField, DamageBefore : new EffectTimingDamageBeforeEvent(EffectTimingDamageBeforeEvent.EventSource.Guard, CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })),
+                        new[]{ testAction }
+                    )
                 });
 
-            var testNormalCardDef = CardDef.CreatureCard(0, $"test.test2", "test2", "test2", 1, 5);
+            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 0);
 
             var testCardFactory = new CardFactory();
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
@@ -1026,42 +894,36 @@ namespace Cauldron.Server_Test
         }
 
         [Fact]
-        public void 戦闘以外のダメージ前時_自分がが防御()
+        public void 戦闘以外のダメージ前時_自分が防御()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.CreatureCard(0, $"test.test", "test", "test", 1, 5,
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            DamageBefore = new EffectTimingDamageBeforeEvent()
-                            {
-                                Source = EffectTimingDamageBeforeEvent.EventSource.Guard,
-                                CardCondition = new CardCondition()
+                    new CardEffect(
+                        new EffectTiming(
+                            ZoneType.YouField,
+                            DamageBefore: new EffectTimingDamageBeforeEvent(
+                                EffectTimingDamageBeforeEvent.EventSource.Guard,
+                                CardCondition: new CardCondition()
                                 {
                                     Context = CardCondition.CardConditionContext.This
                                 }
-                            }
-                        },
-                        Actions = new[]{ testAction }
-                    }
+                            )
+                        ),
+                        new[]{ testAction }
+                    )
                 });
 
             // クリーチャーに1ダメージの魔法
-            var testSorcery = CardDef.SorceryCard(0, $"test.test2", "test2", "test2",
+            var testSorceryDef = CardDef.Sorcery(0, $"test.test2", "test2", "test2",
                 effects: new[]
                 {
-                    new CardEffect()
-                    {
-                        Timing = new EffectTiming()
-                        {
-                            Play = new EffectTimingPlayEvent()
-                            {
-                                Source = EffectTimingPlayEvent.EventSource.This
-                            }
-                        },
-                        Actions = new[]
+                    new CardEffect(
+                        new EffectTiming(
+                            ZoneType.YouField,
+                            Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
+                        ),
+                        new[]
                         {
                             new EffectAction()
                             {
@@ -1072,17 +934,18 @@ namespace Cauldron.Server_Test
                                         CardCondition = new CardCondition()
                                         {
                                             ZoneCondition = ZoneType.Field,
-                                        }
+                                            TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
+                                        },
                                     },
                                     Value = 1
                                 }
                             }
                         }
-                    }
+                    )
                 });
 
             var testCardFactory = new CardFactory();
-            testCardFactory.SetCardPool(new[] { testCardDef, testSorcery });
+            testCardFactory.SetCardPool(new[] { testCardDef, testSorceryDef });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null);
@@ -1098,7 +961,48 @@ namespace Cauldron.Server_Test
                 TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 Assert.Equal(0, testAction.CallCount);
-                TestUtil.NewCardAndPlayFromHand(g, pId, testSorcery.Id);
+                TestUtil.NewCardAndPlayFromHand(g, pId, testSorceryDef.Id);
+                Assert.Equal(1, testAction.CallCount);
+            });
+        }
+
+        [Fact]
+        public void 自分の破壊時()
+        {
+            var testAction = new TestEffectAction();
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
+                effects: new[]{
+                    new CardEffect(
+                        new EffectTiming(
+                            ZoneType.YouCemetery,
+                            Destroy: new (EffectTimingDestroyEvent.EventSource.This)
+                        ),
+                        new[]{ testAction }
+                    )
+                });
+
+            var testCardFactory = new CardFactory();
+            testCardFactory.SetCardPool(new[] { testCardDef });
+
+            // 以下テスト
+            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null);
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 先攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(0, testAction.CallCount);
+                TestUtil.AssertGameAction(() =>
+                {
+                    g.DestroyCard(testCard);
+                    return (true, "");
+                });
                 Assert.Equal(1, testAction.CallCount);
             });
         }

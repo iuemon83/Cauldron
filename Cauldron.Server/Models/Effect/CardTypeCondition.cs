@@ -3,11 +3,8 @@ using System.Linq;
 
 namespace Cauldron.Server.Models.Effect
 {
-    public class CardTypeCondition
+    public record CardTypeCondition(IReadOnlyList<CardType> Value, bool Not = false)
     {
-        public IReadOnlyList<CardType> Value { get; set; }
-        public bool Not { get; set; }
-
         public bool IsMatch(CardType checkValue)
         {
             var result = this.Value.Contains(checkValue);

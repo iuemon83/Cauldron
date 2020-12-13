@@ -43,6 +43,11 @@
         OnGainLife,
 
         /// <summary>
+        /// カードの領域間の移動時
+        /// </summary>
+        OnMoveCard,
+
+        /// <summary>
         /// ターン開始時
         /// </summary>
         OnStartTurn,

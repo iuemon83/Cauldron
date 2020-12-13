@@ -14,22 +14,7 @@ namespace Cauldron.Server
             Func<Guid, ChoiceResult, int, ChoiceResult> askCardAction)
         {
             var id = Guid.NewGuid();
-            var cruleBook = new RuleBook()
-            {
-                InitialMp = ruleBook.InitialMp,
-                InitialNumHands = ruleBook.InitialNumHands,
-                InitialPlayerHp = ruleBook.InitialPlayerHp,
-                MaxMp = ruleBook.MaxMp,
-                MaxNumDeckCards = ruleBook.MaxNumDeckCards,
-                MaxNumFieldCars = ruleBook.MaxNumFieldCars,
-                MaxNumHands = ruleBook.MaxNumHands,
-                MaxPlayerHp = ruleBook.MaxPlayerHp,
-                MinMp = ruleBook.MinMp,
-                MinNumDeckCards = ruleBook.MinNumDeckCards,
-                MinPlayerHp = ruleBook.MinPlayerHp,
-                MpByStep = ruleBook.MpByStep
-            };
-            var gameMaster = new GameMaster(cruleBook, cardFactory, logger, askCardAction);
+            var gameMaster = new GameMaster(new RuleBook(ruleBook), cardFactory, logger, askCardAction);
             gameMasterListByGameId.Add(id, gameMaster);
 
             return id;

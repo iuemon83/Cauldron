@@ -1,6 +1,9 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
-    public class PlayerCondition
+    public record PlayerCondition(
+        PlayerCondition.PlayerConditionContext Context = PlayerCondition.PlayerConditionContext.All,
+        PlayerCondition.PlayerConditionType Type = PlayerCondition.PlayerConditionType.All
+        )
     {
         public enum PlayerConditionContext
         {
@@ -11,15 +14,11 @@
         public enum PlayerConditionType
         {
             All,
-            Owner,
-            NotOwner,
+            You,
+            Opponent,
             Active,
             NonActive,
         }
-
-        public PlayerConditionContext Context { get; set; } = PlayerConditionContext.All;
-
-        public PlayerConditionType Type { get; set; } = PlayerConditionType.All;
 
         public bool IsMatch(Card effectOwnerCard, Player player, EffectEventArgs eventArgs)
         {
@@ -31,8 +30,8 @@
                 }
                 && this.Type switch
                 {
-                    PlayerConditionType.Owner => player.Id == effectOwnerCard.OwnerId,
-                    PlayerConditionType.NotOwner => player.Id != effectOwnerCard.OwnerId,
+                    PlayerConditionType.You => player.Id == effectOwnerCard.OwnerId,
+                    PlayerConditionType.Opponent => player.Id != effectOwnerCard.OwnerId,
                     PlayerConditionType.Active => player.Id == eventArgs.GameMaster.ActivePlayer.Id,
                     PlayerConditionType.NonActive => player.Id != eventArgs.GameMaster.ActivePlayer.Id,
                     _ => true

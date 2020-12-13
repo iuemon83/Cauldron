@@ -7,7 +7,7 @@
             this.InitialMp = source.InitialMp;
             this.InitialNumHands = source.InitialNumHands;
             this.InitialPlayerHp = source.InitialPlayerHp;
-            this.MaxMp = source.MaxMp;
+            this.MaxMp = source.MaxLimitMp;
             this.MaxNumDeckCards = source.MaxNumDeckCards;
             this.MaxNumFieldCars = source.MaxNumFieldCars;
             this.MaxNumHands = source.MaxNumHands;

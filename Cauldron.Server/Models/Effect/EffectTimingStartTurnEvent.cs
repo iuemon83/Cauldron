@@ -2,7 +2,7 @@
 
 namespace Cauldron.Server.Models.Effect
 {
-    public class EffectTimingStartTurnEvent
+    public record EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource Source)
     {
         public enum EventSource
         {
@@ -11,9 +11,7 @@ namespace Cauldron.Server.Models.Effect
             Both
         }
 
-        public EventSource Source { get; set; }
-
-        public bool Match(Guid turnPlayerId, Card ownerCard)
+        public bool IsMatch(Guid turnPlayerId, Card ownerCard)
         {
             return this.Source switch
             {

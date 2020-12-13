@@ -1,8 +1,7 @@
-﻿using System;
-
-namespace Cauldron.Server.Models.Effect
+﻿namespace Cauldron.Server.Models.Effect
 {
     public record EffectTiming(
+        ZoneType Zone,
         EffectTimingStartTurnEvent StartTurn = null,
         EffectTimingEndTurnEvent EndTurn = null,
         EffectTimingPlayEvent Play = null,
@@ -10,39 +9,28 @@ namespace Cauldron.Server.Models.Effect
         EffectTimingDamageBeforeEvent DamageBefore = null,
         EffectTimingDamageAfterEvent DamageAfter = null,
         EffectTimingBattleBeforeEvent BattleBefore = null,
-        EffectTimingBattleAfterEvent BattleAfter = null
+        EffectTimingBattleAfterEvent BattleAfter = null,
+        EffectTimingMoveCardEvent MoveCard = null
         )
     {
-        public bool Match(GameEvent gameEvent)
+        public bool IsMatch(Card effectOwnerCard, EffectEventArgs eventArgs)
         {
-            return gameEvent switch
-            {
-                GameEvent.OnStartTurn => this.StartTurn != null,
-                GameEvent.OnEndTurn => this.EndTurn != null,
-                GameEvent.OnPlay => this.Play != null,
-                GameEvent.OnDestroy => this.Destroy != null,
-                GameEvent.OnDamageBefore => this.DamageBefore != null,
-                GameEvent.OnDamage => this.DamageAfter != null,
-                GameEvent.OnBattleBefore => this.BattleBefore != null,
-                GameEvent.OnBattle => this.BattleAfter != null,
-                _ => throw new InvalidOperationException()
-            };
-        }
+            var isMatchedZone = effectOwnerCard.Zone == this.Zone;
 
-        public bool Match(GameEvent effectType, Guid turnPlayerId, Card ownerCard, EffectEventArgs eventArgs)
-        {
-            return effectType switch
-            {
-                GameEvent.OnStartTurn => this.StartTurn?.Match(turnPlayerId, ownerCard) ?? false,
-                GameEvent.OnEndTurn => this.EndTurn?.Match(turnPlayerId, ownerCard) ?? false,
-                GameEvent.OnPlay => this.Play?.Match(ownerCard, eventArgs.SourceCard) ?? false,
-                GameEvent.OnDestroy => this.Destroy?.Match(ownerCard, eventArgs.SourceCard) ?? false,
-                GameEvent.OnDamageBefore => this.DamageBefore?.IsMatch(ownerCard, eventArgs) ?? false,
-                GameEvent.OnDamage => this.DamageAfter?.IsMatch(ownerCard, eventArgs) ?? false,
-                GameEvent.OnBattleBefore => this.BattleBefore?.Match(ownerCard, eventArgs) ?? false,
-                GameEvent.OnBattle => this.BattleAfter?.Match(ownerCard, eventArgs) ?? false,
-                _ => false,
-            };
+            return isMatchedZone
+                && eventArgs.GameEvent switch
+                {
+                    GameEvent.OnStartTurn => this.StartTurn?.IsMatch(eventArgs.GameMaster.ActivePlayer.Id, effectOwnerCard) ?? false,
+                    GameEvent.OnEndTurn => this.EndTurn?.IsMatch(eventArgs.GameMaster.ActivePlayer.Id, effectOwnerCard) ?? false,
+                    GameEvent.OnPlay => this.Play?.IsMatch(effectOwnerCard, eventArgs.SourceCard) ?? false,
+                    GameEvent.OnDestroy => this.Destroy?.IsMatch(effectOwnerCard, eventArgs.SourceCard) ?? false,
+                    GameEvent.OnDamageBefore => this.DamageBefore?.IsMatch(effectOwnerCard, eventArgs) ?? false,
+                    GameEvent.OnDamage => this.DamageAfter?.IsMatch(effectOwnerCard, eventArgs) ?? false,
+                    GameEvent.OnBattleBefore => this.BattleBefore?.IsMatch(effectOwnerCard, eventArgs) ?? false,
+                    GameEvent.OnBattle => this.BattleAfter?.IsMatch(effectOwnerCard, eventArgs) ?? false,
+                    GameEvent.OnMoveCard => this.MoveCard?.IsMatch(effectOwnerCard, eventArgs) ?? false,
+                    _ => false,
+                };
         }
     }
 }

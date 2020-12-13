@@ -9,7 +9,7 @@ namespace Cauldron.Server_Test
 {
     class TestUtil
     {
-        public static void AssertPhase(Func<(bool, string)> phase)
+        public static void AssertGameAction(Func<(bool, string)> phase)
         {
             var (isSucceeded, errorMessage) = phase();
             Assert.True(isSucceeded, errorMessage);
@@ -66,7 +66,7 @@ namespace Cauldron.Server_Test
         {
             var newCard = testGameMaster.GenerateNewCard(cardDefId, playerId);
             testGameMaster.AddHand(testGameMaster.ActivePlayer, newCard);
-            TestUtil.AssertPhase(() => testGameMaster.PlayFromHand(playerId, newCard.Id));
+            TestUtil.AssertGameAction(() => testGameMaster.PlayFromHand(playerId, newCard.Id));
 
             return newCard;
         }

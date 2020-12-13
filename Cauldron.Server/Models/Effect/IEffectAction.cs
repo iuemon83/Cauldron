@@ -2,6 +2,6 @@
 {
     public interface IEffectAction
     {
-        public bool Execute(Card ownerCard, EffectEventArgs effectEventArgs);
+        public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs effectEventArgs);
     }
 }
