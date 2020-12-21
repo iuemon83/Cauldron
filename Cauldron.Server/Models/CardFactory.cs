@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,11 +7,11 @@ namespace Cauldron.Server.Models
 {
     public class CardFactory
     {
-        private Dictionary<Guid, CardDef> CardDefListById { get; } = new Dictionary<Guid, CardDef>();
+        private ConcurrentDictionary<Guid, CardDef> CardDefListById { get; } = new();
 
-        private Dictionary<string, CardDef> CardDefListByFullName { get; } = new Dictionary<string, CardDef>();
+        private ConcurrentDictionary<string, CardDef> CardDefListByFullName { get; } = new();
 
-        private Dictionary<Guid, Card> CardsById { get; } = new Dictionary<Guid, Card>();
+        private ConcurrentDictionary<Guid, Card> CardsById { get; } = new();
 
         public IEnumerable<Card> GetAllCards => this.CardsById.Values;
 
@@ -25,8 +26,8 @@ namespace Cauldron.Server.Models
                     throw new InvalidOperationException($"Card Type: {cardDef.Type}");
                 }
 
-                this.CardDefListById.Add(cardDef.Id, cardDef);
-                this.CardDefListByFullName.Add(cardDef.FullName, cardDef);
+                this.CardDefListById.TryAdd(cardDef.Id, cardDef);
+                this.CardDefListByFullName.TryAdd(cardDef.FullName, cardDef);
             }
         }
 
@@ -39,7 +40,7 @@ namespace Cauldron.Server.Models
         public Card CreateNew(Guid classId)
         {
             var card = new Card(CardDefListById[classId]);
-            this.CardsById.Add(card.Id, card);
+            this.CardsById.TryAdd(card.Id, card);
 
             return card;
         }

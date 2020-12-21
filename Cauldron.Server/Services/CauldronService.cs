@@ -1,10 +1,10 @@
 using Cauldron.Grpc.Api;
-using Cauldron.Grpc.Models;
 using Cauldron.Server.Models;
 using Cauldron.Server.Models.Effect;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,7 +12,37 @@ namespace Cauldron.Server
 {
     public class CauldronService : Cauldron.Grpc.Api.Cauldron.CauldronBase
     {
+        private static Grpc.Models.GameContext CreateGameContext(Guid gameId, Guid PlayerId)
+        {
+            var gameMaster = new GameMasterRepository().GetById(gameId);
+
+            var gameContext = gameMaster.CreateGameContext(PlayerId);
+
+            return new Grpc.Models.GameContext()
+            {
+                GameOver = gameContext.GameOver,
+                //RuleBook
+                WinnerPlayerId = gameContext.WinnerPlayerId.ToString(),
+                You = new Grpc.Models.PrivatePlayerInfo(gameContext.You),
+                Opponent = new Grpc.Models.PublicPlayerInfo(gameContext.Opponent),
+                RuleBook = new Grpc.Models.RuleBook(gameContext.RuleBook)
+            };
+        }
+
+        private static void NotifyClient(Guid playerId, ReadyGameReply clientNotify)
+        {
+            if (!queueByGameId.TryGetValue(playerId, out var messageQueue))
+            {
+                throw new ArgumentException($"指定されたゲームが存在しない: {playerId}");
+            }
+
+            messageQueue.Enqueue(clientNotify);
+        }
+
+        private static readonly ConcurrentDictionary<Guid, ConcurrentQueue<ReadyGameReply>> queueByGameId = new();
+
         private readonly ILogger<CauldronService> _logger;
+
         public CauldronService(ILogger<CauldronService> logger)
         {
             _logger = logger;
@@ -24,7 +54,7 @@ namespace Cauldron.Server
             cardFactory.SetCardPool(new CardPool().Load());
 
             var gameId = new GameMasterRepository()
-                .Add(request.RuleBook, cardFactory, this._logger, this.AskCard);
+                .Add(request.RuleBook, cardFactory, this._logger, this.AskCard, (p, n) => NotifyClient(p, n));
 
             //var deckIds = request.Deck
             //    .Select(deckId => Guid.Parse(deckId));
@@ -87,26 +117,48 @@ namespace Cauldron.Server
             return base.SetDeck(request, context);
         }
 
-        public override Task ReadyGame(ReadyGameRequest request, IServerStreamWriter<ReadyGameReply> responseStream, ServerCallContext context)
+        public override async Task ReadyGame(ReadyGameRequest request, IServerStreamWriter<ReadyGameReply> responseStream, ServerCallContext context)
         {
             var gameId = Guid.Parse(request.GameId);
             var playerId = Guid.Parse(request.PlayerId);
 
+            var queue = new ConcurrentQueue<ReadyGameReply>();
+            queueByGameId.TryAdd(playerId, queue);
+
+            this._logger.LogInformation("二人揃ってない");
+
+            await responseStream.WriteAsync(new ReadyGameReply()
+            {
+                Code = ReadyGameReply.Types.Code.Ready
+            });
+
             Matching.Default.Ready(gameId, playerId, firstReadyPlayerId =>
             {
-                var gameMaster = new GameMasterRepository().GetById(gameId);
-                gameMaster.Start(firstReadyPlayerId);
+                this._logger.LogInformation("二人揃った");
+
+                if (playerId == firstReadyPlayerId)
+                {
+                    var gameMaster = new GameMasterRepository().GetById(gameId);
+                    gameMaster.Start(firstReadyPlayerId);
+                }
 
                 responseStream.WriteAsync(new ReadyGameReply()
                 {
-                    IsStart = true
+                    Code = ReadyGameReply.Types.Code.StartGame
                 });
             });
 
-            return responseStream.WriteAsync(new ReadyGameReply()
+            while (!context.CancellationToken.IsCancellationRequested)
             {
-                IsStart = false,
-            });
+                if (queue.TryDequeue(out var r))
+                {
+                    // メッセージがある
+                    r.GameContext = CreateGameContext(gameId, playerId);
+                    await responseStream.WriteAsync(r);
+                }
+            }
+
+            this._logger.LogInformation("切れた");
         }
 
         public override Task<EnterGameReply> EnterGame(EnterGameRequest request, ServerCallContext context)
@@ -126,23 +178,6 @@ namespace Cauldron.Server
                 }),
                 GameMasterStatusCode.IsIncludedTokensInDeck => throw new RpcException(new Status(StatusCode.InvalidArgument, "deck include token")),
                 _ => throw new RpcException(new Status(StatusCode.Unknown, "unknown error")),
-            };
-        }
-
-        private GameContext CreateGameContext(Guid gameId, Guid PlayerId)
-        {
-            var gameMaster = new GameMasterRepository().GetById(gameId);
-
-            var gameContext = gameMaster.CreateEnvironment(PlayerId);
-
-            return new GameContext()
-            {
-                GameOver = gameContext.GameOver,
-                //RuleBook
-                WinnerPlayerId = gameContext.WinnerPlayerId.ToString(),
-                You = new Grpc.Models.PrivatePlayerInfo(gameContext.You),
-                Opponent = new Grpc.Models.PublicPlayerInfo(gameContext.Opponent),
-                RuleBook = new Grpc.Models.RuleBook(gameContext.RuleBook)
             };
         }
 
@@ -185,12 +220,12 @@ namespace Cauldron.Server
 
             var playerId = Guid.Parse(request.PlayerId);
             var handCardId = Guid.Parse(request.HandCardId);
-            var (isSucceeded, errorMessage) = gameMaster.PlayFromHand(playerId, handCardId);
+            var statusCode = gameMaster.PlayFromHand(playerId, handCardId);
 
             return Task.FromResult(new PlayFromHandReply()
             {
-                Result = isSucceeded,
-                ErrorMessage = errorMessage,
+                Result = statusCode == GameMasterStatusCode.OK,
+                ErrorMessage = statusCode.ToString(),
                 GameContext = CreateGameContext(gameId, playerId)
             });
         }

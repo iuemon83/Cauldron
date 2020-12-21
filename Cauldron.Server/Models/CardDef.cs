@@ -39,7 +39,7 @@ namespace Cauldron.Server.Models
             };
         }
 
-        public static CardDef Sorcery(int cost, string fullName, string name, string flavorText, CardRequireToPlay require = null, IEnumerable<CardEffect> effects = null)
+        public static CardDef Sorcery(int cost, string fullName, string name, string flavorText, IEnumerable<CardEffect> effects = null)
         {
             return new CardDef()
             {
@@ -48,7 +48,6 @@ namespace Cauldron.Server.Models
                 FullName = fullName,
                 Name = name,
                 FlavorText = flavorText,
-                Require = require ?? new CardRequireToPlay(),
                 Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
             };
         }
@@ -71,8 +70,6 @@ namespace Cauldron.Server.Models
         public int BaseToughness { get; set; } = 0;
 
         public List<CreatureAbility> Abilities { get; set; } = new List<CreatureAbility>();
-
-        public CardRequireToPlay Require { get; set; } = new CardRequireToPlay(_ => true);
 
         public IReadOnlyList<CardEffect> Effects { get; set; } = Array.Empty<CardEffect>();
 

@@ -2,7 +2,7 @@
 {
     public partial class GameContext
     {
-        public GameContext(Server.Models.GameEnvironment source)
+        public GameContext(Server.Models.GameContext source)
         {
             this.GameOver = source.GameOver;
             this.WinnerPlayerId = source.WinnerPlayerId.ToString();

@@ -36,10 +36,6 @@ namespace Cauldron.Server.Models
 
         public List<CreatureAbility> Abilities { get; set; } = new List<CreatureAbility>();
 
-        public CardRequireToPlay Require = new CardRequireToPlay();
-
-        //public Dictionary<CardEffectType, CardEffect> EffectsByType { get; set; } = new Dictionary<CardEffectType, CardEffect>();
-
         public List<CardEffect> Effects { get; set; } = new List<CardEffect>();
 
         /// <summary>
@@ -68,15 +64,12 @@ namespace Cauldron.Server.Models
             this.BaseToughness = cardDef.BaseToughness;
 
             this.Abilities = cardDef.Abilities;
-            this.Require = cardDef.Require;
             this.Effects = cardDef.Effects.ToList();
             this.TurnCountToCanAttack = cardDef.TurnCountToCanAttack;
-            //this.EffectsByType = cardDef.Effects.ToDictionary(effect => effect.Type);
         }
 
         public void AddEffect(CardEffect effect)
         {
-            //this.EffectsByType.Add(effect.Type, effect);
             this.Effects.Add(effect);
         }
 

@@ -9,6 +9,6 @@
         public string ErrorMessage { get; set; } = "";
 
 
-        public GameEnvironment GameEnvironment { get; set; }
+        public GameContext GameEnvironment { get; set; }
     }
 }

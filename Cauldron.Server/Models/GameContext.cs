@@ -2,7 +2,7 @@
 
 namespace Cauldron.Server.Models
 {
-    public class GameEnvironment
+    public class GameContext
     {
         public bool GameOver { get; set; } = false;
         public Guid WinnerPlayerId { get; set; }

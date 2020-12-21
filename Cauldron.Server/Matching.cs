@@ -1,25 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Cauldron.Server
 {
     public class Matching
     {
-        public static Matching Default = new Matching();
+        public static readonly Matching Default = new Matching();
 
-        private readonly Dictionary<Guid, Guid> readPlayerIdListByGameId = new Dictionary<Guid, Guid>();
+        private readonly ConcurrentDictionary<Guid, (Guid FirstReadyPlayerId, Action<Guid> Callback)> readyFirstPlayerListByGameId = new();
 
         public void Ready(Guid gameId, Guid playerId, Action<Guid> startGameCallback)
         {
-            if (!this.readPlayerIdListByGameId.TryGetValue(gameId, out var firstReadyPlayerId))
+            if (this.readyFirstPlayerListByGameId.TryAdd(gameId, (playerId, startGameCallback)))
             {
-                this.readPlayerIdListByGameId.Add(gameId, playerId);
+                // 一人目ならなにもしない
                 return;
             }
 
-            if (playerId != firstReadyPlayerId)
+            var (FirstReadyPlayerId, Callback) = this.readyFirstPlayerListByGameId[gameId];
+
+            // 二人目ならゲーム開始
+            if (playerId != FirstReadyPlayerId)
             {
-                startGameCallback(firstReadyPlayerId);
+                Callback(FirstReadyPlayerId);
+                startGameCallback(FirstReadyPlayerId);
             }
         }
     }

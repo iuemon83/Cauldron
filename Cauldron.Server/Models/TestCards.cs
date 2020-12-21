@@ -1,5 +1,4 @@
 ﻿using Cauldron.Server.Models.Effect;
-using System.Linq;
 
 namespace Cauldron.Server.Models
 {
@@ -1070,11 +1069,6 @@ namespace Cauldron.Server.Models
             });
 
         public static readonly CardDef shippu = CardDef.Sorcery(2, $"{CardsetName}.疾風怒濤", "疾風怒濤", "テストソーサリー",
-            require: new CardRequireToPlay(environment =>
-            {
-                return environment.Opponent.Field.AllCards
-                    .Any(c => c.Type == CardType.Creature);
-            }),
             effects: new[]
             {
                 // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"

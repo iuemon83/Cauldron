@@ -1,6 +1,7 @@
 ﻿using Cauldron.Server.Models.Effect;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -38,7 +39,7 @@ namespace Cauldron.Server.Models
                 ;
         }
 
-        public static bool CanAttack(Card attackCard, Card guardCard, GameEnvironment environment)
+        public static bool CanAttack(Card attackCard, Card guardCard, GameContext environment)
         {
             var guardPlayer = environment.You.PublicPlayerInfo.Id == guardCard.OwnerId
                 ? environment.You.PublicPlayerInfo
@@ -70,7 +71,7 @@ namespace Cauldron.Server.Models
 
         private readonly CardFactory cardFactory;
 
-        public readonly Dictionary<Guid, Player> PlayersById = new Dictionary<Guid, Player>();
+        public readonly ConcurrentDictionary<Guid, Player> PlayersById = new();
 
         public Player ActivePlayer { get; set; }
 
@@ -80,7 +81,7 @@ namespace Cauldron.Server.Models
 
         public bool GameOver => this.PlayersById.Values.Any(player => player.CurrentHp <= 0);
 
-        public Dictionary<Guid, int> PlayerTurnCountById { get; set; } = new Dictionary<Guid, int>();
+        public ConcurrentDictionary<Guid, int> PlayerTurnCountById { get; set; } = new();
 
         public int AllTurnCount => this.PlayerTurnCountById.Sum(x => x.Value);
 
@@ -90,14 +91,17 @@ namespace Cauldron.Server.Models
 
         private readonly EffectManager effectManager;
 
+        private readonly Action<Guid, Grpc.Api.ReadyGameReply> notifyClient;
+
         public GameMaster(RuleBook ruleBook, CardFactory cardFactory, ILogger logger,
-            Func<Guid, ChoiceResult, int, ChoiceResult> askCardAction)
+            Func<Guid, ChoiceResult, int, ChoiceResult> askCardAction, Action<Guid, Grpc.Api.ReadyGameReply> notifyClient)
         {
             this.RuleBook = ruleBook;
             this.cardFactory = cardFactory;
             this.logger = logger;
             this.AskCardAction = askCardAction;
             this.effectManager = new EffectManager(logger);
+            this.notifyClient = notifyClient;
         }
 
         public (GameMasterStatusCode, Guid) CreateNewPlayer(string name, IEnumerable<Guid> deckCardDefIdList)
@@ -112,9 +116,9 @@ namespace Cauldron.Server.Models
             }
 
             var player = new Player(newId, name, this.RuleBook, deckCards);
-            this.PlayersById.Add(newId, player);
+            this.PlayersById.TryAdd(newId, player);
 
-            this.PlayerTurnCountById.Add(newId, 0);
+            this.PlayerTurnCountById.TryAdd(newId, 0);
 
             return (GameMasterStatusCode.OK, newId);
         }
@@ -129,6 +133,11 @@ namespace Cauldron.Server.Models
             {
                 this.Draw(player.Id, this.RuleBook.InitialNumHands);
             }
+
+            this.notifyClient(this.ActivePlayer.Id, new Grpc.Api.ReadyGameReply()
+            {
+                Code = Grpc.Api.ReadyGameReply.Types.Code.StartTurn,
+            });
         }
 
         public Player GetWinner()
@@ -322,30 +331,67 @@ namespace Cauldron.Server.Models
 
             card.Zone = moveCardContext.To;
 
+            var publicZones = new[] { ZoneType.YouField, ZoneType.OpponentField, ZoneType.YouCemetery, ZoneType.OpponentCemetery };
+            var isPublic = publicZones.Contains(moveCardContext.From)
+                || publicZones.Contains(moveCardContext.To);
+
+            // カードの持ち主には無条件に通知する
+            //this.notifyClient(card.OwnerId, new ClientNotify(MoveCardNotify: new MoveCardNotify(card.Id, moveCardContext.To)));
+            this.notifyClient(card.OwnerId, new Grpc.Api.ReadyGameReply()
+            {
+                Code = Grpc.Api.ReadyGameReply.Types.Code.MoveCard,
+                MoveCardNotify = new Grpc.Api.MoveCardNotify()
+                {
+                    CardId = card.Id.ToString(),
+                    ToZone = moveCardContext.To.ToString()
+                }
+            });
+
+            // カードの持ち主以外への通知は
+            // 移動元か移動後どちらかの領域が公開領域の場合のみ
+            if (isPublic)
+            {
+                //this.notifyClient(this.GetOpponent(card.OwnerId).Id, new ClientNotify(MoveCardNotify: new MoveCardNotify(card.Id, moveCardContext.To)));
+                this.notifyClient(this.GetOpponent(card.OwnerId).Id, new Grpc.Api.ReadyGameReply()
+                {
+                    Code = Grpc.Api.ReadyGameReply.Types.Code.MoveCard,
+                    MoveCardNotify = new Grpc.Api.MoveCardNotify()
+                    {
+                        CardId = card.Id.ToString(),
+                        ToZone = moveCardContext.To.ToString()
+                    }
+                });
+            }
+
             // カードの移動イベント
             this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: card, MoveCardContext: moveCardContext));
         }
 
-        public GameEnvironment CreateEnvironment(Guid playerId)
+        public GameContext CreateGameContext(Guid playerId)
         {
-            return new GameEnvironment()
+            return new GameContext()
             {
                 GameOver = this.GameOver,
                 WinnerPlayerId = this.GetWinner()?.Id ?? Guid.Empty,
-                You = playerId == this.ActivePlayer.Id
-                    ? new PrivatePlayerInfo(this.ActivePlayer)
-                    : new PrivatePlayerInfo(this.GetOpponent(this.ActivePlayer.Id)),
-
-                Opponent = playerId == this.ActivePlayer.Id
-                    ? new PublicPlayerInfo(this.GetOpponent(this.ActivePlayer.Id))
-                    : new PublicPlayerInfo(this.ActivePlayer),
+                You = new PrivatePlayerInfo(this.PlayersById[playerId]),
+                Opponent = new PublicPlayerInfo(this.GetOpponent(playerId)),
                 RuleBook = this.RuleBook
             };
         }
 
-        public GameEnvironment GetEnvironment(Guid playerId)
+        public GameMasterStatusCode Resolve(Guid playerId, Func<Guid, GameMasterStatusCode> action)
         {
-            return this.CreateEnvironment(playerId);
+            if (this.GameOver)
+            {
+                return GameMasterStatusCode.GameOver;
+            }
+
+            if (playerId != this.ActivePlayer.Id)
+            {
+                return GameMasterStatusCode.NotActivePlayer;
+            }
+
+            return action(playerId);
         }
 
         public (bool IsSucceeded, string errorMessage) StartTurn(Guid playerId)
@@ -401,6 +447,11 @@ namespace Cauldron.Server.Models
 
             this.ActivePlayer = this.NextPlayer;
             this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
+            //this.notifyClient(this.ActivePlayer.Id, new ClientNotify(StartTurnNotify: new StartTurnNotify()));
+            this.notifyClient(this.ActivePlayer.Id, new Grpc.Api.ReadyGameReply()
+            {
+                Code = Grpc.Api.ReadyGameReply.Types.Code.StartTurn,
+            });
 
             return (true, "");
         }
@@ -451,27 +502,32 @@ namespace Cauldron.Server.Models
         /// <param name="playerId"></param>
         /// <param name="handCardId"></param>
         /// <returns></returns>
-        public (bool IsSucceeded, string errorMessage) PlayFromHand(Guid playerId, Guid handCardId)
+        public GameMasterStatusCode PlayFromHand(Guid playerId, Guid handCardId)
         {
             if (this.GameOver)
             {
-                return (false, "すでにゲームが終了しています。");
+                return GameMasterStatusCode.GameOver;
             }
 
             if (playerId != this.ActivePlayer.Id)
             {
-                return (false, "このプレイヤーのターンではありません。");
+                return GameMasterStatusCode.NotActivePlayer;
             }
 
             var player = this.PlayersById[playerId];
-            var playingCard = player.Hands.GetById(handCardId);
+            var (success, playingCard) = player.Hands.TryGetById(handCardId);
+
+            if (!success)
+            {
+                return GameMasterStatusCode.CardNotExists;
+            }
 
             this.logger.LogInformation($"プレイ：{playingCard}({player.Name})");
 
             // プレイ不能
             if (!this.IsPlayable(player, playingCard))
             {
-                return (false, "プレイ不能");
+                return GameMasterStatusCode.CardCantPlay;
             }
 
             this.ActivePlayer.UseMp(playingCard.Cost);
@@ -498,9 +554,7 @@ namespace Cauldron.Server.Models
                     break;
             }
 
-
-
-            return (true, "");
+            return GameMasterStatusCode.OK;
         }
 
         /// <summary>
@@ -659,6 +713,22 @@ namespace Cauldron.Server.Models
 
             newEventArgs.DamageContext.GuardPlayer.Damage(newEventArgs.DamageContext.Value);
 
+            // 各プレイヤーに通知
+            foreach (var playerId in this.PlayersById.Keys)
+            {
+                this.notifyClient(playerId, new Grpc.Api.ReadyGameReply()
+                {
+                    Code = Grpc.Api.ReadyGameReply.Types.Code.Damage,
+                    DamageNotify = new Grpc.Api.DamageNotify()
+                    {
+                        Reason = Grpc.Api.DamageNotify.Types.Reason.Attack,
+                        Damage = newEventArgs.DamageContext.Value,
+                        SourceCardId = newEventArgs.DamageContext.DamageSourceCard.Id.ToString(),
+                        GuardPlayerId = newEventArgs.DamageContext.GuardPlayer.Id.ToString()
+                    }
+                });
+            }
+
             this.effectManager.DoEffect(newEventArgs with { GameEvent = GameEvent.OnDamage });
         }
 
@@ -694,7 +764,7 @@ namespace Cauldron.Server.Models
 
             this.logger.LogInformation($"アタック（クリーチャー）：{eventArgs.BattleContext.AttackCard}({attackPlayer.Name}) > {eventArgs.BattleContext.GuardCard}({guardPlayer.Name})");
 
-            if (!CanAttack(eventArgs.BattleContext.AttackCard, eventArgs.BattleContext.GuardCard, this.CreateEnvironment(playerId)))
+            if (!CanAttack(eventArgs.BattleContext.AttackCard, eventArgs.BattleContext.GuardCard, this.CreateGameContext(playerId)))
             {
                 return (false, "攻撃不能");
             }
@@ -740,6 +810,22 @@ namespace Cauldron.Server.Models
                 $"ダメージ：{newEventArgs.DamageContext.Value} > {newEventArgs.DamageContext.GuardCard}({this.PlayersById[newEventArgs.DamageContext.GuardCard.OwnerId].Name})");
 
             newEventArgs.DamageContext.GuardCard.Damage(newEventArgs.DamageContext.Value);
+
+            // 各プレイヤーに通知
+            foreach (var playerId in this.PlayersById.Keys)
+            {
+                this.notifyClient(playerId, new Grpc.Api.ReadyGameReply()
+                {
+                    Code = Grpc.Api.ReadyGameReply.Types.Code.Damage,
+                    DamageNotify = new Grpc.Api.DamageNotify()
+                    {
+                        Reason = Grpc.Api.DamageNotify.Types.Reason.Attack,
+                        Damage = newEventArgs.DamageContext.Value,
+                        SourceCardId = newEventArgs.DamageContext.DamageSourceCard.Id.ToString(),
+                        GuardCardId = newEventArgs.DamageContext.GuardCard.Id.ToString()
+                    }
+                });
+            }
 
             this.effectManager.DoEffect(newEventArgs with { GameEvent = GameEvent.OnDamage });
 

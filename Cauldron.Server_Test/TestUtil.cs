@@ -15,6 +15,12 @@ namespace Cauldron.Server_Test
             Assert.True(isSucceeded, errorMessage);
         }
 
+        public static void AssertGameAction(Func<GameMasterStatusCode> phase)
+        {
+            var statusCode = phase();
+            Assert.True(statusCode == GameMasterStatusCode.OK, statusCode.ToString());
+        }
+
         public static void AssertCollection<T>(IReadOnlyList<T> expected, IReadOnlyList<T> actual)
         {
             Assert.Equal(expected.Count, actual.Count);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +9,7 @@ namespace Cauldron.Server.Models
     {
         private RuleBook RuleBook { get; }
 
-        private Dictionary<Guid, Card> CardsById { get; }
+        private ConcurrentDictionary<Guid, Card> CardsById { get; } = new();
 
         public IReadOnlyList<Card> AllCards => this.CardsById.Values.ToArray();
 
@@ -17,7 +18,6 @@ namespace Cauldron.Server.Models
         public Field(RuleBook ruleBook)
         {
             this.RuleBook = ruleBook;
-            this.CardsById = new Dictionary<Guid, Card>();
         }
 
         public void Add(Card card)
@@ -27,12 +27,12 @@ namespace Cauldron.Server.Models
                 return;
             }
 
-            this.CardsById.Add(card.Id, card);
+            this.CardsById.TryAdd(card.Id, card);
         }
 
         public void Remove(Card card)
         {
-            this.CardsById.Remove(card.Id);
+            this.CardsById.TryRemove(card.Id, out _);
         }
 
         public Card GetById(Guid cardId)

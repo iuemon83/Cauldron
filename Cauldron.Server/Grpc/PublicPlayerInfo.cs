@@ -6,13 +6,16 @@ namespace Cauldron.Grpc.Models
     {
         public PublicPlayerInfo(Server.Models.PublicPlayerInfo serverModel)
         {
-            this.DeckCount = serverModel.DeckCount;
-            this.Field.AddRange(serverModel.Field.AllCards.Select(card => new Card(card)));
-            this.Hp = serverModel.Hp;
             this.Id = serverModel.Id.ToString();
-            this.MaxMp = serverModel.MaxMp;
             this.Name = serverModel.Name;
-            this.UsedMp = serverModel.UsedMp;
+            this.DeckCount = serverModel.DeckCount;
+            this.CemeteryCount = serverModel.CemeteryCount;
+            this.HandCount = serverModel.HandsCount;
+            this.Field.AddRange(serverModel.Field.AllCards.Select(card => new Card(card)));
+            this.MaxHp = serverModel.MaxHp;
+            this.CurrentHp = serverModel.CurrentHp;
+            this.MaxMp = serverModel.MaxMp;
+            this.CurrentMp = serverModel.CurrentMp;
         }
 
         //public Server.Models.PublicPlayerInfo ToServerModel()

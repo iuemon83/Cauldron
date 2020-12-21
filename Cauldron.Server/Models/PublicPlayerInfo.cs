@@ -7,11 +7,12 @@ namespace Cauldron.Server.Models
         string Name,
         Field Field,
         int DeckCount,
+        int CemeteryCount,
         int HandsCount,
-        int Hp,
+        int MaxHp,
+        int CurrentHp,
         int MaxMp,
-        int UsedMp,
-        int UsableMp
+        int CurrentMp
         )
     {
         public PublicPlayerInfo(Player player)
@@ -20,10 +21,11 @@ namespace Cauldron.Server.Models
                  player.Name,
                  player.Field,
                  player.Deck.Count,
+                 player.Cemetery.Count,
                  player.Hands.Count,
+                 player.MaxHp,
                  player.CurrentHp,
                  player.MaxMp,
-                 player.UsedMp,
                  player.CurrentMp
                  )
         { }

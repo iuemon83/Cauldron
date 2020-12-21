@@ -10,7 +10,7 @@ namespace Cauldron.Server.Models
 
         public IEnumerable<CardDef> AsCardDefs()
         {
-            return new CardDef[0];
+            return System.Array.Empty<CardDef>();
 
             //return this.Cards.Select(c =>
             //{

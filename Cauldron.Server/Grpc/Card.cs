@@ -9,12 +9,12 @@ namespace Cauldron.Grpc.Models
         {
             this.Id = source.Id.ToString();
             this.OwnerId = source.OwnerId.ToString();
-            this.Power = source.BasePower;
-            this.Toughness = source.BaseToughness;
+            this.Power = source.Power;
+            this.Toughness = source.Toughness;
             this.Abilities.AddRange(source.Abilities.Select(ability => (CardDef.Types.Ability)ability));
             this.Name = source.Name;
             this.FlavorText = source.FlavorText;
-            this.Cost = source.BaseCost;
+            this.Cost = source.Cost;
             this.CardType = Enum.Parse<CardDef.Types.Type>(source.Type.ToString());
             this.TurnNumInField = source.TurnCountInField;
             //this.EffectText = source.Effects;
