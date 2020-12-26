@@ -52,7 +52,7 @@
         public NumCondition ToughnessCondition { get; set; }
         public TextCondition NameCondition { get; set; }
         public CardTypeCondition TypeCondition { get; set; }
-        public ZoneType ZoneCondition { get; set; } = ZoneType.All;
+        public ZoneCondition ZoneCondition { get; set; }
 
         public bool IsMatch(Card effectOwnerCard, Card card, EffectEventArgs eventArgs)
         {

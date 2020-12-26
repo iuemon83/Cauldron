@@ -16,7 +16,7 @@ namespace Cauldron.Grpc.Models
             this.FlavorText = source.FlavorText;
             this.Cost = source.Cost;
             this.CardType = Enum.Parse<CardDef.Types.Type>(source.Type.ToString());
-            this.TurnNumInField = source.TurnCountInField;
+            this.TurnNumInField = source.NumTurnsInField;
             //this.EffectText = source.Effects;
         }
 

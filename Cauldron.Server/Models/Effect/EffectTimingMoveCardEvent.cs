@@ -23,37 +23,8 @@ namespace Cauldron.Server.Models.Effect
             };
 
             return matchSource
-                && this.MatchZone(this.From, args.MoveCardContext.From)
-                && this.MatchZone(this.To, args.MoveCardContext.To);
-        }
-
-        public bool MatchZone(ZoneType left, ZoneType right)
-        {
-            return left switch
-            {
-                ZoneType.All => true,
-                ZoneType.Field => right switch
-                {
-                    ZoneType.Field or ZoneType.OpponentField or ZoneType.YouField => true,
-                    _ => false
-                },
-                ZoneType.Cemetery => right switch
-                {
-                    ZoneType.Cemetery or ZoneType.OpponentCemetery or ZoneType.YouCemetery => true,
-                    _ => false
-                },
-                ZoneType.Deck => right switch
-                {
-                    ZoneType.Deck or ZoneType.OpponentDeck or ZoneType.YouDeck => true,
-                    _ => false
-                },
-                ZoneType.Hand => right switch
-                {
-                    ZoneType.Hand or ZoneType.OpponentHand or ZoneType.YouHand => true,
-                    _ => false
-                },
-                _ => left == right
-            };
+                && args.GameMaster.ConvertZone(ownerCard.OwnerId, this.From) == args.MoveCardContext.From
+                && args.GameMaster.ConvertZone(ownerCard.OwnerId, this.To) == args.MoveCardContext.To;
         }
     }
 }

@@ -50,7 +50,7 @@ namespace Cauldron.Server_Test
 
             TestUtil.AssertChoiceResult(expected, actual,
                 expected.PlayerList.Count
-                + expected.CardDefList.Count
+                //+ expected.CardDefList.Count
                 + expected.CardList.Count);
         }
 
@@ -58,12 +58,12 @@ namespace Cauldron.Server_Test
         {
             // ぜんぶ候補に含まれている
             Assert.True(actual.PlayerList.All(a => candidatesExpected.PlayerList.Contains(a)));
-            Assert.True(actual.CardDefList.All(a => candidatesExpected.CardDefList.Select(ec => ec.Id).Contains(a.Id)));
+            //Assert.True(actual.CardDefList.All(a => candidatesExpected.CardDefList.Select(ec => ec.Id).Contains(a.Id)));
             Assert.True(actual.CardList.All(a => candidatesExpected.CardList.Select(ec => ec.Id).Contains(a.Id)));
 
             // 選ばれた数が正しい
             var actualChoiceCount = actual.PlayerList.Count
-                + actual.CardDefList.Count
+                //+ actual.CardDefList.Count
                 + actual.CardList.Count;
             Assert.Equal(numOfAny, actualChoiceCount);
         }

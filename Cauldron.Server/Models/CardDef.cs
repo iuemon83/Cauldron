@@ -7,7 +7,8 @@ namespace Cauldron.Server.Models
     public class CardDef
     {
         public static CardDef Creature(int cost, string fullName, string name, string flavorText, int power, int toughness,
-            int turnCountToCanAttack, bool isToken = false, IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect> effects = null)
+            int? numTurnsToCanAttack = null, int? numAttacksInTurn = null, bool isToken = false,
+            IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect> effects = null)
         {
             return new CardDef()
             {
@@ -18,7 +19,8 @@ namespace Cauldron.Server.Models
                 FlavorText = flavorText,
                 BasePower = power,
                 BaseToughness = toughness,
-                TurnCountToCanAttack = turnCountToCanAttack,
+                NumTurnsToCanAttack = numTurnsToCanAttack,
+                NumAttacksLimitInTurn = numAttacksInTurn,
                 IsToken = isToken,
                 Abilities = abilities?.ToList() ?? new List<CreatureAbility>(),
                 Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
@@ -67,6 +69,7 @@ namespace Cauldron.Server.Models
         public CardType Type { get; set; }
 
         public int BasePower { get; set; } = 0;
+
         public int BaseToughness { get; set; } = 0;
 
         public List<CreatureAbility> Abilities { get; set; } = new List<CreatureAbility>();
@@ -76,7 +79,12 @@ namespace Cauldron.Server.Models
         /// <summary>
         /// 攻撃可能となるまでのターン数
         /// </summary>
-        public int TurnCountToCanAttack { get; set; }
+        public int? NumTurnsToCanAttack { get; set; }
+
+        /// <summary>
+        /// 1ターン中に攻撃可能な回数
+        /// </summary>
+        public int? NumAttacksLimitInTurn { get; set; }
 
         public CardDef()
         {

@@ -12,14 +12,14 @@ namespace Cauldron.Server_Test
         public void ランダムな自分クリーチャー1体()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
             {
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
-                    ZoneCondition = ZoneType.YouField,
+                    ZoneCondition = new(new[] { ZoneType.YouField }),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                 },
                 NumPicks = 1,
@@ -31,7 +31,7 @@ namespace Cauldron.Server_Test
                 {
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.All,
+                            ZoneType.YouField,
                             Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         ),
                         new[]
@@ -48,7 +48,7 @@ namespace Cauldron.Server_Test
                 }
                 );
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -66,14 +66,13 @@ namespace Cauldron.Server_Test
                 var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 return (goblinCard, goblinCard2, testCard);
-
             });
 
             // 候補の検証
             var expected = new ChoiceResult()
             {
                 PlayerList = Array.Empty<Player>(),
-                CardDefList = Array.Empty<CardDef>(),
+                //CardDefList = Array.Empty<CardDef>(),
                 CardList = new[] { goblinCard, goblinCard2 },
             };
             var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, null);
@@ -85,9 +84,9 @@ namespace Cauldron.Server_Test
                 Array.Empty<Player>(),
                 actual.PlayerList);
 
-            TestUtil.AssertCollection(
-                Array.Empty<CardDef>(),
-                actual.CardDefList);
+            //TestUtil.AssertCollection(
+            //    Array.Empty<CardDef>(),
+            //    actual.CardDefList);
 
             // どっちかが選ばれている
             Assert.Single(actual2.CardList);
@@ -98,14 +97,14 @@ namespace Cauldron.Server_Test
         public void 自分のクリーチャーすべて()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
             {
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
-                    ZoneCondition = ZoneType.YouField,
+                    ZoneCondition = new(new[] { ZoneType.YouField }),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature }),
                 },
                 How = Choice.ChoiceHow.All,
@@ -116,7 +115,7 @@ namespace Cauldron.Server_Test
                 {
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.All,
+                            ZoneType.YouField,
                             Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         ),
                         new[]
@@ -133,7 +132,7 @@ namespace Cauldron.Server_Test
                 }
                 );
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -157,7 +156,7 @@ namespace Cauldron.Server_Test
             var expected = new ChoiceResult()
             {
                 PlayerList = Array.Empty<Player>(),
-                CardDefList = Array.Empty<CardDef>(),
+                //CardDefList = Array.Empty<CardDef>(),
                 CardList = new[] { goblinCard, goblinCard2 },
             };
             var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, null);
@@ -167,7 +166,7 @@ namespace Cauldron.Server_Test
             var expected2 = new ChoiceResult()
             {
                 PlayerList = Array.Empty<Player>(),
-                CardDefList = Array.Empty<CardDef>(),
+                //CardDefList = Array.Empty<CardDef>(),
                 CardList = new[] { goblinCard, goblinCard2 },
             };
             var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, null);
@@ -178,20 +177,19 @@ namespace Cauldron.Server_Test
         public void カードプールから名前指定で一枚()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var fairy = CardDef.Creature(0, $"test.フェアリー", "フェアリー", "テストクリーチャー", 1, 1, 1, isToken: true);
 
             var testChoice = new Choice()
             {
-                NewCardCondition = new CardCondition()
+                CardCondition = new CardCondition()
                 {
-                    ZoneCondition = ZoneType.CardPool,
-                    NameCondition = new TextCondition()
-                    {
-                        Value = fairy.FullName,
-                        Compare = TextCondition.ConditionCompare.Equality
-                    }
+                    ZoneCondition = new(new[] { ZoneType.CardPool }),
+                    NameCondition = new TextCondition(
+                        fairy.FullName,
+                        TextCondition.ConditionCompare.Equality
+                    )
                 },
                 NumPicks = 1,
             };
@@ -201,7 +199,7 @@ namespace Cauldron.Server_Test
                 {
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.All,
+                            ZoneType.YouField,
                             Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
                         ),
                         new[]
@@ -218,7 +216,7 @@ namespace Cauldron.Server_Test
                 }
                 );
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, fairy, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -241,7 +239,7 @@ namespace Cauldron.Server_Test
             var expected = new ChoiceResult()
             {
                 PlayerList = Array.Empty<Player>(),
-                CardDefList = new[] { fairy },
+                //CardDefList = new[] { fairy },
                 CardList = Array.Empty<Card>()
             };
             var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, null);
@@ -251,7 +249,7 @@ namespace Cauldron.Server_Test
             var expected2 = new ChoiceResult()
             {
                 PlayerList = Array.Empty<Player>(),
-                CardDefList = new[] { fairy },
+                //CardDefList = new[] { fairy },
                 CardList = Array.Empty<Card>()
             };
             var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, null);
@@ -262,20 +260,19 @@ namespace Cauldron.Server_Test
         public void カードプールから名前指定で2枚()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var fairy = CardDef.Creature(0, $"test.フェアリー", "フェアリー", "テストクリーチャー", 1, 1, 1, isToken: true);
 
             var testChoice = new Choice()
             {
-                NewCardCondition = new CardCondition()
+                CardCondition = new CardCondition()
                 {
-                    ZoneCondition = ZoneType.CardPool,
-                    NameCondition = new TextCondition()
-                    {
-                        Value = fairy.FullName,
-                        Compare = TextCondition.ConditionCompare.Equality
-                    }
+                    ZoneCondition = new(new[] { ZoneType.CardPool }),
+                    NameCondition = new(
+                        fairy.FullName,
+                        TextCondition.ConditionCompare.Equality
+                    )
                 },
                 NumPicks = 2,
             };
@@ -285,7 +282,7 @@ namespace Cauldron.Server_Test
                 {
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.All,
+                            ZoneType.YouField,
                             Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
                         ),
                         new[]
@@ -302,7 +299,7 @@ namespace Cauldron.Server_Test
                 }
                 );
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, fairy, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -325,7 +322,7 @@ namespace Cauldron.Server_Test
             var expected = new ChoiceResult()
             {
                 PlayerList = Array.Empty<Player>(),
-                CardDefList = new[] { fairy, fairy },
+                //CardDefList = new[] { fairy, fairy },
                 CardList = Array.Empty<Card>()
             };
             var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, null);
@@ -335,7 +332,7 @@ namespace Cauldron.Server_Test
             var expected2 = new ChoiceResult()
             {
                 PlayerList = Array.Empty<Player>(),
-                CardDefList = new[] { fairy, fairy },
+                //CardDefList = new[] { fairy, fairy },
                 CardList = Array.Empty<Card>()
             };
             var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, null);
@@ -346,7 +343,7 @@ namespace Cauldron.Server_Test
         public void 相手プレイヤーが選択される()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
             {
@@ -360,7 +357,7 @@ namespace Cauldron.Server_Test
                 {
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.All,
+                            ZoneType.YouField,
                             Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
                         ),
                         new []
@@ -377,7 +374,7 @@ namespace Cauldron.Server_Test
                 }
                 );
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -400,7 +397,7 @@ namespace Cauldron.Server_Test
             var expected = new ChoiceResult()
             {
                 PlayerList = new[] { testGameMaster.PlayersById[player2Id] },
-                CardDefList = Array.Empty<CardDef>(),
+                //CardDefList = Array.Empty<CardDef>(),
                 CardList = Array.Empty<Card>()
             };
             var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, null);
@@ -410,7 +407,7 @@ namespace Cauldron.Server_Test
             var expected2 = new ChoiceResult()
             {
                 PlayerList = new[] { testGameMaster.PlayersById[player2Id] },
-                CardDefList = Array.Empty<CardDef>(),
+                //CardDefList = Array.Empty<CardDef>(),
                 CardList = Array.Empty<Card>()
             };
             var actual2 = testGameMaster.ChoiceCards(testCard, testChoice, null);
@@ -421,7 +418,7 @@ namespace Cauldron.Server_Test
         public void ターン中のプレイヤーが選択される()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
             {
@@ -436,7 +433,7 @@ namespace Cauldron.Server_Test
                     // ターン開始時、カレントプレイヤーに1ダメージ
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.All,
+                            ZoneType.YouField,
                             StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Both)
                         ),
                         new []{
@@ -453,7 +450,7 @@ namespace Cauldron.Server_Test
                 }
                 );
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -473,7 +470,7 @@ namespace Cauldron.Server_Test
                 var expected = new ChoiceResult()
                 {
                     PlayerList = new[] { testGameMaster.PlayersById[player1Id] },
-                    CardDefList = Array.Empty<CardDef>(),
+                    //CardDefList = Array.Empty<CardDef>(),
                     CardList = Array.Empty<Card>()
                 };
                 var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
@@ -490,7 +487,7 @@ namespace Cauldron.Server_Test
             var expected = new ChoiceResult()
             {
                 PlayerList = new[] { testGameMaster.PlayersById[player2Id] },
-                CardDefList = Array.Empty<CardDef>(),
+                //CardDefList = Array.Empty<CardDef>(),
                 CardList = Array.Empty<Card>()
             };
             var actual = testGameMaster.ChoiceCandidates(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
@@ -505,21 +502,21 @@ namespace Cauldron.Server_Test
         public void ランダムな相手クリーチャー一体()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
             {
                 How = Choice.ChoiceHow.Random,
                 CardCondition = new CardCondition()
                 {
-                    ZoneCondition = ZoneType.OpponentField,
+                    ZoneCondition = new(new[] { ZoneType.OpponentField }),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                 },
                 NumPicks = 1
             };
             var testCardDef = CardDef.Artifact(0, $"test.test", "test", "test", false);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // 以下テスト
@@ -564,7 +561,7 @@ namespace Cauldron.Server_Test
         public void 相手プレイヤーかランダムな相手クリーチャー1体()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
             {
@@ -577,12 +574,12 @@ namespace Cauldron.Server_Test
                 CardCondition = new CardCondition()
                 {
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature }),
-                    ZoneCondition = ZoneType.OpponentField,
+                    ZoneCondition = new(new[] { ZoneType.OpponentField }),
                 }
             };
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // 以下テスト
@@ -628,7 +625,7 @@ namespace Cauldron.Server_Test
         public void 対象の相手クリーチャー1体()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
             {
@@ -636,13 +633,13 @@ namespace Cauldron.Server_Test
                 NumPicks = 1,
                 CardCondition = new CardCondition()
                 {
-                    ZoneCondition = ZoneType.OpponentField,
+                    ZoneCondition = new(new[] { ZoneType.OpponentField }),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                 }
             };
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // カードの選択処理のテスト
@@ -698,7 +695,7 @@ namespace Cauldron.Server_Test
         public void 対象の自分クリーチャー1体()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
             {
@@ -707,13 +704,13 @@ namespace Cauldron.Server_Test
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
-                    ZoneCondition = ZoneType.YouField,
+                    ZoneCondition = new(new[] { ZoneType.YouField }),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature, })
                 }
             };
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // カードの選択処理のテスト
@@ -764,7 +761,7 @@ namespace Cauldron.Server_Test
         public void 自分自身を選択する()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
             {
@@ -776,7 +773,7 @@ namespace Cauldron.Server_Test
             };
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // 以下テスト
@@ -814,7 +811,7 @@ namespace Cauldron.Server_Test
         public void イベントソースを選択する()
         {
             var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 1);
-            goblin.TurnCountToCanAttack = 0;
+            goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
             {
@@ -826,7 +823,7 @@ namespace Cauldron.Server_Test
             };
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // 以下テスト

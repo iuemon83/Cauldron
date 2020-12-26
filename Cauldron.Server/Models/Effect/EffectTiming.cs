@@ -15,7 +15,7 @@
     {
         public bool IsMatch(Card effectOwnerCard, EffectEventArgs eventArgs)
         {
-            var isMatchedZone = effectOwnerCard.Zone == this.Zone;
+            var isMatchedZone = effectOwnerCard.Zone == eventArgs.GameMaster.ConvertZone(effectOwnerCard.OwnerId, this.Zone);
 
             return isMatchedZone
                 && eventArgs.GameEvent switch

@@ -9,7 +9,8 @@
             var done = false;
             foreach (var card in targets)
             {
-                args.GameMaster.MoveCard(card.Id, new(card.Zone, To));
+                var toZone = args.GameMaster.ConvertZone(effectOwnerCard.OwnerId, this.To);
+                args.GameMaster.MoveCard(card.Id, new(card.Zone, toZone));
 
                 done = true;
             }

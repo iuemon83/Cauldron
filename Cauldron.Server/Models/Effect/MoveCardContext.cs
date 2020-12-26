@@ -1,4 +1,4 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
-    public record MoveCardContext(ZoneType From, ZoneType To);
+    public record MoveCardContext(Zone From, Zone To);
 }

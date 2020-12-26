@@ -14,7 +14,7 @@ namespace Cauldron.Server_Test
             var slime = TestCards.slime;
             slime.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { slime });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -53,14 +53,13 @@ namespace Cauldron.Server_Test
                                     ZoneToAddCard = ZoneType.YouField,
                                     Choice = new Choice()
                                     {
-                                        NewCardCondition = new CardCondition()
+                                        CardCondition = new CardCondition()
                                         {
-                                            NameCondition = new TextCondition()
-                                            {
-                                                Value = $"test.スライム",
-                                                Compare = TextCondition.ConditionCompare.Equality
-                                            },
-                                            ZoneCondition = ZoneType.CardPool,
+                                            NameCondition = new(
+                                                $"test.スライム",
+                                                TextCondition.ConditionCompare.Equality
+                                            ),
+                                            ZoneCondition = new(new[]{ ZoneType.CardPool }),
                                         },
                                         NumPicks=2
                                     }
@@ -71,7 +70,7 @@ namespace Cauldron.Server_Test
                 }
                 );
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { slime });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -97,7 +96,7 @@ namespace Cauldron.Server_Test
             var mouseDef = TestCards.mouse;
             mouseDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { mouseDef, goblinDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -166,7 +165,7 @@ namespace Cauldron.Server_Test
             var waterFairyDef = TestCards.waterFairy;
             waterFairyDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { fairyDef, waterFairyDef, goblinDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -219,7 +218,7 @@ namespace Cauldron.Server_Test
             var testCreature = TestCards.whiteGeneral;
             testCreature.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCreature });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -260,7 +259,7 @@ namespace Cauldron.Server_Test
             var testCreature = TestCards.commander;
             testCreature.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCreature });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
@@ -307,7 +306,7 @@ namespace Cauldron.Server_Test
             var testCardDef = TestCards.devil;
             testCardDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { });
@@ -358,7 +357,7 @@ namespace Cauldron.Server_Test
             var testCardDef = TestCards.shock;
             testCardDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { });
@@ -401,7 +400,7 @@ namespace Cauldron.Server_Test
             var testCardDef = TestCards.buf;
             testCardDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // カードの選択処理のテスト
@@ -439,7 +438,7 @@ namespace Cauldron.Server_Test
             var testCardDef = TestCards.flag;
             testCardDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { });
@@ -478,7 +477,7 @@ namespace Cauldron.Server_Test
             var testCardDef = TestCards.shield;
             testCardDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { });
@@ -517,7 +516,7 @@ namespace Cauldron.Server_Test
             var testCardDef = TestCards.wall;
             testCardDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { });
@@ -552,7 +551,7 @@ namespace Cauldron.Server_Test
             var testCardDef = TestCards.hikari;
             testCardDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { });
@@ -584,7 +583,7 @@ namespace Cauldron.Server_Test
             var testCardDef = TestCards.hikari;
             testCardDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { });
@@ -617,7 +616,7 @@ namespace Cauldron.Server_Test
             var testCardDef = TestCards.healingAngel;
             testCardDef.BaseCost = 0;
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef });
 
             var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { });
@@ -650,7 +649,7 @@ namespace Cauldron.Server_Test
         //    var testCardDef = TestCards.holyKnight;
         //    testCardDef.BaseCost = 0;
 
-        //    var testCardFactory = new CardFactory();
+        //    var testCardFactory = new CardFactory(new RuleBook());
         //    testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
         //    var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_,_) => {});

@@ -41,6 +41,8 @@ service Cauldron {
 
   // クリーチャーへ攻撃する
   rpc AttackToCreature (AttackToCreatureRequest) returns (AttackToCreatureReply);
+
+  // 指定したクリーチャーで攻撃可能な対象の一覧を取得する
 }
 
 message SetDeckRequest {
@@ -82,14 +84,19 @@ message ReadyGameReply {
   DamageNotify damageNotify = 5;
 }
 
+message Zone {
+  string playerId = 1;
+  string zoneName = 2;
+}
+
 message AddCardNotify {
   string cardId = 1;
-  string toZone = 2;
+  Zone toZone = 2;
 }
 
 message MoveCardNotify {
   string cardId = 1;
-  string toZone = 2;
+  Zone toZone = 2;
 }
 
 message DamageNotify {

@@ -15,7 +15,7 @@
         CardNotExists,
 
         /// <summary>
-        /// 指定されたカードがプレイ不能です
+        /// 指定されたカードがプレイできません
         /// </summary>
         CardCantPlay,
 
@@ -28,5 +28,15 @@
         /// このプレイヤーのターンではありません
         /// </summary>
         NotActivePlayer,
+
+        /// <summary>
+        /// 指定されたプレイヤーが存在しません
+        /// </summary>
+        PlayerNotExists,
+
+        /// <summary>
+        /// 攻撃できません
+        /// </summary>
+        CandAttack,
     }
 }

@@ -2,17 +2,13 @@
 
 namespace Cauldron.Server.Models.Effect
 {
-    public class TextCondition
+    public record TextCondition(string Value, TextCondition.ConditionCompare Compare, bool Not = false)
     {
         public enum ConditionCompare
         {
             Equality,
             Like,
         }
-
-        public string Value { get; set; }
-        public ConditionCompare Compare { get; set; }
-        public bool Not { get; set; }
 
         public bool IsMatch(string checkValue)
         {

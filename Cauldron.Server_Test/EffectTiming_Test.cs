@@ -41,7 +41,7 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef });
 
             // 以下テスト
@@ -89,7 +89,7 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef });
 
             // 以下テスト
@@ -137,7 +137,7 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef });
 
             // 以下テスト
@@ -187,7 +187,7 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef });
 
             // 以下テスト
@@ -235,7 +235,7 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef });
 
             // 以下テスト
@@ -283,7 +283,7 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef });
 
             // 以下テスト
@@ -333,7 +333,7 @@ namespace Cauldron.Server_Test
 
             var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 1, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
 
             // 以下テスト
@@ -374,7 +374,7 @@ namespace Cauldron.Server_Test
 
             var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 1, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
 
             // 以下テスト
@@ -415,7 +415,7 @@ namespace Cauldron.Server_Test
 
             var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
 
             // 以下テスト
@@ -480,7 +480,7 @@ namespace Cauldron.Server_Test
 
             var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
 
             // 以下テスト
@@ -542,7 +542,7 @@ namespace Cauldron.Server_Test
 
             var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
 
             // 以下テスト
@@ -604,7 +604,7 @@ namespace Cauldron.Server_Test
 
             var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
 
             // 以下テスト
@@ -658,7 +658,7 @@ namespace Cauldron.Server_Test
 
             var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
 
             // 以下テスト
@@ -712,7 +712,7 @@ namespace Cauldron.Server_Test
 
             var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 0);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
 
             // 以下テスト
@@ -780,7 +780,7 @@ namespace Cauldron.Server_Test
 
             var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 0);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
 
             // 以下テスト
@@ -843,7 +843,7 @@ namespace Cauldron.Server_Test
 
             var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 0);
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
 
             // 以下テスト
@@ -933,7 +933,7 @@ namespace Cauldron.Server_Test
                                     {
                                         CardCondition = new CardCondition()
                                         {
-                                            ZoneCondition = ZoneType.Field,
+                                            ZoneCondition = new(new[]{ ZoneType.YouField }),
                                             TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                         },
                                     },
@@ -944,7 +944,7 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef, testSorceryDef });
 
             // 以下テスト
@@ -981,7 +981,7 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testCardFactory = new CardFactory();
+            var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { testCardDef });
 
             // 以下テスト

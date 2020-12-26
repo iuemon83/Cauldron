@@ -72,13 +72,16 @@ namespace Cauldron.Server.Models
 
         public void AddMaxMp(int x)
         {
-            this.MaxMp += x;
+            this.MaxMp = Math.Min(this.MaxMp + x, this.MaxLimitMp);
         }
 
         public void UseMp(int x) => this.UsedMp = Math.Min(this.MaxMp, this.UsedMp + x);
 
         public void GainMp(int x) => this.UsedMp = Math.Max(0, this.UsedMp - x);
 
+        /// <summary>
+        /// MP を最大値まで回復
+        /// </summary>
         public void FullMp() => this.UsedMp = 0;
 
         public void Damage(Card card) => this.Damage(card.Power);

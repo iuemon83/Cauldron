@@ -50,22 +50,15 @@ namespace Cauldron.Server
 
         public override Task<OpenNewGameReply> OpenNewGame(OpenNewGameRequest request, ServerCallContext context)
         {
-            var cardFactory = new CardFactory();
+            var cardFactory = new CardFactory(new RuleBook(request.RuleBook));
             cardFactory.SetCardPool(new CardPool().Load());
 
             var gameId = new GameMasterRepository()
                 .Add(request.RuleBook, cardFactory, this._logger, this.AskCard, (p, n) => NotifyClient(p, n));
 
-            //var deckIds = request.Deck
-            //    .Select(deckId => Guid.Parse(deckId));
-
-            //var gameMaster = new GameMasterRepository().GetById(gameId);
-            //var newPlayerId = gameMaster.CreateNewPlayer(request.PlayerName, deckIds);
-
             return Task.FromResult(new OpenNewGameReply
             {
                 GameId = gameId.ToString(),
-                //PlayerId = newPlayerId.ToString(),
             });
         }
 
@@ -89,15 +82,15 @@ namespace Cauldron.Server
             numPicks -= pickedPlayers.Length;
 
             var pickedCards = choiceResult.CardList.Take(numPicks).ToArray();
-            numPicks -= pickedCards.Length;
+            //numPicks -= pickedCards.Length;
 
-            var pickedCarddefs = choiceResult.CardDefList.Take(numPicks).ToArray();
+            //var pickedCarddefs = choiceResult.CardDefList.Take(numPicks).ToArray();
 
             return new ChoiceResult()
             {
                 PlayerList = pickedPlayers,
                 CardList = pickedCards,
-                CardDefList = pickedCarddefs
+                //CardDefList = pickedCarddefs
             };
         }
 
@@ -187,12 +180,12 @@ namespace Cauldron.Server
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
             var playerId = Guid.Parse(request.PlayerId);
-            var (isSucceeded, errorMessage) = gameMaster.StartTurn(playerId);
+            var statusCode = gameMaster.StartTurn(playerId);
 
             return Task.FromResult(new StartTurnReply()
             {
-                Result = isSucceeded,
-                ErrorMessage = errorMessage,
+                Result = statusCode == GameMasterStatusCode.OK,
+                ErrorMessage = statusCode.ToString(),
                 GameContext = CreateGameContext(gameId, playerId)
             });
         }
@@ -203,12 +196,12 @@ namespace Cauldron.Server
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
             var playerId = Guid.Parse(request.PlayerId);
-            var (isSucceeded, errorMessage) = gameMaster.EndTurn(playerId);
+            var statusCode = gameMaster.EndTurn(playerId);
 
             return Task.FromResult(new EndTurnReply()
             {
-                Result = isSucceeded,
-                ErrorMessage = errorMessage,
+                Result = statusCode == GameMasterStatusCode.OK,
+                ErrorMessage = statusCode.ToString(),
                 GameContext = CreateGameContext(gameId, playerId)
             });
         }
@@ -238,12 +231,12 @@ namespace Cauldron.Server
             var playerId = Guid.Parse(request.PlayerId);
             var attackHandCardId = Guid.Parse(request.AttackHandCardId);
             var guardHandCardId = Guid.Parse(request.GuardHandCardId);
-            var (isSucceeded, errorMessage) = gameMaster.AttackToCreature(playerId, attackHandCardId, guardHandCardId);
+            var statusCode = gameMaster.AttackToCreature(playerId, attackHandCardId, guardHandCardId);
 
             return Task.FromResult(new AttackToCreatureReply()
             {
-                Result = isSucceeded,
-                ErrorMessage = errorMessage,
+                Result = statusCode == GameMasterStatusCode.OK,
+                ErrorMessage = statusCode.ToString(),
                 GameContext = CreateGameContext(gameId, playerId)
             });
         }
@@ -256,12 +249,12 @@ namespace Cauldron.Server
             var playerId = Guid.Parse(request.PlayerId);
             var attackHandCardId = Guid.Parse(request.AttackHandCardId);
             var guardPlayerId = Guid.Parse(request.GuardPlayerId);
-            var (isSucceeded, errorMessage) = gameMaster.AttackToPlayer(playerId, attackHandCardId, guardPlayerId);
+            var statusCode = gameMaster.AttackToPlayer(playerId, attackHandCardId, guardPlayerId);
 
             return Task.FromResult(new AttackToPlayerReply()
             {
-                Result = isSucceeded,
-                ErrorMessage = errorMessage,
+                Result = statusCode == GameMasterStatusCode.OK,
+                ErrorMessage = statusCode.ToString(),
                 GameContext = CreateGameContext(gameId, playerId)
             });
         }

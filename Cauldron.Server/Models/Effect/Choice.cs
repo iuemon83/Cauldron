@@ -34,11 +34,6 @@
         public CardCondition CardCondition { get; set; }
 
         /// <summary>
-        /// 新規生成する候補となるカードの条件
-        /// </summary>
-        public CardCondition NewCardCondition { get; set; }
-
-        /// <summary>
         /// 選択する数
         /// </summary>
         public int NumPicks { get; set; } = 1;

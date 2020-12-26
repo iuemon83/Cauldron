@@ -41,14 +41,24 @@ namespace Cauldron.Server.Models
         /// <summary>
         /// 攻撃可能となるまでのターン数
         /// </summary>
-        public int TurnCountToCanAttack { get; set; }
+        public int NumTurnsToCanAttack { get; set; }
+
+        /// <summary>
+        /// 1ターン中に攻撃可能な回数
+        /// </summary>
+        public int NumAttacksLimitInTurn { get; set; }
+
+        /// <summary>
+        /// 1ターン中に攻撃した回数
+        /// </summary>
+        public int NumAttacksInTurn { get; set; }
 
         /// <summary>
         /// フィールドに出てからのターン数
         /// </summary>
-        public int TurnCountInField { get; set; }
+        public int NumTurnsInField { get; set; }
 
-        public ZoneType Zone { get; set; }
+        public Zone Zone { get; set; }
 
         public Card(CardDef cardDef)
         {
@@ -65,7 +75,8 @@ namespace Cauldron.Server.Models
 
             this.Abilities = cardDef.Abilities;
             this.Effects = cardDef.Effects.ToList();
-            this.TurnCountToCanAttack = cardDef.TurnCountToCanAttack;
+            this.NumTurnsToCanAttack = cardDef.NumTurnsToCanAttack.Value;
+            this.NumAttacksLimitInTurn = cardDef.NumAttacksLimitInTurn.Value;
         }
 
         public void AddEffect(CardEffect effect)

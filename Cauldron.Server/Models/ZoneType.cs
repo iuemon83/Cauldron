@@ -2,18 +2,14 @@
 {
     public enum ZoneType
     {
-        All,
+        None,
         CardPool,
-        Field,
         YouField,
         OpponentField,
-        Hand,
         YouHand,
         OpponentHand,
-        Deck,
         YouDeck,
         OpponentDeck,
-        Cemetery,
         YouCemetery,
         OpponentCemetery,
     }

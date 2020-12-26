@@ -2,7 +2,7 @@
 
 namespace Cauldron.Server.Models.Effect
 {
-    public class NumCondition
+    public record NumCondition(int Value, NumCondition.ConditionCompare Compare, bool Not = false)
     {
         public enum ConditionCompare
         {
@@ -10,10 +10,6 @@ namespace Cauldron.Server.Models.Effect
             LessThan,
             GreaterTan,
         }
-
-        public int Value { get; set; }
-        public ConditionCompare Compare { get; set; }
-        public bool Not { get; set; }
 
         public bool IsMatch(int checkValue)
         {
