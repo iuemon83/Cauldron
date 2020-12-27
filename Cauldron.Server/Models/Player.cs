@@ -8,11 +8,11 @@ namespace Cauldron.Server.Models
     {
         private RuleBook RuleBook { get; }
 
-        public Guid Id { get; }
+        public PlayerId Id { get; }
 
         public string Name { get; } = "";
 
-        public Dictionary<Guid, Card> CardsById { get; } = new Dictionary<Guid, Card>();
+        public Dictionary<CardId, Card> CardsById { get; } = new();
 
         public Hands Hands { get; }
 
@@ -30,7 +30,7 @@ namespace Cauldron.Server.Models
         public int UsedMp { get; private set; }
         public int CurrentMp => Math.Max(0, this.MaxMp - this.UsedMp);
 
-        public Player(Guid id, string name, RuleBook ruleBook, IReadOnlyList<Card> deck)
+        public Player(PlayerId id, string name, RuleBook ruleBook, IReadOnlyList<Card> deck)
         {
             foreach (var card in deck)
             {

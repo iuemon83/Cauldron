@@ -6,11 +6,11 @@ namespace Cauldron.Server.Models
 {
     public class Card
     {
-        public Guid Id { get; }
+        public CardId Id { get; }
 
-        public Guid OwnerId { get; set; }
+        public PlayerId OwnerId { get; set; }
 
-        public Guid CardDefId { get; set; }
+        public CardDefId CardDefId { get; set; }
 
         public int BaseCost { get; set; } = 0;
 
@@ -62,7 +62,7 @@ namespace Cauldron.Server.Models
 
         public Card(CardDef cardDef)
         {
-            this.Id = Guid.NewGuid();
+            this.Id = CardId.NewId();
             this.CardDefId = cardDef.Id;
             this.BaseCost = cardDef.BaseCost;
             this.IsToken = cardDef.IsToken;

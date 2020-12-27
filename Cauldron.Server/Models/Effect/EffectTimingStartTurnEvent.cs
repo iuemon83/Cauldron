@@ -11,7 +11,7 @@ namespace Cauldron.Server.Models.Effect
             Both
         }
 
-        public bool IsMatch(Guid turnPlayerId, Card ownerCard)
+        public bool IsMatch(PlayerId turnPlayerId, Card ownerCard)
         {
             return this.Source switch
             {

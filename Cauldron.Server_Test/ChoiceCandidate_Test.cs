@@ -645,7 +645,7 @@ namespace Cauldron.Server_Test
             // カードの選択処理のテスト
             var isCalledAskAction = false;
             ChoiceResult expected = null;
-            ChoiceResult testAskCardAction(Guid _, ChoiceResult c, int i)
+            ChoiceResult testAskCardAction(PlayerId _, ChoiceResult c, int i)
             {
                 isCalledAskAction = true;
                 Assert.Equal(1, i);
@@ -716,7 +716,7 @@ namespace Cauldron.Server_Test
             // カードの選択処理のテスト
             var isCalledAskAction = false;
             ChoiceResult expected = null;
-            ChoiceResult testAskCardAction(Guid _, ChoiceResult c, int i)
+            ChoiceResult testAskCardAction(PlayerId _, ChoiceResult c, int i)
             {
                 isCalledAskAction = true;
 

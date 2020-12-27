@@ -54,7 +54,7 @@ namespace Cauldron.Server.Models
             };
         }
 
-        public Guid Id { get; }
+        public CardDefId Id { get; }
 
         public int BaseCost { get; set; }
 
@@ -88,7 +88,7 @@ namespace Cauldron.Server.Models
 
         public CardDef()
         {
-            this.Id = Guid.NewGuid();
+            this.Id = CardDefId.NewId();
         }
     }
 }

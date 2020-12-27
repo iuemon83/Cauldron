@@ -68,7 +68,7 @@ namespace Cauldron.Server_Test
             Assert.Equal(numOfAny, actualChoiceCount);
         }
 
-        public static Card NewCardAndPlayFromHand(GameMaster testGameMaster, Guid playerId, Guid cardDefId)
+        public static Card NewCardAndPlayFromHand(GameMaster testGameMaster, PlayerId playerId, CardDefId cardDefId)
         {
             var newCard = testGameMaster.GenerateNewCard(cardDefId, playerId);
             testGameMaster.AddHand(testGameMaster.ActivePlayer, newCard);
@@ -77,14 +77,14 @@ namespace Cauldron.Server_Test
             return newCard;
         }
 
-        public static void Turn(GameMaster gameMaster, Action<GameMaster, Guid> turnAction)
+        public static void Turn(GameMaster gameMaster, Action<GameMaster, PlayerId> turnAction)
         {
             gameMaster.StartTurn(gameMaster.ActivePlayer.Id);
             turnAction(gameMaster, gameMaster.ActivePlayer.Id);
             gameMaster.EndTurn(gameMaster.ActivePlayer.Id);
         }
 
-        public static T Turn<T>(GameMaster gameMaster, Func<GameMaster, Guid, T> turnAction)
+        public static T Turn<T>(GameMaster gameMaster, Func<GameMaster, PlayerId, T> turnAction)
         {
             gameMaster.StartTurn(gameMaster.ActivePlayer.Id);
             var cards = turnAction(gameMaster, gameMaster.ActivePlayer.Id);

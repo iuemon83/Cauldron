@@ -73,7 +73,7 @@ namespace Cauldron.Server.Models
 
         private readonly CardFactory cardFactory;
 
-        public readonly ConcurrentDictionary<Guid, Player> PlayersById = new();
+        public readonly ConcurrentDictionary<PlayerId, Player> PlayersById = new();
 
         public Player ActivePlayer { get; set; }
 
@@ -83,22 +83,22 @@ namespace Cauldron.Server.Models
 
         public bool GameOver => this.PlayersById.Values.Any(player => player.CurrentHp <= 0);
 
-        public ConcurrentDictionary<Guid, int> PlayerTurnCountById { get; set; } = new();
+        public ConcurrentDictionary<PlayerId, int> PlayerTurnCountById { get; set; } = new();
 
         public int AllTurnCount => this.PlayerTurnCountById.Sum(x => x.Value);
 
         public IEnumerable<CardDef> CardPool => this.cardFactory.CardPool;
 
-        private readonly Func<Guid, ChoiceResult, int, ChoiceResult> AskCardAction;
+        private readonly Func<PlayerId, ChoiceResult, int, ChoiceResult> AskCardAction;
 
         private readonly EffectManager effectManager;
 
-        private readonly Action<Guid, Grpc.Api.ReadyGameReply> notifyClient;
+        private readonly Action<PlayerId, Grpc.Api.ReadyGameReply> notifyClient;
 
         private bool isStarted = false;
 
         public GameMaster(RuleBook ruleBook, CardFactory cardFactory, ILogger logger,
-            Func<Guid, ChoiceResult, int, ChoiceResult> askCardAction, Action<Guid, Grpc.Api.ReadyGameReply> notifyClient)
+            Func<PlayerId, ChoiceResult, int, ChoiceResult> askCardAction, Action<PlayerId, Grpc.Api.ReadyGameReply> notifyClient)
         {
             this.RuleBook = ruleBook;
             this.cardFactory = cardFactory;
@@ -108,9 +108,9 @@ namespace Cauldron.Server.Models
             this.notifyClient = notifyClient;
         }
 
-        public (GameMasterStatusCode, Guid) CreateNewPlayer(string name, IEnumerable<Guid> deckCardDefIdList)
+        public (GameMasterStatusCode, PlayerId) CreateNewPlayer(string name, IEnumerable<CardDefId> deckCardDefIdList)
         {
-            var newId = Guid.NewGuid();
+            var newId = PlayerId.NewId();
             var deckCards = deckCardDefIdList.Select(id => this.cardFactory.CreateNew(id)).ToArray();
 
             // 提示されたデッキにトークンが含まれていてはいけない
@@ -127,7 +127,7 @@ namespace Cauldron.Server.Models
             return (GameMasterStatusCode.OK, newId);
         }
 
-        public void Start(Guid firstPlayerId)
+        public void Start(PlayerId firstPlayerId)
         {
             if (this.isStarted) return;
 
@@ -138,6 +138,8 @@ namespace Cauldron.Server.Models
             foreach (var player in this.PlayersById.Values)
             {
                 this.Draw(player.Id, this.RuleBook.InitialNumHands);
+
+                Console.WriteLine("hands: " + string.Join(",", player.Hands.AllCards.Select(c => c.Name)));
             }
 
             this.notifyClient(this.ActivePlayer.Id, new Grpc.Api.ReadyGameReply()
@@ -157,7 +159,7 @@ namespace Cauldron.Server.Models
                 : alives.First();
         }
 
-        public Player GetOpponent(Guid playerId)
+        public Player GetOpponent(PlayerId playerId)
         {
             return this.PlayersById.Values
                 .First(player => player.Id != playerId);
@@ -230,7 +232,7 @@ namespace Cauldron.Server.Models
             return true;
         }
 
-        public Card GenerateNewCard(Guid cardDefId, Guid ownerId)
+        public Card GenerateNewCard(CardDefId cardDefId, PlayerId ownerId)
         {
             var card = this.cardFactory.CreateNew(cardDefId);
             card.OwnerId = ownerId;
@@ -238,7 +240,7 @@ namespace Cauldron.Server.Models
             return card;
         }
 
-        public Card GenerateNewCard(string cardFullName, Guid ownerId)
+        public Card GenerateNewCard(string cardFullName, PlayerId ownerId)
         {
             var cardDef = this.cardFactory.GetByFullName(cardFullName);
             var card = this.cardFactory.CreateNew(cardDef.Id);
@@ -265,7 +267,7 @@ namespace Cauldron.Server.Models
             this.logger.LogInformation($"手札: {handsLog}({player.Name})");
         }
 
-        public void MoveCard(Guid cardId, MoveCardContext moveCardContext)
+        public void MoveCard(CardId cardId, MoveCardContext moveCardContext)
         {
             var card = this.cardFactory.GetById(cardId);
 
@@ -353,20 +355,25 @@ namespace Cauldron.Server.Models
             this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: card, MoveCardContext: moveCardContext));
         }
 
-        public GameContext CreateGameContext(Guid playerId)
+        public GameContext CreateGameContext(PlayerId playerId)
         {
             return new GameContext()
             {
                 GameOver = this.GameOver,
-                WinnerPlayerId = this.GetWinner()?.Id ?? Guid.Empty,
+                WinnerPlayerId = this.GetWinner()?.Id ?? default,
                 You = new PrivatePlayerInfo(this.PlayersById[playerId]),
                 Opponent = new PublicPlayerInfo(this.GetOpponent(playerId)),
                 RuleBook = this.RuleBook
             };
         }
 
-        public GameMasterStatusCode Resolve(Guid playerId, Func<GameMasterStatusCode> action)
+        public GameMasterStatusCode Resolve(PlayerId playerId, Func<GameMasterStatusCode> action)
         {
+            if (!this.isStarted)
+            {
+                return GameMasterStatusCode.NotStart;
+            }
+
             if (this.GameOver)
             {
                 return GameMasterStatusCode.GameOver;
@@ -380,7 +387,7 @@ namespace Cauldron.Server.Models
             return action();
         }
 
-        public GameMasterStatusCode StartTurn(Guid playerId)
+        public GameMasterStatusCode StartTurn(PlayerId playerId)
         {
             return this.Resolve(playerId, () =>
             {
@@ -412,7 +419,7 @@ namespace Cauldron.Server.Models
             });
         }
 
-        public GameMasterStatusCode EndTurn(Guid playerId)
+        public GameMasterStatusCode EndTurn(PlayerId playerId)
         {
             return this.Resolve(playerId, () =>
             {
@@ -433,7 +440,7 @@ namespace Cauldron.Server.Models
             });
         }
 
-        public GameMasterStatusCode Draw(Guid playerId, int numCards)
+        public GameMasterStatusCode Draw(PlayerId playerId, int numCards)
         {
             return this.Resolve(playerId, () =>
             {
@@ -457,7 +464,7 @@ namespace Cauldron.Server.Models
             });
         }
 
-        public GameMasterStatusCode Discard(Guid playerId, IEnumerable<Guid> handCardId)
+        public GameMasterStatusCode Discard(PlayerId playerId, IEnumerable<CardId> handCardId)
         {
             return this.Resolve(playerId, () =>
             {
@@ -485,7 +492,7 @@ namespace Cauldron.Server.Models
         /// <param name="playerId"></param>
         /// <param name="handCardId"></param>
         /// <returns></returns>
-        public GameMasterStatusCode PlayFromHand(Guid playerId, Guid handCardId)
+        public GameMasterStatusCode PlayFromHand(PlayerId playerId, CardId handCardId)
         {
             return this.Resolve(playerId, () =>
             {
@@ -539,7 +546,7 @@ namespace Cauldron.Server.Models
         /// <param name="choiceCandidates"></param>
         /// <param name="choiceNum"></param>
         /// <returns></returns>
-        public ChoiceResult AskCard(Guid playerId, ChoiceResult choiceCandidates, int choiceNum)
+        public ChoiceResult AskCard(PlayerId playerId, ChoiceResult choiceCandidates, int choiceNum)
         {
             var choiceResult = this.AskCardAction(playerId, choiceCandidates, choiceNum);
             return choiceResult;
@@ -582,7 +589,7 @@ namespace Cauldron.Server.Models
         /// <param name="playerId"></param>
         /// <param name="cardId"></param>
         /// <returns></returns>
-        public GameMasterStatusCode PlayDirect(Guid playerId, Guid cardId)
+        public GameMasterStatusCode PlayDirect(PlayerId playerId, CardId cardId)
         {
             return this.Resolve(playerId, () =>
             {
@@ -619,7 +626,7 @@ namespace Cauldron.Server.Models
         /// <param name="attackCardId"></param>
         /// <param name="damagePlayerId"></param>
         /// <returns></returns>
-        public GameMasterStatusCode AttackToPlayer(Guid playerId, Guid attackCardId, Guid damagePlayerId)
+        public GameMasterStatusCode AttackToPlayer(PlayerId playerId, CardId attackCardId, PlayerId damagePlayerId)
         {
             return this.Resolve(playerId, () =>
             {
@@ -695,7 +702,7 @@ namespace Cauldron.Server.Models
             this.effectManager.DoEffect(newEventArgs with { GameEvent = GameEvent.OnDamage });
         }
 
-        public GameMasterStatusCode AttackToCreature(Guid playerId, Guid attackCardId, Guid guardCardId)
+        public GameMasterStatusCode AttackToCreature(PlayerId playerId, CardId attackCardId, CardId guardCardId)
         {
             return this.Resolve(playerId, () =>
             {
@@ -912,7 +919,7 @@ namespace Cauldron.Server.Models
             player.Modify(modifyPlayerContext.PlayerModifier);
         }
 
-        public Zone ConvertZone(Guid playerId, ZoneType zoneType)
+        public Zone ConvertZone(PlayerId playerId, ZoneType zoneType)
         {
             return zoneType switch
             {

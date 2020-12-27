@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace Cauldron.Server.Models
+﻿namespace Cauldron.Server.Models
 {
     public record PublicPlayerInfo(
-        Guid Id,
+        PlayerId Id,
         string Name,
         Field Field,
         int DeckCount,

@@ -404,7 +404,7 @@ namespace Cauldron.Server_Test
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // カードの選択処理のテスト
-            static ChoiceResult testAskCardAction(Guid _, ChoiceResult c, int i)
+            static ChoiceResult testAskCardAction(PlayerId _, ChoiceResult c, int i)
             {
                 return new ChoiceResult()
                 {

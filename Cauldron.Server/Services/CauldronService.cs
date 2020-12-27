@@ -12,7 +12,7 @@ namespace Cauldron.Server
 {
     public class CauldronService : Cauldron.Grpc.Api.Cauldron.CauldronBase
     {
-        private static Grpc.Models.GameContext CreateGameContext(Guid gameId, Guid PlayerId)
+        private static Grpc.Models.GameContext CreateGameContext(GameId gameId, PlayerId PlayerId)
         {
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
@@ -29,7 +29,7 @@ namespace Cauldron.Server
             };
         }
 
-        private static void NotifyClient(Guid playerId, ReadyGameReply clientNotify)
+        private static void NotifyClient(PlayerId playerId, ReadyGameReply clientNotify)
         {
             if (!queueByGameId.TryGetValue(playerId, out var messageQueue))
             {
@@ -39,7 +39,7 @@ namespace Cauldron.Server
             messageQueue.Enqueue(clientNotify);
         }
 
-        private static readonly ConcurrentDictionary<Guid, ConcurrentQueue<ReadyGameReply>> queueByGameId = new();
+        private static readonly ConcurrentDictionary<PlayerId, ConcurrentQueue<ReadyGameReply>> queueByGameId = new();
 
         private readonly ILogger<CauldronService> _logger;
 
@@ -64,7 +64,7 @@ namespace Cauldron.Server
 
         public override Task<GetCardPoolReply> GetCardPool(GetCardPoolRequest request, ServerCallContext context)
         {
-            var gameId = Guid.Parse(request.GameId);
+            var gameId = GameId.Parse(request.GameId);
             var gameMaster = new GameMasterRepository().GetById(gameId);
             var cards = gameMaster.CardPool
             //var cards = new Core.CardPool().Load()
@@ -76,7 +76,7 @@ namespace Cauldron.Server
             });
         }
 
-        private ChoiceResult AskCard(Guid playerId, ChoiceResult choiceResult, int numPicks)
+        private ChoiceResult AskCard(PlayerId playerId, ChoiceResult choiceResult, int numPicks)
         {
             var pickedPlayers = choiceResult.PlayerList.Take(numPicks).ToArray();
             numPicks -= pickedPlayers.Length;
@@ -96,7 +96,7 @@ namespace Cauldron.Server
 
         public override Task<CloseGameReply> CloseGame(CloseGameRequest request, ServerCallContext context)
         {
-            var gameId = Guid.Parse(request.GameId);
+            var gameId = GameId.Parse(request.GameId);
             new GameMasterRepository().Delete(gameId);
 
             return Task.FromResult(new CloseGameReply
@@ -112,8 +112,8 @@ namespace Cauldron.Server
 
         public override async Task ReadyGame(ReadyGameRequest request, IServerStreamWriter<ReadyGameReply> responseStream, ServerCallContext context)
         {
-            var gameId = Guid.Parse(request.GameId);
-            var playerId = Guid.Parse(request.PlayerId);
+            var gameId = GameId.Parse(request.GameId);
+            var playerId = PlayerId.Parse(request.PlayerId);
 
             var queue = new ConcurrentQueue<ReadyGameReply>();
             queueByGameId.TryAdd(playerId, queue);
@@ -156,9 +156,9 @@ namespace Cauldron.Server
 
         public override Task<EnterGameReply> EnterGame(EnterGameRequest request, ServerCallContext context)
         {
-            var gameId = Guid.Parse(request.GameId);
+            var gameId = GameId.Parse(request.GameId);
 
-            var deckIds = request.DeckCardIds.Select(deckId => Guid.Parse(deckId));
+            var deckIds = request.DeckCardIds.Select(deckId => CardDefId.Parse(deckId));
 
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
@@ -176,10 +176,10 @@ namespace Cauldron.Server
 
         public override Task<StartTurnReply> StartTurn(StartTurnRequest request, ServerCallContext context)
         {
-            var gameId = Guid.Parse(request.GameId);
+            var gameId = GameId.Parse(request.GameId);
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
-            var playerId = Guid.Parse(request.PlayerId);
+            var playerId = PlayerId.Parse(request.PlayerId);
             var statusCode = gameMaster.StartTurn(playerId);
 
             return Task.FromResult(new StartTurnReply()
@@ -192,10 +192,10 @@ namespace Cauldron.Server
 
         public override Task<EndTurnReply> EndTurn(EndTurnRequest request, ServerCallContext context)
         {
-            var gameId = Guid.Parse(request.GameId);
+            var gameId = GameId.Parse(request.GameId);
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
-            var playerId = Guid.Parse(request.PlayerId);
+            var playerId = PlayerId.Parse(request.PlayerId);
             var statusCode = gameMaster.EndTurn(playerId);
 
             return Task.FromResult(new EndTurnReply()
@@ -208,11 +208,11 @@ namespace Cauldron.Server
 
         public override Task<PlayFromHandReply> PlayFromHand(PlayFromHandRequest request, ServerCallContext context)
         {
-            var gameId = Guid.Parse(request.GameId);
+            var gameId = GameId.Parse(request.GameId);
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
-            var playerId = Guid.Parse(request.PlayerId);
-            var handCardId = Guid.Parse(request.HandCardId);
+            var playerId = PlayerId.Parse(request.PlayerId);
+            var handCardId = CardId.Parse(request.HandCardId);
             var statusCode = gameMaster.PlayFromHand(playerId, handCardId);
 
             return Task.FromResult(new PlayFromHandReply()
@@ -225,12 +225,12 @@ namespace Cauldron.Server
 
         public override Task<AttackToCreatureReply> AttackToCreature(AttackToCreatureRequest request, ServerCallContext context)
         {
-            var gameId = Guid.Parse(request.GameId);
+            var gameId = GameId.Parse(request.GameId);
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
-            var playerId = Guid.Parse(request.PlayerId);
-            var attackHandCardId = Guid.Parse(request.AttackHandCardId);
-            var guardHandCardId = Guid.Parse(request.GuardHandCardId);
+            var playerId = PlayerId.Parse(request.PlayerId);
+            var attackHandCardId = CardId.Parse(request.AttackHandCardId);
+            var guardHandCardId = CardId.Parse(request.GuardHandCardId);
             var statusCode = gameMaster.AttackToCreature(playerId, attackHandCardId, guardHandCardId);
 
             return Task.FromResult(new AttackToCreatureReply()
@@ -243,12 +243,12 @@ namespace Cauldron.Server
 
         public override Task<AttackToPlayerReply> AttackToPlayer(AttackToPlayerRequest request, ServerCallContext context)
         {
-            var gameId = Guid.Parse(request.GameId);
+            var gameId = GameId.Parse(request.GameId);
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
-            var playerId = Guid.Parse(request.PlayerId);
-            var attackHandCardId = Guid.Parse(request.AttackHandCardId);
-            var guardPlayerId = Guid.Parse(request.GuardPlayerId);
+            var playerId = PlayerId.Parse(request.PlayerId);
+            var attackHandCardId = CardId.Parse(request.AttackHandCardId);
+            var guardPlayerId = PlayerId.Parse(request.GuardPlayerId);
             var statusCode = gameMaster.AttackToPlayer(playerId, attackHandCardId, guardPlayerId);
 
             return Task.FromResult(new AttackToPlayerReply()

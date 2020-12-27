@@ -5,6 +5,11 @@
         OK,
 
         /// <summary>
+        /// ゲームがまだ開始していない
+        /// </summary>
+        NotStart,
+
+        /// <summary>
         /// デッキにトークンが含まれている
         /// </summary>
         IsIncludedTokensInDeck,

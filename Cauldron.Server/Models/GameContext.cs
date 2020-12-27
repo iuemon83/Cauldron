@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Cauldron.Server.Models
+﻿namespace Cauldron.Server.Models
 {
     public class GameContext
     {
         public bool GameOver { get; set; } = false;
-        public Guid WinnerPlayerId { get; set; }
+        public PlayerId WinnerPlayerId { get; set; }
 
         public PublicPlayerInfo Opponent { get; set; }
 

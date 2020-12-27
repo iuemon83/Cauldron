@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Cauldron.Server.Models
 {
-    public record Zone(Guid PlayerId, ZoneName ZoneName)
+    public record Zone(PlayerId PlayerId, ZoneName ZoneName)
     {
         public static readonly ZoneName[] PublicZoneNames = new[] { ZoneName.Field, ZoneName.Cemetery, ZoneName.CardPool };
 

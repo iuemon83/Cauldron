@@ -6,11 +6,11 @@ namespace Cauldron.Server.Models
 {
     public class CardFactory
     {
-        private ConcurrentDictionary<Guid, CardDef> CardDefListById { get; } = new();
+        private ConcurrentDictionary<CardDefId, CardDef> CardDefListById { get; } = new();
 
         private ConcurrentDictionary<string, CardDef> CardDefListByFullName { get; } = new();
 
-        private ConcurrentDictionary<Guid, Card> CardsById { get; } = new();
+        private ConcurrentDictionary<CardId, Card> CardsById { get; } = new();
 
         private readonly RuleBook ruleBook;
 
@@ -41,7 +41,7 @@ namespace Cauldron.Server.Models
         }
 
 
-        public Card CreateNew(Guid cardDefId)
+        public Card CreateNew(CardDefId cardDefId)
         {
             var card = new Card(CardDefListById[cardDefId]);
             this.CardsById.TryAdd(card.Id, card);
@@ -49,7 +49,7 @@ namespace Cauldron.Server.Models
             return card;
         }
 
-        public Card GetById(Guid cardId)
+        public Card GetById(CardId cardId)
         {
             return this.CardsById.TryGetValue(cardId, out var cardDef)
                 ? cardDef

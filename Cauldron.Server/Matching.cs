@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cauldron.Server.Models;
+using System;
 using System.Collections.Concurrent;
 
 namespace Cauldron.Server
@@ -7,9 +8,9 @@ namespace Cauldron.Server
     {
         public static readonly Matching Default = new Matching();
 
-        private readonly ConcurrentDictionary<Guid, (Guid FirstReadyPlayerId, Action<Guid> Callback)> readyFirstPlayerListByGameId = new();
+        private readonly ConcurrentDictionary<GameId, (PlayerId FirstReadyPlayerId, Action<PlayerId> Callback)> readyFirstPlayerListByGameId = new();
 
-        public void Ready(Guid gameId, Guid playerId, Action<Guid> startGameCallback)
+        public void Ready(GameId gameId, PlayerId playerId, Action<PlayerId> startGameCallback)
         {
             if (this.readyFirstPlayerListByGameId.TryAdd(gameId, (playerId, startGameCallback)))
             {
