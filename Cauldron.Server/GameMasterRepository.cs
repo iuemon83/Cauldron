@@ -1,7 +1,4 @@
 ﻿using Cauldron.Server.Models;
-using Cauldron.Server.Models.Effect;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
 
 namespace Cauldron.Server
@@ -10,12 +7,10 @@ namespace Cauldron.Server
     {
         public static readonly ConcurrentDictionary<GameId, GameMaster> gameMasterListByGameId = new();
 
-        public GameId Add(Grpc.Models.RuleBook ruleBook, CardFactory cardFactory, ILogger logger,
-            Func<PlayerId, ChoiceResult, int, ChoiceResult> askCardAction,
-            Action<PlayerId, Grpc.Api.ReadyGameReply> notifyClientAction)
+        public GameId Add(GameMasterOptions options)
         {
             var id = GameId.NewId();
-            var gameMaster = new GameMaster(new RuleBook(ruleBook), cardFactory, logger, askCardAction, notifyClientAction);
+            var gameMaster = new GameMaster(options);
             gameMasterListByGameId.TryAdd(id, gameMaster);
 
             return id;

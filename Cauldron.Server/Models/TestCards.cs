@@ -639,6 +639,7 @@ namespace Cauldron.Server.Models
                                     {
                                         Context = CardCondition.CardConditionContext.Others,
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
+                                        ZoneCondition = new ZoneCondition(new[]{ ZoneType.YouField })
                                     },
                                     How = Choice.ChoiceHow.All,
                                 },

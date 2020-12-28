@@ -51,7 +51,7 @@ namespace Cauldron.Server_Test
             var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -135,7 +135,7 @@ namespace Cauldron.Server_Test
             var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -219,7 +219,7 @@ namespace Cauldron.Server_Test
             var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, fairy, testCardDef });
 
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -302,7 +302,7 @@ namespace Cauldron.Server_Test
             var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, fairy, testCardDef });
 
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -377,7 +377,7 @@ namespace Cauldron.Server_Test
             var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -453,7 +453,7 @@ namespace Cauldron.Server_Test
             var testCardFactory = new CardFactory(new RuleBook());
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -520,7 +520,7 @@ namespace Cauldron.Server_Test
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // 以下テスト
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -583,7 +583,7 @@ namespace Cauldron.Server_Test
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // 以下テスト
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -654,7 +654,7 @@ namespace Cauldron.Server_Test
             }
 
             // 以下テスト
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), testAskCardAction, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), testAskCardAction, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -726,7 +726,7 @@ namespace Cauldron.Server_Test
             }
 
             // 以下テスト
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), testAskCardAction, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), testAskCardAction, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -777,7 +777,7 @@ namespace Cauldron.Server_Test
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // 以下テスト
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
@@ -827,7 +827,7 @@ namespace Cauldron.Server_Test
             testCardFactory.SetCardPool(new[] { goblin, testCardDef });
 
             // 以下テスト
-            var testGameMaster = new GameMaster(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { });
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));

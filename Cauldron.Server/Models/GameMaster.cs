@@ -73,6 +73,7 @@ namespace Cauldron.Server.Models
 
         private readonly CardFactory cardFactory;
 
+        public readonly ConcurrentDictionary<PlayerId, PlayerDef> PlayerDefsById = new();
         public readonly ConcurrentDictionary<PlayerId, Player> PlayersById = new();
 
         public Player ActivePlayer { get; set; }
@@ -95,60 +96,7 @@ namespace Cauldron.Server.Models
 
         private readonly Action<PlayerId, Grpc.Api.ReadyGameReply> notifyClient;
 
-        private bool isStarted = false;
-
-        public GameMaster(RuleBook ruleBook, CardFactory cardFactory, ILogger logger,
-            Func<PlayerId, ChoiceResult, int, ChoiceResult> askCardAction, Action<PlayerId, Grpc.Api.ReadyGameReply> notifyClient)
-        {
-            this.RuleBook = ruleBook;
-            this.cardFactory = cardFactory;
-            this.logger = logger;
-            this.AskCardAction = askCardAction;
-            this.effectManager = new EffectManager(logger);
-            this.notifyClient = notifyClient;
-        }
-
-        public (GameMasterStatusCode, PlayerId) CreateNewPlayer(string name, IEnumerable<CardDefId> deckCardDefIdList)
-        {
-            var newId = PlayerId.NewId();
-            var deckCards = deckCardDefIdList.Select(id => this.cardFactory.CreateNew(id)).ToArray();
-
-            // 提示されたデッキにトークンが含まれていてはいけない
-            if (deckCards.Any(c => c.IsToken))
-            {
-                return (GameMasterStatusCode.IsIncludedTokensInDeck, default);
-            }
-
-            var player = new Player(newId, name, this.RuleBook, deckCards);
-            this.PlayersById.TryAdd(newId, player);
-
-            this.PlayerTurnCountById.TryAdd(newId, 0);
-
-            return (GameMasterStatusCode.OK, newId);
-        }
-
-        public void Start(PlayerId firstPlayerId)
-        {
-            if (this.isStarted) return;
-
-            this.ActivePlayer = this.PlayersById[firstPlayerId];
-            this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
-
-            // ぜんいんにカードを配る
-            foreach (var player in this.PlayersById.Values)
-            {
-                this.Draw(player.Id, this.RuleBook.InitialNumHands);
-
-                Console.WriteLine("hands: " + string.Join(",", player.Hands.AllCards.Select(c => c.Name)));
-            }
-
-            this.notifyClient(this.ActivePlayer.Id, new Grpc.Api.ReadyGameReply()
-            {
-                Code = Grpc.Api.ReadyGameReply.Types.Code.StartTurn,
-            });
-
-            this.isStarted = true;
-        }
+        public bool IsStarted { get; private set; }
 
         public Player GetWinner()
         {
@@ -163,38 +111,6 @@ namespace Cauldron.Server.Models
         {
             return this.PlayersById.Values
                 .First(player => player.Id != playerId);
-        }
-
-        /// <summary>
-        /// 指定したカードを破壊します。
-        /// </summary>
-        /// <param name="cardToDestroy"></param>
-        public void DestroyCard(Card cardToDestroy)
-        {
-            var player = this.PlayersById[cardToDestroy.OwnerId];
-            this.logger.LogInformation($"破壊：{cardToDestroy}({player.Name})");
-
-            this.MoveCard(cardToDestroy.Id, new(new(cardToDestroy.OwnerId, ZoneName.Field), new(cardToDestroy.OwnerId, ZoneName.Cemetery)));
-
-            this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDestroy, this, SourceCard: cardToDestroy));
-        }
-
-        public void Buff(Card creatureCard, int powerBuff, int toughnessBuff)
-        {
-            this.logger.LogInformation($"修整：{creatureCard}({this.PlayersById[creatureCard.OwnerId].Name})-[{powerBuff},{toughnessBuff}]");
-
-            if (creatureCard.Type != CardType.Creature)
-            {
-                return;
-            }
-
-            creatureCard.PowerBuff += powerBuff;
-            creatureCard.ToughnessBuff += toughnessBuff;
-
-            if (creatureCard.Toughness <= 0)
-            {
-                this.DestroyCard(creatureCard);
-            }
         }
 
         public bool IsPutFieldCard(Card card)
@@ -232,18 +148,114 @@ namespace Cauldron.Server.Models
             return true;
         }
 
+        public GameMaster(GameMasterOptions options)
+        {
+            this.RuleBook = options.RuleBook;
+            this.cardFactory = options.CardFactory;
+            this.logger = options.Logger;
+            this.AskCardAction = options.AskCardAction;
+            this.notifyClient = options.NotifyClient;
+
+            this.effectManager = new EffectManager(logger);
+        }
+
+        public (GameMasterStatusCode, PlayerId) CreateNewPlayer(string name, IEnumerable<CardDefId> deckCardDefIdList)
+        {
+            var newId = PlayerId.NewId();
+            var deckCards = deckCardDefIdList.Select(id => this.cardFactory.CreateNew(id)).ToArray();
+
+            // 提示されたデッキにトークンが含まれていてはいけない
+            if (deckCards.Any(c => c.IsToken))
+            {
+                return (GameMasterStatusCode.IsIncludedTokensInDeck, default);
+            }
+
+            var playerDef = new PlayerDef(newId, name, deckCardDefIdList.ToArray());
+            this.PlayerDefsById.TryAdd(newId, playerDef);
+
+            return (GameMasterStatusCode.OK, newId);
+        }
+
+        public void Start(PlayerId firstPlayerId)
+        {
+            if (this.IsStarted) return;
+
+            this.IsStarted = true;
+
+            try
+            {
+                if (!this.PlayerDefsById.ContainsKey(firstPlayerId))
+                {
+                    throw new InvalidOperationException("存在しないプレイヤーです。");
+                }
+
+                foreach (var playerDef in this.PlayerDefsById.Values)
+                {
+                    var deckCards = playerDef.DeckIdList.Select(id => this.cardFactory.CreateNew(id)).ToArray();
+                    var player = new Player(playerDef.Id, playerDef.Name, this.RuleBook, deckCards);
+                    this.PlayersById.TryAdd(player.Id, player);
+
+                    this.PlayerTurnCountById.TryAdd(player.Id, 0);
+                }
+
+                this.ActivePlayer = this.PlayersById[firstPlayerId];
+                this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
+
+                foreach (var player in this.PlayersById.Values)
+                {
+                    player.Deck.Shuffle();
+
+                    // カードを配る
+                    this.Draw(player.Id, this.RuleBook.InitialNumHands);
+                }
+
+                this.notifyClient(this.ActivePlayer.Id, new Grpc.Api.ReadyGameReply()
+                {
+                    Code = Grpc.Api.ReadyGameReply.Types.Code.StartTurn,
+                });
+            }
+            catch
+            {
+                this.IsStarted = false;
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 指定したカードを破壊します。
+        /// </summary>
+        /// <param name="cardToDestroy"></param>
+        public void DestroyCard(Card cardToDestroy)
+        {
+            var player = this.PlayersById[cardToDestroy.OwnerId];
+            this.logger.LogInformation($"破壊：{cardToDestroy}({player.Name})");
+
+            this.MoveCard(cardToDestroy.Id, new(new(cardToDestroy.OwnerId, ZoneName.Field), new(cardToDestroy.OwnerId, ZoneName.Cemetery)));
+
+            this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDestroy, this, SourceCard: cardToDestroy));
+        }
+
+        public void Buff(Card creatureCard, int powerBuff, int toughnessBuff)
+        {
+            this.logger.LogInformation($"修整：{creatureCard}({this.PlayersById[creatureCard.OwnerId].Name})-[{powerBuff},{toughnessBuff}]");
+
+            if (creatureCard.Type != CardType.Creature)
+            {
+                return;
+            }
+
+            creatureCard.PowerBuff += powerBuff;
+            creatureCard.ToughnessBuff += toughnessBuff;
+
+            if (creatureCard.Toughness <= 0)
+            {
+                this.DestroyCard(creatureCard);
+            }
+        }
+
         public Card GenerateNewCard(CardDefId cardDefId, PlayerId ownerId)
         {
             var card = this.cardFactory.CreateNew(cardDefId);
-            card.OwnerId = ownerId;
-
-            return card;
-        }
-
-        public Card GenerateNewCard(string cardFullName, PlayerId ownerId)
-        {
-            var cardDef = this.cardFactory.GetByFullName(cardFullName);
-            var card = this.cardFactory.CreateNew(cardDef.Id);
             card.OwnerId = ownerId;
 
             return card;
@@ -367,123 +379,124 @@ namespace Cauldron.Server.Models
             };
         }
 
-        public GameMasterStatusCode Resolve(PlayerId playerId, Func<GameMasterStatusCode> action)
-        {
-            if (!this.isStarted)
-            {
-                return GameMasterStatusCode.NotStart;
-            }
-
-            if (this.GameOver)
-            {
-                return GameMasterStatusCode.GameOver;
-            }
-
-            if (playerId != this.ActivePlayer.Id)
-            {
-                return GameMasterStatusCode.NotActivePlayer;
-            }
-
-            return action();
-        }
-
-        public GameMasterStatusCode StartTurn(PlayerId playerId)
-        {
-            return this.Resolve(playerId, () =>
-            {
-                this.PlayerTurnCountById[this.ActivePlayer.Id]++;
-
-                // 1ターン目はMP を増やさない
-                if (this.PlayerTurnCountById[this.ActivePlayer.Id] != 1)
-                {
-                    this.ActivePlayer.AddMaxMp(this.RuleBook.MpByStep);
-                }
-
-                this.ActivePlayer.FullMp();
-                foreach (var card in this.ActivePlayer.Field.AllCards)
-                {
-                    card.NumTurnsInField++;
-                    card.NumAttacksInTurn = 0;
-                }
-
-                this.logger.LogInformation(
-                     $"ターン開始: {this.ActivePlayer.Name}-[HP:{this.ActivePlayer.CurrentHp}/{this.ActivePlayer.MaxHp}][MP:{this.ActivePlayer.MaxMp}][ターン:{this.PlayerTurnCountById[this.ActivePlayer.Id]}({this.AllTurnCount})]----------------------------");
-                this.logger.LogInformation(
-                     $"フィールド: {string.Join(",", this.ActivePlayer.Field.AllCards.Select(c => c.Name))}");
-
-                this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnStartTurn, this));
-
-                this.Draw(this.ActivePlayer.Id, 1);
-
-                return GameMasterStatusCode.OK;
-            });
-        }
-
-        public GameMasterStatusCode EndTurn(PlayerId playerId)
-        {
-            return this.Resolve(playerId, () =>
-            {
-                var endTurnPlayer = this.ActivePlayer;
-
-                this.logger.LogInformation($"ターンエンド：{endTurnPlayer.Name}");
-
-                this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnEndTurn, this));
-
-                this.ActivePlayer = this.NextPlayer;
-                this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
-                this.notifyClient(this.ActivePlayer.Id, new Grpc.Api.ReadyGameReply()
-                {
-                    Code = Grpc.Api.ReadyGameReply.Types.Code.StartTurn,
-                });
-
-                return GameMasterStatusCode.OK;
-            });
-        }
-
         public GameMasterStatusCode Draw(PlayerId playerId, int numCards)
         {
-            return this.Resolve(playerId, () =>
+            if (this.PlayersById.TryGetValue(playerId, out var player))
             {
-                if (this.PlayersById.TryGetValue(playerId, out var player))
+                foreach (var _ in Enumerable.Range(0, numCards))
                 {
-                    foreach (var _ in Enumerable.Range(0, numCards))
-                    {
-                        var drawCard = player.Draw();
+                    var drawCard = player.Draw();
 
-                        this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
-                        this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
-                            MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
-                    }
+                    this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
+                    this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
+                        MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
+                }
 
-                    return GameMasterStatusCode.OK;
-                }
-                else
-                {
-                    return GameMasterStatusCode.PlayerNotExists;
-                }
-            });
+                return GameMasterStatusCode.OK;
+            }
+            else
+            {
+                return GameMasterStatusCode.PlayerNotExists;
+            }
         }
 
         public GameMasterStatusCode Discard(PlayerId playerId, IEnumerable<CardId> handCardId)
         {
-            return this.Resolve(playerId, () =>
+            if (this.PlayersById.TryGetValue(playerId, out var player))
             {
-                if (this.PlayersById.TryGetValue(playerId, out var player))
+                //TODO 本当に手札にあるのか確認する必要あり
+                var handCards = handCardId.Select(cid => this.cardFactory.GetById(cid));
+                foreach (var card in handCards)
                 {
-                    //TODO 本当に手札にあるのか確認する必要あり
-                    var handCards = handCardId.Select(cid => this.cardFactory.GetById(cid));
-                    foreach (var card in handCards)
-                    {
-                        this.MoveCard(card.Id, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Cemetery)));
-                    }
+                    this.MoveCard(card.Id, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Cemetery)));
+                }
 
-                    return GameMasterStatusCode.OK;
-                }
-                else
-                {
-                    return GameMasterStatusCode.PlayerNotExists;
-                }
+                return GameMasterStatusCode.OK;
+            }
+            else
+            {
+                return GameMasterStatusCode.PlayerNotExists;
+            }
+        }
+
+        /// <summary>
+        /// 新規に生成されるカードをプレイ（効果で召喚とか）
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <param name="cardId"></param>
+        /// <returns></returns>
+        public GameMasterStatusCode PlayDirect(PlayerId playerId, CardId cardId)
+        {
+            var player = this.PlayersById[playerId];
+            var playingCard = this.cardFactory.GetById(cardId);
+
+            this.logger.LogInformation($"特殊プレイ：{playingCard}({player.Name})");
+
+            // プレイ不能
+            if (!this.IsPlayableDirect(player, playingCard))
+            {
+                return GameMasterStatusCode.CardCantPlay;
+            }
+
+            switch (playingCard.Type)
+            {
+                case CardType.Creature:
+                case CardType.Artifact:
+                    player.Field.Add(playingCard);
+                    break;
+
+                default:
+                    break;
+            }
+
+            return GameMasterStatusCode.OK;
+        }
+
+        public GameMasterStatusCode StartTurn()
+        {
+            this.PlayerTurnCountById[this.ActivePlayer.Id]++;
+
+            // 1ターン目はMP を増やさない
+            if (this.PlayerTurnCountById[this.ActivePlayer.Id] != 1)
+            {
+                this.ActivePlayer.AddMaxMp(this.RuleBook.MpByStep);
+            }
+
+            this.ActivePlayer.FullMp();
+            foreach (var card in this.ActivePlayer.Field.AllCards)
+            {
+                card.NumTurnsInField++;
+                card.NumAttacksInTurn = 0;
+            }
+
+            this.logger.LogInformation(
+                 $"ターン開始: {this.ActivePlayer.Name}-[HP:{this.ActivePlayer.CurrentHp}/{this.ActivePlayer.MaxHp}][MP:{this.ActivePlayer.MaxMp}][ターン:{this.PlayerTurnCountById[this.ActivePlayer.Id]}({this.AllTurnCount})]----------------------------");
+            this.logger.LogInformation(
+                 $"フィールド: {string.Join(",", this.ActivePlayer.Field.AllCards.Select(c => c.Name))}");
+
+            this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnStartTurn, this));
+
+            this.Draw(this.ActivePlayer.Id, 1);
+
+            return GameMasterStatusCode.OK;
+        }
+
+        public GameMasterStatusCode EndTurn()
+        {
+            var endTurnPlayer = this.ActivePlayer;
+
+            this.logger.LogInformation($"ターンエンド：{endTurnPlayer.Name}");
+
+            this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnEndTurn, this));
+
+            this.ActivePlayer = this.NextPlayer;
+            this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
+            this.notifyClient(this.ActivePlayer.Id, new Grpc.Api.ReadyGameReply()
+            {
+                Code = Grpc.Api.ReadyGameReply.Types.Code.StartTurn,
             });
+
+            return GameMasterStatusCode.OK;
         }
 
         /// <summary>
@@ -494,49 +507,46 @@ namespace Cauldron.Server.Models
         /// <returns></returns>
         public GameMasterStatusCode PlayFromHand(PlayerId playerId, CardId handCardId)
         {
-            return this.Resolve(playerId, () =>
+            var player = this.PlayersById[playerId];
+            var (success, playingCard) = player.Hands.TryGetById(handCardId);
+
+            if (!success)
             {
-                var player = this.PlayersById[playerId];
-                var (success, playingCard) = player.Hands.TryGetById(handCardId);
+                return GameMasterStatusCode.CardNotExists;
+            }
 
-                if (!success)
-                {
-                    return GameMasterStatusCode.CardNotExists;
-                }
+            this.logger.LogInformation($"プレイ：{playingCard}({player.Name})");
 
-                this.logger.LogInformation($"プレイ：{playingCard}({player.Name})");
+            // プレイ不能
+            if (!this.IsPlayable(player, playingCard))
+            {
+                return GameMasterStatusCode.CardCantPlay;
+            }
 
-                // プレイ不能
-                if (!this.IsPlayable(player, playingCard))
-                {
-                    return GameMasterStatusCode.CardCantPlay;
-                }
+            this.ActivePlayer.UseMp(playingCard.Cost);
 
-                this.ActivePlayer.UseMp(playingCard.Cost);
+            this.MoveCard(handCardId, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Field)));
 
-                this.MoveCard(handCardId, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Field)));
+            this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnPlay, this, SourceCard: playingCard));
 
-                this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnPlay, this, SourceCard: playingCard));
+            switch (playingCard.Type)
+            {
+                case CardType.Creature:
+                case CardType.Artifact:
 
-                switch (playingCard.Type)
-                {
-                    case CardType.Creature:
-                    case CardType.Artifact:
+                    //player.Field.Add(playingCard);
+                    break;
 
-                        //player.Field.Add(playingCard);
-                        break;
+                case CardType.Sorcery:
+                    this.MoveCard(handCardId, new(new(playerId, ZoneName.Field), new(playerId, ZoneName.Cemetery)));
 
-                    case CardType.Sorcery:
-                        this.MoveCard(handCardId, new(new(playerId, ZoneName.Field), new(playerId, ZoneName.Cemetery)));
+                    break;
 
-                        break;
+                default:
+                    break;
+            }
 
-                    default:
-                        break;
-                }
-
-                return GameMasterStatusCode.OK;
-            });
+            return GameMasterStatusCode.OK;
         }
 
         /// <summary>
@@ -584,42 +594,6 @@ namespace Cauldron.Server.Models
         }
 
         /// <summary>
-        /// 新規に生成されるカードをプレイ（効果で召喚とか）
-        /// </summary>
-        /// <param name="playerId"></param>
-        /// <param name="cardId"></param>
-        /// <returns></returns>
-        public GameMasterStatusCode PlayDirect(PlayerId playerId, CardId cardId)
-        {
-            return this.Resolve(playerId, () =>
-            {
-                var player = this.PlayersById[playerId];
-                var playingCard = this.cardFactory.GetById(cardId);
-
-                this.logger.LogInformation($"特殊プレイ：{playingCard}({player.Name})");
-
-                // プレイ不能
-                if (!this.IsPlayableDirect(player, playingCard))
-                {
-                    return GameMasterStatusCode.CardCantPlay;
-                }
-
-                switch (playingCard.Type)
-                {
-                    case CardType.Creature:
-                    case CardType.Artifact:
-                        player.Field.Add(playingCard);
-                        break;
-
-                    default:
-                        break;
-                }
-
-                return GameMasterStatusCode.OK;
-            });
-        }
-
-        /// <summary>
         /// プレイヤーに攻撃します。
         /// </summary>
         /// <param name="playerId"></param>
@@ -628,46 +602,43 @@ namespace Cauldron.Server.Models
         /// <returns></returns>
         public GameMasterStatusCode AttackToPlayer(PlayerId playerId, CardId attackCardId, PlayerId damagePlayerId)
         {
-            return this.Resolve(playerId, () =>
-            {
-                var player = this.PlayersById[playerId];
-                var attackCard = player.Field.GetById(attackCardId);
-                var damagePlayer = this.PlayersById[damagePlayerId];
+            var player = this.PlayersById[playerId];
+            var attackCard = player.Field.GetById(attackCardId);
+            var damagePlayer = this.PlayersById[damagePlayerId];
 
-                var eventArgs = new EffectEventArgs(
-                    GameEvent.OnBattleBefore,
-                    this,
-                    BattleContext: new BattleContext(
-                        AttackCard: attackCard,
-                        GuardPlayer: damagePlayer,
-                        Value: attackCard.Power
-                        )
-                    );
-
-                this.effectManager.DoEffect(eventArgs);
-
-                this.logger.LogInformation($"アタック（プレイヤー）：{attackCard}({player.Name}) > {damagePlayer.Name}");
-
-                if (!CanAttack(eventArgs.BattleContext.AttackCard, eventArgs.BattleContext.GuardPlayer))
-                {
-                    return GameMasterStatusCode.CandAttack;
-                }
-
-                var damageContext = new DamageContext(
-                    DamageSourceCard: eventArgs.BattleContext.AttackCard,
-                    GuardPlayer: eventArgs.BattleContext.GuardPlayer,
-                    Value: eventArgs.BattleContext.AttackCard.Power
+            var eventArgs = new EffectEventArgs(
+                GameEvent.OnBattleBefore,
+                this,
+                BattleContext: new BattleContext(
+                    AttackCard: attackCard,
+                    GuardPlayer: damagePlayer,
+                    Value: attackCard.Power
+                    )
                 );
-                this.HitPlayer(damageContext);
 
-                attackCard.NumAttacksInTurn++;
+            this.effectManager.DoEffect(eventArgs);
 
-                var eventArgs2 = eventArgs with { GameEvent = GameEvent.OnBattle };
+            this.logger.LogInformation($"アタック（プレイヤー）：{attackCard}({player.Name}) > {damagePlayer.Name}");
 
-                this.effectManager.DoEffect(eventArgs2);
+            if (!CanAttack(eventArgs.BattleContext.AttackCard, eventArgs.BattleContext.GuardPlayer))
+            {
+                return GameMasterStatusCode.CandAttack;
+            }
 
-                return GameMasterStatusCode.OK;
-            });
+            var damageContext = new DamageContext(
+                DamageSourceCard: eventArgs.BattleContext.AttackCard,
+                GuardPlayer: eventArgs.BattleContext.GuardPlayer,
+                Value: eventArgs.BattleContext.AttackCard.Power
+            );
+            this.HitPlayer(damageContext);
+
+            attackCard.NumAttacksInTurn++;
+
+            var eventArgs2 = eventArgs with { GameEvent = GameEvent.OnBattle };
+
+            this.effectManager.DoEffect(eventArgs2);
+
+            return GameMasterStatusCode.OK;
         }
 
         public void HitPlayer(DamageContext damageContext)
@@ -704,60 +675,57 @@ namespace Cauldron.Server.Models
 
         public GameMasterStatusCode AttackToCreature(PlayerId playerId, CardId attackCardId, CardId guardCardId)
         {
-            return this.Resolve(playerId, () =>
+            var attackCard = this.cardFactory.GetById(attackCardId);
+            var guardCard = this.cardFactory.GetById(guardCardId);
+
+            var attackPlayer = this.PlayersById[attackCard.OwnerId];
+            var guardPlayer = this.PlayersById[guardCard.OwnerId];
+
+            var eventArgs = new EffectEventArgs(
+                GameEvent.OnBattleBefore,
+                this,
+                BattleContext: new BattleContext(
+                    AttackCard: attackCard,
+                    GuardCard: guardCard,
+                    Value: attackCard.Power
+                ));
+
+            this.effectManager.DoEffect(eventArgs);
+
+            this.logger.LogInformation($"アタック（クリーチャー）：{eventArgs.BattleContext.AttackCard}({attackPlayer.Name}) > {eventArgs.BattleContext.GuardCard}({guardPlayer.Name})");
+
+            if (!CanAttack(eventArgs.BattleContext.AttackCard, eventArgs.BattleContext.GuardCard, this.CreateGameContext(playerId)))
             {
-                var attackCard = this.cardFactory.GetById(attackCardId);
-                var guardCard = this.cardFactory.GetById(guardCardId);
+                return GameMasterStatusCode.CandAttack;
+            }
 
-                var attackPlayer = this.PlayersById[attackCard.OwnerId];
-                var guardPlayer = this.PlayersById[guardCard.OwnerId];
+            // 攻撃するとステルスを失う
+            if (eventArgs.BattleContext.AttackCard.Abilities.Contains(CreatureAbility.Stealth))
+            {
+                eventArgs.BattleContext.AttackCard.Abilities.Remove(CreatureAbility.Stealth);
+            }
 
-                var eventArgs = new EffectEventArgs(
-                    GameEvent.OnBattleBefore,
-                    this,
-                    BattleContext: new BattleContext(
-                        AttackCard: attackCard,
-                        GuardCard: guardCard,
-                        Value: attackCard.Power
-                    ));
+            // お互いにダメージを受ける
+            var damageContext = new DamageContext(
+                DamageSourceCard: eventArgs.BattleContext.AttackCard,
+                GuardCard: eventArgs.BattleContext.GuardCard,
+                Value: eventArgs.BattleContext.AttackCard.Power
+            );
+            this.HitCreature(damageContext);
 
-                this.effectManager.DoEffect(eventArgs);
+            attackCard.NumAttacksInTurn++;
 
-                this.logger.LogInformation($"アタック（クリーチャー）：{eventArgs.BattleContext.AttackCard}({attackPlayer.Name}) > {eventArgs.BattleContext.GuardCard}({guardPlayer.Name})");
+            var damageContext2 = new DamageContext(
+                DamageSourceCard: eventArgs.BattleContext.GuardCard,
+                GuardCard: eventArgs.BattleContext.AttackCard,
+                Value: eventArgs.BattleContext.GuardCard.Power
+            );
+            this.HitCreature(damageContext2);
 
-                if (!CanAttack(eventArgs.BattleContext.AttackCard, eventArgs.BattleContext.GuardCard, this.CreateGameContext(playerId)))
-                {
-                    return GameMasterStatusCode.CandAttack;
-                }
+            var eventArgs2 = eventArgs with { GameEvent = GameEvent.OnBattle };
+            this.effectManager.DoEffect(eventArgs2);
 
-                // 攻撃するとステルスを失う
-                if (eventArgs.BattleContext.AttackCard.Abilities.Contains(CreatureAbility.Stealth))
-                {
-                    eventArgs.BattleContext.AttackCard.Abilities.Remove(CreatureAbility.Stealth);
-                }
-
-                // お互いにダメージを受ける
-                var damageContext = new DamageContext(
-                    DamageSourceCard: eventArgs.BattleContext.AttackCard,
-                    GuardCard: eventArgs.BattleContext.GuardCard,
-                    Value: eventArgs.BattleContext.AttackCard.Power
-                );
-                this.HitCreature(damageContext);
-
-                attackCard.NumAttacksInTurn++;
-
-                var damageContext2 = new DamageContext(
-                    DamageSourceCard: eventArgs.BattleContext.GuardCard,
-                    GuardCard: eventArgs.BattleContext.AttackCard,
-                    Value: eventArgs.BattleContext.GuardCard.Power
-                );
-                this.HitCreature(damageContext2);
-
-                var eventArgs2 = eventArgs with { GameEvent = GameEvent.OnBattle };
-                this.effectManager.DoEffect(eventArgs2);
-
-                return GameMasterStatusCode.OK;
-            });
+            return GameMasterStatusCode.OK;
         }
 
         public void HitCreature(DamageContext damageContext)

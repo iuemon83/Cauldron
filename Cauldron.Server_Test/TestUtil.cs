@@ -79,16 +79,16 @@ namespace Cauldron.Server_Test
 
         public static void Turn(GameMaster gameMaster, Action<GameMaster, PlayerId> turnAction)
         {
-            gameMaster.StartTurn(gameMaster.ActivePlayer.Id);
+            gameMaster.StartTurn();
             turnAction(gameMaster, gameMaster.ActivePlayer.Id);
-            gameMaster.EndTurn(gameMaster.ActivePlayer.Id);
+            gameMaster.EndTurn();
         }
 
         public static T Turn<T>(GameMaster gameMaster, Func<GameMaster, PlayerId, T> turnAction)
         {
-            gameMaster.StartTurn(gameMaster.ActivePlayer.Id);
+            gameMaster.StartTurn();
             var cards = turnAction(gameMaster, gameMaster.ActivePlayer.Id);
-            gameMaster.EndTurn(gameMaster.ActivePlayer.Id);
+            gameMaster.EndTurn();
 
             return cards;
         }
