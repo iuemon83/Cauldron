@@ -247,6 +247,16 @@ namespace Cauldron.Server.Models
             creatureCard.PowerBuff += powerBuff;
             creatureCard.ToughnessBuff += toughnessBuff;
 
+            // カードの持ち主には無条件に通知する
+            this.notifyClient(creatureCard.OwnerId, new Grpc.Api.ReadyGameReply()
+            {
+                Code = Grpc.Api.ReadyGameReply.Types.Code.ModifyCard,
+                ModifyCardNotify = new Grpc.Api.ModifyCardNotify()
+                {
+                    CardId = creatureCard.Id.ToString(),
+                }
+            });
+
             if (creatureCard.Toughness <= 0)
             {
                 this.DestroyCard(creatureCard);
@@ -885,6 +895,18 @@ namespace Cauldron.Server.Models
             }
 
             player.Modify(modifyPlayerContext.PlayerModifier);
+
+            foreach (var playerId in this.PlayersById.Keys)
+            {
+                this.notifyClient(playerId, new Grpc.Api.ReadyGameReply()
+                {
+                    Code = Grpc.Api.ReadyGameReply.Types.Code.ModifyPlayer,
+                    ModifyPlayerNotify = new Grpc.Api.ModifyPlayerNotify()
+                    {
+                        PlayerId = modifyPlayerContext.PlayerId.ToString()
+                    }
+                });
+            }
         }
 
         public Zone ConvertZone(PlayerId playerId, ZoneType zoneType)
