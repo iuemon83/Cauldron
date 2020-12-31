@@ -20,7 +20,7 @@
                  player.Field,
                  player.Deck.Count,
                  player.Cemetery,
-                 player.Hands.Count,
+                 player.Hands.AllCards.Count,
                  player.MaxHp,
                  player.CurrentHp,
                  player.MaxMp,

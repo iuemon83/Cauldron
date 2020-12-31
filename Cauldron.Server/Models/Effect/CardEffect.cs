@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Cauldron.Server.Models
 {
-    public record CardEffect(EffectTiming Timing, IReadOnlyList<IEffectAction> Actions)
+    public record CardEffect(EffectTiming Timing, IReadOnlyList<EffectAction> Actions)
     {
         public (bool, EffectEventArgs) DoIfMatched(Card effectOwnerCard, EffectEventArgs args)
         {

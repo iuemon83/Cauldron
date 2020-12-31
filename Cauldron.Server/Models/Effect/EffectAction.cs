@@ -13,7 +13,13 @@ namespace Cauldron.Server.Models.Effect
         EffectActionMoveCard MoveCard = null
         ) : IEffectAction
     {
-        public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs effectEventArgs)
+        /// <summary>
+        /// テストようにvirtual にしてる
+        /// </summary>
+        /// <param name="ownerCard"></param>
+        /// <param name="effectEventArgs"></param>
+        /// <returns></returns>
+        public virtual (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs effectEventArgs)
         {
             //TODO この順番もけっこう重要
             var actions = new IEffectAction[]

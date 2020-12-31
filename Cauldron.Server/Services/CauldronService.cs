@@ -2,6 +2,7 @@ using Cauldron.Grpc.Api;
 using Cauldron.Server.Models;
 using Cauldron.Server.Models.Effect;
 using Grpc.Core;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -65,10 +66,12 @@ namespace Cauldron.Server
 
         private static readonly GameMasterRepository gameMasterRepository = new();
 
+        private readonly IConfiguration configuration;
         private readonly ILogger<CauldronService> _logger;
 
-        public CauldronService(ILogger<CauldronService> logger)
+        public CauldronService(IConfiguration configuration, ILogger<CauldronService> logger)
         {
+            this.configuration = configuration;
             _logger = logger;
         }
 
@@ -94,7 +97,7 @@ namespace Cauldron.Server
         {
             var ruleBook = new RuleBook(request.RuleBook);
             var cardFactory = new CardFactory(ruleBook);
-            cardFactory.SetCardPool(new CardPool().Load());
+            cardFactory.SetCardPool(CardPool.LoadFromDirectory(this.configuration["CardSetDirectoryPath"]));
 
             var options = new GameMasterOptions(ruleBook, cardFactory, this._logger, this.AskCard, NotifyClient);
             var gameId = new GameMasterRepository().Add(options);

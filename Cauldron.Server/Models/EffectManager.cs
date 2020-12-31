@@ -1,6 +1,5 @@
 ﻿using Cauldron.Server.Models.Effect;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Cauldron.Server.Models
@@ -19,10 +18,11 @@ namespace Cauldron.Server.Models
             // カードの効果の発動順は
             // アクティブプレイヤー → 相手プレイヤー
             // 場 → 手札
-            static IEnumerable<Card> getCards(Player player) =>
+            static Card[] getCards(Player player) =>
                 player.Field.AllCards
                     .Concat(player.Hands.AllCards)
-                    .Concat(player.Cemetery.AllCards);
+                    .Concat(player.Cemetery.AllCards)
+                    .ToArray();
 
             var newEffectEventArgs = effectEventArgs;
             var activePlayerCards = getCards(newEffectEventArgs.GameMaster.ActivePlayer);

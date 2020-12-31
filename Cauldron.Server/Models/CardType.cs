@@ -21,7 +21,5 @@
         /// 魔法
         /// </summary>
         Sorcery,
-
-        Counter,
     }
 }

@@ -11,13 +11,13 @@ namespace Cauldron.Server_Test
     /// </summary>
     public class EffectTiming_Test
     {
-        private class TestEffectAction : IEffectAction
+        private record TestEffectAction : EffectAction
         {
             public int CallCount = 0;
 
             public Action<Card, EffectEventArgs> Action { get; set; }
 
-            public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs effectEventArgs)
+            public override (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs effectEventArgs)
             {
                 this.CallCount++;
 

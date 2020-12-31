@@ -64,6 +64,7 @@ namespace Cauldron.Server.Models
             }
             else
             {
+                newCard.Zone = new(newCard.OwnerId, ZoneName.Hand);
                 this.Hands.Add(newCard);
             }
 

@@ -1,0 +1,864 @@
+{
+  "Name": "Sample",
+  "Cards": [
+    {
+      "BaseCost": 1,
+      "Name": "エンジェルスナイプ",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "sorcery",
+      "BasePower": 0,
+      "BaseToughness": 0,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "Damage": {
+                "Value": 1,
+                "Choice": {
+                  "How": "choose",
+                  "PlayerCondition": {
+                    "Context": "all",
+                    "Type": "opponent"
+                  },
+                  "CardCondition": {
+                    "Context": "others",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "opponentField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "BaseCost": 2,
+      "Name": "ベルエンジェル",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 0,
+      "BaseToughness": 2,
+      "Abilities": [
+        "cover"
+      ],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Destroy": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "DrawCard": {
+                "NumCards": 1,
+                "PlayerCondition": {
+                  "Context": "all",
+                  "Type": "you"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 2,
+      "Name": "ミノタウロス",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 2,
+      "BaseToughness": 1,
+      "Abilities": [
+        "cover"
+      ],
+      "Effects": [],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 2,
+      "Name": "研磨の魔法",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "sorcery",
+      "BasePower": 0,
+      "BaseToughness": 0,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "ModifyCard": {
+                "Choice": {
+                  "How": "choose",
+                  "CardCondition": {
+                    "Context": "all",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "youField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                },
+                "Power": 2,
+                "Toughness": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "BaseCost": 2,
+      "Name": "光の道筋",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "sorcery",
+      "BasePower": 0,
+      "BaseToughness": 0,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "DrawCard": {
+                "NumCards": 1,
+                "PlayerCondition": {
+                  "Context": "all",
+                  "Type": "you"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Timing": {
+            "Zone": "youCemetery",
+            "MoveCard": {
+              "Source": "this",
+              "From": "youHand",
+              "To": "youCemetery"
+            }
+          },
+          "Actions": [
+            {
+              "DrawCard": {
+                "NumCards": 1,
+                "PlayerCondition": {
+                  "Context": "all",
+                  "Type": "you"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "BaseCost": 2,
+      "Name": "新たなる運命",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "sorcery",
+      "BasePower": 0,
+      "BaseToughness": 0,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "MoveCard": {
+                "CardsChoice": {
+                  "How": "all",
+                  "CardCondition": {
+                    "Context": "all",
+                    "ZoneCondition": {
+                      "Values": [
+                        "youHand"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                },
+                "To": "youCemetery"
+              }
+            },
+            {
+              "DrawCard": {
+                "NumCards": 0,
+                "PlayerCondition": {
+                  "Context": "all",
+                  "Type": "you"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "BaseCost": 3,
+      "Name": "シールドエンジェル",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 1,
+      "BaseToughness": 4,
+      "Abilities": [
+        "cover"
+      ],
+      "Effects": [],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 3,
+      "Name": "ヒーリングエンジェル",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 2,
+      "BaseToughness": 3,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "ModifyPlayer": {
+                "Choice": {
+                  "How": "all",
+                  "PlayerCondition": {
+                    "Context": "all",
+                    "Type": "you"
+                  },
+                  "NumPicks": 1
+                },
+                "PlayerModifier": {
+                  "Hp": {
+                    "Operator": "add",
+                    "Value": 2
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 3,
+      "Name": "リザードマン",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 3,
+      "BaseToughness": 2,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "AddCard": {
+                "Choice": {
+                  "How": "all",
+                  "CardCondition": {
+                    "Context": "all",
+                    "NameCondition": {
+                      "Value": "sample.リザードマン",
+                      "Compare": "equality",
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "cardPool"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                },
+                "ZoneToAddCard": "youField"
+              }
+            }
+          ]
+        }
+      ],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 3,
+      "Name": "エンジェルバレッジ",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "sorcery",
+      "BasePower": 0,
+      "BaseToughness": 0,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "Damage": {
+                "Value": 1,
+                "Choice": {
+                  "How": "all",
+                  "PlayerCondition": {
+                    "Context": "all",
+                    "Type": "opponent"
+                  },
+                  "CardCondition": {
+                    "Context": "all",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "opponentField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "BaseCost": 3,
+      "Name": "天上の楽曲",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "sorcery",
+      "BasePower": 0,
+      "BaseToughness": 0,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "ModifyCard": {
+                "Choice": {
+                  "How": "choose",
+                  "CardCondition": {
+                    "Context": "all",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "youField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                },
+                "Power": 0,
+                "Toughness": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "BaseCost": 4,
+      "Name": "ウルズ",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 1,
+      "BaseToughness": 1,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {}
+          ]
+        }
+      ]
+    },
+    {
+      "BaseCost": 4,
+      "Name": "デモンストライク",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "sorcery",
+      "BasePower": 0,
+      "BaseToughness": 0,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "Damage": {
+                "Value": 3,
+                "Choice": {
+                  "How": "choose",
+                  "PlayerCondition": {
+                    "Context": "all",
+                    "Type": "opponent"
+                  },
+                  "CardCondition": {
+                    "Context": "all",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "opponentField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "BaseCost": 4,
+      "Name": "冥府への道",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "artifact",
+      "BasePower": 0,
+      "BaseToughness": 0,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "EndTurn": {
+              "Source": "you"
+            }
+          },
+          "Actions": [
+            {}
+          ]
+        }
+      ]
+    },
+    {
+      "BaseCost": 5,
+      "Name": "ゴブリンマウントデーモン",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 3,
+      "BaseToughness": 7,
+      "Abilities": [
+        "cover"
+      ],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "Damage": {
+                "Value": 3,
+                "Choice": {
+                  "How": "all",
+                  "CardCondition": {
+                    "Context": "others",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "youField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 5,
+      "Name": "風神",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 1,
+      "BaseToughness": 5,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "StartTurn": {
+              "Source": "owner"
+            },
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "ModifyCard": {
+                "Choice": {
+                  "How": "all",
+                  "CardCondition": {
+                    "Context": "others",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "youField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                },
+                "Power": 1,
+                "Toughness": 0
+              }
+            }
+          ]
+        }
+      ],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 5,
+      "Name": "エクスキューション",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "sorcery",
+      "BasePower": 0,
+      "BaseToughness": 0,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "DestroyCard": {
+                "Choice": {
+                  "How": "choose",
+                  "CardCondition": {
+                    "Context": "all",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature",
+                        "artifact"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "opponentField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "BaseCost": 6,
+      "Name": "アテナ",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 5,
+      "BaseToughness": 4,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {}
+          ]
+        }
+      ],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 6,
+      "Name": "天翼を食う者",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 6,
+      "BaseToughness": 6,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {}
+          ]
+        }
+      ],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 7,
+      "Name": "ガブリエル",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 3,
+      "BaseToughness": 4,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {
+              "ModifyCard": {
+                "Choice": {
+                  "How": "choose",
+                  "CardCondition": {
+                    "Context": "others",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "youField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                },
+                "Power": 4,
+                "Toughness": 3
+              }
+            }
+          ]
+        }
+      ],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 7,
+      "Name": "ギルガメッシュ",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 5,
+      "BaseToughness": 4,
+      "Abilities": [],
+      "Effects": [],
+      "NumTurnsToCanAttack": 0
+    },
+    {
+      "BaseCost": 8,
+      "Name": "ルシフェル",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 6,
+      "BaseToughness": 7,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "EndTurn": {
+              "Source": "you"
+            }
+          },
+          "Actions": [
+            {
+              "ModifyPlayer": {
+                "Choice": {
+                  "How": "all",
+                  "PlayerCondition": {
+                    "Context": "all",
+                    "Type": "you"
+                  },
+                  "NumPicks": 1
+                },
+                "PlayerModifier": {
+                  "Hp": {
+                    "Operator": "add",
+                    "Value": 4
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "NumTurnsToCanAttack": 1
+    },
+    {
+      "BaseCost": 10,
+      "Name": "サタン",
+      "FlavorText": "",
+      "IsToken": false,
+      "Type": "creature",
+      "BasePower": 6,
+      "BaseToughness": 6,
+      "Abilities": [],
+      "Effects": [
+        {
+          "Timing": {
+            "Zone": "youField",
+            "Play": {
+              "Source": "this"
+            }
+          },
+          "Actions": [
+            {}
+          ]
+        }
+      ],
+      "NumTurnsToCanAttack": 1
+    }
+  ]
+}

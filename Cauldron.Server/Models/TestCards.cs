@@ -39,11 +39,11 @@ namespace Cauldron.Server.Models
                 )
             });
 
-        public static readonly CardDef fairy = CardDef.Creature(2, $"{CardsetName}.ベルエンジェル", "ベルエンジェル", "", 0, 2, 1,
+        public static readonly CardDef bellAngel = CardDef.Creature(2, $"{CardsetName}.ベルエンジェル", "ベルエンジェル", "", 0, 2, 1,
             abilities: new[] { CreatureAbility.Cover },
             effects: new[]{
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)),
+                    new EffectTiming(ZoneType.YouCemetery, Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction(
@@ -473,7 +473,7 @@ namespace Cauldron.Server.Models
                     )
             });
 
-        public static readonly CardDef bellAngel = CardDef.Creature(1, $"{CardsetName}.フェアリー", "フェアリー", "", 1, 1, 1, isToken: true);
+        public static readonly CardDef fairy = CardDef.Creature(1, $"{CardsetName}.フェアリー", "フェアリー", "", 1, 1, 1, isToken: true);
 
         public static readonly CardDef goblin = CardDef.Creature(1, $"{CardsetName}.ゴブリン", "ゴブリン", "", 1, 2, 1);
 

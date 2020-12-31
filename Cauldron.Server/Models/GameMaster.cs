@@ -113,17 +113,10 @@ namespace Cauldron.Server.Models
                 .First(player => player.Id != playerId);
         }
 
-        public bool IsPutFieldCard(Card card)
-        {
-            return card.Type == CardType.Artifact
-                || card.Type == CardType.Creature
-                ;
-        }
-
         public bool IsPlayable(Player player, Card card)
         {
             // フィールドに出すカードはフィールドに空きがないとプレイできない
-            if (IsPutFieldCard(card) && player.Field.Full)
+            if (player.Field.Full)
             {
                 return false;
             }
@@ -140,7 +133,7 @@ namespace Cauldron.Server.Models
         public bool IsPlayableDirect(Player player, Card card)
         {
             // フィールドに出すカードはフィールドに空きがないとプレイできない
-            if (IsPutFieldCard(card) && player.Field.Full)
+            if (player.Field.Full)
             {
                 return false;
             }
@@ -280,13 +273,40 @@ namespace Cauldron.Server.Models
             this.logger.LogInformation($"手札: {handsLog}({player.Name})");
         }
 
-        public void RemoveHand(Player player, Card removeCard)
+        public GameMasterStatusCode Draw(PlayerId playerId, int numCards)
         {
-            player.Hands.Remove(removeCard);
+            if (!this.PlayersById.TryGetValue(playerId, out var player))
+            {
+                return GameMasterStatusCode.PlayerNotExists;
+            }
 
-            this.logger.LogInformation($"手札を捨てる: {removeCard.Name}({player.Name})");
-            var handsLog = string.Join(",", player.Hands.AllCards.Select(c => c.Name));
-            this.logger.LogInformation($"手札: {handsLog}({player.Name})");
+            foreach (var _ in Enumerable.Range(0, numCards))
+            {
+                var drawCard = player.Draw();
+
+                this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
+                this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
+                    MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
+
+                foreach (var pid in this.PlayersById.Keys)
+                {
+                    this.notifyClient(pid, new Grpc.Api.ReadyGameReply()
+                    {
+                        Code = Grpc.Api.ReadyGameReply.Types.Code.MoveCard,
+                        MoveCardNotify = new Grpc.Api.MoveCardNotify()
+                        {
+                            CardId = drawCard.Id.ToString(),
+                            ToZone = new Grpc.Api.Zone()
+                            {
+                                PlayerId = playerId.ToString(),
+                                ZoneName = ZoneName.Hand.ToString(),
+                            }
+                        }
+                    });
+                }
+            }
+
+            return GameMasterStatusCode.OK;
         }
 
         public void MoveCard(CardId cardId, MoveCardContext moveCardContext)
@@ -387,27 +407,6 @@ namespace Cauldron.Server.Models
                 Opponent = new PublicPlayerInfo(this.GetOpponent(playerId)),
                 RuleBook = this.RuleBook
             };
-        }
-
-        public GameMasterStatusCode Draw(PlayerId playerId, int numCards)
-        {
-            if (this.PlayersById.TryGetValue(playerId, out var player))
-            {
-                foreach (var _ in Enumerable.Range(0, numCards))
-                {
-                    var drawCard = player.Draw();
-
-                    this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
-                    this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
-                        MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
-                }
-
-                return GameMasterStatusCode.OK;
-            }
-            else
-            {
-                return GameMasterStatusCode.PlayerNotExists;
-            }
         }
 
         public GameMasterStatusCode Discard(PlayerId playerId, IEnumerable<CardId> handCardId)
@@ -517,10 +516,14 @@ namespace Cauldron.Server.Models
         /// <returns></returns>
         public GameMasterStatusCode PlayFromHand(PlayerId playerId, CardId handCardId)
         {
-            var player = this.PlayersById[playerId];
-            var (success, playingCard) = player.Hands.TryGetById(handCardId);
+            if (!this.PlayersById.TryGetValue(playerId, out var player))
+            {
+                return GameMasterStatusCode.PlayerNotExists;
+            }
 
-            if (!success)
+            var (cardExists, playingCard) = player.Hands.TryGetById(handCardId);
+
+            if (!cardExists)
             {
                 return GameMasterStatusCode.CardNotExists;
             }
@@ -793,12 +796,22 @@ namespace Cauldron.Server.Models
                     .ToArray();
             }
 
-            return choice.CardCondition.ZoneCondition.ZoneTypes
+            return choice.CardCondition.ZoneCondition.Values
                 .SelectMany(zoneType => zoneType switch
                 {
                     ZoneType.YouField => this.PlayersById[effectOwnerCard.OwnerId].Field.AllCards
                         .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
                     ZoneType.OpponentField => this.GetOpponent(effectOwnerCard.OwnerId).Field.AllCards
+                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
+
+                    ZoneType.YouHand => this.PlayersById[effectOwnerCard.OwnerId].Hands.AllCards
+                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
+                    ZoneType.OpponentHand => this.GetOpponent(effectOwnerCard.OwnerId).Hands.AllCards
+                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
+
+                    ZoneType.YouCemetery => this.PlayersById[effectOwnerCard.OwnerId].Cemetery.AllCards
+                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
+                    ZoneType.OpponentCemetery => this.GetOpponent(effectOwnerCard.OwnerId).Cemetery.AllCards
                         .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
                     _ => Array.Empty<Card>(),
                 })
@@ -812,7 +825,7 @@ namespace Cauldron.Server.Models
                 return Array.Empty<CardDef>();
             }
 
-            return choice.CardCondition.ZoneCondition.ZoneTypes
+            return choice.CardCondition.ZoneCondition.Values
                 .SelectMany(zoneType => zoneType switch
                 {
                     ZoneType.CardPool => this.cardFactory.CardPool

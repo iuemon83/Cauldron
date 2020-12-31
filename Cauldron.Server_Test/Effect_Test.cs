@@ -574,6 +574,35 @@ namespace Cauldron.Server_Test
         }
 
         [Fact]
+        public void カードをすべて捨てる()
+        {
+            var testCardDef = TestCards.unmei;
+            testCardDef.BaseCost = 0;
+
+            var testCardFactory = new CardFactory(new RuleBook());
+            testCardFactory.SetCardPool(new[] { testCardDef });
+
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 先攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                var beforeNumOfHands = g.ActivePlayer.Hands.AllCards.Count;
+                Assert.True(beforeNumOfHands != 0);
+
+                TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var afterNumOfHands = g.ActivePlayer.Hands.AllCards.Count;
+                Assert.Equal(0, afterNumOfHands);
+            });
+        }
+
+        [Fact]
         public void このカードが手札から捨てられたら1枚引く()
         {
             var testCardDef = TestCards.hikari;
