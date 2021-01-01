@@ -19,7 +19,7 @@ namespace Cauldron.Server_Test
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
-                    ZoneCondition = new(new[] { ZoneType.YouField }),
+                    ZoneCondition = new(new[] { ZonePrettyName.YouField }),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                 },
                 NumPicks = 1,
@@ -31,7 +31,7 @@ namespace Cauldron.Server_Test
                 {
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.YouField,
+                            ZonePrettyName.YouField,
                             Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         ),
                         new[]
@@ -104,7 +104,7 @@ namespace Cauldron.Server_Test
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
-                    ZoneCondition = new(new[] { ZoneType.YouField }),
+                    ZoneCondition = new(new[] { ZonePrettyName.YouField }),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature }),
                 },
                 How = Choice.ChoiceHow.All,
@@ -115,7 +115,7 @@ namespace Cauldron.Server_Test
                 {
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.YouField,
+                            ZonePrettyName.YouField,
                             Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         ),
                         new[]
@@ -185,7 +185,7 @@ namespace Cauldron.Server_Test
             {
                 CardCondition = new CardCondition()
                 {
-                    ZoneCondition = new(new[] { ZoneType.CardPool }),
+                    ZoneCondition = new(new[] { ZonePrettyName.CardPool }),
                     NameCondition = new TextCondition(
                         fairy.FullName,
                         TextCondition.ConditionCompare.Equality
@@ -199,7 +199,7 @@ namespace Cauldron.Server_Test
                 {
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.YouField,
+                            ZonePrettyName.YouField,
                             Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
                         ),
                         new[]
@@ -268,7 +268,7 @@ namespace Cauldron.Server_Test
             {
                 CardCondition = new CardCondition()
                 {
-                    ZoneCondition = new(new[] { ZoneType.CardPool }),
+                    ZoneCondition = new(new[] { ZonePrettyName.CardPool }),
                     NameCondition = new(
                         fairy.FullName,
                         TextCondition.ConditionCompare.Equality
@@ -282,7 +282,7 @@ namespace Cauldron.Server_Test
                 {
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.YouField,
+                            ZonePrettyName.YouField,
                             Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
                         ),
                         new[]
@@ -357,7 +357,7 @@ namespace Cauldron.Server_Test
                 {
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.YouField,
+                            ZonePrettyName.YouField,
                             Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
                         ),
                         new []
@@ -433,7 +433,7 @@ namespace Cauldron.Server_Test
                     // ターン開始時、カレントプレイヤーに1ダメージ
                     new CardEffect(
                         new EffectTiming(
-                            ZoneType.YouField,
+                            ZonePrettyName.YouField,
                             StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Both)
                         ),
                         new []{
@@ -509,7 +509,7 @@ namespace Cauldron.Server_Test
                 How = Choice.ChoiceHow.Random,
                 CardCondition = new CardCondition()
                 {
-                    ZoneCondition = new(new[] { ZoneType.OpponentField }),
+                    ZoneCondition = new(new[] { ZonePrettyName.OpponentField }),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                 },
                 NumPicks = 1
@@ -574,7 +574,7 @@ namespace Cauldron.Server_Test
                 CardCondition = new CardCondition()
                 {
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature }),
-                    ZoneCondition = new(new[] { ZoneType.OpponentField }),
+                    ZoneCondition = new(new[] { ZonePrettyName.OpponentField }),
                 }
             };
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1);
@@ -633,7 +633,7 @@ namespace Cauldron.Server_Test
                 NumPicks = 1,
                 CardCondition = new CardCondition()
                 {
-                    ZoneCondition = new(new[] { ZoneType.OpponentField }),
+                    ZoneCondition = new(new[] { ZonePrettyName.OpponentField }),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                 }
             };
@@ -704,7 +704,7 @@ namespace Cauldron.Server_Test
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
-                    ZoneCondition = new(new[] { ZoneType.YouField }),
+                    ZoneCondition = new(new[] { ZonePrettyName.YouField }),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature, })
                 }
             };

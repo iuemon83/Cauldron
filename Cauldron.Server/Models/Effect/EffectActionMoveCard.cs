@@ -1,6 +1,6 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
-    public record EffectActionMoveCard(Choice CardsChoice, ZoneType To) : IEffectAction
+    public record EffectActionMoveCard(Choice CardsChoice, ZonePrettyName To) : IEffectAction
     {
         public (bool, EffectEventArgs) Execute(Card effectOwnerCard, EffectEventArgs args)
         {

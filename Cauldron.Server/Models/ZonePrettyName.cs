@@ -1,6 +1,6 @@
 ﻿namespace Cauldron.Server.Models
 {
-    public enum ZoneType
+    public enum ZonePrettyName
     {
         None,
         CardPool,

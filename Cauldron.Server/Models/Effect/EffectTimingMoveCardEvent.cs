@@ -5,7 +5,7 @@ namespace Cauldron.Server.Models.Effect
     /// <summary>
     /// カードの移動時
     /// </summary>
-    public record EffectTimingMoveCardEvent(EffectTimingMoveCardEvent.EventSource Source, ZoneType From, ZoneType To)
+    public record EffectTimingMoveCardEvent(EffectTimingMoveCardEvent.EventSource Source, ZonePrettyName From, ZonePrettyName To)
     {
         public enum EventSource
         {

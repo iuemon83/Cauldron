@@ -5,7 +5,7 @@ namespace Cauldron.Server.Models.Effect
     public class EffectActionAddCard : IEffectAction
     {
         public Choice Choice { get; set; }
-        public ZoneType ZoneToAddCard { get; set; }
+        public ZonePrettyName ZoneToAddCard { get; set; }
 
         public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs args)
         {
@@ -17,7 +17,7 @@ namespace Cauldron.Server.Models.Effect
             var done = false;
             switch (this.ZoneToAddCard)
             {
-                case ZoneType.YouHand:
+                case ZonePrettyName.YouHand:
                     foreach (var newCard in newCards)
                     {
                         args.GameMaster.AddHand(owner, newCard);
@@ -26,7 +26,7 @@ namespace Cauldron.Server.Models.Effect
                     }
                     break;
 
-                case ZoneType.YouField:
+                case ZonePrettyName.YouField:
                     foreach (var newCard in newCards)
                     {
                         args.GameMaster.PlayDirect(ownerCard.OwnerId, newCard.Id);

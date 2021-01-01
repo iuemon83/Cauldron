@@ -41,7 +41,7 @@ namespace Cauldron.Server_Test
                 {
                     // 召喚時、スライムを2体召喚
                     new CardEffect(
-                        new EffectTiming(ZoneType.YouField,
+                        new EffectTiming(ZonePrettyName.YouField,
                             Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                         ),
                         new[]
@@ -50,7 +50,7 @@ namespace Cauldron.Server_Test
                             {
                                 AddCard = new EffectActionAddCard()
                                 {
-                                    ZoneToAddCard = ZoneType.YouField,
+                                    ZoneToAddCard = ZonePrettyName.YouField,
                                     Choice = new Choice()
                                     {
                                         CardCondition = new CardCondition()
@@ -59,7 +59,7 @@ namespace Cauldron.Server_Test
                                                 $"test.スライム",
                                                 TextCondition.ConditionCompare.Equality
                                             ),
-                                            ZoneCondition = new(new[]{ ZoneType.CardPool }),
+                                            ZoneCondition = new(new[]{ ZonePrettyName.CardPool }),
                                         },
                                         NumPicks=2
                                     }

@@ -799,19 +799,19 @@ namespace Cauldron.Server.Models
             return choice.CardCondition.ZoneCondition.Values
                 .SelectMany(zoneType => zoneType switch
                 {
-                    ZoneType.YouField => this.PlayersById[effectOwnerCard.OwnerId].Field.AllCards
+                    ZonePrettyName.YouField => this.PlayersById[effectOwnerCard.OwnerId].Field.AllCards
                         .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
-                    ZoneType.OpponentField => this.GetOpponent(effectOwnerCard.OwnerId).Field.AllCards
-                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
-
-                    ZoneType.YouHand => this.PlayersById[effectOwnerCard.OwnerId].Hands.AllCards
-                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
-                    ZoneType.OpponentHand => this.GetOpponent(effectOwnerCard.OwnerId).Hands.AllCards
+                    ZonePrettyName.OpponentField => this.GetOpponent(effectOwnerCard.OwnerId).Field.AllCards
                         .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
 
-                    ZoneType.YouCemetery => this.PlayersById[effectOwnerCard.OwnerId].Cemetery.AllCards
+                    ZonePrettyName.YouHand => this.PlayersById[effectOwnerCard.OwnerId].Hands.AllCards
                         .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
-                    ZoneType.OpponentCemetery => this.GetOpponent(effectOwnerCard.OwnerId).Cemetery.AllCards
+                    ZonePrettyName.OpponentHand => this.GetOpponent(effectOwnerCard.OwnerId).Hands.AllCards
+                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
+
+                    ZonePrettyName.YouCemetery => this.PlayersById[effectOwnerCard.OwnerId].Cemetery.AllCards
+                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
+                    ZonePrettyName.OpponentCemetery => this.GetOpponent(effectOwnerCard.OwnerId).Cemetery.AllCards
                         .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
                     _ => Array.Empty<Card>(),
                 })
@@ -828,7 +828,7 @@ namespace Cauldron.Server.Models
             return choice.CardCondition.ZoneCondition.Values
                 .SelectMany(zoneType => zoneType switch
                 {
-                    ZoneType.CardPool => this.cardFactory.CardPool
+                    ZonePrettyName.CardPool => this.cardFactory.CardPool
                         .Where(cdef => choice.CardCondition.IsMatch(cdef))
                         .SelectMany(cdef => Enumerable.Repeat(cdef, choice.NumPicks)),
                     _ => Array.Empty<CardDef>(),
@@ -922,19 +922,19 @@ namespace Cauldron.Server.Models
             }
         }
 
-        public Zone ConvertZone(PlayerId playerId, ZoneType zoneType)
+        public Zone ConvertZone(PlayerId playerId, ZonePrettyName zoneType)
         {
             return zoneType switch
             {
-                ZoneType.CardPool => new Zone(default, ZoneName.CardPool),
-                ZoneType.YouField => new Zone(playerId, ZoneName.Field),
-                ZoneType.OpponentField => new Zone(this.GetOpponent(playerId).Id, ZoneName.Field),
-                ZoneType.YouHand => new Zone(playerId, ZoneName.Hand),
-                ZoneType.OpponentHand => new Zone(this.GetOpponent(playerId).Id, ZoneName.Hand),
-                ZoneType.YouDeck => new Zone(playerId, ZoneName.Deck),
-                ZoneType.OpponentDeck => new Zone(this.GetOpponent(playerId).Id, ZoneName.Deck),
-                ZoneType.YouCemetery => new Zone(playerId, ZoneName.Cemetery),
-                ZoneType.OpponentCemetery => new Zone(this.GetOpponent(playerId).Id, ZoneName.Cemetery),
+                ZonePrettyName.CardPool => new Zone(default, ZoneName.CardPool),
+                ZonePrettyName.YouField => new Zone(playerId, ZoneName.Field),
+                ZonePrettyName.OpponentField => new Zone(this.GetOpponent(playerId).Id, ZoneName.Field),
+                ZonePrettyName.YouHand => new Zone(playerId, ZoneName.Hand),
+                ZonePrettyName.OpponentHand => new Zone(this.GetOpponent(playerId).Id, ZoneName.Hand),
+                ZonePrettyName.YouDeck => new Zone(playerId, ZoneName.Deck),
+                ZonePrettyName.OpponentDeck => new Zone(this.GetOpponent(playerId).Id, ZoneName.Deck),
+                ZonePrettyName.YouCemetery => new Zone(playerId, ZoneName.Cemetery),
+                ZonePrettyName.OpponentCemetery => new Zone(this.GetOpponent(playerId).Id, ZoneName.Cemetery),
                 _ => throw new NotImplementedException(),
             };
         }

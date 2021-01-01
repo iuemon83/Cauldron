@@ -1,7 +1,7 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
     public record EffectTiming(
-        ZoneType Zone,
+        ZonePrettyName Zone,
         EffectTimingStartTurnEvent StartTurn = null,
         EffectTimingEndTurnEvent EndTurn = null,
         EffectTimingPlayEvent Play = null,

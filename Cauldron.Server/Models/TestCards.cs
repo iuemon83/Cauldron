@@ -10,7 +10,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction()
@@ -29,7 +29,7 @@ namespace Cauldron.Server.Models
                                     CardCondition = new CardCondition()
                                     {
                                         Context = CardCondition.CardConditionContext.Others,
-                                        ZoneCondition = new(new[]{ ZoneType.OpponentField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                     }
                                 }
@@ -43,7 +43,7 @@ namespace Cauldron.Server.Models
             abilities: new[] { CreatureAbility.Cover },
             effects: new[]{
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouCemetery, Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouCemetery, Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction(
@@ -61,7 +61,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction(
@@ -73,7 +73,7 @@ namespace Cauldron.Server.Models
                                     NumPicks=1,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                     }
                                 }
@@ -88,7 +88,7 @@ namespace Cauldron.Server.Models
             {
                 // カードを1枚引く
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction(
@@ -98,7 +98,7 @@ namespace Cauldron.Server.Models
                 ),
                 // このカードが手札から捨てられたなら、1枚引く
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouCemetery, MoveCard: new(EffectTimingMoveCardEvent.EventSource.This, ZoneType.YouHand, ZoneType.YouCemetery)),
+                    new EffectTiming(ZonePrettyName.YouCemetery, MoveCard: new(EffectTimingMoveCardEvent.EventSource.This, ZonePrettyName.YouHand, ZonePrettyName.YouCemetery)),
                     new[]
                     {
                         new EffectAction(
@@ -116,7 +116,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new (EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new (EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         // 手札をすべて捨てる
@@ -127,10 +127,10 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.YouHand })
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouHand })
                                     }
                                 },
-                                ZoneType.YouCemetery)
+                                ZonePrettyName.YouCemetery)
                             ),
                         // 捨てたカードと同じ枚数引く
                         new EffectAction(
@@ -149,7 +149,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]{
                         new EffectAction(
                             ModifyPlayer: new(
@@ -169,14 +169,14 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction()
                         {
                             AddCard = new EffectActionAddCard()
                             {
-                                ZoneToAddCard = ZoneType.YouField,
+                                ZoneToAddCard = ZonePrettyName.YouField,
                                 Choice = new Choice()
                                 {
                                     CardCondition = new CardCondition()
@@ -185,7 +185,7 @@ namespace Cauldron.Server.Models
                                             $"{CardsetName}.リザードマン",
                                             TextCondition.ConditionCompare.Equality
                                         ),
-                                        ZoneCondition = new(new[]{ ZoneType.CardPool })
+                                        ZoneCondition = new(new[]{ ZonePrettyName.CardPool })
                                     },
                                     How = Choice.ChoiceHow.All,
                                     NumPicks = 1,
@@ -200,7 +200,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction()
@@ -214,7 +214,7 @@ namespace Cauldron.Server.Models
                                         Type: PlayerCondition.PlayerConditionType.Opponent),
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.OpponentField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                     },
                                     How = Choice.ChoiceHow.All,
@@ -229,7 +229,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction()
@@ -242,7 +242,7 @@ namespace Cauldron.Server.Models
                                 {
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                     },
                                     How = Choice.ChoiceHow.Choose,
@@ -259,7 +259,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]{ new EffectAction() }
                 )
             });
@@ -268,7 +268,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction()
@@ -282,7 +282,7 @@ namespace Cauldron.Server.Models
                                         Type: PlayerCondition.PlayerConditionType.Opponent),
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.OpponentField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                     },
                                     How = Choice.ChoiceHow.Choose,
@@ -301,7 +301,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.You)),
+                    new EffectTiming(ZonePrettyName.YouField, EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.You)),
                     new[]{ new EffectAction() }
                 )
             });
@@ -311,7 +311,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction()
@@ -324,7 +324,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                         Context = CardCondition.CardConditionContext.Others,
                                     }
@@ -340,7 +340,7 @@ namespace Cauldron.Server.Models
             {
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This),
                         StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Owner)
                         ),
@@ -357,7 +357,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                         Context = CardCondition.CardConditionContext.Others,
                                     }
@@ -372,7 +372,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction()
@@ -385,7 +385,7 @@ namespace Cauldron.Server.Models
                                     NumPicks = 1,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.OpponentField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature, CardType.Artifact })
                                     }
                                 }
@@ -400,8 +400,25 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
-                    new[]{ new EffectAction() }
+                    new EffectTiming(ZonePrettyName.YouField,
+                        Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new[]{
+                        new EffectAction(
+                            ModifyDamage: new()
+                            {
+                                Value = new ValueModifier(ValueModifier.ValueModifierOperator.Replace, 0),
+                                Choice = new Choice()
+                                {
+                                    How = Choice.ChoiceHow.All,
+                                    CardCondition =new CardCondition()
+                                    {
+                                        ZoneCondition = new ZoneCondition(new[]{ ZonePrettyName.YouField }),
+                                        Context = CardCondition.CardConditionContext.Others,
+                                    }
+                                }
+                            }
+                            )
+                    }
                 )
             });
 
@@ -410,7 +427,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]{ new EffectAction() }
                     )
             });
@@ -419,7 +436,7 @@ namespace Cauldron.Server.Models
             effects: new[]
             {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction()
@@ -434,7 +451,7 @@ namespace Cauldron.Server.Models
                                     NumPicks = 1,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                         Context = CardCondition.CardConditionContext.Others,
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                     }
@@ -450,7 +467,7 @@ namespace Cauldron.Server.Models
         public static readonly CardDef lucifer = CardDef.Creature(8, $"{CardsetName}.ルシフェル", "ルシフェル", "", 6, 7, 1,
             effects: new[] {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.You)),
+                    new EffectTiming(ZonePrettyName.YouField, EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.You)),
                     new[]{ new EffectAction(
                         ModifyPlayer: new(
                             new Choice()
@@ -468,7 +485,7 @@ namespace Cauldron.Server.Models
         public static readonly CardDef satan = CardDef.Creature(10, $"{CardsetName}.サタン", "サタン", "", 6, 6, 1,
             effects: new[] {
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]{ new EffectAction() }
                     )
             });
@@ -483,7 +500,7 @@ namespace Cauldron.Server.Models
                 // 死亡時、相手に1ダメージ
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouCemetery,
+                        ZonePrettyName.YouCemetery,
                         Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
                     ),
                     new []
@@ -515,7 +532,7 @@ namespace Cauldron.Server.Models
                 // 破壊時、フェアリー１枚を手札に加える
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouCemetery,
+                        ZonePrettyName.YouCemetery,
                         Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
                     ),
                     new[]
@@ -524,12 +541,12 @@ namespace Cauldron.Server.Models
                         {
                             AddCard = new EffectActionAddCard()
                             {
-                                ZoneToAddCard = ZoneType.YouHand,
+                                ZoneToAddCard = ZonePrettyName.YouHand,
                                 Choice = new Choice()
                                 {
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.CardPool }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.CardPool }),
                                         NameCondition = new(
                                             fairy.FullName,
                                             TextCondition.ConditionCompare.Equality
@@ -550,7 +567,7 @@ namespace Cauldron.Server.Models
                 // 召喚時、スライムを一体召喚
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                     ),
                     new[]
@@ -559,12 +576,12 @@ namespace Cauldron.Server.Models
                         {
                             AddCard = new EffectActionAddCard()
                             {
-                                ZoneToAddCard = ZoneType.YouField,
+                                ZoneToAddCard = ZonePrettyName.YouField,
                                 Choice = new Choice()
                                 {
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new ZoneCondition(new[]{ ZoneType.CardPool }),
+                                        ZoneCondition = new ZoneCondition(new[]{ ZonePrettyName.CardPool }),
                                         NameCondition = new(
                                             $"{CardsetName}.スライム",
                                             TextCondition.ConditionCompare.Equality
@@ -591,7 +608,7 @@ namespace Cauldron.Server.Models
                 // 召喚時、自分のクリーチャーをランダムで一体を+2/+0
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                     ),
                     new[]
@@ -605,7 +622,7 @@ namespace Cauldron.Server.Models
                                     CardCondition = new CardCondition()
                                     {
                                         Context = CardCondition.CardConditionContext.Others,
-                                        ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                     },
                                     NumPicks = 1,
@@ -624,7 +641,7 @@ namespace Cauldron.Server.Models
                 // 召喚時、自分のクリーチャーすべてを+1/+2
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                     ),
                     new[]
@@ -639,7 +656,7 @@ namespace Cauldron.Server.Models
                                     {
                                         Context = CardCondition.CardConditionContext.Others,
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                        ZoneCondition = new ZoneCondition(new[]{ ZoneType.YouField })
+                                        ZoneCondition = new ZoneCondition(new[]{ ZonePrettyName.YouField })
                                     },
                                     How = Choice.ChoiceHow.All,
                                 },
@@ -657,7 +674,7 @@ namespace Cauldron.Server.Models
                 // ターン開始時、カレントプレイヤーに1ダメージ
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Both)
                     ),
                     new []{
@@ -685,7 +702,7 @@ namespace Cauldron.Server.Models
                 // ターン終了時、ランダムな相手クリーチャー一体に1ダメージ。その後このカードを破壊
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.Both)
                     ),
                     new[]
@@ -700,7 +717,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.Random,
                                     CardCondition= new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.OpponentField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
                                         TypeCondition=new CardTypeCondition(new[]{CardType.Creature}),
                                     },
                                     NumPicks=1
@@ -731,7 +748,7 @@ namespace Cauldron.Server.Models
                 // ターン終了時、ランダムな自分のクリーチャー一体を+1/+0
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.You)
                     ),
                     new[]
@@ -744,7 +761,7 @@ namespace Cauldron.Server.Models
                                 {
                                     CardCondition=  new CardCondition()
                                     {
-                                        ZoneCondition= new(new[]{ ZoneType.YouField }),
+                                        ZoneCondition= new(new[]{ ZonePrettyName.YouField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature}),
                                     },
                                     NumPicks=1,
@@ -763,7 +780,7 @@ namespace Cauldron.Server.Models
                 // 使用時、すべての自分クリーチャーを+1/+0
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                     ),
                     new[]
@@ -778,7 +795,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                     }
                                 }
@@ -788,8 +805,8 @@ namespace Cauldron.Server.Models
                 // 自分クリーチャーのプレイ時+1/+0
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
-                        MoveCard: new EffectTimingMoveCardEvent(EffectTimingMoveCardEvent.EventSource.Other, ZoneType.YouHand, ZoneType.YouField)
+                        ZonePrettyName.YouField,
+                        MoveCard: new EffectTimingMoveCardEvent(EffectTimingMoveCardEvent.EventSource.Other, ZonePrettyName.YouHand, ZonePrettyName.YouField)
                     ),
                     new[]
                     {
@@ -803,7 +820,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                         Context = CardCondition.CardConditionContext.EventSource,
                                     }
@@ -819,7 +836,7 @@ namespace Cauldron.Server.Models
                 // 使用時、相手かランダムな相手クリーチャー一体に2ダメージ
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                     ),
                     new[]
@@ -839,7 +856,7 @@ namespace Cauldron.Server.Models
                                     CardCondition = new CardCondition()
                                     {
                                         TypeCondition = new CardTypeCondition(new []{CardType.Creature}),
-                                        ZoneCondition = new(new[]{ ZoneType.OpponentField }),
+                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
                                     }
                                 },
                                 Value=2
@@ -855,7 +872,7 @@ namespace Cauldron.Server.Models
             // 使用時、対象の自分クリーチャーを+2/+2
             new CardEffect(
                 new EffectTiming(
-                    ZoneType.YouField,
+                    ZonePrettyName.YouField,
                     Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
                 ),
                 new[]
@@ -871,7 +888,7 @@ namespace Cauldron.Server.Models
                                 NumPicks=1,
                                 CardCondition=new CardCondition()
                                 {
-                                    ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                    ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                     TypeCondition = new CardTypeCondition(new[]{CardType.Creature, }),
                                 }
                             }
@@ -887,13 +904,13 @@ namespace Cauldron.Server.Models
                 // 自分のクリーチャーが受けるダメージを1軽減する.その後このカードを破壊する
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         DamageBefore: new EffectTimingDamageBeforeEvent(
                             EffectTimingDamageBeforeEvent.EventSource.All,
                             CardCondition: new CardCondition()
                             {
                                 TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                 Context = CardCondition.CardConditionContext.Others
                             }
                         )
@@ -940,7 +957,7 @@ namespace Cauldron.Server.Models
             // 自分のプレイヤーまたはクリーチャーが受けるダメージを1軽減する.その後このカードを破壊する
             new CardEffect(
                 new EffectTiming(
-                    ZoneType.YouField,
+                    ZonePrettyName.YouField,
                     DamageBefore: new EffectTimingDamageBeforeEvent(
                         EffectTimingDamageBeforeEvent.EventSource.Guard,
                         PlayerCondition: new PlayerCondition()
@@ -950,7 +967,7 @@ namespace Cauldron.Server.Models
                         CardCondition: new CardCondition()
                         {
                             TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                            ZoneCondition = new(new[]{ ZoneType.YouField }),
+                            ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                             Context = CardCondition.CardConditionContext.Others
                         }
                     )
@@ -1001,7 +1018,7 @@ namespace Cauldron.Server.Models
                 // 自分が受けるダメージを2軽減する
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         DamageBefore: new EffectTimingDamageBeforeEvent(
                             EffectTimingDamageBeforeEvent.EventSource.Guard,
                             CardCondition: new CardCondition()
@@ -1034,12 +1051,12 @@ namespace Cauldron.Server.Models
                 // 自分の他のクリーチャーが戦闘で与えるダメージを1増加する
                 new CardEffect(
                     new EffectTiming(
-                        ZoneType.YouField,
+                        ZonePrettyName.YouField,
                         BattleBefore: new EffectTimingBattleBeforeEvent(
                             EffectTimingBattleBeforeEvent.EventSource.Attack,
                             CardCondition: new CardCondition()
                             {
-                                ZoneCondition = new(new[]{ ZoneType.YouField }),
+                                ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                 TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                 Context = CardCondition.CardConditionContext.Others,
                             }
@@ -1073,7 +1090,7 @@ namespace Cauldron.Server.Models
             {
                 // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
                 new CardEffect(
-                    new EffectTiming(ZoneType.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                    new EffectTiming(ZonePrettyName.YouField, Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]
                     {
                         new EffectAction()
@@ -1086,7 +1103,7 @@ namespace Cauldron.Server.Models
                                     NumPicks=1,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition= new(new[]{ ZoneType.OpponentField }),
+                                        ZoneCondition= new(new[]{ ZonePrettyName.OpponentField }),
                                         TypeCondition = new CardTypeCondition(new []{CardType.Creature, }),
                                     }
                                 },

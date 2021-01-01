@@ -2,7 +2,7 @@
 
 namespace Cauldron.Server.Models.Effect
 {
-    public record ZoneCondition(IEnumerable<ZoneType> Values, bool Not = false)
+    public record ZoneCondition(IEnumerable<ZonePrettyName> Values, bool Not = false)
     {
         public enum ZoneType
         {
