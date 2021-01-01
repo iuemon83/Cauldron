@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Cauldron.Server.Models
 {
@@ -9,14 +7,18 @@ namespace Cauldron.Server.Models
     /// </summary>
     public class Cemetery
     {
-        private ConcurrentDictionary<CardId, Card> CardsById { get; } = new();
+        /// <summary>
+        /// 順序を保存するため
+        /// </summary>
+        private List<Card> Cards { get; } = new();
+        private Dictionary<CardId, Card> CardsById { get; } = new();
 
-        public IReadOnlyList<Card> AllCards => this.CardsById.Values.ToArray();
-        public int Count => this.AllCards.Count;
+        public IReadOnlyList<Card> AllCards => this.Cards;
 
         public void Add(Card card)
         {
-            this.CardsById.TryAdd(card.Id, card);
+            this.Cards.Add(card);
+            this.CardsById.Add(card.Id, card);
         }
     }
 }

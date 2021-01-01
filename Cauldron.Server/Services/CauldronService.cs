@@ -32,12 +32,12 @@ namespace Cauldron.Server
 
         private static void NotifyClient(PlayerId playerId, ReadyGameReply clientNotify)
         {
-            if (!queueByGameId.TryGetValue(playerId, out var messageQueue))
+            if (!notifyQueueByPlayerId.TryGetValue(playerId, out var notifyQueue))
             {
                 throw new ArgumentException($"éwíËÇ≥ÇÍÇΩÉQÅ[ÉÄÇ™ë∂ç›ÇµÇ»Ç¢: {playerId}");
             }
 
-            messageQueue.Enqueue(clientNotify);
+            notifyQueue.Enqueue(clientNotify);
         }
 
         private static GameMasterStatusCode IsPlayable(GameId gameId, PlayerId playerId)
@@ -62,12 +62,14 @@ namespace Cauldron.Server
             return GameMasterStatusCode.OK;
         }
 
-        private static readonly ConcurrentDictionary<PlayerId, ConcurrentQueue<ReadyGameReply>> queueByGameId = new();
+        private static readonly ConcurrentDictionary<PlayerId, ConcurrentQueue<ReadyGameReply>> notifyQueueByPlayerId = new();
 
         private static readonly GameMasterRepository gameMasterRepository = new();
 
         private readonly IConfiguration configuration;
         private readonly ILogger<CauldronService> _logger;
+
+        private string CardSetDirectoryPath => this.configuration["CardSetDirectoryPath"];
 
         public CauldronService(IConfiguration configuration, ILogger<CauldronService> logger)
         {
@@ -81,15 +83,15 @@ namespace Cauldron.Server
             numPicks -= pickedPlayers.Length;
 
             var pickedCards = choiceResult.CardList.Take(numPicks).ToArray();
-            //numPicks -= pickedCards.Length;
+            numPicks -= pickedCards.Length;
 
-            //var pickedCarddefs = choiceResult.CardDefList.Take(numPicks).ToArray();
+            var pickedCarddefs = choiceResult.CardDefList.Take(numPicks).ToArray();
 
             return new ChoiceResult()
             {
                 PlayerList = pickedPlayers,
                 CardList = pickedCards,
-                //CardDefList = pickedCarddefs
+                CardDefList = pickedCarddefs
             };
         }
 
@@ -97,7 +99,7 @@ namespace Cauldron.Server
         {
             var ruleBook = new RuleBook(request.RuleBook);
             var cardFactory = new CardFactory(ruleBook);
-            cardFactory.SetCardPool(CardPool.LoadFromDirectory(this.configuration["CardSetDirectoryPath"]));
+            cardFactory.SetCardPool(CardPool.LoadFromDirectory(this.CardSetDirectoryPath));
 
             var options = new GameMasterOptions(ruleBook, cardFactory, this._logger, this.AskCard, NotifyClient);
             var gameId = new GameMasterRepository().Add(options);
@@ -113,7 +115,6 @@ namespace Cauldron.Server
             var gameId = GameId.Parse(request.GameId);
             var gameMaster = new GameMasterRepository().GetById(gameId);
             var cards = gameMaster.CardPool
-            //var cards = new Core.CardPool().Load()
                 .Select(cardDef => new Cauldron.Grpc.Models.CardDef(cardDef));
 
             return Task.FromResult(new GetCardPoolReply
@@ -164,7 +165,7 @@ namespace Cauldron.Server
             var playerId = PlayerId.Parse(request.PlayerId);
 
             var queue = new ConcurrentQueue<ReadyGameReply>();
-            queueByGameId.TryAdd(playerId, queue);
+            notifyQueueByPlayerId.TryAdd(playerId, queue);
 
             this._logger.LogInformation("ìÒêlëµÇ¡ÇƒÇ»Ç¢");
 
@@ -200,6 +201,7 @@ namespace Cauldron.Server
             }
 
             this._logger.LogInformation("êÿÇÍÇΩ");
+            notifyQueueByPlayerId.TryRemove(playerId, out var _);
         }
 
         public override Task<StartTurnReply> StartTurn(StartTurnRequest request, ServerCallContext context)

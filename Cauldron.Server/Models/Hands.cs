@@ -1,36 +1,33 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Cauldron.Server.Models
 {
     public class Hands
     {
-        private ConcurrentDictionary<CardId, Card> CardsById { get; } = new();
+        /// <summary>
+        /// 順序を保存するため
+        /// </summary>
+        private List<Card> Cards { get; } = new();
+        private Dictionary<CardId, Card> CardsById { get; } = new();
 
-        public IReadOnlyList<Card> AllCards => this.CardsById.Values.ToArray();
-
-        public int Count => this.CardsById.Count;
+        public IReadOnlyList<Card> AllCards => this.Cards;
 
         public void Add(Card card)
         {
-            this.CardsById.TryAdd(card.Id, card);
+            this.Cards.Add(card);
+            this.CardsById.Add(card.Id, card);
         }
 
         public void Remove(Card card)
         {
-            this.CardsById.TryRemove(card.Id, out _);
+            this.Cards.Remove(card);
+            this.CardsById.Remove(card.Id);
         }
 
         public (bool, Card) TryGetById(CardId cardId)
         {
             var success = this.CardsById.TryGetValue(cardId, out var card);
             return (success, card);
-        }
-
-        public Card At(int index)
-        {
-            return this.CardsById.Values.ElementAt(index);
         }
     }
 }

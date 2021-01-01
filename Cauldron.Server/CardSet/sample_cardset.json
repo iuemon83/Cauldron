@@ -327,9 +327,9 @@
                   "CardCondition": {
                     "Context": "all",
                     "NameCondition": {
-                      "Value": "sample.リザードマン",
-                      "Compare": "equality",
-                      "Not": false
+                        "Value": "Sample.リザードマン",
+                        "Compare": "equality",
+                        "Not": false
                     },
                     "ZoneCondition": {
                       "Values": [
