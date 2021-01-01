@@ -396,18 +396,18 @@ namespace Cauldron.Server.Models
             });
 
         //TODO アテナ
-        public static readonly CardDef atena = CardDef.Creature(6, $"{CardsetName}.アテナ", "アテナ", "", 5, 4, 1,
+        public static readonly CardDef atena = CardDef.Creature(6, $"{CardsetName}.アテナ", "アテナ", "", 5, 4,
             effects: new[]
             {
+                // 自軍クリーチャーに次の効果を付与する。
+                // 「ターン終了時まで、受けるダメージは0になる。」
                 new CardEffect(
                     new EffectTiming(ZonePrettyName.YouField,
                         Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
                     new[]{
                         new EffectAction(
-                            ModifyDamage: new()
-                            {
-                                Value = new ValueModifier(ValueModifier.ValueModifierOperator.Replace, 0),
-                                Choice = new Choice()
+                            AddEffect: new(
+                                new Choice()
                                 {
                                     How = Choice.ChoiceHow.All,
                                     CardCondition =new CardCondition()
@@ -415,8 +415,32 @@ namespace Cauldron.Server.Models
                                         ZoneCondition = new ZoneCondition(new[]{ ZonePrettyName.YouField }),
                                         Context = CardCondition.CardConditionContext.Others,
                                     }
-                                }
-                            }
+                                },
+                                new[]
+                                {
+                                    new CardEffect(
+                                        new EffectTiming(ZonePrettyName.YouField,
+                                            DamageBefore: new(EffectTimingDamageBeforeEvent.EventSource.Guard,
+                                                CardCondition: new(){
+                                                    Context = CardCondition.CardConditionContext.This,
+                                                })),
+                                        new[]
+                                        {
+                                            new EffectAction(
+                                                ModifyDamage: new()
+                                                {
+                                                    Value = new ValueModifier(ValueModifier.ValueModifierOperator.Replace, 0),
+                                                    Choice = new Choice()
+                                                    {
+                                                        CardCondition = new()
+                                                        {
+                                                            Context = CardCondition.CardConditionContext.This,
+                                                        }
+                                                    }
+                                                }
+                                                )
+                                        })
+                                })
                             )
                     }
                 )

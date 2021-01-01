@@ -10,7 +10,8 @@ namespace Cauldron.Server.Models.Effect
         EffectActionModifyDamage ModifyDamage = null,
         EffectActionModifyPlayer ModifyPlayer = null,
         EffectActionDrawCard DrawCard = null,
-        EffectActionMoveCard MoveCard = null
+        EffectActionMoveCard MoveCard = null,
+        EffectActionAddEffect AddEffect = null
         ) : IEffectAction
     {
         /// <summary>
@@ -32,6 +33,7 @@ namespace Cauldron.Server.Models.Effect
                 this.ModifyPlayer,
                 this.DrawCard,
                 this.MoveCard,
+                this.AddEffect,
             };
 
             var result = effectEventArgs;

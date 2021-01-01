@@ -8,8 +8,6 @@ namespace Cauldron.Server.Models
     {
         private ConcurrentDictionary<CardDefId, CardDef> CardDefListById { get; } = new();
 
-        private ConcurrentDictionary<string, CardDef> CardDefListByFullName { get; } = new();
-
         private ConcurrentDictionary<CardId, Card> CardsById { get; } = new();
 
         private readonly RuleBook ruleBook;
@@ -36,10 +34,8 @@ namespace Cauldron.Server.Models
                 cardDef.NumAttacksLimitInTurn ??= this.ruleBook.DefaultNumAttacksLimitInTurn;
 
                 this.CardDefListById.TryAdd(cardDef.Id, cardDef);
-                this.CardDefListByFullName.TryAdd(cardDef.FullName, cardDef);
             }
         }
-
 
         public Card CreateNew(CardDefId cardDefId)
         {
@@ -52,13 +48,6 @@ namespace Cauldron.Server.Models
         public Card GetById(CardId cardId)
         {
             return this.CardsById.TryGetValue(cardId, out var cardDef)
-                ? cardDef
-                : null;
-        }
-
-        public CardDef GetByFullName(string fullName)
-        {
-            return this.CardDefListByFullName.TryGetValue(fullName, out var cardDef)
                 ? cardDef
                 : null;
         }

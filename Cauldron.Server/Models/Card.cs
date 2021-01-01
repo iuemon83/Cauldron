@@ -30,9 +30,9 @@ namespace Cauldron.Server.Models
         public int PowerBuff { get; set; } = 0;
         public int ToughnessBuff { get; set; } = 0;
 
-        public int Cost => this.BaseCost + this.CostBuff;
-        public int Power => this.BasePower + this.PowerBuff;
-        public int Toughness => this.BaseToughness + this.ToughnessBuff;
+        public int Cost => Math.Max(0, this.BaseCost + this.CostBuff);
+        public int Power => Math.Max(0, this.BasePower + this.PowerBuff);
+        public int Toughness => Math.Max(0, this.BaseToughness + this.ToughnessBuff);
 
         public List<CreatureAbility> Abilities { get; set; } = new List<CreatureAbility>();
 
@@ -77,16 +77,6 @@ namespace Cauldron.Server.Models
             this.Effects = cardDef.Effects.ToList();
             this.NumTurnsToCanAttack = cardDef.NumTurnsToCanAttack.Value;
             this.NumAttacksLimitInTurn = cardDef.NumAttacksLimitInTurn.Value;
-        }
-
-        public void AddEffect(CardEffect effect)
-        {
-            this.Effects.Add(effect);
-        }
-
-        public void Damage(Card card)
-        {
-            this.ToughnessBuff -= Math.Max(0, card.Power);
         }
 
         public void Damage(int damage)

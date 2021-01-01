@@ -938,5 +938,12 @@ namespace Cauldron.Server.Models
                 _ => throw new NotImplementedException(),
             };
         }
+
+        public GameMasterStatusCode AddEffect(Card card, IEnumerable<CardEffect> effectToAdd)
+        {
+            card.Effects.AddRange(effectToAdd);
+
+            return GameMasterStatusCode.OK;
+        }
     }
 }

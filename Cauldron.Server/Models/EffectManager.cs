@@ -30,12 +30,11 @@ namespace Cauldron.Server.Models
             {
                 foreach (var ef in card.Effects)
                 {
-                    var a = ef.DoIfMatched(card, newEffectEventArgs);
+                    var (done, args) = ef.DoIfMatched(card, newEffectEventArgs);
 
-                    newEffectEventArgs = a.Item2;
-
-                    if (a.Item1)
+                    if (done)
                     {
+                        newEffectEventArgs = args;
                         this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {card.Name}");
                     }
                 }
@@ -48,12 +47,11 @@ namespace Cauldron.Server.Models
                 {
                     foreach (var ef in card.Effects)
                     {
-                        var a = ef.DoIfMatched(card, newEffectEventArgs);
+                        var (done, args) = ef.DoIfMatched(card, newEffectEventArgs);
 
-                        newEffectEventArgs = a.Item2;
-
-                        if (a.Item1)
+                        if (done)
                         {
+                            newEffectEventArgs = args;
                             this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {card.Name}");
                         }
                     }

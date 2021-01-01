@@ -665,6 +665,56 @@ namespace Cauldron.Server_Test
             });
         }
 
+        [Fact]
+        public void 召喚時に自軍クリーチャーに効果を付与する()
+        {
+            var goblinDef = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 2, 2);
+
+            var testCardDef = TestCards.atena;
+            testCardDef.BaseCost = 0;
+
+            var testCardFactory = new CardFactory(new RuleBook()
+            {
+                DefaultNumTurnsToCanAttack = 0
+            });
+            testCardFactory.SetCardPool(new[] { goblinDef, testCardDef });
+
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 先攻
+            var (goblin1, goblin2) = TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                var goblin1 = TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                var goblin2 = TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+
+                return (goblin1, goblin2);
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                var goblin3 = TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // ゴブリンで敵を攻撃
+                // 攻撃した方はダメージを受けない
+                g.AttackToCreature(pId, goblin3.Id, goblin1.Id);
+                Assert.Equal(0, goblin1.Toughness);
+                Assert.Equal(goblinDef.BaseToughness, goblin3.Toughness);
+
+                // テストカードで敵を攻撃
+                // 自分には効果が付与されないので、ダメージを受ける
+                g.AttackToCreature(pId, testCard.Id, goblin2.Id);
+                Assert.Equal(0, goblin2.Toughness);
+                Assert.Equal(testCardDef.BaseToughness - goblin2.Power, testCard.Toughness);
+            });
+        }
+
         //[Fact]
         //public void 自分のクリーチャーの攻撃ダメージを増加する()
         //{
