@@ -12,10 +12,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -64,10 +68,14 @@
       ],
       "Effects": [
         {
-          "Timing": {
-            "Zone": "youField",
-            "Destroy": {
-              "Source": "this"
+          "Condition": {
+            "Zone": "youCemetery",
+            "When": {
+              "Timing": {
+                "Destroy": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -110,10 +118,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -157,10 +169,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -176,12 +192,16 @@
           ]
         },
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youCemetery",
-            "MoveCard": {
-              "Source": "this",
-              "From": "youHand",
-              "To": "youCemetery"
+            "When": {
+              "Timing": {
+                "MoveCard": {
+                  "Source": "this",
+                  "From": "youHand",
+                  "To": "youCemetery"
+                }
+              }
             }
           },
           "Actions": [
@@ -209,10 +229,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -272,10 +296,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -313,10 +341,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -327,9 +359,9 @@
                   "CardCondition": {
                     "Context": "all",
                     "NameCondition": {
-                        "Value": "Sample.リザードマン",
-                        "Compare": "equality",
-                        "Not": false
+                      "Value": "Sample.リザードマン",
+                      "Compare": "equality",
+                      "Not": false
                     },
                     "ZoneCondition": {
                       "Values": [
@@ -359,10 +391,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -409,10 +445,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -456,10 +496,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -479,10 +523,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -529,10 +577,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "EndTurn": {
-              "Source": "you"
+            "When": {
+              "Timing": {
+                "EndTurn": {
+                  "Source": "you"
+                }
+              }
             }
           },
           "Actions": [
@@ -554,10 +606,14 @@
       ],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -601,13 +657,17 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "StartTurn": {
-              "Source": "owner"
-            },
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "StartTurn": {
+                  "Source": "owner"
+                },
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -652,10 +712,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -698,18 +762,80 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
-            {}
+            {
+              "AddEffect": {
+                "CardsChoice": {
+                  "How": "all",
+                  "CardCondition": {
+                    "Context": "others",
+                    "ZoneCondition": {
+                      "Values": [
+                        "youField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                },
+                "EffectToAdd": [
+                  {
+                    "Condition": {
+                      "Zone": "youField",
+                      "When": {
+                        "Timing": {
+                          "DamageBefore": {
+                            "Source": "guard",
+                            "CardCondition": {
+                              "Context": "this"
+                            }
+                          }
+                        }
+                      },
+                      "While": {
+                        "Timing": {
+                          "EndTurn": {
+                            "Source": "you"
+                          }
+                        },
+                        "Skip": 0,
+                        "Take": 1
+                      }
+                    },
+                    "Actions": [
+                      {
+                        "ModifyDamage": {
+                          "Choice": {
+                            "How": "all",
+                            "CardCondition": {
+                              "Context": "this"
+                            },
+                            "NumPicks": 1
+                          },
+                          "Value": {
+                            "Operator": "replace",
+                            "Value": 0
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
           ]
         }
-      ],
-      "NumTurnsToCanAttack": 1
+      ]
     },
     {
       "BaseCost": 6,
@@ -722,10 +848,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -746,10 +876,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [
@@ -806,10 +940,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "EndTurn": {
-              "Source": "you"
+            "When": {
+              "Timing": {
+                "EndTurn": {
+                  "Source": "you"
+                }
+              }
             }
           },
           "Actions": [
@@ -847,10 +985,14 @@
       "Abilities": [],
       "Effects": [
         {
-          "Timing": {
+          "Condition": {
             "Zone": "youField",
-            "Play": {
-              "Source": "this"
+            "When": {
+              "Timing": {
+                "Play": {
+                  "Source": "this"
+                }
+              }
             }
           },
           "Actions": [

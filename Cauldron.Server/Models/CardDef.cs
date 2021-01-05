@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Cauldron.Server.Models
 {
@@ -54,10 +55,12 @@ namespace Cauldron.Server.Models
             };
         }
 
+        [JsonIgnore]
         public CardDefId Id { get; }
 
         public int BaseCost { get; set; }
 
+        [JsonIgnore]
         public string FullName { get; set; } = "";
 
         public string Name { get; set; } = "";

@@ -34,8 +34,8 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField,
-                            StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Both)
+                        new(ZonePrettyName.YouField,
+                            new(new(StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Both)))
                         ),
                         new[]{ testAction }
                     )
@@ -84,7 +84,8 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Owner)),
+                        new(ZonePrettyName.YouField,
+                            new(new(StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Owner)))),
                         new[]{ testAction }
                     )
                 });
@@ -132,7 +133,8 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Other)),
+                        new(ZonePrettyName.YouField,
+                            new(new(StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Other)))),
                         new[]{ testAction }
                     )
                 });
@@ -180,8 +182,8 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField,
-                            EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.Both)
+                        new(ZonePrettyName.YouField,
+                            new(new(EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.Both)))
                         ),
                         new[]{ testAction }
                     )
@@ -230,7 +232,8 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, EndTurn : new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.You)),
+                        new(ZonePrettyName.YouField,
+                            new(new(EndTurn : new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.You)))),
                         new[]{ testAction }
                     )
                 });
@@ -278,7 +281,8 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, EndTurn : new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.Opponent)),
+                        new(ZonePrettyName.YouField,
+                            new(new(EndTurn : new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.Opponent)))),
                         new[]{ testAction }
                     )
                 });
@@ -326,7 +330,7 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, Play : new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)),
+                        EffectCondition.Spell,
                         new[]{ testAction }
                     )
                 });
@@ -367,7 +371,9 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, Play : new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.Other)),
+                        new(
+                            ZonePrettyName.YouField,
+                            new(new(Play : new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.Other)))),
                         new[]{ testAction }
                     )
                 });
@@ -408,7 +414,8 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, BattleBefore : new EffectTimingBattleBeforeEvent(EffectTimingBattleBeforeEvent.EventSource.All, CardCondition : new CardCondition())),
+                        new(ZonePrettyName.YouField,
+                            new(new(BattleBefore : new(EffectTimingBattleBeforeEvent.EventSource.All, CardCondition : new CardCondition())))),
                         new[]{ testAction }
                     )
                 });
@@ -473,7 +480,11 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, BattleBefore : new EffectTimingBattleBeforeEvent(EffectTimingBattleBeforeEvent.EventSource.Attack, CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })),
+                        new(ZonePrettyName.YouField,
+                            new(new(
+                                BattleBefore : new(
+                                    EffectTimingBattleBeforeEvent.EventSource.Attack,
+                                    CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })))),
                         new[]{ testAction }
                     )
                 });
@@ -535,7 +546,10 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, BattleBefore : new EffectTimingBattleBeforeEvent(EffectTimingBattleBeforeEvent.EventSource.Guard, CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })),
+                        new(ZonePrettyName.YouField,
+                            new(new(BattleBefore : new(
+                                EffectTimingBattleBeforeEvent.EventSource.Guard,
+                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })))),
                         new[]{ testAction }
                     )
                 });
@@ -597,7 +611,10 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, BattleBefore : new EffectTimingBattleBeforeEvent(EffectTimingBattleBeforeEvent.EventSource.Attack, CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })),
+                        new(ZonePrettyName.YouField,
+                            new(new(BattleBefore : new(
+                                EffectTimingBattleBeforeEvent.EventSource.Attack,
+                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })))),
                         new[]{ testAction }
                     )
                 });
@@ -651,7 +668,10 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, BattleBefore : new EffectTimingBattleBeforeEvent(EffectTimingBattleBeforeEvent.EventSource.Guard, CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })),
+                        new(ZonePrettyName.YouField,
+                            new(new(BattleBefore : new(
+                                EffectTimingBattleBeforeEvent.EventSource.Guard,
+                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })))),
                         new[]{ testAction }
                     )
                 });
@@ -705,7 +725,10 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 0,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, DamageBefore : new EffectTimingDamageBeforeEvent(EffectTimingDamageBeforeEvent.EventSource.All, CardCondition : new CardCondition())),
+                        new(ZonePrettyName.YouField,
+                            new(new(DamageBefore : new(
+                                EffectTimingDamageBeforeEvent.EventSource.All,
+                                CardCondition : new CardCondition())))),
                         new[]{ testAction }
                     )
                 });
@@ -771,9 +794,9 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 0,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField,
-                            DamageBefore : new (EffectTimingDamageBeforeEvent.EventSource.DamageSource,
-                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })),
+                        new(ZonePrettyName.YouField,
+                            new(new(DamageBefore : new (EffectTimingDamageBeforeEvent.EventSource.DamageSource,
+                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })))),
                         new[]{ testAction }
                     )
                 });
@@ -836,7 +859,10 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 0,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField, DamageBefore : new EffectTimingDamageBeforeEvent(EffectTimingDamageBeforeEvent.EventSource.Guard, CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })),
+                        new(ZonePrettyName.YouField,
+                            new(new(DamageBefore : new(
+                                EffectTimingDamageBeforeEvent.EventSource.Guard,
+                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })))),
                         new[]{ testAction }
                     )
                 });
@@ -900,15 +926,15 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(
+                        new(
                             ZonePrettyName.YouField,
-                            DamageBefore: new EffectTimingDamageBeforeEvent(
+                            new(new(DamageBefore: new(
                                 EffectTimingDamageBeforeEvent.EventSource.Guard,
                                 CardCondition: new CardCondition()
                                 {
                                     Context = CardCondition.CardConditionContext.This
                                 }
-                            )
+                            )))
                         ),
                         new[]{ testAction }
                     )
@@ -919,10 +945,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectTiming(
-                            ZonePrettyName.YouField,
-                            Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
-                        ),
+                        EffectCondition.Spell,
                         new[]
                         {
                             new EffectAction()
@@ -973,9 +996,9 @@ namespace Cauldron.Server_Test
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectTiming(
+                        new(
                             ZonePrettyName.YouCemetery,
-                            Destroy: new (EffectTimingDestroyEvent.EventSource.This)
+                            new(new(Destroy: new (EffectTimingDestroyEvent.EventSource.This)))
                         ),
                         new[]{ testAction }
                     )

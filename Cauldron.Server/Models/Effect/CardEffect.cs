@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Cauldron.Server.Models
 {
-    public record CardEffect(EffectTiming Timing, IReadOnlyList<EffectAction> Actions)
+    public record CardEffect(EffectCondition Condition, IReadOnlyList<EffectAction> Actions)
     {
         public (bool, EffectEventArgs) DoIfMatched(Card effectOwnerCard, EffectEventArgs args)
         {
-            if (!this.Timing.IsMatch(effectOwnerCard, args)) return (false, args);
+            if (!this.Condition.IsMatch(effectOwnerCard, args)) return (false, args);
 
             var done = false;
             var newArgs = args;

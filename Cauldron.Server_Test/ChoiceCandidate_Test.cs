@@ -30,10 +30,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectTiming(
-                            ZonePrettyName.YouField,
-                            Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
-                        ),
+                        EffectCondition.Spell,
                         new[]
                         {
                             new EffectAction()
@@ -114,10 +111,7 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectTiming(
-                            ZonePrettyName.YouField,
-                            Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
-                        ),
+                        EffectCondition.Spell,
                         new[]
                         {
                             new EffectAction()
@@ -198,9 +192,9 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectTiming(
+                        new(
                             ZonePrettyName.YouField,
-                            Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
+                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)))
                         ),
                         new[]
                         {
@@ -281,9 +275,9 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectTiming(
+                        new(
                             ZonePrettyName.YouField,
-                            Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
+                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)))
                         ),
                         new[]
                         {
@@ -356,9 +350,9 @@ namespace Cauldron.Server_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectTiming(
+                        new(
                             ZonePrettyName.YouField,
-                            Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)
+                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)))
                         ),
                         new []
                         {
@@ -432,9 +426,9 @@ namespace Cauldron.Server_Test
                 {
                     // ターン開始時、カレントプレイヤーに1ダメージ
                     new CardEffect(
-                        new EffectTiming(
+                        new(
                             ZonePrettyName.YouField,
-                            StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Both)
+                            new(new(StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Both)))
                         ),
                         new []{
                             new EffectAction()

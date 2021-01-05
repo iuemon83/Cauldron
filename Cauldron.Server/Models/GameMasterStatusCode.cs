@@ -42,6 +42,6 @@
         /// <summary>
         /// 攻撃できません
         /// </summary>
-        CandAttack,
+        CantAttack,
     }
 }

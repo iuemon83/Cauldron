@@ -635,7 +635,7 @@ namespace Cauldron.Server.Models
 
             if (!CanAttack(eventArgs.BattleContext.AttackCard, eventArgs.BattleContext.GuardPlayer))
             {
-                return GameMasterStatusCode.CandAttack;
+                return GameMasterStatusCode.CantAttack;
             }
 
             var damageContext = new DamageContext(
@@ -709,7 +709,7 @@ namespace Cauldron.Server.Models
 
             if (!CanAttack(eventArgs.BattleContext.AttackCard, eventArgs.BattleContext.GuardCard, this.CreateGameContext(playerId)))
             {
-                return GameMasterStatusCode.CandAttack;
+                return GameMasterStatusCode.CantAttack;
             }
 
             // 攻撃するとステルスを失う
@@ -865,7 +865,7 @@ namespace Cauldron.Server.Models
                 case Choice.ChoiceHow.Random:
                     var totalCount = choiceCandidates.PlayerList.Count + choiceCandidates.CardList.Count;// + choiceCandidates.CardDefList.Count;
                     var totalIndexList = Enumerable.Range(0, totalCount).ToArray();
-                    var pickedIndexList = Program.RandomPick(totalIndexList, choice.NumPicks);
+                    var pickedIndexList = RandomUtil.RandomPick(totalIndexList, choice.NumPicks);
 
                     var randomPickedPlayerList = new List<Player>();
                     var randomPickedCardList = new List<Card>();

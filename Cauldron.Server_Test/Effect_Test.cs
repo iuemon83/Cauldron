@@ -41,9 +41,7 @@ namespace Cauldron.Server_Test
                 {
                     // ¢Š«AƒXƒ‰ƒCƒ€‚ğ2‘Ì¢Š«
                     new CardEffect(
-                        new EffectTiming(ZonePrettyName.YouField,
-                            Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This)
-                        ),
+                        EffectCondition.Spell,
                         new[]
                         {
                             new EffectAction()
