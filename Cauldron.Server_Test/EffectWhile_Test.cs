@@ -34,7 +34,6 @@ namespace Cauldron.Server_Test
             var testAction = new TestEffectAction();
             var testCardDef = CardDef.Creature(0, $"test.test", "test", "", 1, 5,
                 effects: new[]{
-                    // ターン終了時まで自分へのダメージ無効
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
@@ -91,6 +90,213 @@ namespace Cauldron.Server_Test
                 Assert.Equal(1, testAction.CallCount);
                 var status = g.AttackToCreature(pId, goblin.Id, testCard.Id);
                 Assert.Equal(GameMasterStatusCode.OK, status);
+                Assert.Equal(1, testAction.CallCount);
+            });
+        }
+
+        [Fact]
+        public void 次の自分ターン開始時()
+        {
+            var testAction = new TestEffectAction();
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "", 1, 5,
+                effects: new[]{
+                    new CardEffect(
+                        new(
+                            ZonePrettyName.YouField,
+                            new(new(StartTurn: new(EffectTimingStartTurnEvent.EventSource.You))),
+                            While: new(new(StartTurn: new(EffectTimingStartTurnEvent.EventSource.You)), 0, 1)
+                        ),
+                        new[]{ testAction }
+                    )
+                });
+
+            var testCardFactory = new CardFactory(new RuleBook(
+                DefaultNumTurnsToCanAttack: 0));
+            testCardFactory.SetCardPool(new[] { testCardDef });
+
+            // 以下テスト
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 1ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 効果が発動しない
+            Assert.Equal(0, testAction.CallCount);
+
+            // 2ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                // 効果が発動する
+                Assert.Equal(1, testAction.CallCount);
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 3ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                // 2度目は効果が発動しない
+                Assert.Equal(1, testAction.CallCount);
+            });
+        }
+
+        [Fact]
+        public void 次の自分ターン終了時()
+        {
+            var testAction = new TestEffectAction();
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "", 1, 5,
+                effects: new[]{
+                    new CardEffect(
+                        new(
+                            ZonePrettyName.YouField,
+                            new(new(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You))),
+                            While: new(new(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You)), 1, 1)
+                        ),
+                        new[]{ testAction }
+                    )
+                });
+
+            var testCardFactory = new CardFactory(new RuleBook(
+                DefaultNumTurnsToCanAttack: 0));
+            testCardFactory.SetCardPool(new[] { testCardDef });
+
+            // 以下テスト
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 1ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 2ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                // 効果が発動しない
+                Assert.Equal(0, testAction.CallCount);
+            });
+
+            // 効果が発動する
+            Assert.Equal(1, testAction.CallCount);
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 3ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 2度目は効果が発動しない
+            Assert.Equal(1, testAction.CallCount);
+        }
+
+        [Fact]
+        public void 三ターン後の開始時に()
+        {
+            var testAction = new TestEffectAction();
+            var testCardDef = CardDef.Creature(0, $"test.test", "test", "", 1, 5,
+                effects: new[]{
+                    new CardEffect(
+                        new(
+                            ZonePrettyName.YouField,
+                            new(new(StartTurn: new(EffectTimingStartTurnEvent.EventSource.You))),
+                            While: new(new(StartTurn: new(EffectTimingStartTurnEvent.EventSource.You)), 2, 1)
+                        ),
+                        new[]{ testAction }
+                    )
+                });
+
+            var testCardFactory = new CardFactory(new RuleBook(
+                DefaultNumTurnsToCanAttack: 0));
+            testCardFactory.SetCardPool(new[] { testCardDef });
+
+            // 以下テスト
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 1ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 2ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 3ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 効果が発動しない
+            Assert.Equal(0, testAction.CallCount);
+
+            // 4ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                // 効果が発動する
+                Assert.Equal(1, testAction.CallCount);
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 3ターン目
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                // 2度目は効果が発動しない
                 Assert.Equal(1, testAction.CallCount);
             });
         }

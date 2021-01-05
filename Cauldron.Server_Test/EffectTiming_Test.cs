@@ -85,7 +85,7 @@ namespace Cauldron.Server_Test
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
-                            new(new(StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Owner)))),
+                            new(new(StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.You)))),
                         new[]{ testAction }
                     )
                 });
@@ -134,7 +134,7 @@ namespace Cauldron.Server_Test
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
-                            new(new(StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Other)))),
+                            new(new(StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Opponent)))),
                         new[]{ testAction }
                     )
                 });

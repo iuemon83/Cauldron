@@ -348,7 +348,7 @@ namespace Cauldron.Server.Models
                         ZonePrettyName.YouField,
                         new(new(
                             Play: new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.This),
-                            StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Owner)
+                            StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.You)
                             ))),
                     new[]
                     {

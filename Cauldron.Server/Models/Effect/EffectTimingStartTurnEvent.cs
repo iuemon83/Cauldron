@@ -6,8 +6,8 @@ namespace Cauldron.Server.Models.Effect
     {
         public enum EventSource
         {
-            Owner,
-            Other,
+            You,
+            Opponent,
             Both
         }
 
@@ -16,8 +16,8 @@ namespace Cauldron.Server.Models.Effect
             return this.Source switch
             {
                 EventSource.Both => true,
-                EventSource.Owner => turnPlayerId == ownerCard.OwnerId,
-                EventSource.Other => turnPlayerId != ownerCard.OwnerId,
+                EventSource.You => turnPlayerId == ownerCard.OwnerId,
+                EventSource.Opponent => turnPlayerId != ownerCard.OwnerId,
                 _ => throw new InvalidOperationException($"{nameof(this.Source)}={this.Source}"),
             };
         }
