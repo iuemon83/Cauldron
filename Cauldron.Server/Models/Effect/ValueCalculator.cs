@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Cauldron.Server.Models.Effect
+﻿namespace Cauldron.Server.Models.Effect
 {
-    public class ValueCalculator
+    public record ValueCalculator(
+        ValueCalculatorForCard Card)
     {
-
+        public int Calculate(Card effectOwnerCard, EffectEventArgs effectEventArgs)
+        {
+            return this.Card.Calculate(effectOwnerCard, effectEventArgs);
+        }
     }
 }

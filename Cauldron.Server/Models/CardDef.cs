@@ -7,7 +7,7 @@ namespace Cauldron.Server.Models
 {
     public class CardDef
     {
-        public static CardDef Creature(int cost, string fullName, string name, string flavorText, int power, int toughness,
+        public static CardDef Creature(int cost, string name, string flavorText, int power, int toughness,
             int? numTurnsToCanAttack = null, int? numAttacksInTurn = null, bool isToken = false,
             IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect> effects = null)
         {
@@ -15,7 +15,6 @@ namespace Cauldron.Server.Models
             {
                 BaseCost = cost,
                 Type = CardType.Creature,
-                FullName = fullName,
                 Name = name,
                 FlavorText = flavorText,
                 BasePower = power,
@@ -28,27 +27,25 @@ namespace Cauldron.Server.Models
             };
         }
 
-        public static CardDef Artifact(int cost, string fullName, string name, string flavorText, bool isToken = false, IEnumerable<CardEffect> effects = null)
+        public static CardDef Artifact(int cost, string name, string flavorText, bool isToken = false, IEnumerable<CardEffect> effects = null)
         {
             return new CardDef()
             {
                 BaseCost = cost,
                 IsToken = isToken,
                 Type = CardType.Artifact,
-                FullName = fullName,
                 Name = name,
                 FlavorText = flavorText,
                 Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
             };
         }
 
-        public static CardDef Sorcery(int cost, string fullName, string name, string flavorText, IEnumerable<CardEffect> effects = null)
+        public static CardDef Sorcery(int cost, string name, string flavorText, IEnumerable<CardEffect> effects = null)
         {
             return new CardDef()
             {
                 BaseCost = cost,
                 Type = CardType.Sorcery,
-                FullName = fullName,
                 Name = name,
                 FlavorText = flavorText,
                 Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()

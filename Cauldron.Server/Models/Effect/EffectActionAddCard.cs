@@ -2,11 +2,8 @@
 
 namespace Cauldron.Server.Models.Effect
 {
-    public class EffectActionAddCard : IEffectAction
+    public record EffectActionAddCard(ZonePrettyName ZoneToAddCard, Choice Choice) : IEffectAction
     {
-        public Choice Choice { get; set; }
-        public ZonePrettyName ZoneToAddCard { get; set; }
-
         public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs args)
         {
             var newCardDefs = args.GameMaster.ChoiceCards(ownerCard, this.Choice, args).CardDefList;

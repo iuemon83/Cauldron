@@ -1,10 +1,7 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
-    public class EffectActionDamage : IEffectAction
+    public record EffectActionDamage(int Value, Choice Choice) : IEffectAction
     {
-        public int Value { get; set; }
-        public Choice Choice { get; set; }
-
         public (bool, EffectEventArgs) Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             var choiceResult = args.GameMaster.ChoiceCards(effectOwnerCard, this.Choice, args);

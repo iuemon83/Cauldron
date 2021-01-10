@@ -131,6 +131,8 @@
           "Actions": [
             {
               "ModifyCard": {
+                "Power": 2,
+                "Toughness": 0,
                 "Choice": {
                   "How": "choose",
                   "CardCondition": {
@@ -149,9 +151,7 @@
                     }
                   },
                   "NumPicks": 1
-                },
-                "Power": 2,
-                "Toughness": 0
+                }
               }
             }
           ]
@@ -354,6 +354,7 @@
           "Actions": [
             {
               "AddCard": {
+                "ZoneToAddCard": "youField",
                 "Choice": {
                   "How": "all",
                   "CardCondition": {
@@ -371,8 +372,7 @@
                     }
                   },
                   "NumPicks": 1
-                },
-                "ZoneToAddCard": "youField"
+                }
               }
             }
           ]
@@ -458,6 +458,8 @@
           "Actions": [
             {
               "ModifyCard": {
+                "Power": 0,
+                "Toughness": 3,
                 "Choice": {
                   "How": "choose",
                   "CardCondition": {
@@ -476,9 +478,7 @@
                     }
                   },
                   "NumPicks": 1
-                },
-                "Power": 0,
-                "Toughness": 3
+                }
               }
             }
           ]
@@ -585,10 +585,62 @@
                   "Source": "you"
                 }
               }
+            },
+            "If": {
+              "NumCondition": {
+                "Value": 30,
+                "Compare": "greaterThan",
+                "Not": false
+              },
+              "ValueCalculator": {
+                "Card": {
+                  "Type": "cardCount",
+                  "CardsChoice": {
+                    "How": "all",
+                    "CardCondition": {
+                      "Context": "all",
+                      "ZoneCondition": {
+                        "Values": [
+                          "youCemetery"
+                        ],
+                        "Not": false
+                      }
+                    },
+                    "NumPicks": 1
+                  }
+                }
+              }
             }
           },
           "Actions": [
-            {}
+            {
+              "Damage": {
+                "Value": 6,
+                "Choice": {
+                  "How": "all",
+                  "PlayerCondition": {
+                    "Context": "all",
+                    "Type": "opponent"
+                  },
+                  "CardCondition": {
+                    "Context": "all",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "opponentField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                }
+              }
+            }
           ]
         }
       ]
@@ -662,7 +714,7 @@
             "When": {
               "Timing": {
                 "StartTurn": {
-                  "Source": "owner"
+                  "Source": "you"
                 },
                 "Play": {
                   "Source": "this"
@@ -673,6 +725,8 @@
           "Actions": [
             {
               "ModifyCard": {
+                "Power": 1,
+                "Toughness": 0,
                 "Choice": {
                   "How": "all",
                   "CardCondition": {
@@ -691,9 +745,7 @@
                     }
                   },
                   "NumPicks": 1
-                },
-                "Power": 1,
-                "Toughness": 0
+                }
               }
             }
           ]
@@ -815,16 +867,16 @@
                     "Actions": [
                       {
                         "ModifyDamage": {
+                          "Value": {
+                            "Operator": "replace",
+                            "Value": 0
+                          },
                           "Choice": {
                             "How": "all",
                             "CardCondition": {
                               "Context": "this"
                             },
                             "NumPicks": 1
-                          },
-                          "Value": {
-                            "Operator": "replace",
-                            "Value": 0
                           }
                         }
                       }
@@ -889,6 +941,8 @@
           "Actions": [
             {
               "ModifyCard": {
+                "Power": 4,
+                "Toughness": 3,
                 "Choice": {
                   "How": "choose",
                   "CardCondition": {
@@ -907,9 +961,7 @@
                     }
                   },
                   "NumPicks": 1
-                },
-                "Power": 4,
-                "Toughness": 3
+                }
               }
             }
           ]

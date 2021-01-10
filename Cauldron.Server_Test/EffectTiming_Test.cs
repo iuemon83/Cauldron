@@ -31,7 +31,7 @@ namespace Cauldron.Server_Test
         public void すべてのターン開始時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -42,7 +42,7 @@ namespace Cauldron.Server_Test
                 });
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -81,7 +81,7 @@ namespace Cauldron.Server_Test
         public void 自分のターン開始時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -91,7 +91,7 @@ namespace Cauldron.Server_Test
                 });
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -130,7 +130,7 @@ namespace Cauldron.Server_Test
         public void 相手のターン開始時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -140,7 +140,7 @@ namespace Cauldron.Server_Test
                 });
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -179,7 +179,7 @@ namespace Cauldron.Server_Test
         public void すべてのターン終了時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -190,7 +190,7 @@ namespace Cauldron.Server_Test
                 });
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -229,7 +229,7 @@ namespace Cauldron.Server_Test
         public void 自分のターン終了時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -239,7 +239,7 @@ namespace Cauldron.Server_Test
                 });
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -278,7 +278,7 @@ namespace Cauldron.Server_Test
         public void 相手のターン終了時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -288,7 +288,7 @@ namespace Cauldron.Server_Test
                 });
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -327,7 +327,7 @@ namespace Cauldron.Server_Test
         public void カードのプレイ時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         EffectCondition.Spell,
@@ -335,10 +335,10 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 1, 1);
+            var testNormalCardDef = CardDef.Creature(0, "test2", "test2", 1, 1, 1);
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -368,7 +368,7 @@ namespace Cauldron.Server_Test
         public void 他のカードのプレイ時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 1, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -378,10 +378,10 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 1, 1);
+            var testNormalCardDef = CardDef.Creature(0, "test2", "test2", 1, 1, 1);
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -411,7 +411,7 @@ namespace Cauldron.Server_Test
         public void 戦闘開始前時_すべてのクリーチャー()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -420,10 +420,10 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
+            var testNormalCardDef = CardDef.Creature(0, "test2", "test2", 1, 5, 1);
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -477,7 +477,7 @@ namespace Cauldron.Server_Test
         public void 戦闘開始前時_自分が攻撃()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -489,10 +489,10 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
+            var testNormalCardDef = CardDef.Creature(0, "test2", "test2", 1, 5, 1);
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -543,7 +543,7 @@ namespace Cauldron.Server_Test
         public void 戦闘開始前時_自分が防御()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -554,10 +554,10 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
+            var testNormalCardDef = CardDef.Creature(0, "test2", "test2", 1, 5, 1);
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -608,7 +608,7 @@ namespace Cauldron.Server_Test
         public void 戦闘開始前時_他カードが攻撃()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -619,10 +619,10 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
+            var testNormalCardDef = CardDef.Creature(0, "test2", "test2", 1, 5, 1);
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -665,7 +665,7 @@ namespace Cauldron.Server_Test
         public void 戦闘開始前時_他カードが防御()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -676,10 +676,10 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 1);
+            var testNormalCardDef = CardDef.Creature(0, "test2", "test2", 1, 5, 1);
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -722,7 +722,7 @@ namespace Cauldron.Server_Test
         public void 戦闘ダメージ前時_すべてのクリーチャー()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 0,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 5, 0,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -733,10 +733,10 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 0);
+            var testNormalCardDef = CardDef.Creature(0, "test2", "test2", 1, 5, 0);
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -791,7 +791,7 @@ namespace Cauldron.Server_Test
         public void 戦闘ダメージ前時_自分が攻撃()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 0,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 5, 0,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -801,10 +801,10 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 0);
+            var testNormalCardDef = CardDef.Creature(0, "test2", "test2", 1, 5, 0);
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -856,7 +856,7 @@ namespace Cauldron.Server_Test
         public void 戦闘ダメージ前時_ほかカードが防御()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 0,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 5, 0,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -867,10 +867,10 @@ namespace Cauldron.Server_Test
                     )
                 });
 
-            var testNormalCardDef = CardDef.Creature(0, $"test.test2", "test2", "test2", 1, 5, 0);
+            var testNormalCardDef = CardDef.Creature(0, "test2", "test2", 1, 5, 0);
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testNormalCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -923,7 +923,7 @@ namespace Cauldron.Server_Test
         public void 戦闘以外のダメージ前時_自分が防御()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -941,7 +941,7 @@ namespace Cauldron.Server_Test
                 });
 
             // クリーチャーに1ダメージの魔法
-            var testSorceryDef = CardDef.Sorcery(0, $"test.test2", "test2", "test2",
+            var testSorceryDef = CardDef.Sorcery(0, "test2", "test2",
                 effects: new[]
                 {
                     new CardEffect(
@@ -950,25 +950,24 @@ namespace Cauldron.Server_Test
                         {
                             new EffectAction()
                             {
-                                Damage = new EffectActionDamage()
-                                {
-                                    Choice = new Choice()
+                                Damage = new EffectActionDamage(
+                                    1,
+                                    new Choice()
                                     {
                                         CardCondition = new CardCondition()
                                         {
                                             ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
                                             TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                         },
-                                    },
-                                    Value = 1
-                                }
+                                    }
+                                )
                             }
                         }
                     )
                 });
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef, testSorceryDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testSorceryDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -993,7 +992,7 @@ namespace Cauldron.Server_Test
         public void 自分の破壊時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "test", 1, 5, 1,
+            var testCardDef = CardDef.Creature(0, "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -1005,7 +1004,7 @@ namespace Cauldron.Server_Test
                 });
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));

@@ -5,12 +5,8 @@ namespace Cauldron.Server.Models.Effect
     /// <summary>
     /// ダメージの修整
     /// </summary>
-    public class EffectActionModifyDamage : IEffectAction
+    public record EffectActionModifyDamage(ValueModifier Value, Choice Choice) : IEffectAction
     {
-        public Choice Choice { get; set; }
-
-        public ValueModifier Value { get; set; }
-
         public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs args)
         {
             var done = false;

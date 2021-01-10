@@ -850,9 +850,9 @@ namespace Cauldron.Server.Models
             };
         }
 
-        public ChoiceResult ChoiceCards(Card ownerCard, Choice choice, EffectEventArgs eventArgs)
+        public ChoiceResult ChoiceCards(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
         {
-            var choiceCandidates = this.ChoiceCandidates(ownerCard, choice, eventArgs);
+            var choiceCandidates = this.ChoiceCandidates(effectOwnerCard, choice, eventArgs);
 
             switch (choice.How)
             {
@@ -860,7 +860,7 @@ namespace Cauldron.Server.Models
                     return choiceCandidates;
 
                 case Choice.ChoiceHow.Choose:
-                    return this.AskCard(ownerCard.OwnerId, choiceCandidates, choice.NumPicks);
+                    return this.AskCard(effectOwnerCard.OwnerId, choiceCandidates, choice.NumPicks);
 
                 case Choice.ChoiceHow.Random:
                     var totalCount = choiceCandidates.PlayerList.Count + choiceCandidates.CardList.Count;// + choiceCandidates.CardDefList.Count;

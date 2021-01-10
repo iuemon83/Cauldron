@@ -1,11 +1,7 @@
 ﻿namespace Cauldron.Server.Models.Effect
 {
-    public class EffectActionModifyCard : IEffectAction
+    public record EffectActionModifyCard(int Power, int Toughness, Choice Choice) : IEffectAction
     {
-        public Choice Choice { get; set; }
-        public int Power { get; set; }
-        public int Toughness { get; set; }
-
         public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs args)
         {
             var targets = args.GameMaster.ChoiceCards(ownerCard, this.Choice, args).CardList;

@@ -6,21 +6,15 @@ namespace Cauldron.Server.Models
 {
     public class CardPool
     {
-        public static IEnumerable<CardDef> LoadFromDirectory(string cardsetDirectoryPath)
+        public static IEnumerable<CardSet> ReadFromDirectory(string cardsetDirectoryPath)
         {
             return Directory.GetFiles(cardsetDirectoryPath)
-                .SelectMany(LoadFromFile);
+                .Select(ReadFromFile);
         }
-        public static IEnumerable<CardDef> LoadFromFile(string jsonFilePath)
+        public static CardSet ReadFromFile(string jsonFilePath)
         {
             var jsonString = File.ReadAllText(jsonFilePath);
-            var cardset = JsonConverter.Deserialize<CardSet>(jsonString);
-            return cardset.Cards
-                .Select(c =>
-                {
-                    c.FullName = $"{cardset.Name}.{c.Name}";
-                    return c;
-                });
+            return JsonConverter.Deserialize<CardSet>(jsonString);
         }
 
         public static void WriteToFile(string jsonFilePath)

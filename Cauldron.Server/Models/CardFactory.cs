@@ -21,19 +21,23 @@ namespace Cauldron.Server.Models
             this.ruleBook = ruleBook;
         }
 
-        public void SetCardPool(IEnumerable<CardDef> cardDefList)
+        public void SetCardPool(IEnumerable<CardSet> cardsetList)
         {
-            foreach (var cardDef in cardDefList)
+            foreach (var cardset in cardsetList)
             {
-                if (cardDef.Type == CardType.Unknown)
+                foreach (var cardDef in cardset.Cards)
                 {
-                    throw new InvalidOperationException($"Card Type: {cardDef.Type}");
+                    if (cardDef.Type == CardType.Unknown)
+                    {
+                        throw new InvalidOperationException($"Card Type: {cardDef.Type}");
+                    }
+
+                    cardDef.FullName = $"{cardset.Name}.{cardDef.Name}";
+                    cardDef.NumTurnsToCanAttack ??= this.ruleBook.DefaultNumTurnsToCanAttack;
+                    cardDef.NumAttacksLimitInTurn ??= this.ruleBook.DefaultNumAttacksLimitInTurn;
+
+                    this.CardDefListById.TryAdd(cardDef.Id, cardDef);
                 }
-
-                cardDef.NumTurnsToCanAttack ??= this.ruleBook.DefaultNumTurnsToCanAttack;
-                cardDef.NumAttacksLimitInTurn ??= this.ruleBook.DefaultNumAttacksLimitInTurn;
-
-                this.CardDefListById.TryAdd(cardDef.Id, cardDef);
             }
         }
 

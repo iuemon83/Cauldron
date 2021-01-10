@@ -8,7 +8,7 @@ namespace Cauldron.Server.Models.Effect
         {
             Equality,
             LessThan,
-            GreaterTan,
+            GreaterThan,
         }
 
         public bool IsMatch(int checkValue)
@@ -17,11 +17,11 @@ namespace Cauldron.Server.Models.Effect
             {
                 ConditionCompare.Equality => checkValue == this.Value,
                 ConditionCompare.LessThan => checkValue <= this.Value,
-                ConditionCompare.GreaterTan => checkValue >= this.Value,
-                _ => throw new InvalidOperationException($"不正な入力値です: {this.Compare}")
+                ConditionCompare.GreaterThan => checkValue >= this.Value,
+                _ => throw new InvalidOperationException($"{nameof(this.Compare)}: {this.Compare}")
             };
 
-            return this.Not ? !result : result;
+            return result ^ this.Not;
         }
     }
 }

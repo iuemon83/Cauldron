@@ -6,7 +6,8 @@
     public record EffectCondition(
         ZonePrettyName Zone,
         EffectWhen When,
-        EffectWhile While = null
+        EffectWhile While = null,
+        EffectIf If = null
         )
     {
         public static readonly EffectCondition Spell
@@ -16,7 +17,8 @@
         {
             return this.IsMatchedZone(effectOwnerCard, eventArgs)
                 && (this.While?.IsMatch(effectOwnerCard, eventArgs) ?? true)
-                && this.When.IsMatch(effectOwnerCard, eventArgs);
+                && this.When.IsMatch(effectOwnerCard, eventArgs)
+                && (this.If?.IsMatch(effectOwnerCard, eventArgs) ?? true);
         }
 
         private bool IsMatchedZone(Card effectOwnerCard, EffectEventArgs eventArgs)

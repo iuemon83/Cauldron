@@ -15,7 +15,7 @@ namespace Cauldron.Server_Test
             slime.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { slime });
+            testCardFactory.SetCardPool(new[] { new CardSet(TestCards.CardsetName, new[] { slime }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -36,7 +36,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 召喚時にクリーチャーを2体出す能力()
         {
-            var slime = CardDef.Creature(0, $"test.スライム", "スライム", "テストクリーチャー", 1, 1, 1,
+            var slime = CardDef.Creature(0, "スライム", "テストクリーチャー", 1, 1, 1,
                 effects: new[]
                 {
                     // 召喚時、スライムを2体召喚
@@ -46,22 +46,21 @@ namespace Cauldron.Server_Test
                         {
                             new EffectAction()
                             {
-                                AddCard = new EffectActionAddCard()
-                                {
-                                    ZoneToAddCard = ZonePrettyName.YouField,
-                                    Choice = new Choice()
+                                AddCard = new EffectActionAddCard(
+                                    ZonePrettyName.YouField,
+                                    new Choice()
                                     {
                                         CardCondition = new CardCondition()
                                         {
                                             NameCondition = new(
-                                                $"test.スライム",
+                                                $"Test.スライム",
                                                 TextCondition.ConditionCompare.Equality
                                             ),
                                             ZoneCondition = new(new[]{ ZonePrettyName.CardPool }),
                                         },
                                         NumPicks=2
                                     }
-                                }
+                                )
                             }
                         }
                     )
@@ -69,7 +68,7 @@ namespace Cauldron.Server_Test
                 );
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { slime });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { slime }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -90,12 +89,12 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 死亡時に相手プレイヤーに1ダメージ()
         {
-            var goblinDef = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblinDef = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
             var mouseDef = TestCards.mouse;
             mouseDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { mouseDef, goblinDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { mouseDef, goblinDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -158,13 +157,13 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 破壊時にフェアリー１枚を手札に加える()
         {
-            var goblinDef = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblinDef = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
             var fairyDef = TestCards.fairy;
             var waterFairyDef = TestCards.waterFairy;
             waterFairyDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { fairyDef, waterFairyDef, goblinDef });
+            testCardFactory.SetCardPool(new[] { new CardSet(TestCards.CardsetName, new[] { fairyDef, waterFairyDef, goblinDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -212,12 +211,12 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 召喚時に自分のクリーチャーをランダムで一体を修正()
         {
-            var goblinDef = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblinDef = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
             var testCreatureDef = TestCards.whiteGeneral;
             testCreatureDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { goblinDef, testCreatureDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCreatureDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -252,12 +251,12 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 召喚時に自分のクリーチャーすべてを修正()
         {
-            var goblinDef = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblinDef = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
             var testCreatureDef = TestCards.commander;
             testCreatureDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { goblinDef, testCreatureDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCreatureDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -295,13 +294,13 @@ namespace Cauldron.Server_Test
         [Fact]
         public void ターン終了時にランダムな相手クリーチャー1体に1ダメージ_その後このカードを破壊()
         {
-            var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblin = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = TestCards.devil;
             testCardDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { goblin, testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -346,13 +345,13 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 相手かランダムな相手クリーチャー一体に2ダメージ()
         {
-            var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblin = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = TestCards.shock;
             testCardDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { goblin, testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -389,13 +388,13 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 対象の自分クリーチャーを修正()
         {
-            var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblin = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = TestCards.buf;
             testCardDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { goblin, testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
 
             // カードの選択処理のテスト
             static ChoiceResult testAskCardAction(PlayerId _, ChoiceResult c, int i)
@@ -427,13 +426,13 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 使用時にすべての自分クリーチャーを修正かつ自分クリーチャーのプレイ時に修正()
         {
-            var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblin = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = TestCards.flag;
             testCardDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { goblin, testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -466,13 +465,13 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 自分クリーチャーの被ダメージを軽減する()
         {
-            var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblin = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
 
             var testCardDef = TestCards.shield;
             testCardDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { goblin, testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -505,13 +504,13 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 自分プレイヤーの被ダメージを軽減する()
         {
-            var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblin = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
 
             var testCardDef = TestCards.wall;
             testCardDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { goblin, testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -540,13 +539,13 @@ namespace Cauldron.Server_Test
         [Fact]
         public void カードを1枚引く()
         {
-            var goblin = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblin = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
 
             var testCardDef = TestCards.hikari;
             testCardDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { goblin, testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -578,7 +577,7 @@ namespace Cauldron.Server_Test
             testCardDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -607,7 +606,7 @@ namespace Cauldron.Server_Test
             testCardDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -640,7 +639,7 @@ namespace Cauldron.Server_Test
             testCardDef.BaseCost = 0;
 
             var testCardFactory = new CardFactory(new RuleBook());
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 
@@ -666,7 +665,7 @@ namespace Cauldron.Server_Test
         [Fact]
         public void 召喚時に自軍クリーチャーに効果を付与する()
         {
-            var goblinDef = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 2, 2);
+            var goblinDef = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2);
 
             var testCardDef = TestCards.atena;
             testCardDef.BaseCost = 0;
@@ -675,7 +674,7 @@ namespace Cauldron.Server_Test
             {
                 DefaultNumTurnsToCanAttack = 0
             });
-            testCardFactory.SetCardPool(new[] { goblinDef, testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCardDef }) });
 
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
 

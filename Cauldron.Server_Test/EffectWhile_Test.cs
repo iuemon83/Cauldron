@@ -30,9 +30,9 @@ namespace Cauldron.Server_Test
         [Fact]
         public void ターン終了時まで()
         {
-            var goblinDef = CardDef.Creature(0, $"test.ゴブリン", "ゴブリン", "", 2, 2);
+            var goblinDef = CardDef.Creature(0, "ゴブリン", "", 2, 2);
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "", 1, 5,
+            var testCardDef = CardDef.Creature(0, "test", "", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -53,7 +53,7 @@ namespace Cauldron.Server_Test
 
             var testCardFactory = new CardFactory(new RuleBook(
                 DefaultNumTurnsToCanAttack: 0));
-            testCardFactory.SetCardPool(new[] { goblinDef, testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -98,7 +98,7 @@ namespace Cauldron.Server_Test
         public void 次の自分ターン開始時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "", 1, 5,
+            var testCardDef = CardDef.Creature(0, "test", "", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -112,7 +112,7 @@ namespace Cauldron.Server_Test
 
             var testCardFactory = new CardFactory(new RuleBook(
                 DefaultNumTurnsToCanAttack: 0));
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -160,7 +160,7 @@ namespace Cauldron.Server_Test
         public void 次の自分ターン終了時()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "", 1, 5,
+            var testCardDef = CardDef.Creature(0, "test", "", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -174,7 +174,7 @@ namespace Cauldron.Server_Test
 
             var testCardFactory = new CardFactory(new RuleBook(
                 DefaultNumTurnsToCanAttack: 0));
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));
@@ -223,7 +223,7 @@ namespace Cauldron.Server_Test
         public void 三ターン後の開始時に()
         {
             var testAction = new TestEffectAction();
-            var testCardDef = CardDef.Creature(0, $"test.test", "test", "", 1, 5,
+            var testCardDef = CardDef.Creature(0, "test", "", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -237,7 +237,7 @@ namespace Cauldron.Server_Test
 
             var testCardFactory = new CardFactory(new RuleBook(
                 DefaultNumTurnsToCanAttack: 0));
-            testCardFactory.SetCardPool(new[] { testCardDef });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
             // 以下テスト
             var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), null, (_, _) => { }));

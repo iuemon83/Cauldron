@@ -99,7 +99,7 @@ namespace Cauldron.Server
         {
             var ruleBook = new RuleBook(request.RuleBook);
             var cardFactory = new CardFactory(ruleBook);
-            cardFactory.SetCardPool(CardPool.LoadFromDirectory(this.CardSetDirectoryPath));
+            cardFactory.SetCardPool(CardPool.ReadFromDirectory(this.CardSetDirectoryPath));
 
             var options = new GameMasterOptions(ruleBook, cardFactory, this._logger, this.AskCard, NotifyClient);
             var gameId = new GameMasterRepository().Add(options);
