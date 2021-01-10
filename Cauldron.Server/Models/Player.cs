@@ -91,26 +91,26 @@ namespace Cauldron.Server.Models
 
         public void GainHp(int x) => this.UsedHp = Math.Max(0, this.UsedHp - x);
 
-        public void Modify(PlayerModifier modifier)
+        public void Modify(PlayerModifier modifier, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             if (modifier.MaxHp != null)
             {
-                this.MaxHp = modifier.MaxHp.Modify(this.MaxHp);
+                this.MaxHp = modifier.MaxHp.Modify(effectOwnerCard, effectEventArgs, this.MaxHp);
             }
 
             if (modifier.Hp != null)
             {
-                this.GainHp(modifier.Hp.Modify(this.CurrentHp) - this.CurrentHp);
+                this.GainHp(modifier.Hp.Modify(effectOwnerCard, effectEventArgs, this.CurrentHp) - this.CurrentHp);
             }
 
             if (modifier.MaxMp != null)
             {
-                this.MaxMp = modifier.MaxMp.Modify(this.MaxMp);
+                this.MaxMp = modifier.MaxMp.Modify(effectOwnerCard, effectEventArgs, this.MaxMp);
             }
 
             if (modifier.Mp != null)
             {
-                this.GainMp(modifier.Mp.Modify(this.CurrentMp) - this.CurrentMp);
+                this.GainMp(modifier.Mp.Modify(effectOwnerCard, effectEventArgs, this.CurrentMp) - this.CurrentMp);
             }
         }
     }

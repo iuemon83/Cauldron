@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Cauldron.Server.Models.Effect.Value;
+using System;
 
 namespace Cauldron.Server.Models.Effect
 {
     /// <summary>
     /// ダメージの修整
     /// </summary>
-    public record EffectActionModifyDamage(ValueModifier Value, Choice Choice) : IEffectAction
+    public record EffectActionModifyDamage(NumValueModifier Value, Choice Choice) : IEffectAction
     {
-        public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs args)
+        public (bool, EffectEventArgs) Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             var done = false;
 
@@ -19,7 +20,7 @@ namespace Cauldron.Server.Models.Effect
                 {
                     BattleContext = args.BattleContext with
                     {
-                        Value = Math.Max(0, this.Value.Modify(args.BattleContext.Value))
+                        Value = Math.Max(0, this.Value.Modify(effectOwnerCard, args, args.BattleContext.Value))
                     }
                 };
 
@@ -32,7 +33,7 @@ namespace Cauldron.Server.Models.Effect
                 {
                     DamageContext = args.DamageContext with
                     {
-                        Value = Math.Max(0, this.Value.Modify(args.DamageContext.Value))
+                        Value = Math.Max(0, this.Value.Modify(effectOwnerCard, args, args.DamageContext.Value))
                     }
                 };
 

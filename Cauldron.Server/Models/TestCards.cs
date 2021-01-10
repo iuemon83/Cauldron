@@ -1,4 +1,5 @@
 ﻿using Cauldron.Server.Models.Effect;
+using Cauldron.Server.Models.Effect.Value;
 
 namespace Cauldron.Server.Models
 {
@@ -66,7 +67,8 @@ namespace Cauldron.Server.Models
                     {
                         new EffectAction(
                             ModifyCard: new EffectActionModifyCard(
-                                2, 0,
+                                new NumValue(2),
+                                new NumValue(0),
                                 new Choice()
                                 {
                                     How = Choice.ChoiceHow.Choose,
@@ -159,7 +161,7 @@ namespace Cauldron.Server.Models
                                     PlayerCondition = new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You),
                                     NumPicks = 1
                                 },
-                                new PlayerModifier(Hp: new ValueModifier(ValueModifier.ValueModifierOperator.Add, 2))
+                                new PlayerModifier(Hp: new NumValueModifier(NumValueModifier.ValueModifierOperator.Add, new NumValue(2)))
                             )
                         )
                     }
@@ -234,7 +236,8 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             ModifyCard = new EffectActionModifyCard(
-                                0, 3,
+                                new NumValue(0),
+                                new NumValue(3),
                                 new Choice()
                                 {
                                     CardCondition = new CardCondition()
@@ -298,8 +301,8 @@ namespace Cauldron.Server.Models
                         new(new(EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource.You))),
                         If: new(
                             new NumCondition(30, NumCondition.ConditionCompare.GreaterThan),
-                            new ValueCalculator(new ValueCalculatorForCard(
-                                ValueCalculatorForCard.ValueType.CardCount,
+                            new NumValue(NumValueCalculator: new(
+                                NumValueCalculator.ValueType.Count,
                                 new Choice()
                                 {
                                     How = Choice.ChoiceHow.All,
@@ -372,7 +375,8 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             ModifyCard = new EffectActionModifyCard(
-                                1, 0,
+                                new NumValue(1),
+                                new NumValue(0),
                                 new Choice()
                                 {
                                     How = Choice.ChoiceHow.All,
@@ -449,7 +453,7 @@ namespace Cauldron.Server.Models
                                         {
                                             new EffectAction(
                                                 ModifyDamage: new(
-                                                    new ValueModifier(ValueModifier.ValueModifierOperator.Replace, 0),
+                                                    new NumValueModifier(NumValueModifier.ValueModifierOperator.Replace, new NumValue(0)),
                                                     new Choice()
                                                     {
                                                         CardCondition = new()
@@ -467,13 +471,46 @@ namespace Cauldron.Server.Models
             });
 
         //TODO 天翼を食う者
-        public static readonly CardDef tenyoku = CardDef.Creature(6, "天翼を食う者", "", 6, 6, 1,
+        public static readonly CardDef tenyoku = CardDef.Creature(6, "天翼を食う者", "", 6, 6,
             effects: new[]
             {
                 new CardEffect(
                     EffectCondition.Spell,
-                    new[]{ new EffectAction() }
-                    )
+                    new[]{
+                        new EffectAction(EffectActionSetVariable: new(
+                            "x",
+                            new NumValue(NumValueCalculator: new(
+                                NumValueCalculator.ValueType.Count,
+                                new Choice()
+                                {
+                                    How = Choice.ChoiceHow.All,
+                                    CardCondition = new()
+                                    {
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouHand })
+                                    }
+                                }
+                                )))),
+                        new EffectAction(MoveCard: new(
+                            new Choice(){
+                                How = Choice.ChoiceHow.All,
+                                CardCondition = new()
+                                {
+                                    ZoneCondition = new(new[]{ ZonePrettyName.YouHand })
+                                }
+                            },
+                            ZonePrettyName.YouCemetery)),
+                        new EffectAction(ModifyCard: new(
+                            new NumValue(NumValueVariableCalculator: new("x")),
+                            new NumValue(NumValueVariableCalculator: new("x")),
+                            new Choice()
+                            {
+                                How = Choice.ChoiceHow.All,
+                                CardCondition = new()
+                                {
+                                    Context = CardCondition.CardConditionContext.This
+                                }
+                            }))
+                    })
             });
 
         public static readonly CardDef gabriel = CardDef.Creature(7, "ガブリエル", "", 3, 4, 1,
@@ -486,7 +523,8 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             ModifyCard = new EffectActionModifyCard(
-                                4, 3,
+                                new NumValue(4),
+                                new NumValue(3),
                                 new Choice()
                                 {
                                     How = Choice.ChoiceHow.Choose,
@@ -518,7 +556,7 @@ namespace Cauldron.Server.Models
                                 PlayerCondition = new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You),
                                 NumPicks = 1
                             },
-                            new PlayerModifier(Hp: new ValueModifier(ValueModifier.ValueModifierOperator.Add,4))
+                            new PlayerModifier(Hp: new NumValueModifier(NumValueModifier.ValueModifierOperator.Add, new NumValue(4)))
                         )
                         )}
                     )
@@ -650,7 +688,8 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             ModifyCard = new EffectActionModifyCard(
-                                2, 0,
+                                new NumValue(2),
+                                new NumValue(0),
                                 new Choice()
                                 {
                                     CardCondition = new CardCondition()
@@ -679,7 +718,8 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             ModifyCard = new EffectActionModifyCard(
-                                1, 2,
+                                new NumValue(1),
+                                new NumValue(2),
                                 new Choice()
                                 {
                                     CardCondition = new CardCondition()
@@ -781,7 +821,8 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             ModifyCard = new EffectActionModifyCard(
-                                1, 0,
+                                new NumValue(1),
+                                new NumValue(0),
                                 new Choice()
                                 {
                                     CardCondition=  new CardCondition()
@@ -808,7 +849,8 @@ namespace Cauldron.Server.Models
                     {
                         new EffectAction(){
                             ModifyCard = new EffectActionModifyCard(
-                                1, 0,
+                                new NumValue(1),
+                                new NumValue(0),
                                 new Choice()
                                 {
                                     How = Choice.ChoiceHow.All,
@@ -831,7 +873,8 @@ namespace Cauldron.Server.Models
                     {
                         new EffectAction(){
                             ModifyCard = new EffectActionModifyCard(
-                                1, 0,
+                                new NumValue(1),
+                                new NumValue(0),
                                 new Choice()
                                 {
                                     How = Choice.ChoiceHow.All,
@@ -889,7 +932,8 @@ namespace Cauldron.Server.Models
                 {
                     new EffectAction(){
                         ModifyCard=new EffectActionModifyCard(
-                            2, 2,
+                            new NumValue(2),
+                            new NumValue(2),
                             new Choice()
                             {
                                 How= Choice.ChoiceHow.Choose,
@@ -927,9 +971,9 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             ModifyDamage = new EffectActionModifyDamage(
-                                new ValueModifier(
-                                    ValueModifier.ValueModifierOperator.Sub,
-                                    1
+                                new NumValueModifier(
+                                    NumValueModifier.ValueModifierOperator.Sub,
+                                    new NumValue(1)
                                 ),
                                 new Choice()
                                 {
@@ -983,9 +1027,9 @@ namespace Cauldron.Server.Models
                     new EffectAction()
                     {
                         ModifyDamage = new EffectActionModifyDamage(
-                            new ValueModifier(
-                                ValueModifier.ValueModifierOperator.Sub,
-                                1
+                            new NumValueModifier(
+                                NumValueModifier.ValueModifierOperator.Sub,
+                                new NumValue(1)
                             ),
                             new Choice()
                             {
@@ -1037,9 +1081,9 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             ModifyDamage = new EffectActionModifyDamage(
-                                new ValueModifier(
-                                    ValueModifier.ValueModifierOperator.Sub,
-                                    2
+                                new NumValueModifier(
+                                    NumValueModifier.ValueModifierOperator.Sub,
+                                    new NumValue(2)
                                 ),
                                 new Choice()
                                 {
@@ -1072,9 +1116,9 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             ModifyDamage = new EffectActionModifyDamage(
-                                new ValueModifier(
-                                    ValueModifier.ValueModifierOperator.Add,
-                                    1
+                                new NumValueModifier(
+                                    NumValueModifier.ValueModifierOperator.Add,
+                                    new NumValue(1)
                                 ),
                                 new Choice()
                                 {

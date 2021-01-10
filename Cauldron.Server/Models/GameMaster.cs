@@ -900,14 +900,14 @@ namespace Cauldron.Server.Models
             }
         }
 
-        public void ModifyPlayer(ModifyPlayerContext modifyPlayerContext)
+        public void ModifyPlayer(ModifyPlayerContext modifyPlayerContext, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             if (!this.PlayersById.TryGetValue(modifyPlayerContext.PlayerId, out var player))
             {
                 return;
             }
 
-            player.Modify(modifyPlayerContext.PlayerModifier);
+            player.Modify(modifyPlayerContext.PlayerModifier, effectOwnerCard, effectEventArgs);
 
             foreach (var playerId in this.PlayersById.Keys)
             {
@@ -944,6 +944,51 @@ namespace Cauldron.Server.Models
             card.Effects.AddRange(effectToAdd);
 
             return GameMasterStatusCode.OK;
+        }
+
+        private readonly Dictionary<(CardId, string), (int Num, string Text)> variablesByName = new();
+
+        public void SetVariable(CardId cardId, string name, int value)
+            => this.SetVariable(cardId, name, (value, default));
+
+        public void SetVariable(CardId cardId, string name, string value)
+            => this.SetVariable(cardId, name, (default, value));
+
+        public void SetVariable(CardId cardId, string name, (int, string) value)
+        {
+            var key = (cardId, name);
+            if (this.variablesByName.ContainsKey(key))
+            {
+                this.variablesByName[key] = value;
+            }
+            else
+            {
+                this.variablesByName.Add(key, value);
+            }
+        }
+
+        public bool TryGetNumVariable(CardId cardId, string name, out int value)
+        {
+            if (this.variablesByName.TryGetValue((cardId, name), out var v))
+            {
+                value = v.Num;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        public bool TryGetTextVariable(CardId cardId, string name, out string value)
+        {
+            if (this.variablesByName.TryGetValue((cardId, name), out var v))
+            {
+                value = v.Text;
+                return true;
+            }
+
+            value = default;
+            return false;
         }
     }
 }

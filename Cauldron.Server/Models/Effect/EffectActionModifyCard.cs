@@ -1,20 +1,24 @@
-﻿namespace Cauldron.Server.Models.Effect
+﻿using Cauldron.Server.Models.Effect.Value;
+
+namespace Cauldron.Server.Models.Effect
 {
-    public record EffectActionModifyCard(int Power, int Toughness, Choice Choice) : IEffectAction
+    public record EffectActionModifyCard(NumValue Power, NumValue Toughness, Choice Choice) : IEffectAction
     {
-        public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs args)
+        public (bool, EffectEventArgs) Execute(Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
-            var targets = args.GameMaster.ChoiceCards(ownerCard, this.Choice, args).CardList;
+            var targets = effectEventArgs.GameMaster.ChoiceCards(effectOwnerCard, this.Choice, effectEventArgs).CardList;
 
             var done = false;
+            var buffPower = this.Power?.Calculate(effectOwnerCard, effectEventArgs) ?? 0;
+            var buffToughness = this.Toughness?.Calculate(effectOwnerCard, effectEventArgs) ?? 0;
             foreach (var card in targets)
             {
-                args.GameMaster.Buff(card, this.Power, this.Toughness);
+                effectEventArgs.GameMaster.Buff(card, buffPower, buffToughness);
 
                 done = true;
             }
 
-            return (done, args);
+            return (done, effectEventArgs);
         }
     }
 }

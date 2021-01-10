@@ -1,19 +1,19 @@
 ﻿using System;
 
-namespace Cauldron.Server.Models.Effect
+namespace Cauldron.Server.Models.Effect.Value
 {
-    public record ValueCalculatorForCard(ValueCalculatorForCard.ValueType Type, Choice CardsChoice)
+    public record NumValueCalculator(NumValueCalculator.ValueType Type, Choice CardsChoice)
     {
         public enum ValueType
         {
-            CardCount
+            Count,
         }
 
         public int Calculate(Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             return this.Type switch
             {
-                ValueType.CardCount => this.CalculateCount(effectOwnerCard, effectEventArgs),
+                ValueType.Count => this.CalculateCount(effectOwnerCard, effectEventArgs),
                 _ => throw new InvalidOperationException($"{nameof(this.Type)}: {this.Type}")
             };
         }

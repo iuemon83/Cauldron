@@ -712,6 +712,37 @@ namespace Cauldron.Server_Test
             });
         }
 
+        [Fact]
+        public void 手札をすべて捨てその枚数だけ自分を強化()
+        {
+            var testCardDef = TestCards.tenyoku;
+            testCardDef.BaseCost = 0;
+
+            var testCardFactory = new CardFactory(new RuleBook()
+            {
+                DefaultNumTurnsToCanAttack = 0
+            });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
+
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 先攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                // ↓で1枚増えるから
+                var numHands = g.PlayersById[pId].Hands.AllCards.Count;
+                var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(testCard.BasePower + numHands, testCard.Power);
+                Assert.Equal(testCard.BaseToughness + numHands, testCard.Toughness);
+            });
+        }
+
         //[Fact]
         //public void 自分のクリーチャーの攻撃ダメージを増加する()
         //{

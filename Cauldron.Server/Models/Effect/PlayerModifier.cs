@@ -1,10 +1,12 @@
-﻿namespace Cauldron.Server.Models.Effect
+﻿using Cauldron.Server.Models.Effect.Value;
+
+namespace Cauldron.Server.Models.Effect
 {
     public record PlayerModifier(
-        ValueModifier MaxHp = null,
-        ValueModifier Hp = null,
-        ValueModifier MaxMp = null,
-        ValueModifier Mp = null
+        NumValueModifier MaxHp = null,
+        NumValueModifier Hp = null,
+        NumValueModifier MaxMp = null,
+        NumValueModifier Mp = null
         )
     {
 

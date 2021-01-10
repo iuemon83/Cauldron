@@ -1,5 +1,6 @@
 using Cauldron.Server.Models;
 using Cauldron.Server.Models.Effect;
+using Cauldron.Server.Models.Effect.Value;
 using System;
 using System.Linq;
 using Xunit;
@@ -39,8 +40,8 @@ namespace Cauldron.Server_Test
                             new(new(Play: new(EffectTimingPlayEvent.EventSource.This))),
                             If: new(
                                 new NumCondition(2, NumCondition.ConditionCompare.GreaterThan),
-                                new ValueCalculator(
-                                    new ValueCalculatorForCard(ValueCalculatorForCard.ValueType.CardCount,
+                                new NumValue(
+                                    NumValueCalculator: new(NumValueCalculator.ValueType.Count,
                                         new Choice()
                                         {
                                             How = Choice.ChoiceHow.All,

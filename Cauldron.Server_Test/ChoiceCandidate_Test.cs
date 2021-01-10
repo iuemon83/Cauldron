@@ -1,5 +1,6 @@
 using Cauldron.Server.Models;
 using Cauldron.Server.Models.Effect;
+using Cauldron.Server.Models.Effect.Value;
 using System;
 using System.Linq;
 using Xunit;
@@ -36,7 +37,8 @@ namespace Cauldron.Server_Test
                             new EffectAction()
                             {
                                 ModifyCard = new EffectActionModifyCard(
-                                    0, 0,
+                                    new NumValue(0),
+                                    new NumValue(0),
                                     testChoice
                                 )
                             }
@@ -117,7 +119,8 @@ namespace Cauldron.Server_Test
                             new EffectAction()
                             {
                                 ModifyCard = new EffectActionModifyCard(
-                                    0, 0,
+                                    new NumValue(0),
+                                    new NumValue(0),
                                     testChoice
                                 )
                             }
