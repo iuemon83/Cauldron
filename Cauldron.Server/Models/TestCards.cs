@@ -49,7 +49,7 @@ namespace Cauldron.Server.Models
                     {
                         new EffectAction(
                             DrawCard: new EffectActionDrawCard(
-                                1,
+                                new NumValue(1),
                                 new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)))
                     }
                 )
@@ -94,7 +94,7 @@ namespace Cauldron.Server.Models
                     new[]
                     {
                         new EffectAction(
-                            DrawCard: new EffectActionDrawCard(1, new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You))
+                            DrawCard: new(new NumValue(1), new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You))
                         )
                     }
                 ),
@@ -105,16 +105,12 @@ namespace Cauldron.Server.Models
                     new[]
                     {
                         new EffectAction(
-                            DrawCard: new EffectActionDrawCard(1, new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You))
+                            DrawCard: new(new NumValue(1), new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You))
                         )
                     }
                 )
             });
 
-        // X=手札の数。X枚捨てて、X枚ドローする
-        // C=指定したカード。X=Cのコスト。Cを捨てる。クリーチャー一体を+X/+X する
-
-        //TODO 新たなる運命
         public static readonly CardDef unmei = CardDef.Sorcery(2, "新たなる運命", "",
             effects: new[]
             {
@@ -122,6 +118,20 @@ namespace Cauldron.Server.Models
                     EffectCondition.Spell,
                     new[]
                     {
+                        // 手札の枚数をとっとく
+                        new EffectAction(EffectActionSetVariable: new(
+                            "x",
+                            new NumValue(NumValueCalculator: new(
+                                NumValueCalculator.ValueType.Count,
+                                new Choice()
+                                {
+                                    How = Choice.ChoiceHow.All,
+                                    CardCondition = new()
+                                    {
+                                        ZoneCondition = new(new[]{ ZonePrettyName.YouHand })
+                                    }
+                                }
+                                )))),
                         // 手札をすべて捨てる
                         new EffectAction(
                             MoveCard: new(
@@ -138,7 +148,7 @@ namespace Cauldron.Server.Models
                         // 捨てたカードと同じ枚数引く
                         new EffectAction(
                             DrawCard: new(
-                                0,
+                                new NumValue(NumValueVariableCalculator: new("x")),
                                 new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
                                 )),
                     }
@@ -260,7 +270,35 @@ namespace Cauldron.Server.Models
             {
                 new CardEffect(
                     EffectCondition.Spell,
-                    new[]{ new EffectAction() }
+                    new[]{
+                        // 自分か相手のクリーチャーを一体破壊する
+                        new EffectAction(DestroyCard: new(
+                            new Choice()
+                            {
+                                How = Choice.ChoiceHow.Choose,
+                                NumPicks = 1,
+                                CardCondition = new()
+                                {
+                                    ZoneCondition = new(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }),
+                                    TypeCondition = new(new[]{ CardType.Creature })
+                                }
+                            },
+                            "destroyCard")),
+                        // 破壊したクリーチャーのコピーを場に出す
+                        new EffectAction(AddCard: new(
+                            ZonePrettyName.YouField,
+                            new Choice()
+                            {
+                                How = Choice.ChoiceHow.All,
+                                CardCondition = new()
+                                {
+                                    ActionContext = new(ActionContextCardsOfDestroyCard: new(
+                                        "destroyCard",
+                                        ActionContextCardsOfDestroyCard.ValueType.Destroyed
+                                        ))
+                                }
+                            }))
+                    }
                 )
             });
 
@@ -470,7 +508,6 @@ namespace Cauldron.Server.Models
                 )
             });
 
-        //TODO 天翼を食う者
         public static readonly CardDef tenyoku = CardDef.Creature(6, "天翼を食う者", "", 6, 6,
             effects: new[]
             {

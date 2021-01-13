@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Cauldron.Server.Models.Effect.Value
 {
@@ -7,6 +8,7 @@ namespace Cauldron.Server.Models.Effect.Value
         public enum ValueType
         {
             Count,
+            CardCost,
         }
 
         public int Calculate(Card effectOwnerCard, EffectEventArgs effectEventArgs)
@@ -14,6 +16,7 @@ namespace Cauldron.Server.Models.Effect.Value
             return this.Type switch
             {
                 ValueType.Count => this.CalculateCount(effectOwnerCard, effectEventArgs),
+                ValueType.CardCost => this.CalculateCardCost(effectOwnerCard, effectEventArgs),
                 _ => throw new InvalidOperationException($"{nameof(this.Type)}: {this.Type}")
             };
         }
@@ -21,6 +24,14 @@ namespace Cauldron.Server.Models.Effect.Value
         private int CalculateCount(Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             return effectEventArgs.GameMaster.ChoiceCards(effectOwnerCard, this.CardsChoice, effectEventArgs).CardList.Count;
+        }
+
+        private int CalculateCardCost(Card effectOwnerCard, EffectEventArgs effectEventArgs)
+        {
+            return effectEventArgs.GameMaster
+                .ChoiceCards(effectOwnerCard, this.CardsChoice, effectEventArgs)
+                .CardList
+                .Sum(c => c.Cost);
         }
     }
 }

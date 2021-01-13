@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using Cauldron.Server.Models.Effect.Value;
+using System.Linq;
 
 namespace Cauldron.Server.Models.Effect
 {
-    public record EffectActionDrawCard(int NumCards, PlayerCondition PlayerCondition) : IEffectAction
+    public record EffectActionDrawCard(NumValue NumCards, PlayerCondition PlayerCondition) : IEffectAction
     {
         public (bool, EffectEventArgs) Execute(Card effectOwnerCard, EffectEventArgs args)
         {
@@ -12,10 +13,12 @@ namespace Cauldron.Server.Models.Effect
                 .Where(p => this.PlayerCondition.IsMatch(effectOwnerCard, p, args))
                 .OrderBy(p => p.Id == args.GameMaster.ActivePlayer.Id);
 
+            var numCards = this.NumCards.Calculate(effectOwnerCard, args);
+
             foreach (var p in targetPlayers)
             {
 
-                args.GameMaster.Draw(p.Id, this.NumCards);
+                args.GameMaster.Draw(p.Id, numCards);
             }
 
             return (true, args);

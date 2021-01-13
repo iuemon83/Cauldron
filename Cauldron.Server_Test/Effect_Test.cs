@@ -1,5 +1,6 @@
 using Cauldron.Server.Models;
 using Cauldron.Server.Models.Effect;
+using Cauldron.Server.Models.Effect.Value;
 using System;
 using System.Linq;
 using Xunit;
@@ -571,7 +572,7 @@ namespace Cauldron.Server_Test
         }
 
         [Fact]
-        public void カードをすべて捨てる()
+        public void カードをすべて捨てて同じ枚数ドローする()
         {
             var testCardDef = TestCards.unmei;
             testCardDef.BaseCost = 0;
@@ -590,12 +591,18 @@ namespace Cauldron.Server_Test
             TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 var beforeNumOfHands = g.ActivePlayer.Hands.AllCards.Count;
+                var beforeHandIdList = g.ActivePlayer.Hands.AllCards.Select(c => c.Id).ToArray();
                 Assert.True(beforeNumOfHands != 0);
 
                 TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
+                // 捨てた枚数と同じ枚数ドローしてる
                 var afterNumOfHands = g.ActivePlayer.Hands.AllCards.Count;
-                Assert.Equal(0, afterNumOfHands);
+                Assert.Equal(beforeNumOfHands, afterNumOfHands);
+                foreach (var handCard in g.ActivePlayer.Hands.AllCards)
+                {
+                    Assert.True(beforeHandIdList.All(beforeHandId => beforeHandId != handCard.Id));
+                }
             });
         }
 
@@ -740,6 +747,84 @@ namespace Cauldron.Server_Test
 
                 Assert.Equal(testCard.BasePower + numHands, testCard.Power);
                 Assert.Equal(testCard.BaseToughness + numHands, testCard.Toughness);
+            });
+        }
+
+        [Fact]
+        public void 無作為に手札を１枚捨ててそのカードのコスト分ライフを回復する()
+        {
+            var testCardDef = CardDef.Sorcery(2, "test", "", new[] {
+                new CardEffect(
+                    EffectCondition.Spell,
+                    new[]{
+                        new EffectAction(MoveCard: new(
+                            new Choice()
+                            {
+                                How = Choice.ChoiceHow.Random,
+                                NumPicks = 1,
+                                CardCondition = new()
+                                {
+                                    ZoneCondition = new(new[]{ ZonePrettyName.YouHand })
+                                }
+                            },
+                            ZonePrettyName.YouCemetery,
+                            "moveCard"
+                            )),
+                        new EffectAction(ModifyPlayer: new(
+                            new Choice()
+                            {
+                                How = Choice.ChoiceHow.All,
+                                PlayerCondition = new(
+                                    Type: PlayerCondition.PlayerConditionType.You)
+                            },
+                            new PlayerModifier(
+                                Hp: new(
+                                    NumValueModifier.ValueModifierOperator.Add,
+                                    new NumValue(NumValueCalculator: new(
+                                        NumValueCalculator.ValueType.CardCost,
+                                        new Choice()
+                                        {
+                                            How = Choice.ChoiceHow.All,
+                                            CardCondition = new()
+                                            {
+                                                ActionContext = new(ActionContextCardsOfMoveCard: new(
+                                                    "moveCard",
+                                                    ActionContextCardsOfMoveCard.ValueType.Moved
+                                                    ))
+                                            }
+                                        }
+                                        ))))
+                            )),
+                    })
+            }); ;
+
+            var testRulebook = new RuleBook()
+            {
+                DefaultNumTurnsToCanAttack = 0,
+                InitialMp = 2,
+                InitialPlayerHp = 10,
+                MaxPlayerHp = 20,
+            };
+            var testCardFactory = new CardFactory(testRulebook);
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
+
+            var testGameMaster = new GameMaster(new GameMasterOptions(testRulebook, testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 先攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                var beforenumHands = g.PlayersById[pId].Hands.AllCards.Count;
+                var beforeHp = g.PlayersById[pId].CurrentHp;
+                // ↓で1枚増えるから
+                var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(beforenumHands - 1, g.PlayersById[pId].Hands.AllCards.Count);
+                Assert.Equal(beforeHp + testCardDef.BaseCost, g.PlayersById[pId].CurrentHp);
             });
         }
 

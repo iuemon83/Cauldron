@@ -81,7 +81,9 @@
           "Actions": [
             {
               "DrawCard": {
-                "NumCards": 1,
+                "NumCards": {
+                  "PureValue": 1
+                },
                 "PlayerCondition": {
                   "Context": "all",
                   "Type": "you"
@@ -131,8 +133,12 @@
           "Actions": [
             {
               "ModifyCard": {
-                "Power": 2,
-                "Toughness": 0,
+                "Power": {
+                  "PureValue": 2
+                },
+                "Toughness": {
+                  "PureValue": 0
+                },
                 "Choice": {
                   "How": "choose",
                   "CardCondition": {
@@ -182,7 +188,9 @@
           "Actions": [
             {
               "DrawCard": {
-                "NumCards": 1,
+                "NumCards": {
+                  "PureValue": 1
+                },
                 "PlayerCondition": {
                   "Context": "all",
                   "Type": "you"
@@ -207,7 +215,9 @@
           "Actions": [
             {
               "DrawCard": {
-                "NumCards": 1,
+                "NumCards": {
+                  "PureValue": 1
+                },
                 "PlayerCondition": {
                   "Context": "all",
                   "Type": "you"
@@ -241,6 +251,29 @@
           },
           "Actions": [
             {
+              "EffectActionSetVariable": {
+                "Name": "x",
+                "NumValue": {
+                  "NumValueCalculator": {
+                    "Type": "count",
+                    "CardsChoice": {
+                      "How": "all",
+                      "CardCondition": {
+                        "Context": "all",
+                        "ZoneCondition": {
+                          "Values": [
+                            "youHand"
+                          ],
+                          "Not": false
+                        }
+                      },
+                      "NumPicks": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
               "MoveCard": {
                 "CardsChoice": {
                   "How": "all",
@@ -260,7 +293,11 @@
             },
             {
               "DrawCard": {
-                "NumCards": 0,
+                "NumCards": {
+                  "NumValueVariableCalculator": {
+                    "Name": "x"
+                  }
+                },
                 "PlayerCondition": {
                   "Context": "all",
                   "Type": "you"
@@ -320,7 +357,9 @@
                 "PlayerModifier": {
                   "Hp": {
                     "Operator": "add",
-                    "Value": 2
+                    "Value": {
+                      "PureValue": 2
+                    }
                   }
                 }
               }
@@ -458,8 +497,12 @@
           "Actions": [
             {
               "ModifyCard": {
-                "Power": 0,
-                "Toughness": 3,
+                "Power": {
+                  "PureValue": 0
+                },
+                "Toughness": {
+                  "PureValue": 3
+                },
                 "Choice": {
                   "How": "choose",
                   "CardCondition": {
@@ -507,7 +550,49 @@
             }
           },
           "Actions": [
-            {}
+            {
+              "DestroyCard": {
+                "Choice": {
+                  "How": "choose",
+                  "CardCondition": {
+                    "Context": "all",
+                    "TypeCondition": {
+                      "Value": [
+                        "creature"
+                      ],
+                      "Not": false
+                    },
+                    "ZoneCondition": {
+                      "Values": [
+                        "youField",
+                        "opponentField"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                },
+                "Name": "destroyCard"
+              }
+            },
+            {
+              "AddCard": {
+                "ZoneToAddCard": "youField",
+                "Choice": {
+                  "How": "all",
+                  "CardCondition": {
+                    "Context": "all",
+                    "ActionContext": {
+                      "ActionContextCardsOfDestroyCard": {
+                        "ActionName": "destroyCard",
+                        "Type": "destroyed"
+                      }
+                    }
+                  },
+                  "NumPicks": 1
+                }
+              }
+            }
           ]
         }
       ]
@@ -592,9 +677,9 @@
                 "Compare": "greaterThan",
                 "Not": false
               },
-              "ValueCalculator": {
-                "Card": {
-                  "Type": "cardCount",
+              "NumValue": {
+                "NumValueCalculator": {
+                  "Type": "count",
                   "CardsChoice": {
                     "How": "all",
                     "CardCondition": {
@@ -725,8 +810,12 @@
           "Actions": [
             {
               "ModifyCard": {
-                "Power": 1,
-                "Toughness": 0,
+                "Power": {
+                  "PureValue": 1
+                },
+                "Toughness": {
+                  "PureValue": 0
+                },
                 "Choice": {
                   "How": "all",
                   "CardCondition": {
@@ -869,7 +958,9 @@
                         "ModifyDamage": {
                           "Value": {
                             "Operator": "replace",
-                            "Value": 0
+                            "Value": {
+                              "PureValue": 0
+                            }
                           },
                           "Choice": {
                             "How": "all",
@@ -911,11 +1002,71 @@
             }
           },
           "Actions": [
-            {}
+            {
+              "EffectActionSetVariable": {
+                "Name": "x",
+                "NumValue": {
+                  "NumValueCalculator": {
+                    "Type": "count",
+                    "CardsChoice": {
+                      "How": "all",
+                      "CardCondition": {
+                        "Context": "all",
+                        "ZoneCondition": {
+                          "Values": [
+                            "youHand"
+                          ],
+                          "Not": false
+                        }
+                      },
+                      "NumPicks": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "MoveCard": {
+                "CardsChoice": {
+                  "How": "all",
+                  "CardCondition": {
+                    "Context": "all",
+                    "ZoneCondition": {
+                      "Values": [
+                        "youHand"
+                      ],
+                      "Not": false
+                    }
+                  },
+                  "NumPicks": 1
+                },
+                "To": "youCemetery"
+              }
+            },
+            {
+              "ModifyCard": {
+                "Power": {
+                  "NumValueVariableCalculator": {
+                    "Name": "x"
+                  }
+                },
+                "Toughness": {
+                  "NumValueVariableCalculator": {
+                    "Name": "x"
+                  }
+                },
+                "Choice": {
+                  "How": "all",
+                  "CardCondition": {
+                    "Context": "this"
+                  },
+                  "NumPicks": 1
+                }
+              }
+            }
           ]
         }
-      ],
-      "NumTurnsToCanAttack": 1
+      ]
     },
     {
       "BaseCost": 7,
@@ -941,8 +1092,12 @@
           "Actions": [
             {
               "ModifyCard": {
-                "Power": 4,
-                "Toughness": 3,
+                "Power": {
+                  "PureValue": 4
+                },
+                "Toughness": {
+                  "PureValue": 3
+                },
                 "Choice": {
                   "How": "choose",
                   "CardCondition": {
@@ -1016,7 +1171,9 @@
                 "PlayerModifier": {
                   "Hp": {
                     "Operator": "add",
-                    "Value": 4
+                    "Value": {
+                      "PureValue": 4
+                    }
                   }
                 }
               }

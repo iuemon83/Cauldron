@@ -284,6 +284,8 @@ namespace Cauldron.Server.Models
             {
                 var drawCard = player.Draw();
 
+                this.logger.LogInformation($"ドロー: {player.Name}: {drawCard.Name}");
+
                 this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
                 this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
                     MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
@@ -787,34 +789,44 @@ namespace Cauldron.Server.Models
                 .ToArray();
         }
 
+        private IEnumerable<Card> ChoiceCandidateSourceCards(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
+        {
+            var actionContext = choice.CardCondition?.ActionContext;
+            if (actionContext != null)
+            {
+                return actionContext.GetCards(effectOwnerCard, eventArgs);
+            }
+            else
+            {
+                return this.cardFactory.GetAllCards;
+            }
+        }
+
         public IReadOnlyList<Card> ChoiceCandidateCards(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
         {
-            if (choice.CardCondition?.ZoneCondition == null)
+            var source = this.ChoiceCandidateSourceCards(effectOwnerCard, choice, eventArgs)
+                .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs));
+
+            if (choice.CardCondition.ZoneCondition == null)
             {
-                return this.cardFactory.GetAllCards
-                    .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs))
-                    .ToArray();
+                return source.ToArray();
             }
 
-            return choice.CardCondition.ZoneCondition.Values
+            var sourceByZone = choice.CardCondition.ZoneCondition.Values
                 .SelectMany(zoneType => zoneType switch
                 {
-                    ZonePrettyName.YouField => this.PlayersById[effectOwnerCard.OwnerId].Field.AllCards
-                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
-                    ZonePrettyName.OpponentField => this.GetOpponent(effectOwnerCard.OwnerId).Field.AllCards
-                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
-
-                    ZonePrettyName.YouHand => this.PlayersById[effectOwnerCard.OwnerId].Hands.AllCards
-                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
-                    ZonePrettyName.OpponentHand => this.GetOpponent(effectOwnerCard.OwnerId).Hands.AllCards
-                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
-
-                    ZonePrettyName.YouCemetery => this.PlayersById[effectOwnerCard.OwnerId].Cemetery.AllCards
-                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
-                    ZonePrettyName.OpponentCemetery => this.GetOpponent(effectOwnerCard.OwnerId).Cemetery.AllCards
-                        .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs)),
+                    ZonePrettyName.YouField => this.PlayersById[effectOwnerCard.OwnerId].Field.AllCards,
+                    ZonePrettyName.OpponentField => this.GetOpponent(effectOwnerCard.OwnerId).Field.AllCards,
+                    ZonePrettyName.YouHand => this.PlayersById[effectOwnerCard.OwnerId].Hands.AllCards,
+                    ZonePrettyName.OpponentHand => this.GetOpponent(effectOwnerCard.OwnerId).Hands.AllCards,
+                    ZonePrettyName.YouCemetery => this.PlayersById[effectOwnerCard.OwnerId].Cemetery.AllCards,
+                    ZonePrettyName.OpponentCemetery => this.GetOpponent(effectOwnerCard.OwnerId).Cemetery.AllCards,
                     _ => Array.Empty<Card>(),
                 })
+                .ToArray();
+
+            return source
+                .Where(c => sourceByZone.Any(cz => cz.Id == c.Id))
                 .ToArray();
         }
 
@@ -839,8 +851,12 @@ namespace Cauldron.Server.Models
 
         public ChoiceResult ChoiceCandidates(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
         {
-            var CardList = choice.CardCondition == null ? Array.Empty<Card>() : this.ChoiceCandidateCards(effectOwnerCard, choice, eventArgs);
-            var CardDefList = choice.CardCondition == null ? Array.Empty<CardDef>() : this.ChoiceCandidateCardDefs(choice, CardList);
+            var CardList = choice.CardCondition == null
+                ? Array.Empty<Card>()
+                : this.ChoiceCandidateCards(effectOwnerCard, choice, eventArgs);
+            var CardDefList = choice.CardCondition == null
+                ? Array.Empty<CardDef>()
+                : this.ChoiceCandidateCardDefs(choice, CardList);
 
             return new ChoiceResult()
             {
@@ -984,6 +1000,33 @@ namespace Cauldron.Server.Models
             if (this.variablesByName.TryGetValue((cardId, name), out var v))
             {
                 value = v.Text;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+
+        private Dictionary<(CardId, string), ActionContext> actionContextsByActionName = new();
+
+        public void SetActionContext(CardId cardId, string name, ActionContext actionContext)
+        {
+            var key = (cardId, name);
+            if (this.actionContextsByActionName.ContainsKey(key))
+            {
+                this.actionContextsByActionName[key] = actionContext;
+            }
+            else
+            {
+                this.actionContextsByActionName.Add(key, actionContext);
+            }
+        }
+
+        public bool TryGetActionContext(CardId cardId, string name, out ActionContext value)
+        {
+            if (this.actionContextsByActionName.TryGetValue((cardId, name), out value))
+            {
                 return true;
             }
 
