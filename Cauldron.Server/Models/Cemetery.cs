@@ -11,9 +11,11 @@ namespace Cauldron.Server.Models
         /// 順序を保存するため
         /// </summary>
         private List<Card> Cards { get; } = new();
+
         private Dictionary<CardId, Card> CardsById { get; } = new();
 
         public IReadOnlyList<Card> AllCards => this.Cards;
+        public int Count => this.AllCards.Count;
 
         public void Add(Card card)
         {

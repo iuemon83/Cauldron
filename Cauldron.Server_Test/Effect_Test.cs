@@ -47,17 +47,17 @@ namespace Cauldron.Server_Test
                         {
                             new EffectAction()
                             {
-                                AddCard = new EffectActionAddCard(
-                                    ZonePrettyName.YouField,
+                                AddCard = new(
+                                    new ZoneValue(new[]{ ZonePrettyName.YouField }),
                                     new Choice()
                                     {
                                         CardCondition = new CardCondition()
                                         {
                                             NameCondition = new(
-                                                $"Test.スライム",
+                                                new TextValue($"Test.スライム"),
                                                 TextCondition.ConditionCompare.Equality
                                             ),
-                                            ZoneCondition = new(new[]{ ZonePrettyName.CardPool }),
+                                            ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
                                         },
                                         NumPicks=2
                                     }
@@ -764,7 +764,7 @@ namespace Cauldron.Server_Test
                                 NumPicks = 1,
                                 CardCondition = new()
                                 {
-                                    ZoneCondition = new(new[]{ ZonePrettyName.YouHand })
+                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
                                 }
                             },
                             ZonePrettyName.YouCemetery,

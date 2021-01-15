@@ -14,6 +14,8 @@ namespace Cauldron.Server.Models
 
         public IReadOnlyList<Card> AllCards => this.Cards;
 
+        public int Count => this.AllCards.Count;
+
         public bool Full => this.CardsById.Count >= this.RuleBook.MaxNumFieldCars;
 
         public Field(RuleBook ruleBook)

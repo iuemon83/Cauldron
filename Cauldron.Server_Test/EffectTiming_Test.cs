@@ -956,7 +956,7 @@ namespace Cauldron.Server_Test
                                     {
                                         CardCondition = new CardCondition()
                                         {
-                                            ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                            ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                             TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                         },
                                     }

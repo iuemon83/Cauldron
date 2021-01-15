@@ -4,7 +4,7 @@
     /// カード効果を発動するための条件
     /// </summary>
     public record EffectCondition(
-        ZonePrettyName Zone,
+        ZonePrettyName ZonePrettyName,
         EffectWhen When,
         EffectWhile While = null,
         EffectIf If = null
@@ -22,6 +22,9 @@
         }
 
         private bool IsMatchedZone(Card effectOwnerCard, EffectEventArgs eventArgs)
-            => effectOwnerCard.Zone == eventArgs.GameMaster.ConvertZone(effectOwnerCard.OwnerId, this.Zone);
+        {
+            var zone = Zone.FromPrettyName(effectOwnerCard.OwnerId, eventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Id, this.ZonePrettyName);
+            return effectOwnerCard.Zone == zone;
+        }
     }
 }

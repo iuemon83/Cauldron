@@ -20,7 +20,7 @@ namespace Cauldron.Server_Test
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
-                    ZoneCondition = new(new[] { ZonePrettyName.YouField }),
+                    ZoneCondition = new(new(new[] { ZonePrettyName.YouField })),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                 },
                 NumPicks = 1,
@@ -103,7 +103,7 @@ namespace Cauldron.Server_Test
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
-                    ZoneCondition = new(new[] { ZonePrettyName.YouField }),
+                    ZoneCondition = new(new(new[] { ZonePrettyName.YouField })),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature }),
                 },
                 How = Choice.ChoiceHow.All,
@@ -182,9 +182,9 @@ namespace Cauldron.Server_Test
             {
                 CardCondition = new CardCondition()
                 {
-                    ZoneCondition = new(new[] { ZonePrettyName.CardPool }),
+                    ZoneCondition = new(new(new[] { ZonePrettyName.CardPool })),
                     NameCondition = new TextCondition(
-                        fairy.FullName,
+                        new TextValue(fairy.FullName),
                         TextCondition.ConditionCompare.Equality
                     )
                 },
@@ -203,8 +203,8 @@ namespace Cauldron.Server_Test
                         {
                             new EffectAction()
                             {
-                                AddCard = new EffectActionAddCard(
-                                    ZonePrettyName.OpponentField,
+                                AddCard = new(
+                                    new ZoneValue(new[]{ ZonePrettyName.OpponentField }),
                                     testChoice
                                 )
                             }
@@ -265,9 +265,9 @@ namespace Cauldron.Server_Test
             {
                 CardCondition = new CardCondition()
                 {
-                    ZoneCondition = new(new[] { ZonePrettyName.CardPool }),
+                    ZoneCondition = new(new(new[] { ZonePrettyName.CardPool })),
                     NameCondition = new(
-                        fairy.FullName,
+                        new TextValue(fairy.FullName),
                         TextCondition.ConditionCompare.Equality
                     )
                 },
@@ -286,8 +286,8 @@ namespace Cauldron.Server_Test
                         {
                             new EffectAction()
                             {
-                                AddCard = new EffectActionAddCard(
-                                    ZonePrettyName.OpponentField,
+                                AddCard = new(
+                                    new ZoneValue(new[]{ ZonePrettyName.OpponentField }),
                                     testChoice
                                 )
                             }
@@ -505,7 +505,7 @@ namespace Cauldron.Server_Test
                 How = Choice.ChoiceHow.Random,
                 CardCondition = new CardCondition()
                 {
-                    ZoneCondition = new(new[] { ZonePrettyName.OpponentField }),
+                    ZoneCondition = new(new(new[] { ZonePrettyName.OpponentField })),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                 },
                 NumPicks = 1
@@ -570,7 +570,7 @@ namespace Cauldron.Server_Test
                 CardCondition = new CardCondition()
                 {
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature }),
-                    ZoneCondition = new(new[] { ZonePrettyName.OpponentField }),
+                    ZoneCondition = new(new(new[] { ZonePrettyName.OpponentField })),
                 }
             };
             var testCardDef = CardDef.Creature(0, "test", "test", 1, 1, 1);
@@ -629,7 +629,7 @@ namespace Cauldron.Server_Test
                 NumPicks = 1,
                 CardCondition = new CardCondition()
                 {
-                    ZoneCondition = new(new[] { ZonePrettyName.OpponentField }),
+                    ZoneCondition = new(new(new[] { ZonePrettyName.OpponentField })),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                 }
             };
@@ -700,7 +700,7 @@ namespace Cauldron.Server_Test
                 CardCondition = new CardCondition()
                 {
                     Context = CardCondition.CardConditionContext.Others,
-                    ZoneCondition = new(new[] { ZonePrettyName.YouField }),
+                    ZoneCondition = new(new(new[] { ZonePrettyName.YouField })),
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature, })
                 }
             };

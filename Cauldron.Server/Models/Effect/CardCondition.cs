@@ -56,32 +56,32 @@
         public CardTypeCondition TypeCondition { get; set; }
         public ZoneCondition ZoneCondition { get; set; }
 
-        public bool IsMatch(Card effectOwnerCard, Card cardToMatch, EffectEventArgs eventArgs)
+        public bool IsMatch(Card effectOwnerCard, Card cardToMatch, EffectEventArgs effectEventArgs)
         {
             return
                 (this.Context switch
                 {
                     CardConditionContext.This => cardToMatch.Id == effectOwnerCard.Id,
                     CardConditionContext.Others => cardToMatch.Id != effectOwnerCard.Id,
-                    CardConditionContext.EventSource => cardToMatch.Id == eventArgs.SourceCard.Id,
-                    CardConditionContext.Attack => cardToMatch.Id == eventArgs.BattleContext.AttackCard.Id,
-                    CardConditionContext.Guard => cardToMatch.Id == eventArgs.BattleContext.GuardCard.Id,
+                    CardConditionContext.EventSource => cardToMatch.Id == effectEventArgs.SourceCard.Id,
+                    CardConditionContext.Attack => cardToMatch.Id == effectEventArgs.BattleContext.AttackCard.Id,
+                    CardConditionContext.Guard => cardToMatch.Id == effectEventArgs.BattleContext.GuardCard.Id,
                     _ => true
                 })
                 && (this.CostCondition?.IsMatch(cardToMatch.Cost) ?? true)
                 && (this.PowerCondition?.IsMatch(cardToMatch.Power) ?? true)
                 && (this.ToughnessCondition?.IsMatch(cardToMatch.Toughness) ?? true)
-                && (this.NameCondition?.IsMatch(cardToMatch.Name) ?? true)
+                && (this.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Name) ?? true)
                 && (this.TypeCondition?.IsMatch(cardToMatch.Type) ?? true);
         }
 
-        public bool IsMatch(CardDef cardDefToMatch)
+        public bool IsMatch(Card effectOwnerCard, EffectEventArgs effectEventArgs, CardDef cardDefToMatch)
         {
             return
                 (this.CostCondition?.IsMatch(cardDefToMatch.BaseCost) ?? true)
                 && (this.PowerCondition?.IsMatch(cardDefToMatch.BasePower) ?? true)
                 && (this.ToughnessCondition?.IsMatch(cardDefToMatch.BaseToughness) ?? true)
-                && (this.NameCondition?.IsMatch(cardDefToMatch.FullName) ?? true)
+                && (this.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardDefToMatch.FullName) ?? true)
                 && (this.TypeCondition?.IsMatch(cardDefToMatch.Type) ?? true);
         }
     }

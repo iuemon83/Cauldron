@@ -1,23 +1,41 @@
-﻿using System.Linq;
+﻿using Cauldron.Server.Models.Effect.Value;
+using System.Linq;
 
 namespace Cauldron.Server.Models.Effect
 {
-    public record EffectActionAddCard(ZonePrettyName ZoneToAddCard, Choice Choice) : IEffectAction
+    public record EffectActionAddCard(ZoneValue ZoneToAddCard, Choice Choice) : IEffectAction
     {
-        public (bool, EffectEventArgs) Execute(Card ownerCard, EffectEventArgs args)
+        public (bool, EffectEventArgs) Execute(Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
-            var newCardDefs = args.GameMaster.ChoiceCards(ownerCard, this.Choice, args).CardDefList;
+            var newCardDefs = effectEventArgs.GameMaster.ChoiceCards(effectOwnerCard, this.Choice, effectEventArgs).CardDefList;
 
-            var owner = args.GameMaster.PlayersById[ownerCard.OwnerId];
-            var newCards = newCardDefs.Select(cd => args.GameMaster.GenerateNewCard(cd.Id, owner.Id));
+            var owner = effectEventArgs.GameMaster.PlayersById[effectOwnerCard.OwnerId];
+            var opponent = effectEventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId);
+            var newCards = newCardDefs.Select(cd => effectEventArgs.GameMaster.GenerateNewCard(cd.Id, owner.Id));
+
+            var zone = this.ZoneToAddCard.Calculate(effectOwnerCard, effectEventArgs);
+
+            if (!zone.Any())
+            {
+                return (false, effectEventArgs);
+            }
 
             var done = false;
-            switch (this.ZoneToAddCard)
+            switch (zone[0])
             {
                 case ZonePrettyName.YouHand:
                     foreach (var newCard in newCards)
                     {
-                        args.GameMaster.AddHand(owner, newCard);
+                        effectEventArgs.GameMaster.AddHand(owner, newCard);
+
+                        done = true;
+                    }
+                    break;
+
+                case ZonePrettyName.OpponentHand:
+                    foreach (var newCard in newCards)
+                    {
+                        effectEventArgs.GameMaster.AddHand(opponent, newCard);
 
                         done = true;
                     }
@@ -26,7 +44,16 @@ namespace Cauldron.Server.Models.Effect
                 case ZonePrettyName.YouField:
                     foreach (var newCard in newCards)
                     {
-                        args.GameMaster.PlayDirect(ownerCard.OwnerId, newCard.Id);
+                        effectEventArgs.GameMaster.PlayDirect(effectOwnerCard.OwnerId, newCard.Id);
+
+                        done = true;
+                    }
+                    break;
+
+                case ZonePrettyName.OpponentField:
+                    foreach (var newCard in newCards)
+                    {
+                        effectEventArgs.GameMaster.PlayDirect(opponent.Id, newCard.Id);
 
                         done = true;
                     }
@@ -36,7 +63,7 @@ namespace Cauldron.Server.Models.Effect
                     break;
             }
 
-            return (done, args);
+            return (done, effectEventArgs);
         }
     }
 }

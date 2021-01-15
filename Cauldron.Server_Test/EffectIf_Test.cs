@@ -47,7 +47,7 @@ namespace Cauldron.Server_Test
                                             How = Choice.ChoiceHow.All,
                                             CardCondition = new CardCondition()
                                             {
-                                                ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                                ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                             }
                                         }
                                         )

@@ -16,6 +16,8 @@ namespace Cauldron.Server.Models
 
         public int CostBuff { get; set; } = 0;
 
+        public string FullName { get; set; } = "";
+
         public string Name { get; set; } = "";
 
         public string FlavorText { get; set; } = "";
@@ -67,6 +69,7 @@ namespace Cauldron.Server.Models
             this.BaseCost = cardDef.BaseCost;
             this.IsToken = cardDef.IsToken;
             this.Type = cardDef.Type;
+            this.FullName = cardDef.FullName;
             this.Name = cardDef.Name;
             this.FlavorText = cardDef.FlavorText;
 

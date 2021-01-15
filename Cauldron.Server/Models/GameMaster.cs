@@ -802,17 +802,17 @@ namespace Cauldron.Server.Models
             }
         }
 
-        public IReadOnlyList<Card> ChoiceCandidateCards(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
+        public IReadOnlyList<Card> ChoiceCandidateCards(Card effectOwnerCard, Choice choice, EffectEventArgs effectEventArgs)
         {
-            var source = this.ChoiceCandidateSourceCards(effectOwnerCard, choice, eventArgs)
-                .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, eventArgs));
+            var source = this.ChoiceCandidateSourceCards(effectOwnerCard, choice, effectEventArgs)
+                .Where(c => choice.CardCondition.IsMatch(effectOwnerCard, c, effectEventArgs));
 
             if (choice.CardCondition.ZoneCondition == null)
             {
                 return source.ToArray();
             }
 
-            var sourceByZone = choice.CardCondition.ZoneCondition.Values
+            var sourceByZone = choice.CardCondition.ZoneCondition.Value.Calculate(effectOwnerCard, effectEventArgs)
                 .SelectMany(zoneType => zoneType switch
                 {
                     ZonePrettyName.YouField => this.PlayersById[effectOwnerCard.OwnerId].Field.AllCards,
@@ -830,18 +830,18 @@ namespace Cauldron.Server.Models
                 .ToArray();
         }
 
-        public IReadOnlyList<CardDef> ChoiceCandidateCardDefs(Choice choice, IReadOnlyList<Card> candidateCards)
+        public IReadOnlyList<CardDef> ChoiceCandidateCardDefs(Card effectOwnerCard, EffectEventArgs effectEventArgs, Choice choice, IReadOnlyList<Card> candidateCards)
         {
             if (choice.CardCondition?.ZoneCondition == null)
             {
                 return Array.Empty<CardDef>();
             }
 
-            return choice.CardCondition.ZoneCondition.Values
+            return choice.CardCondition.ZoneCondition.Value.Calculate(effectOwnerCard, effectEventArgs)
                 .SelectMany(zoneType => zoneType switch
                 {
                     ZonePrettyName.CardPool => this.cardFactory.CardPool
-                        .Where(cdef => choice.CardCondition.IsMatch(cdef))
+                        .Where(cdef => choice.CardCondition.IsMatch(effectOwnerCard, effectEventArgs, cdef))
                         .SelectMany(cdef => Enumerable.Repeat(cdef, choice.NumPicks)),
                     _ => Array.Empty<CardDef>(),
                 })
@@ -849,18 +849,18 @@ namespace Cauldron.Server.Models
                 .ToArray();
         }
 
-        public ChoiceResult ChoiceCandidates(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
+        public ChoiceResult ChoiceCandidates(Card effectOwnerCard, Choice choice, EffectEventArgs effectEventArgs)
         {
             var CardList = choice.CardCondition == null
                 ? Array.Empty<Card>()
-                : this.ChoiceCandidateCards(effectOwnerCard, choice, eventArgs);
+                : this.ChoiceCandidateCards(effectOwnerCard, choice, effectEventArgs);
             var CardDefList = choice.CardCondition == null
                 ? Array.Empty<CardDef>()
-                : this.ChoiceCandidateCardDefs(choice, CardList);
+                : this.ChoiceCandidateCardDefs(effectOwnerCard, effectEventArgs, choice, CardList);
 
             return new ChoiceResult()
             {
-                PlayerList = choice.PlayerCondition == null ? Array.Empty<Player>() : this.ChoiceCandidatePlayers(effectOwnerCard, choice, eventArgs),
+                PlayerList = choice.PlayerCondition == null ? Array.Empty<Player>() : this.ChoiceCandidatePlayers(effectOwnerCard, choice, effectEventArgs),
                 CardList = CardList,
                 CardDefList = CardDefList,
             };
@@ -938,22 +938,22 @@ namespace Cauldron.Server.Models
             }
         }
 
-        public Zone ConvertZone(PlayerId playerId, ZonePrettyName zoneType)
-        {
-            return zoneType switch
-            {
-                ZonePrettyName.CardPool => new Zone(default, ZoneName.CardPool),
-                ZonePrettyName.YouField => new Zone(playerId, ZoneName.Field),
-                ZonePrettyName.OpponentField => new Zone(this.GetOpponent(playerId).Id, ZoneName.Field),
-                ZonePrettyName.YouHand => new Zone(playerId, ZoneName.Hand),
-                ZonePrettyName.OpponentHand => new Zone(this.GetOpponent(playerId).Id, ZoneName.Hand),
-                ZonePrettyName.YouDeck => new Zone(playerId, ZoneName.Deck),
-                ZonePrettyName.OpponentDeck => new Zone(this.GetOpponent(playerId).Id, ZoneName.Deck),
-                ZonePrettyName.YouCemetery => new Zone(playerId, ZoneName.Cemetery),
-                ZonePrettyName.OpponentCemetery => new Zone(this.GetOpponent(playerId).Id, ZoneName.Cemetery),
-                _ => throw new NotImplementedException(),
-            };
-        }
+        //public Zone ConvertZone(PlayerId playerId, ZonePrettyName zoneType)
+        //{
+        //    return zoneType switch
+        //    {
+        //        ZonePrettyName.CardPool => new Zone(default, ZoneName.CardPool),
+        //        ZonePrettyName.YouField => new Zone(playerId, ZoneName.Field),
+        //        ZonePrettyName.OpponentField => new Zone(this.GetOpponent(playerId).Id, ZoneName.Field),
+        //        ZonePrettyName.YouHand => new Zone(playerId, ZoneName.Hand),
+        //        ZonePrettyName.OpponentHand => new Zone(this.GetOpponent(playerId).Id, ZoneName.Hand),
+        //        ZonePrettyName.YouDeck => new Zone(playerId, ZoneName.Deck),
+        //        ZonePrettyName.OpponentDeck => new Zone(this.GetOpponent(playerId).Id, ZoneName.Deck),
+        //        ZonePrettyName.YouCemetery => new Zone(playerId, ZoneName.Cemetery),
+        //        ZonePrettyName.OpponentCemetery => new Zone(this.GetOpponent(playerId).Id, ZoneName.Cemetery),
+        //        _ => throw new NotImplementedException(),
+        //    };
+        //}
 
         public GameMasterStatusCode AddEffect(Card card, IEnumerable<CardEffect> effectToAdd)
         {

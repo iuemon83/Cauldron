@@ -29,7 +29,7 @@ namespace Cauldron.Server.Models
                                     CardCondition = new CardCondition()
                                     {
                                         Context = CardCondition.CardConditionContext.Others,
-                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                     }
                                 }
@@ -75,7 +75,7 @@ namespace Cauldron.Server.Models
                                     NumPicks=1,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                     }
                                 }
@@ -128,7 +128,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouHand })
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
                                     }
                                 }
                                 )))),
@@ -140,7 +140,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouHand })
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
                                     }
                                 },
                                 ZonePrettyName.YouCemetery)
@@ -187,17 +187,17 @@ namespace Cauldron.Server.Models
                     {
                         new EffectAction()
                         {
-                            AddCard = new EffectActionAddCard(
-                                ZonePrettyName.YouField,
+                            AddCard = new(
+                                new ZoneValue(new[]{ ZonePrettyName.YouField }),
                                 new Choice()
                                 {
                                     CardCondition = new CardCondition()
                                     {
                                         NameCondition = new(
-                                            $"{CardsetName}.リザードマン",
+                                            new TextValue($"{CardsetName}.リザードマン"),
                                             TextCondition.ConditionCompare.Equality
                                         ),
-                                        ZoneCondition = new(new[]{ ZonePrettyName.CardPool })
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool }))
                                     },
                                     How = Choice.ChoiceHow.All,
                                     NumPicks = 1,
@@ -225,7 +225,7 @@ namespace Cauldron.Server.Models
                                         Type: PlayerCondition.PlayerConditionType.Opponent),
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                     },
                                     How = Choice.ChoiceHow.All,
@@ -252,7 +252,7 @@ namespace Cauldron.Server.Models
                                 {
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                     },
                                     How = Choice.ChoiceHow.Choose,
@@ -265,42 +265,66 @@ namespace Cauldron.Server.Models
             });
 
         //TODO ウルズ
-        public static readonly CardDef ulz = CardDef.Creature(4, "ウルズ", "", 1, 1,
-            effects: new[]
-            {
-                new CardEffect(
-                    EffectCondition.Spell,
-                    new[]{
-                        // 自分か相手のクリーチャーを一体破壊する
-                        new EffectAction(DestroyCard: new(
-                            new Choice()
-                            {
-                                How = Choice.ChoiceHow.Choose,
-                                NumPicks = 1,
-                                CardCondition = new()
-                                {
-                                    ZoneCondition = new(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }),
-                                    TypeCondition = new(new[]{ CardType.Creature })
-                                }
-                            },
-                            "destroyCard")),
-                        // 破壊したクリーチャーのコピーを場に出す
-                        new EffectAction(AddCard: new(
-                            ZonePrettyName.YouField,
-                            new Choice()
-                            {
-                                How = Choice.ChoiceHow.All,
-                                CardCondition = new()
-                                {
-                                    ActionContext = new(ActionContextCardsOfDestroyCard: new(
-                                        "destroyCard",
-                                        ActionContextCardsOfDestroyCard.ValueType.Destroyed
-                                        ))
-                                }
-                            }))
-                    }
-                )
-            });
+        //public static readonly CardDef ulz = CardDef.Creature(4, "ウルズ", "", 1, 1,
+        //    effects: new[]
+        //    {
+        //        new CardEffect(
+        //            EffectCondition.Spell,
+        //            new[]{
+        //                // 自分か相手のクリーチャーを一体破壊する
+        //                new EffectAction(DestroyCard: new(
+        //                    new Choice()
+        //                    {
+        //                        How = Choice.ChoiceHow.Choose,
+        //                        NumPicks = 1,
+        //                        CardCondition = new()
+        //                        {
+        //                            ZoneCondition = new(new(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
+        //                            TypeCondition = new(new[]{ CardType.Creature })
+        //                        }
+        //                    },
+        //                    "destroyCard")),
+        //                // 破壊したクリーチャーのコピーを場に出す
+        //                // 破壊したのが相手クリーチャーなら相手の場に、自分のなら自分の場に
+        //                new EffectAction(AddCard: new(
+        //                    new ZoneValue(ZoneValueCalculator: new(
+        //                        new Choice()
+        //                        {
+        //                            How = Choice.ChoiceHow.All,
+        //                            CardCondition = new()
+        //                            {
+        //                                ActionContext = new(ActionContextCardsOfDestroyCard: new(
+        //                                    "destroyCard",
+        //                                    ActionContextCardsOfDestroyCard.ValueType.Destroyed))
+        //                            }
+        //                        })),
+        //                    new Choice()
+        //                    {
+        //                        How = Choice.ChoiceHow.All,
+        //                        CardCondition = new()
+        //                        {
+        //                            NameCondition = new(
+        //                                new TextValue(TextValueCalculator: new(
+        //                                    TextValueCalculator.ValueType.CardName,
+        //                                    new Choice()
+        //                                    {
+        //                                        How = Choice.ChoiceHow.All,
+        //                                        CardCondition = new()
+        //                                        {
+        //                                            ActionContext = new(ActionContextCardsOfDestroyCard: new(
+        //                                                "destroyCard",
+        //                                                ActionContextCardsOfDestroyCard.ValueType.Destroyed)),
+        //                                            ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
+        //                                        }
+        //                                    }
+        //                                    )),
+        //                                TextCondition.ConditionCompare.Equality
+        //                                )
+        //                        },
+        //                    }))
+        //            }
+        //        )
+        //    });
 
         public static readonly CardDef demonStraike = CardDef.Sorcery(4, "デモンストライク", "",
             effects: new[]
@@ -319,7 +343,7 @@ namespace Cauldron.Server.Models
                                         Type: PlayerCondition.PlayerConditionType.Opponent),
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                     },
                                     How = Choice.ChoiceHow.Choose,
@@ -346,7 +370,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouCemetery })
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouCemetery }))
                                     }
                                 }
                                 ))
@@ -360,7 +384,7 @@ namespace Cauldron.Server.Models
                                 PlayerCondition = new(Type: PlayerCondition.PlayerConditionType.Opponent),
                                 CardCondition = new()
                                 {
-                                    ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
+                                    ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
                                     TypeCondition = new(new[]{ CardType.Creature })
                                 }
                             }))
@@ -385,7 +409,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                         Context = CardCondition.CardConditionContext.Others,
                                     }
@@ -420,7 +444,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                         Context = CardCondition.CardConditionContext.Others,
                                     }
@@ -447,7 +471,7 @@ namespace Cauldron.Server.Models
                                     NumPicks = 1,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature, CardType.Artifact })
                                     }
                                 }
@@ -472,7 +496,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition =new CardCondition()
                                     {
-                                        ZoneCondition = new ZoneCondition(new[]{ ZonePrettyName.YouField }),
+                                        ZoneCondition = new ZoneCondition(new(new[]{ ZonePrettyName.YouField })),
                                         Context = CardCondition.CardConditionContext.Others,
                                     }
                                 },
@@ -523,7 +547,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouHand })
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
                                     }
                                 }
                                 )))),
@@ -532,7 +556,7 @@ namespace Cauldron.Server.Models
                                 How = Choice.ChoiceHow.All,
                                 CardCondition = new()
                                 {
-                                    ZoneCondition = new(new[]{ ZonePrettyName.YouHand })
+                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
                                 }
                             },
                             ZonePrettyName.YouCemetery)),
@@ -568,7 +592,7 @@ namespace Cauldron.Server.Models
                                     NumPicks = 1,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                         Context = CardCondition.CardConditionContext.Others,
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
                                     }
@@ -657,14 +681,14 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             AddCard = new EffectActionAddCard(
-                                ZonePrettyName.YouHand,
+                                new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                 new Choice()
                                 {
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.CardPool }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
                                         NameCondition = new(
-                                            $"{CardsetName}.{fairy.Name}",
+                                            new TextValue($"{CardsetName}.{fairy.Name}"),
                                             TextCondition.ConditionCompare.Equality
                                         )
                                     },
@@ -688,14 +712,14 @@ namespace Cauldron.Server.Models
                         new EffectAction()
                         {
                             AddCard = new EffectActionAddCard(
-                                ZonePrettyName.YouField,
+                                new ZoneValue(new[]{ ZonePrettyName.YouField }),
                                 new Choice()
                                 {
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new ZoneCondition(new[]{ ZonePrettyName.CardPool }),
+                                        ZoneCondition = new ZoneCondition(new(new[]{ ZonePrettyName.CardPool })),
                                         NameCondition = new(
-                                            $"{CardsetName}.スライム",
+                                            new TextValue($"{CardsetName}.スライム"),
                                             TextCondition.ConditionCompare.Equality
                                         )
                                     },
@@ -732,7 +756,7 @@ namespace Cauldron.Server.Models
                                     CardCondition = new CardCondition()
                                     {
                                         Context = CardCondition.CardConditionContext.Others,
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                     },
                                     NumPicks = 1,
@@ -763,7 +787,7 @@ namespace Cauldron.Server.Models
                                     {
                                         Context = CardCondition.CardConditionContext.Others,
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                        ZoneCondition = new ZoneCondition(new[]{ ZonePrettyName.YouField })
+                                        ZoneCondition = new ZoneCondition(new(new[]{ ZonePrettyName.YouField }))
                                     },
                                     How = Choice.ChoiceHow.All,
                                 }
@@ -820,7 +844,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.Random,
                                     CardCondition= new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
                                         TypeCondition=new CardTypeCondition(new[]{CardType.Creature}),
                                     },
                                     NumPicks=1
@@ -864,7 +888,7 @@ namespace Cauldron.Server.Models
                                 {
                                     CardCondition=  new CardCondition()
                                     {
-                                        ZoneCondition= new(new[]{ ZonePrettyName.YouField }),
+                                        ZoneCondition= new(new(new[]{ ZonePrettyName.YouField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature}),
                                     },
                                     NumPicks=1,
@@ -893,7 +917,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                     }
                                 }
@@ -917,7 +941,7 @@ namespace Cauldron.Server.Models
                                     How = Choice.ChoiceHow.All,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                         Context = CardCondition.CardConditionContext.EventSource,
                                     }
@@ -950,7 +974,7 @@ namespace Cauldron.Server.Models
                                     CardCondition = new CardCondition()
                                     {
                                         TypeCondition = new CardTypeCondition(new []{CardType.Creature}),
-                                        ZoneCondition = new(new[]{ ZonePrettyName.OpponentField }),
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
                                     }
                                 }
                             )
@@ -977,7 +1001,7 @@ namespace Cauldron.Server.Models
                                 NumPicks=1,
                                 CardCondition=new CardCondition()
                                 {
-                                    ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                     TypeCondition = new CardTypeCondition(new[]{CardType.Creature, }),
                                 }
                             }
@@ -1000,7 +1024,7 @@ namespace Cauldron.Server.Models
                                 CardCondition: new CardCondition()
                                 {
                                     TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                    ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                     Context = CardCondition.CardConditionContext.Others
                                 })))),
                     new[]
@@ -1054,7 +1078,7 @@ namespace Cauldron.Server.Models
                             CardCondition: new CardCondition()
                             {
                                 TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                 Context = CardCondition.CardConditionContext.Others
                             }))
                     )
@@ -1142,7 +1166,7 @@ namespace Cauldron.Server.Models
                                 EffectTimingBattleBeforeEvent.EventSource.Attack,
                                 CardCondition: new CardCondition()
                                 {
-                                    ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                     TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                     Context = CardCondition.CardConditionContext.Others,
                                 }))
@@ -1188,7 +1212,7 @@ namespace Cauldron.Server.Models
                                     NumPicks=1,
                                     CardCondition = new CardCondition()
                                     {
-                                        ZoneCondition= new(new[]{ ZonePrettyName.OpponentField }),
+                                        ZoneCondition= new(new(new[]{ ZonePrettyName.OpponentField })),
                                         TypeCondition = new CardTypeCondition(new []{CardType.Creature, }),
                                     }
                                 }

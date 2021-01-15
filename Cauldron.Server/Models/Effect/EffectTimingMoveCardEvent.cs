@@ -22,9 +22,11 @@ namespace Cauldron.Server.Models.Effect
                 _ => throw new InvalidOperationException()
             };
 
+            var opponentId = args.GameMaster.GetOpponent(ownerCard.OwnerId).Id;
+
             return matchSource
-                && args.GameMaster.ConvertZone(ownerCard.OwnerId, this.From) == args.MoveCardContext.From
-                && args.GameMaster.ConvertZone(ownerCard.OwnerId, this.To) == args.MoveCardContext.To;
+                && Zone.FromPrettyName(ownerCard.OwnerId, opponentId, this.From) == args.MoveCardContext.From
+                && Zone.FromPrettyName(ownerCard.OwnerId, opponentId, this.To) == args.MoveCardContext.To;
         }
     }
 }

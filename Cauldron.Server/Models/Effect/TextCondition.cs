@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Cauldron.Server.Models.Effect.Value;
+using System;
 
 namespace Cauldron.Server.Models.Effect
 {
-    public record TextCondition(string Value, TextCondition.ConditionCompare Compare, bool Not = false)
+    public record TextCondition(TextValue Value, TextCondition.ConditionCompare Compare, bool Not = false)
     {
         public enum ConditionCompare
         {
@@ -10,12 +11,14 @@ namespace Cauldron.Server.Models.Effect
             Like,
         }
 
-        public bool IsMatch(string checkValue)
+        public bool IsMatch(Card effectOwnerCard, EffectEventArgs effectEventArgs, string checkValue)
         {
+            var value = this.Value.Calculate(effectOwnerCard, effectEventArgs);
+
             var result = this.Compare switch
             {
-                ConditionCompare.Equality => checkValue == this.Value,
-                ConditionCompare.Like => checkValue.Contains(this.Value),
+                ConditionCompare.Equality => checkValue == value,
+                ConditionCompare.Like => checkValue.Contains(value),
                 _ => throw new InvalidOperationException($"不正な入力値です: {this.Compare}")
             };
 

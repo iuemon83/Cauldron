@@ -42,7 +42,7 @@ namespace Cauldron.Server_Test
                                 CardCondition: new()
                                 {
                                     Context = CardCondition.CardConditionContext.This,
-                                    ZoneCondition = new(new[]{ ZonePrettyName.YouField }),
+                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                 }
                                 ))),
                             While: new(new(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You)), 0, 0)

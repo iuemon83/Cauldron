@@ -1,21 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using Cauldron.Server.Models.Effect.Value;
+using System.Linq;
 
 namespace Cauldron.Server.Models.Effect
 {
-    public record ZoneCondition(IEnumerable<ZonePrettyName> Values, bool Not = false)
+    public record ZoneCondition(ZoneValue Value, bool Not = false)
     {
-        public enum ZoneType
+        public bool IsMatch(Card effectOwnerCard, EffectEventArgs effectEventArgs, Zone checkValue)
         {
-            None,
-            CardPool,
-            YouField,
-            OpponentField,
-            YouHand,
-            OpponentHand,
-            YouDeck,
-            OpponentDeck,
-            YouCemetery,
-            OpponentCemetery,
+            var zones = this.Value.Calculate(effectOwnerCard, effectEventArgs);
+            var opponentId = effectEventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Id;
+            var isMatch = zones.Select(z => Zone.FromPrettyName(effectOwnerCard.OwnerId, opponentId, z))
+                .Any(z => z == checkValue);
+
+            return isMatch ^ this.Not;
         }
     }
 }
