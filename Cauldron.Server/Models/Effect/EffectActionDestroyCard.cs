@@ -19,7 +19,7 @@
 
             if (!string.IsNullOrEmpty(this.Name))
             {
-                var context = new ActionContext(new ActionDestroyCardContext(choiceResult.CardList));
+                var context = new ActionContext(ActionDestroyCardContext: new(choiceResult.CardList));
                 args.GameMaster.SetActionContext(effectOwnerCard.Id, this.Name, context);
             }
 

@@ -13,7 +13,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -41,9 +41,11 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "opponentField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "opponentField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -69,7 +71,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youCemetery",
+            "ZonePrettyName": "youCemetery",
             "When": {
               "Timing": {
                 "Destroy": {
@@ -121,7 +123,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -150,9 +152,11 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "youField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "youField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -176,7 +180,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -201,7 +205,7 @@
         },
         {
           "Condition": {
-            "Zone": "youCemetery",
+            "ZonePrettyName": "youCemetery",
             "When": {
               "Timing": {
                 "MoveCard": {
@@ -240,7 +244,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -261,9 +265,11 @@
                       "CardCondition": {
                         "Context": "all",
                         "ZoneCondition": {
-                          "Values": [
-                            "youHand"
-                          ],
+                          "Value": {
+                            "PureValue": [
+                              "youHand"
+                            ]
+                          },
                           "Not": false
                         }
                       },
@@ -280,9 +286,11 @@
                   "CardCondition": {
                     "Context": "all",
                     "ZoneCondition": {
-                      "Values": [
-                        "youHand"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "youHand"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -334,7 +342,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -381,7 +389,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -393,20 +401,28 @@
           "Actions": [
             {
               "AddCard": {
-                "ZoneToAddCard": "youField",
+                "ZoneToAddCard": {
+                  "PureValue": [
+                    "youField"
+                  ]
+                },
                 "Choice": {
                   "How": "all",
                   "CardCondition": {
                     "Context": "all",
                     "NameCondition": {
-                      "Value": "Sample.リザードマン",
+                      "Value": {
+                        "PureValue": "Sample.リザードマン"
+                      },
                       "Compare": "equality",
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "cardPool"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "cardPool"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -431,7 +447,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -459,9 +475,11 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "opponentField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "opponentField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -485,7 +503,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -514,9 +532,11 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "youField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "youField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -534,13 +554,13 @@
       "FlavorText": "",
       "IsToken": false,
       "Type": "creature",
-      "BasePower": 1,
-      "BaseToughness": 1,
+      "BasePower": 3,
+      "BaseToughness": 3,
       "Abilities": [],
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -551,11 +571,11 @@
           },
           "Actions": [
             {
-              "DestroyCard": {
-                "Choice": {
+              "AddEffect": {
+                "CardsChoice": {
                   "How": "choose",
                   "CardCondition": {
-                    "Context": "all",
+                    "Context": "others",
                     "TypeCondition": {
                       "Value": [
                         "creature"
@@ -563,29 +583,86 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "youField",
-                        "opponentField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "youField",
+                          "opponentField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
                   "NumPicks": 1
                 },
-                "Name": "destroyCard"
+                "EffectToAdd": [
+                  {
+                    "Condition": {
+                      "ZonePrettyName": "youCemetery",
+                      "When": {
+                        "Timing": {
+                          "Destroy": {
+                            "Source": "this"
+                          }
+                        }
+                      }
+                    },
+                    "Actions": [
+                      {
+                        "AddCard": {
+                          "ZoneToAddCard": {
+                            "PureValue": [
+                              "youField"
+                            ]
+                          },
+                          "Choice": {
+                            "How": "all",
+                            "CardCondition": {
+                              "Context": "all",
+                              "NameCondition": {
+                                "Value": {
+                                  "TextValueCalculator": {
+                                    "Type": "cardName",
+                                    "CardsChoice": {
+                                      "How": "all",
+                                      "CardCondition": {
+                                        "Context": "this"
+                                      },
+                                      "NumPicks": 1
+                                    }
+                                  }
+                                },
+                                "Compare": "equality",
+                                "Not": false
+                              },
+                              "ZoneCondition": {
+                                "Value": {
+                                  "PureValue": [
+                                    "cardPool"
+                                  ]
+                                },
+                                "Not": false
+                              }
+                            },
+                            "NumPicks": 1
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "Name": "addEffect"
               }
             },
             {
-              "AddCard": {
-                "ZoneToAddCard": "youField",
+              "DestroyCard": {
                 "Choice": {
                   "How": "all",
                   "CardCondition": {
                     "Context": "all",
                     "ActionContext": {
-                      "ActionContextCardsOfDestroyCard": {
-                        "ActionName": "destroyCard",
-                        "Type": "destroyed"
+                      "ActionContextCardsOfAddEffect": {
+                        "ActionName": "addEffect",
+                        "Type": "targetCards"
                       }
                     }
                   },
@@ -609,7 +686,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -637,9 +714,11 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "opponentField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "opponentField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -663,7 +742,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "EndTurn": {
@@ -685,9 +764,11 @@
                     "CardCondition": {
                       "Context": "all",
                       "ZoneCondition": {
-                        "Values": [
-                          "youCemetery"
-                        ],
+                        "Value": {
+                          "PureValue": [
+                            "youCemetery"
+                          ]
+                        },
                         "Not": false
                       }
                     },
@@ -716,9 +797,11 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "opponentField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "opponentField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -744,7 +827,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -768,9 +851,11 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "youField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "youField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -795,7 +880,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "StartTurn": {
@@ -827,9 +912,11 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "youField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "youField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -854,7 +941,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -878,9 +965,11 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "opponentField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "opponentField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -904,7 +993,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -921,9 +1010,11 @@
                   "CardCondition": {
                     "Context": "others",
                     "ZoneCondition": {
-                      "Values": [
-                        "youField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "youField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -932,7 +1023,7 @@
                 "EffectToAdd": [
                   {
                     "Condition": {
-                      "Zone": "youField",
+                      "ZonePrettyName": "youField",
                       "When": {
                         "Timing": {
                           "DamageBefore": {
@@ -992,7 +1083,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -1013,9 +1104,11 @@
                       "CardCondition": {
                         "Context": "all",
                         "ZoneCondition": {
-                          "Values": [
-                            "youHand"
-                          ],
+                          "Value": {
+                            "PureValue": [
+                              "youHand"
+                            ]
+                          },
                           "Not": false
                         }
                       },
@@ -1032,9 +1125,11 @@
                   "CardCondition": {
                     "Context": "all",
                     "ZoneCondition": {
-                      "Values": [
-                        "youHand"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "youHand"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -1080,7 +1175,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {
@@ -1109,9 +1204,11 @@
                       "Not": false
                     },
                     "ZoneCondition": {
-                      "Values": [
-                        "youField"
-                      ],
+                      "Value": {
+                        "PureValue": [
+                          "youField"
+                        ]
+                      },
                       "Not": false
                     }
                   },
@@ -1148,7 +1245,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "EndTurn": {
@@ -1195,7 +1292,7 @@
       "Effects": [
         {
           "Condition": {
-            "Zone": "youField",
+            "ZonePrettyName": "youField",
             "When": {
               "Timing": {
                 "Play": {

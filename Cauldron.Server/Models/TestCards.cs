@@ -264,67 +264,70 @@ namespace Cauldron.Server.Models
                 )
             });
 
-        //TODO ウルズ
-        //public static readonly CardDef ulz = CardDef.Creature(4, "ウルズ", "", 1, 1,
-        //    effects: new[]
-        //    {
-        //        new CardEffect(
-        //            EffectCondition.Spell,
-        //            new[]{
-        //                // 自分か相手のクリーチャーを一体破壊する
-        //                new EffectAction(DestroyCard: new(
-        //                    new Choice()
-        //                    {
-        //                        How = Choice.ChoiceHow.Choose,
-        //                        NumPicks = 1,
-        //                        CardCondition = new()
-        //                        {
-        //                            ZoneCondition = new(new(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
-        //                            TypeCondition = new(new[]{ CardType.Creature })
-        //                        }
-        //                    },
-        //                    "destroyCard")),
-        //                // 破壊したクリーチャーのコピーを場に出す
-        //                // 破壊したのが相手クリーチャーなら相手の場に、自分のなら自分の場に
-        //                new EffectAction(AddCard: new(
-        //                    new ZoneValue(ZoneValueCalculator: new(
-        //                        new Choice()
-        //                        {
-        //                            How = Choice.ChoiceHow.All,
-        //                            CardCondition = new()
-        //                            {
-        //                                ActionContext = new(ActionContextCardsOfDestroyCard: new(
-        //                                    "destroyCard",
-        //                                    ActionContextCardsOfDestroyCard.ValueType.Destroyed))
-        //                            }
-        //                        })),
-        //                    new Choice()
-        //                    {
-        //                        How = Choice.ChoiceHow.All,
-        //                        CardCondition = new()
-        //                        {
-        //                            NameCondition = new(
-        //                                new TextValue(TextValueCalculator: new(
-        //                                    TextValueCalculator.ValueType.CardName,
-        //                                    new Choice()
-        //                                    {
-        //                                        How = Choice.ChoiceHow.All,
-        //                                        CardCondition = new()
-        //                                        {
-        //                                            ActionContext = new(ActionContextCardsOfDestroyCard: new(
-        //                                                "destroyCard",
-        //                                                ActionContextCardsOfDestroyCard.ValueType.Destroyed)),
-        //                                            ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
-        //                                        }
-        //                                    }
-        //                                    )),
-        //                                TextCondition.ConditionCompare.Equality
-        //                                )
-        //                        },
-        //                    }))
-        //            }
-        //        )
-        //    });
+        public static readonly CardDef ulz = CardDef.Creature(4, "ウルズ", "", 3, 3,
+            effects: new[]
+            {
+                // 破壊時にコピーを場に出す効果を追加する
+                new CardEffect(
+                    EffectCondition.Spell,
+                    new[]{
+                        new EffectAction(AddEffect: new(
+                            new Choice()
+                            {
+                                How = Choice.ChoiceHow.Choose,
+                                NumPicks = 1,
+                                CardCondition = new()
+                                {
+                                    Context = CardCondition.CardConditionContext.Others,
+                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
+                                    TypeCondition = new(new[]{ CardType.Creature })
+                                }
+                            },
+                            new[]
+                            {
+                                new CardEffect(
+                                    new EffectCondition(ZonePrettyName.YouCemetery,
+                                        new EffectWhen(new EffectTiming(Destroy: new(EffectTimingDestroyEvent.EventSource.This)))),
+                                    new[]
+                                    {
+                                        new EffectAction(AddCard: new(
+                                            new ZoneValue(new[]{ ZonePrettyName.YouField }),
+                                            new Choice()
+                                            {
+                                                How = Choice.ChoiceHow.All,
+                                                CardCondition = new()
+                                                {
+                                                    NameCondition = new TextCondition(
+                                                        new TextValue(TextValueCalculator: new(
+                                                            TextValueCalculator.ValueType.CardName,
+                                                            new Choice(){
+                                                                How = Choice.ChoiceHow.All,
+                                                                CardCondition = new()
+                                                                {
+                                                                    Context = CardCondition.CardConditionContext.This,
+                                                                }
+                                                            })),
+                                                        TextCondition.ConditionCompare.Equality),
+                                                    ZoneCondition = new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                                }
+                                            }))
+                                    })
+                            }, "addEffect")),
+                        // 自分か相手のクリーチャーを一体破壊する
+                        new EffectAction(DestroyCard: new(
+                            new Choice()
+                            {
+                                How = Choice.ChoiceHow.All,
+                                CardCondition = new()
+                                {
+                                    ActionContext = new(ActionContextCardsOfAddEffect: new(
+                                        "addEffect",
+                                        ActionContextCardsOfAddEffect.ValueType.TargetCards)),
+                                }
+                            })),
+                    }
+                )
+            });
 
         public static readonly CardDef demonStraike = CardDef.Sorcery(4, "デモンストライク", "",
             effects: new[]

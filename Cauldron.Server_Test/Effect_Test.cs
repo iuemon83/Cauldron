@@ -828,6 +828,46 @@ namespace Cauldron.Server_Test
             });
         }
 
+        [Fact]
+        public void クリーチャーを一体破壊して同じ場にコピーを出す()
+        {
+            var goblinDef = CardDef.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2);
+
+            var testCardDef = TestCards.ulz;
+            testCardDef.BaseCost = 0;
+
+            var testCardFactory = new CardFactory(new RuleBook()
+            {
+                DefaultNumTurnsToCanAttack = 0
+            });
+            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCardDef }) });
+
+            var testGameMaster = new GameMaster(new GameMasterOptions(new RuleBook(), testCardFactory, new TestLogger(), (_, c, _) => c, (_, _) => { }));
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer("player1", Enumerable.Repeat(testCardDef.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer("player2", Enumerable.Repeat(testCardDef.Id, 40));
+
+            testGameMaster.Start(player1Id);
+
+            // 先攻
+            var goblin = TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                return TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+            });
+
+            // 後攻
+            TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+                Assert.Equal(1, g.PlayersById[player1Id].Field.Count);
+                Assert.Equal(goblin.Id, g.PlayersById[player1Id].Field.AllCards[0].Id);
+
+                var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(1, g.PlayersById[player1Id].Field.Count);
+                Assert.NotEqual(goblin.Id, g.PlayersById[player1Id].Field.AllCards[0].Id);
+            });
+        }
+
         //[Fact]
         //public void 自分のクリーチャーの攻撃ダメージを増加する()
         //{

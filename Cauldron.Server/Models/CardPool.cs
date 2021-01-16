@@ -33,7 +33,7 @@ namespace Cauldron.Server.Models
                     TestCards.lizardman,
                     TestCards.angelBarrage,
                     TestCards.gakkyoku,
-                    //TestCards.ulz,
+                    TestCards.ulz,
                     TestCards.demonStraike,
                     TestCards.meifu,
                     TestCards.goblinDemon,
