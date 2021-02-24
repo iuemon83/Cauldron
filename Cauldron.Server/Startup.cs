@@ -13,6 +13,7 @@ namespace Cauldron.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
+            services.AddMagicOnion();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -27,7 +28,8 @@ namespace Cauldron.Server
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<CauldronService>();
+                //endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapMagicOnionService();
 
                 endpoints.MapGet("/", async context =>
                 {

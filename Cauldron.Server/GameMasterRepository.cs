@@ -1,4 +1,5 @@
-﻿using Cauldron.Server.Models;
+﻿using Cauldron.Core.Entities;
+using Cauldron.Shared.MessagePackObjects;
 using System.Collections.Concurrent;
 
 namespace Cauldron.Server
