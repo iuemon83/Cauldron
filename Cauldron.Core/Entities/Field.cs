@@ -11,7 +11,6 @@ namespace Cauldron.Core.Entities
         /// 順序を保存するため
         /// </summary>
         private List<Card> Cards { get; } = new();
-        //private Dictionary<CardId, Card> CardsById { get; } = new();
 
         public IReadOnlyList<Card> AllCards => this.Cards;
 
@@ -32,18 +31,11 @@ namespace Cauldron.Core.Entities
             }
 
             this.Cards.Add(card);
-            //this.CardsById.Add(card.Id, card);
         }
 
         public void Remove(Card card)
         {
             this.Cards.Remove(card);
-            //this.CardsById.Remove(card.Id);
         }
-
-        //public Card GetById(CardId cardId)
-        //{
-        //    return this.CardsById[cardId];
-        //}
     }
 }

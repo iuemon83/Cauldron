@@ -209,9 +209,9 @@ namespace Cauldron.Core.Entities
         public static async ValueTask<bool> IsMatch(this CardCondition cardCondition, Card effectOwnerCard, EffectEventArgs effectEventArgs, CardDef cardDefToMatch)
         {
             return
-                (cardCondition.CostCondition?.IsMatch(cardDefToMatch.BaseCost) ?? true)
-                && (cardCondition.PowerCondition?.IsMatch(cardDefToMatch.BasePower) ?? true)
-                && (cardCondition.ToughnessCondition?.IsMatch(cardDefToMatch.BaseToughness) ?? true)
+                (cardCondition.CostCondition?.IsMatch(cardDefToMatch.Cost) ?? true)
+                && (cardCondition.PowerCondition?.IsMatch(cardDefToMatch.Power) ?? true)
+                && (cardCondition.ToughnessCondition?.IsMatch(cardDefToMatch.Toughness) ?? true)
                 && (await (cardCondition.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardDefToMatch.FullName) ?? ValueTask.FromResult(true)))
                 && (cardCondition.TypeCondition?.IsMatch(cardDefToMatch.Type) ?? true);
         }
@@ -732,12 +732,12 @@ namespace Cauldron.Core.Entities
         {
             return new CardDef()
             {
-                BaseCost = cost,
+                Cost = cost,
                 Type = CardType.Creature,
                 Name = name,
                 FlavorText = flavorText,
-                BasePower = power,
-                BaseToughness = toughness,
+                Power = power,
+                Toughness = toughness,
                 NumTurnsToCanAttack = numTurnsToCanAttack,
                 NumAttacksLimitInTurn = numAttacksInTurn,
                 IsToken = isToken,
@@ -750,7 +750,7 @@ namespace Cauldron.Core.Entities
         {
             return new CardDef()
             {
-                BaseCost = cost,
+                Cost = cost,
                 IsToken = isToken,
                 Type = CardType.Artifact,
                 Name = name,
@@ -763,7 +763,7 @@ namespace Cauldron.Core.Entities
         {
             return new CardDef()
             {
-                BaseCost = cost,
+                Cost = cost,
                 Type = CardType.Sorcery,
                 Name = name,
                 FlavorText = flavorText,

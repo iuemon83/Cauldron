@@ -7,32 +7,25 @@ namespace Cauldron.Core.Entities
 {
     public class JsonConverter
     {
+        private readonly static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+        {
+            IgnoreNullValues = true,
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true,
+            PropertyNameCaseInsensitive = true,
+            MaxDepth = 100,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+        };
+
         public static T Deserialize<T>(string jsonText)
         {
-            var options = new JsonSerializerOptions
-            {
-                IgnoreNullValues = true,
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true,
-                PropertyNameCaseInsensitive = true,
-                MaxDepth = 100,
-            };
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-            return JsonSerializer.Deserialize<T>(jsonText, options);
+            return JsonSerializer.Deserialize<T>(jsonText, jsonSerializerOptions);
         }
 
         public static string Serialize<T>(T obj)
         {
-            var options = new JsonSerializerOptions
-            {
-                IgnoreNullValues = true,
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true,
-                PropertyNameCaseInsensitive = true,
-                MaxDepth = 100,
-            };
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-            return JsonSerializer.Serialize(obj, options);
+            return JsonSerializer.Serialize(obj, jsonSerializerOptions);
         }
     }
 }

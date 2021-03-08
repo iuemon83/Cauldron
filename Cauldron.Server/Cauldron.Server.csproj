@@ -13,10 +13,4 @@
     <ProjectReference Include="..\Cauldron.Core\Cauldron.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="CardSet\sample_cardset.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>

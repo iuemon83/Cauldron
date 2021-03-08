@@ -11,7 +11,7 @@ namespace Cauldron.Shared.MessagePackObjects
         [JsonIgnore]
         public CardDefId Id { get; }
 
-        public int BaseCost { get; set; }
+        public int Cost { get; set; }
 
         [JsonIgnore]
         public string FullName { get; set; } = "";
@@ -24,9 +24,9 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public CardType Type { get; set; }
 
-        public int BasePower { get; set; } = 0;
+        public int Power { get; set; } = 0;
 
-        public int BaseToughness { get; set; } = 0;
+        public int Toughness { get; set; } = 0;
 
         public List<CreatureAbility> Abilities { get; set; } = new List<CreatureAbility>();
 
@@ -63,14 +63,14 @@ namespace Cauldron.Shared.MessagePackObjects
             )
         {
             this.Id = Id;
-            this.BaseCost = BaseCost;
+            this.Cost = BaseCost;
             this.FullName = FullName;
             this.Name = Name;
             this.FlavorText = FlavorText;
             this.IsToken = IsToken;
             this.Type = Type;
-            this.BasePower = BasePower;
-            this.BaseToughness = BaseToughness;
+            this.Power = BasePower;
+            this.Toughness = BaseToughness;
             this.Abilities = Abilities;
             this.Effects = Effects;
             this.NumTurnsToCanAttack = NumTurnsToCanAttack;

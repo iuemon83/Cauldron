@@ -74,15 +74,15 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             this.Id = CardId.NewId();
             this.CardDefId = cardDef.Id;
-            this.BaseCost = cardDef.BaseCost;
+            this.BaseCost = cardDef.Cost;
             this.IsToken = cardDef.IsToken;
             this.Type = cardDef.Type;
             this.FullName = cardDef.FullName;
             this.Name = cardDef.Name;
             this.FlavorText = cardDef.FlavorText;
 
-            this.BasePower = cardDef.BasePower;
-            this.BaseToughness = cardDef.BaseToughness;
+            this.BasePower = cardDef.Power;
+            this.BaseToughness = cardDef.Toughness;
 
             this.Abilities = cardDef.Abilities;
             this.Effects = cardDef.Effects.ToList();

@@ -1,55 +1,55 @@
 {
-  "Name": "Sample",
-  "Cards": [
+  "name": "Sample",
+  "cards": [
     {
-      "BaseCost": 1,
-      "Name": "エンジェルスナイプ",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "sorcery",
-      "BasePower": 0,
-      "BaseToughness": 0,
-      "Abilities": [],
-      "Effects": [
+      "cost": 1,
+      "name": "エンジェルスナイプ",
+      "flavorText": "",
+      "isToken": false,
+      "type": "sorcery",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "Damage": {
-                "Value": 1,
-                "Choice": {
-                  "How": "choose",
-                  "PlayerCondition": {
-                    "Context": "all",
-                    "Type": "opponent"
+              "damage": {
+                "value": 1,
+                "choice": {
+                  "how": "choose",
+                  "playerCondition": {
+                    "context": "all",
+                    "type": "opponent"
                   },
-                  "CardCondition": {
-                    "Context": "others",
-                    "TypeCondition": {
-                      "Value": [
+                  "cardCondition": {
+                    "context": "others",
+                    "typeCondition": {
+                      "value": [
                         "creature"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "opponentField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
@@ -58,109 +58,109 @@
       ]
     },
     {
-      "BaseCost": 2,
-      "Name": "ベルエンジェル",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 0,
-      "BaseToughness": 2,
-      "Abilities": [
+      "cost": 2,
+      "name": "ベルエンジェル",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 0,
+      "toughness": 2,
+      "abilities": [
         "cover"
       ],
-      "Effects": [
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youCemetery",
-            "When": {
-              "Timing": {
-                "Destroy": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youCemetery",
+            "when": {
+              "timing": {
+                "destroy": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "DrawCard": {
-                "NumCards": {
-                  "PureValue": 1
+              "drawCard": {
+                "numCards": {
+                  "pureValue": 1
                 },
-                "PlayerCondition": {
-                  "Context": "all",
-                  "Type": "you"
+                "playerCondition": {
+                  "context": "all",
+                  "type": "you"
                 }
               }
             }
           ]
         }
       ],
-      "NumTurnsToCanAttack": 1
+      "numTurnsToCanAttack": 1
     },
     {
-      "BaseCost": 2,
-      "Name": "ミノタウロス",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 2,
-      "BaseToughness": 1,
-      "Abilities": [
+      "cost": 2,
+      "name": "ミノタウロス",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 2,
+      "toughness": 1,
+      "abilities": [
         "cover"
       ],
-      "Effects": [],
-      "NumTurnsToCanAttack": 1
+      "effects": [],
+      "numTurnsToCanAttack": 1
     },
     {
-      "BaseCost": 2,
-      "Name": "研磨の魔法",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "sorcery",
-      "BasePower": 0,
-      "BaseToughness": 0,
-      "Abilities": [],
-      "Effects": [
+      "cost": 2,
+      "name": "研磨の魔法",
+      "flavorText": "",
+      "isToken": false,
+      "type": "sorcery",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "ModifyCard": {
-                "Power": {
-                  "PureValue": 2
+              "modifyCard": {
+                "power": {
+                  "pureValue": 2
                 },
-                "Toughness": {
-                  "PureValue": 0
+                "toughness": {
+                  "pureValue": 0
                 },
-                "Choice": {
-                  "How": "choose",
-                  "CardCondition": {
-                    "Context": "all",
-                    "TypeCondition": {
-                      "Value": [
+                "choice": {
+                  "how": "choose",
+                  "cardCondition": {
+                    "context": "all",
+                    "typeCondition": {
+                      "value": [
                         "creature"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "youField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
@@ -169,62 +169,62 @@
       ]
     },
     {
-      "BaseCost": 2,
-      "Name": "光の道筋",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "sorcery",
-      "BasePower": 0,
-      "BaseToughness": 0,
-      "Abilities": [],
-      "Effects": [
+      "cost": 2,
+      "name": "光の道筋",
+      "flavorText": "",
+      "isToken": false,
+      "type": "sorcery",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "DrawCard": {
-                "NumCards": {
-                  "PureValue": 1
+              "drawCard": {
+                "numCards": {
+                  "pureValue": 1
                 },
-                "PlayerCondition": {
-                  "Context": "all",
-                  "Type": "you"
+                "playerCondition": {
+                  "context": "all",
+                  "type": "you"
                 }
               }
             }
           ]
         },
         {
-          "Condition": {
-            "ZonePrettyName": "youCemetery",
-            "When": {
-              "Timing": {
-                "MoveCard": {
-                  "Source": "this",
-                  "From": "youHand",
-                  "To": "youCemetery"
+          "condition": {
+            "zonePrettyName": "youCemetery",
+            "when": {
+              "timing": {
+                "moveCard": {
+                  "source": "this",
+                  "from": "youHand",
+                  "to": "youCemetery"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "DrawCard": {
-                "NumCards": {
-                  "PureValue": 1
+              "drawCard": {
+                "numCards": {
+                  "pureValue": 1
                 },
-                "PlayerCondition": {
-                  "Context": "all",
-                  "Type": "you"
+                "playerCondition": {
+                  "context": "all",
+                  "type": "you"
                 }
               }
             }
@@ -233,82 +233,82 @@
       ]
     },
     {
-      "BaseCost": 2,
-      "Name": "新たなる運命",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "sorcery",
-      "BasePower": 0,
-      "BaseToughness": 0,
-      "Abilities": [],
-      "Effects": [
+      "cost": 2,
+      "name": "新たなる運命",
+      "flavorText": "",
+      "isToken": false,
+      "type": "sorcery",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "EffectActionSetVariable": {
-                "Name": "x",
-                "NumValue": {
-                  "NumValueCalculator": {
-                    "Type": "count",
-                    "CardsChoice": {
-                      "How": "all",
-                      "CardCondition": {
-                        "Context": "all",
-                        "ZoneCondition": {
-                          "Value": {
-                            "PureValue": [
+              "effectActionSetVariable": {
+                "name": "x",
+                "numValue": {
+                  "numValueCalculator": {
+                    "type": "count",
+                    "cardsChoice": {
+                      "how": "all",
+                      "cardCondition": {
+                        "context": "all",
+                        "zoneCondition": {
+                          "value": {
+                            "pureValue": [
                               "youHand"
                             ]
                           },
-                          "Not": false
+                          "not": false
                         }
                       },
-                      "NumPicks": 1
+                      "numPicks": 1
                     }
                   }
                 }
               }
             },
             {
-              "MoveCard": {
-                "CardsChoice": {
-                  "How": "all",
-                  "CardCondition": {
-                    "Context": "all",
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+              "moveCard": {
+                "cardsChoice": {
+                  "how": "all",
+                  "cardCondition": {
+                    "context": "all",
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "youHand"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 },
-                "To": "youCemetery"
+                "to": "youCemetery"
               }
             },
             {
-              "DrawCard": {
-                "NumCards": {
-                  "NumValueVariableCalculator": {
-                    "Name": "x"
+              "drawCard": {
+                "numCards": {
+                  "numValueVariableCalculator": {
+                    "name": "x"
                   }
                 },
-                "PlayerCondition": {
-                  "Context": "all",
-                  "Type": "you"
+                "playerCondition": {
+                  "context": "all",
+                  "type": "you"
                 }
               }
             }
@@ -317,56 +317,56 @@
       ]
     },
     {
-      "BaseCost": 3,
-      "Name": "シールドエンジェル",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 1,
-      "BaseToughness": 4,
-      "Abilities": [
+      "cost": 3,
+      "name": "シールドエンジェル",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 1,
+      "toughness": 4,
+      "abilities": [
         "cover"
       ],
-      "Effects": [],
-      "NumTurnsToCanAttack": 1
+      "effects": [],
+      "numTurnsToCanAttack": 1
     },
     {
-      "BaseCost": 3,
-      "Name": "ヒーリングエンジェル",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 2,
-      "BaseToughness": 3,
-      "Abilities": [],
-      "Effects": [
+      "cost": 3,
+      "name": "ヒーリングエンジェル",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 2,
+      "toughness": 3,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "ModifyPlayer": {
-                "Choice": {
-                  "How": "all",
-                  "PlayerCondition": {
-                    "Context": "all",
-                    "Type": "you"
+              "modifyPlayer": {
+                "choice": {
+                  "how": "all",
+                  "playerCondition": {
+                    "context": "all",
+                    "type": "you"
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 },
-                "PlayerModifier": {
-                  "Hp": {
-                    "Operator": "add",
-                    "Value": {
-                      "PureValue": 2
+                "playerModifier": {
+                  "hp": {
+                    "operator": "add",
+                    "value": {
+                      "pureValue": 2
                     }
                   }
                 }
@@ -375,115 +375,115 @@
           ]
         }
       ],
-      "NumTurnsToCanAttack": 1
+      "numTurnsToCanAttack": 1
     },
     {
-      "BaseCost": 3,
-      "Name": "リザードマン",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 3,
-      "BaseToughness": 2,
-      "Abilities": [],
-      "Effects": [
+      "cost": 3,
+      "name": "リザードマン",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 3,
+      "toughness": 2,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "AddCard": {
-                "ZoneToAddCard": {
-                  "PureValue": [
+              "addCard": {
+                "zoneToAddCard": {
+                  "pureValue": [
                     "youField"
                   ]
                 },
-                "Choice": {
-                  "How": "all",
-                  "CardCondition": {
-                    "Context": "all",
-                    "NameCondition": {
-                      "Value": {
-                        "PureValue": "Sample.リザードマン"
+                "choice": {
+                  "how": "all",
+                  "cardCondition": {
+                    "context": "all",
+                    "nameCondition": {
+                      "value": {
+                        "pureValue": "Sample.リザードマン"
                       },
-                      "Compare": "equality",
-                      "Not": false
+                      "compare": "equality",
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "cardPool"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
           ]
         }
       ],
-      "NumTurnsToCanAttack": 1
+      "numTurnsToCanAttack": 1
     },
     {
-      "BaseCost": 3,
-      "Name": "エンジェルバレッジ",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "sorcery",
-      "BasePower": 0,
-      "BaseToughness": 0,
-      "Abilities": [],
-      "Effects": [
+      "cost": 3,
+      "name": "エンジェルバレッジ",
+      "flavorText": "",
+      "isToken": false,
+      "type": "sorcery",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "Damage": {
-                "Value": 1,
-                "Choice": {
-                  "How": "all",
-                  "PlayerCondition": {
-                    "Context": "all",
-                    "Type": "opponent"
+              "damage": {
+                "value": 1,
+                "choice": {
+                  "how": "all",
+                  "playerCondition": {
+                    "context": "all",
+                    "type": "opponent"
                   },
-                  "CardCondition": {
-                    "Context": "all",
-                    "TypeCondition": {
-                      "Value": [
+                  "cardCondition": {
+                    "context": "all",
+                    "typeCondition": {
+                      "value": [
                         "creature"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "opponentField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
@@ -492,55 +492,55 @@
       ]
     },
     {
-      "BaseCost": 3,
-      "Name": "天上の楽曲",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "sorcery",
-      "BasePower": 0,
-      "BaseToughness": 0,
-      "Abilities": [],
-      "Effects": [
+      "cost": 3,
+      "name": "天上の楽曲",
+      "flavorText": "",
+      "isToken": false,
+      "type": "sorcery",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "ModifyCard": {
-                "Power": {
-                  "PureValue": 0
+              "modifyCard": {
+                "power": {
+                  "pureValue": 0
                 },
-                "Toughness": {
-                  "PureValue": 3
+                "toughness": {
+                  "pureValue": 3
                 },
-                "Choice": {
-                  "How": "choose",
-                  "CardCondition": {
-                    "Context": "all",
-                    "TypeCondition": {
-                      "Value": [
+                "choice": {
+                  "how": "choose",
+                  "cardCondition": {
+                    "context": "all",
+                    "typeCondition": {
+                      "value": [
                         "creature"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "youField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
@@ -549,124 +549,124 @@
       ]
     },
     {
-      "BaseCost": 4,
-      "Name": "ウルズ",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 3,
-      "BaseToughness": 3,
-      "Abilities": [],
-      "Effects": [
+      "cost": 4,
+      "name": "ウルズ",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 3,
+      "toughness": 3,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "AddEffect": {
-                "CardsChoice": {
-                  "How": "choose",
-                  "CardCondition": {
-                    "Context": "others",
-                    "TypeCondition": {
-                      "Value": [
+              "addEffect": {
+                "cardsChoice": {
+                  "how": "choose",
+                  "cardCondition": {
+                    "context": "others",
+                    "typeCondition": {
+                      "value": [
                         "creature"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "youField",
                           "opponentField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 },
-                "EffectToAdd": [
+                "effectToAdd": [
                   {
-                    "Condition": {
-                      "ZonePrettyName": "youCemetery",
-                      "When": {
-                        "Timing": {
-                          "Destroy": {
-                            "Source": "this"
+                    "condition": {
+                      "zonePrettyName": "youCemetery",
+                      "when": {
+                        "timing": {
+                          "destroy": {
+                            "source": "this"
                           }
                         }
                       }
                     },
-                    "Actions": [
+                    "actions": [
                       {
-                        "AddCard": {
-                          "ZoneToAddCard": {
-                            "PureValue": [
+                        "addCard": {
+                          "zoneToAddCard": {
+                            "pureValue": [
                               "youField"
                             ]
                           },
-                          "Choice": {
-                            "How": "all",
-                            "CardCondition": {
-                              "Context": "all",
-                              "NameCondition": {
-                                "Value": {
-                                  "TextValueCalculator": {
-                                    "Type": "cardName",
-                                    "CardsChoice": {
-                                      "How": "all",
-                                      "CardCondition": {
-                                        "Context": "this"
+                          "choice": {
+                            "how": "all",
+                            "cardCondition": {
+                              "context": "all",
+                              "nameCondition": {
+                                "value": {
+                                  "textValueCalculator": {
+                                    "type": "cardName",
+                                    "cardsChoice": {
+                                      "how": "all",
+                                      "cardCondition": {
+                                        "context": "this"
                                       },
-                                      "NumPicks": 1
+                                      "numPicks": 1
                                     }
                                   }
                                 },
-                                "Compare": "equality",
-                                "Not": false
+                                "compare": "equality",
+                                "not": false
                               },
-                              "ZoneCondition": {
-                                "Value": {
-                                  "PureValue": [
+                              "zoneCondition": {
+                                "value": {
+                                  "pureValue": [
                                     "cardPool"
                                   ]
                                 },
-                                "Not": false
+                                "not": false
                               }
                             },
-                            "NumPicks": 1
+                            "numPicks": 1
                           }
                         }
                       }
                     ]
                   }
                 ],
-                "Name": "addEffect"
+                "name": "addEffect"
               }
             },
             {
-              "DestroyCard": {
-                "Choice": {
-                  "How": "all",
-                  "CardCondition": {
-                    "Context": "all",
-                    "ActionContext": {
-                      "ActionContextCardsOfAddEffect": {
-                        "ActionName": "addEffect",
-                        "Type": "targetCards"
+              "destroyCard": {
+                "choice": {
+                  "how": "all",
+                  "cardCondition": {
+                    "context": "all",
+                    "actionContext": {
+                      "actionContextCardsOfAddEffect": {
+                        "actionName": "addEffect",
+                        "type": "targetCards"
                       }
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
@@ -675,54 +675,54 @@
       ]
     },
     {
-      "BaseCost": 4,
-      "Name": "デモンストライク",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "sorcery",
-      "BasePower": 0,
-      "BaseToughness": 0,
-      "Abilities": [],
-      "Effects": [
+      "cost": 4,
+      "name": "デモンストライク",
+      "flavorText": "",
+      "isToken": false,
+      "type": "sorcery",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "Damage": {
-                "Value": 3,
-                "Choice": {
-                  "How": "choose",
-                  "PlayerCondition": {
-                    "Context": "all",
-                    "Type": "opponent"
+              "damage": {
+                "value": 3,
+                "choice": {
+                  "how": "choose",
+                  "playerCondition": {
+                    "context": "all",
+                    "type": "opponent"
                   },
-                  "CardCondition": {
-                    "Context": "all",
-                    "TypeCondition": {
-                      "Value": [
+                  "cardCondition": {
+                    "context": "all",
+                    "typeCondition": {
+                      "value": [
                         "creature"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "opponentField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
@@ -731,81 +731,81 @@
       ]
     },
     {
-      "BaseCost": 4,
-      "Name": "冥府への道",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "artifact",
-      "BasePower": 0,
-      "BaseToughness": 0,
-      "Abilities": [],
-      "Effects": [
+      "cost": 4,
+      "name": "冥府への道",
+      "flavorText": "",
+      "isToken": false,
+      "type": "artifact",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "EndTurn": {
-                  "Source": "you"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "endTurn": {
+                  "source": "you"
                 }
               }
             },
-            "If": {
-              "NumCondition": {
-                "Value": 30,
-                "Compare": "greaterThan",
-                "Not": false
+            "if": {
+              "numCondition": {
+                "value": 30,
+                "compare": "greaterThan",
+                "not": false
               },
-              "NumValue": {
-                "NumValueCalculator": {
-                  "Type": "count",
-                  "CardsChoice": {
-                    "How": "all",
-                    "CardCondition": {
-                      "Context": "all",
-                      "ZoneCondition": {
-                        "Value": {
-                          "PureValue": [
+              "numValue": {
+                "numValueCalculator": {
+                  "type": "count",
+                  "cardsChoice": {
+                    "how": "all",
+                    "cardCondition": {
+                      "context": "all",
+                      "zoneCondition": {
+                        "value": {
+                          "pureValue": [
                             "youCemetery"
                           ]
                         },
-                        "Not": false
+                        "not": false
                       }
                     },
-                    "NumPicks": 1
+                    "numPicks": 1
                   }
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "Damage": {
-                "Value": 6,
-                "Choice": {
-                  "How": "all",
-                  "PlayerCondition": {
-                    "Context": "all",
-                    "Type": "opponent"
+              "damage": {
+                "value": 6,
+                "choice": {
+                  "how": "all",
+                  "playerCondition": {
+                    "context": "all",
+                    "type": "opponent"
                   },
-                  "CardCondition": {
-                    "Context": "all",
-                    "TypeCondition": {
-                      "Value": [
+                  "cardCondition": {
+                    "context": "all",
+                    "typeCondition": {
+                      "value": [
                         "creature"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "opponentField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
@@ -814,166 +814,166 @@
       ]
     },
     {
-      "BaseCost": 5,
-      "Name": "ゴブリンマウントデーモン",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 3,
-      "BaseToughness": 7,
-      "Abilities": [
+      "cost": 5,
+      "name": "ゴブリンマウントデーモン",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 3,
+      "toughness": 7,
+      "abilities": [
         "cover"
       ],
-      "Effects": [
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "Damage": {
-                "Value": 3,
-                "Choice": {
-                  "How": "all",
-                  "CardCondition": {
-                    "Context": "others",
-                    "TypeCondition": {
-                      "Value": [
+              "damage": {
+                "value": 3,
+                "choice": {
+                  "how": "all",
+                  "cardCondition": {
+                    "context": "others",
+                    "typeCondition": {
+                      "value": [
                         "creature"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "youField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
           ]
         }
       ],
-      "NumTurnsToCanAttack": 1
+      "numTurnsToCanAttack": 1
     },
     {
-      "BaseCost": 5,
-      "Name": "風神",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 1,
-      "BaseToughness": 5,
-      "Abilities": [],
-      "Effects": [
+      "cost": 5,
+      "name": "風神",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 1,
+      "toughness": 5,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "StartTurn": {
-                  "Source": "you"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "startTurn": {
+                  "source": "you"
                 },
-                "Play": {
-                  "Source": "this"
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "ModifyCard": {
-                "Power": {
-                  "PureValue": 1
+              "modifyCard": {
+                "power": {
+                  "pureValue": 1
                 },
-                "Toughness": {
-                  "PureValue": 0
+                "toughness": {
+                  "pureValue": 0
                 },
-                "Choice": {
-                  "How": "all",
-                  "CardCondition": {
-                    "Context": "others",
-                    "TypeCondition": {
-                      "Value": [
+                "choice": {
+                  "how": "all",
+                  "cardCondition": {
+                    "context": "others",
+                    "typeCondition": {
+                      "value": [
                         "creature"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "youField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
           ]
         }
       ],
-      "NumTurnsToCanAttack": 1
+      "numTurnsToCanAttack": 1
     },
     {
-      "BaseCost": 5,
-      "Name": "エクスキューション",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "sorcery",
-      "BasePower": 0,
-      "BaseToughness": 0,
-      "Abilities": [],
-      "Effects": [
+      "cost": 5,
+      "name": "エクスキューション",
+      "flavorText": "",
+      "isToken": false,
+      "type": "sorcery",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "DestroyCard": {
-                "Choice": {
-                  "How": "choose",
-                  "CardCondition": {
-                    "Context": "all",
-                    "TypeCondition": {
-                      "Value": [
+              "destroyCard": {
+                "choice": {
+                  "how": "choose",
+                  "cardCondition": {
+                    "context": "all",
+                    "typeCondition": {
+                      "value": [
                         "creature",
                         "artifact"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "opponentField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
@@ -982,83 +982,83 @@
       ]
     },
     {
-      "BaseCost": 6,
-      "Name": "アテナ",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 5,
-      "BaseToughness": 4,
-      "Abilities": [],
-      "Effects": [
+      "cost": 6,
+      "name": "アテナ",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 5,
+      "toughness": 4,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "AddEffect": {
-                "CardsChoice": {
-                  "How": "all",
-                  "CardCondition": {
-                    "Context": "others",
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+              "addEffect": {
+                "cardsChoice": {
+                  "how": "all",
+                  "cardCondition": {
+                    "context": "others",
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "youField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 },
-                "EffectToAdd": [
+                "effectToAdd": [
                   {
-                    "Condition": {
-                      "ZonePrettyName": "youField",
-                      "When": {
-                        "Timing": {
-                          "DamageBefore": {
-                            "Source": "guard",
-                            "CardCondition": {
-                              "Context": "this"
+                    "condition": {
+                      "zonePrettyName": "youField",
+                      "when": {
+                        "timing": {
+                          "damageBefore": {
+                            "source": "guard",
+                            "cardCondition": {
+                              "context": "this"
                             }
                           }
                         }
                       },
-                      "While": {
-                        "Timing": {
-                          "EndTurn": {
-                            "Source": "you"
+                      "while": {
+                        "timing": {
+                          "endTurn": {
+                            "source": "you"
                           }
                         },
-                        "Skip": 0,
-                        "Take": 1
+                        "skip": 0,
+                        "take": 1
                       }
                     },
-                    "Actions": [
+                    "actions": [
                       {
-                        "ModifyDamage": {
-                          "Value": {
-                            "Operator": "replace",
-                            "Value": {
-                              "PureValue": 0
+                        "modifyDamage": {
+                          "value": {
+                            "operator": "replace",
+                            "value": {
+                              "pureValue": 0
                             }
                           },
-                          "Choice": {
-                            "How": "all",
-                            "CardCondition": {
-                              "Context": "this"
+                          "choice": {
+                            "how": "all",
+                            "cardCondition": {
+                              "context": "this"
                             },
-                            "NumPicks": 1
+                            "numPicks": 1
                           }
                         }
                       }
@@ -1072,90 +1072,90 @@
       ]
     },
     {
-      "BaseCost": 6,
-      "Name": "天翼を食う者",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 6,
-      "BaseToughness": 6,
-      "Abilities": [],
-      "Effects": [
+      "cost": 6,
+      "name": "天翼を食う者",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 6,
+      "toughness": 6,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "EffectActionSetVariable": {
-                "Name": "x",
-                "NumValue": {
-                  "NumValueCalculator": {
-                    "Type": "count",
-                    "CardsChoice": {
-                      "How": "all",
-                      "CardCondition": {
-                        "Context": "all",
-                        "ZoneCondition": {
-                          "Value": {
-                            "PureValue": [
+              "effectActionSetVariable": {
+                "name": "x",
+                "numValue": {
+                  "numValueCalculator": {
+                    "type": "count",
+                    "cardsChoice": {
+                      "how": "all",
+                      "cardCondition": {
+                        "context": "all",
+                        "zoneCondition": {
+                          "value": {
+                            "pureValue": [
                               "youHand"
                             ]
                           },
-                          "Not": false
+                          "not": false
                         }
                       },
-                      "NumPicks": 1
+                      "numPicks": 1
                     }
                   }
                 }
               }
             },
             {
-              "MoveCard": {
-                "CardsChoice": {
-                  "How": "all",
-                  "CardCondition": {
-                    "Context": "all",
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+              "moveCard": {
+                "cardsChoice": {
+                  "how": "all",
+                  "cardCondition": {
+                    "context": "all",
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "youHand"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 },
-                "To": "youCemetery"
+                "to": "youCemetery"
               }
             },
             {
-              "ModifyCard": {
-                "Power": {
-                  "NumValueVariableCalculator": {
-                    "Name": "x"
+              "modifyCard": {
+                "power": {
+                  "numValueVariableCalculator": {
+                    "name": "x"
                   }
                 },
-                "Toughness": {
-                  "NumValueVariableCalculator": {
-                    "Name": "x"
+                "toughness": {
+                  "numValueVariableCalculator": {
+                    "name": "x"
                   }
                 },
-                "Choice": {
-                  "How": "all",
-                  "CardCondition": {
-                    "Context": "this"
+                "choice": {
+                  "how": "all",
+                  "cardCondition": {
+                    "context": "this"
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
@@ -1164,112 +1164,112 @@
       ]
     },
     {
-      "BaseCost": 7,
-      "Name": "ガブリエル",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 3,
-      "BaseToughness": 4,
-      "Abilities": [],
-      "Effects": [
+      "cost": 7,
+      "name": "ガブリエル",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 3,
+      "toughness": 4,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "ModifyCard": {
-                "Power": {
-                  "PureValue": 4
+              "modifyCard": {
+                "power": {
+                  "pureValue": 4
                 },
-                "Toughness": {
-                  "PureValue": 3
+                "toughness": {
+                  "pureValue": 3
                 },
-                "Choice": {
-                  "How": "choose",
-                  "CardCondition": {
-                    "Context": "others",
-                    "TypeCondition": {
-                      "Value": [
+                "choice": {
+                  "how": "choose",
+                  "cardCondition": {
+                    "context": "others",
+                    "typeCondition": {
+                      "value": [
                         "creature"
                       ],
-                      "Not": false
+                      "not": false
                     },
-                    "ZoneCondition": {
-                      "Value": {
-                        "PureValue": [
+                    "zoneCondition": {
+                      "value": {
+                        "pureValue": [
                           "youField"
                         ]
                       },
-                      "Not": false
+                      "not": false
                     }
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 }
               }
             }
           ]
         }
       ],
-      "NumTurnsToCanAttack": 1
+      "numTurnsToCanAttack": 1
     },
     {
-      "BaseCost": 7,
-      "Name": "ギルガメッシュ",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 5,
-      "BaseToughness": 4,
-      "Abilities": [],
-      "Effects": [],
-      "NumTurnsToCanAttack": 0
+      "cost": 7,
+      "name": "ギルガメッシュ",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 5,
+      "toughness": 4,
+      "abilities": [],
+      "effects": [],
+      "numTurnsToCanAttack": 0
     },
     {
-      "BaseCost": 8,
-      "Name": "ルシフェル",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 6,
-      "BaseToughness": 7,
-      "Abilities": [],
-      "Effects": [
+      "cost": 8,
+      "name": "ルシフェル",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 6,
+      "toughness": 7,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "EndTurn": {
-                  "Source": "you"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "endTurn": {
+                  "source": "you"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {
-              "ModifyPlayer": {
-                "Choice": {
-                  "How": "all",
-                  "PlayerCondition": {
-                    "Context": "all",
-                    "Type": "you"
+              "modifyPlayer": {
+                "choice": {
+                  "how": "all",
+                  "playerCondition": {
+                    "context": "all",
+                    "type": "you"
                   },
-                  "NumPicks": 1
+                  "numPicks": 1
                 },
-                "PlayerModifier": {
-                  "Hp": {
-                    "Operator": "add",
-                    "Value": {
-                      "PureValue": 4
+                "playerModifier": {
+                  "hp": {
+                    "operator": "add",
+                    "value": {
+                      "pureValue": 4
                     }
                   }
                 }
@@ -1278,35 +1278,35 @@
           ]
         }
       ],
-      "NumTurnsToCanAttack": 1
+      "numTurnsToCanAttack": 1
     },
     {
-      "BaseCost": 10,
-      "Name": "サタン",
-      "FlavorText": "",
-      "IsToken": false,
-      "Type": "creature",
-      "BasePower": 6,
-      "BaseToughness": 6,
-      "Abilities": [],
-      "Effects": [
+      "cost": 10,
+      "name": "サタン",
+      "flavorText": "",
+      "isToken": false,
+      "type": "creature",
+      "power": 6,
+      "toughness": 6,
+      "abilities": [],
+      "effects": [
         {
-          "Condition": {
-            "ZonePrettyName": "youField",
-            "When": {
-              "Timing": {
-                "Play": {
-                  "Source": "this"
+          "condition": {
+            "zonePrettyName": "youField",
+            "when": {
+              "timing": {
+                "play": {
+                  "source": "this"
                 }
               }
             }
           },
-          "Actions": [
+          "actions": [
             {}
           ]
         }
       ],
-      "NumTurnsToCanAttack": 1
+      "numTurnsToCanAttack": 1
     }
   ]
 }

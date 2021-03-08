@@ -15,7 +15,7 @@ namespace Cauldron.Core_Test
         public async Task 召喚時にクリーチャーを一体出す能力()
         {
             var slime = TestCards.slime;
-            slime.BaseCost = 0;
+            slime.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet(TestCards.CardsetName, new[] { slime }) });
@@ -94,7 +94,7 @@ namespace Cauldron.Core_Test
         {
             var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
             var mouseDef = TestCards.mouse;
-            mouseDef.BaseCost = 0;
+            mouseDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { mouseDef, goblinDef }) });
@@ -139,7 +139,7 @@ namespace Cauldron.Core_Test
             var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
             var fairyDef = TestCards.fairy;
             var waterFairyDef = TestCards.waterFairy;
-            waterFairyDef.BaseCost = 0;
+            waterFairyDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet(TestCards.CardsetName, new[] { fairyDef, waterFairyDef, goblinDef }) });
@@ -192,7 +192,7 @@ namespace Cauldron.Core_Test
         {
             var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
             var testCreatureDef = TestCards.whiteGeneral;
-            testCreatureDef.BaseCost = 0;
+            testCreatureDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCreatureDef }) });
@@ -232,7 +232,7 @@ namespace Cauldron.Core_Test
         {
             var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
             var testCreatureDef = TestCards.commander;
-            testCreatureDef.BaseCost = 0;
+            testCreatureDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCreatureDef }) });
@@ -276,7 +276,7 @@ namespace Cauldron.Core_Test
             var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = TestCards.devil;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -317,8 +317,8 @@ namespace Cauldron.Core_Test
 
             // どちらかのゴブリンが1ダメージ
             Assert.True(
-                cards.goblinCard.Toughness == goblin.BaseToughness - 1
-                || cards.goblinCard2.Toughness == goblin.BaseToughness - 1);
+                cards.goblinCard.Toughness == goblin.Toughness - 1
+                || cards.goblinCard2.Toughness == goblin.Toughness - 1);
         }
 
         [Fact]
@@ -327,7 +327,7 @@ namespace Cauldron.Core_Test
             var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = TestCards.shock;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -359,7 +359,7 @@ namespace Cauldron.Core_Test
 
                 // ゴブリンか相手プレイヤーにダメージ
                 Assert.True(
-                    cards.goblinCard.Toughness == goblin.BaseToughness - 2
+                    cards.goblinCard.Toughness == goblin.Toughness - 2
                     || testGameMaster.PlayersById[player1Id].CurrentHp == testGameMaster.RuleBook.MaxPlayerHp - 2);
             });
         }
@@ -370,7 +370,7 @@ namespace Cauldron.Core_Test
             var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = TestCards.buf;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -411,7 +411,7 @@ namespace Cauldron.Core_Test
             var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = TestCards.flag;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -450,7 +450,7 @@ namespace Cauldron.Core_Test
             var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
 
             var testCardDef = TestCards.shield;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -489,7 +489,7 @@ namespace Cauldron.Core_Test
             var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
 
             var testCardDef = TestCards.wall;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -526,7 +526,7 @@ namespace Cauldron.Core_Test
             var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
 
             var testCardDef = TestCards.hikari;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -558,7 +558,7 @@ namespace Cauldron.Core_Test
         public async Task カードをすべて捨てて同じ枚数ドローする()
         {
             var testCardDef = TestCards.unmei;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
@@ -593,7 +593,7 @@ namespace Cauldron.Core_Test
         public async Task このカードが手札から捨てられたら1枚引く()
         {
             var testCardDef = TestCards.hikari;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
@@ -626,7 +626,7 @@ namespace Cauldron.Core_Test
         public async Task 召喚時に自分プレイヤーを2回復()
         {
             var testCardDef = TestCards.healingAngel;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
@@ -658,7 +658,7 @@ namespace Cauldron.Core_Test
             var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2);
 
             var testCardDef = TestCards.atena;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
 
@@ -690,13 +690,13 @@ namespace Cauldron.Core_Test
                 // 攻撃した方はダメージを受けない
                 await g.AttackToCreature(pId, goblin3.Id, goblin1.Id);
                 Assert.Equal(0, goblin1.Toughness);
-                Assert.Equal(goblinDef.BaseToughness, goblin3.Toughness);
+                Assert.Equal(goblinDef.Toughness, goblin3.Toughness);
 
                 // テストカードで敵を攻撃
                 // 自分には効果が付与されないので、ダメージを受ける
                 await g.AttackToCreature(pId, testCard.Id, goblin2.Id);
                 Assert.Equal(0, goblin2.Toughness);
-                Assert.Equal(testCardDef.BaseToughness - goblin2.Power, testCard.Toughness);
+                Assert.Equal(testCardDef.Toughness - goblin2.Power, testCard.Toughness);
             });
         }
 
@@ -704,7 +704,7 @@ namespace Cauldron.Core_Test
         public async Task 手札をすべて捨てその枚数だけ自分を強化()
         {
             var testCardDef = TestCards.tenyoku;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
@@ -801,7 +801,7 @@ namespace Cauldron.Core_Test
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 Assert.Equal(beforenumHands - 1, g.PlayersById[pId].Hands.AllCards.Count);
-                Assert.Equal(beforeHp + testCardDef.BaseCost, g.PlayersById[pId].CurrentHp);
+                Assert.Equal(beforeHp + testCardDef.Cost, g.PlayersById[pId].CurrentHp);
             });
         }
 
@@ -811,7 +811,7 @@ namespace Cauldron.Core_Test
             var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2);
 
             var testCardDef = TestCards.ulz;
-            testCardDef.BaseCost = 0;
+            testCardDef.Cost = 0;
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCardDef }) });
