@@ -241,8 +241,15 @@ namespace Cauldron.Server.Services
 
                 var firstPlayerId = this.storage.AllValues.OrderBy(_ => Guid.NewGuid()).First().Id;
 
-                var gameMaster = new GameMasterRepository().GetById(request.GameId);
-                await gameMaster.Start(firstPlayerId);
+                try
+                {
+                    var gameMaster = new GameMasterRepository().GetById(request.GameId);
+                    await gameMaster.Start(firstPlayerId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
         }
 

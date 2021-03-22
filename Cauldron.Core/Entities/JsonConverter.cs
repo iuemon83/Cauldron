@@ -7,11 +7,11 @@ namespace Cauldron.Core.Entities
 {
     public class JsonConverter
     {
-        private readonly static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+        private readonly static JsonSerializerOptions jsonSerializerOptions = new()
         {
             IgnoreNullValues = true,
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true,
+            WriteIndented = false,
             PropertyNameCaseInsensitive = true,
             MaxDepth = 100,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

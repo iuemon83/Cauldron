@@ -6,6 +6,7 @@ namespace Cauldron.Core.Entities.Effect
         Card DamageSourceCard,
         int Value,
         Card GuardCard = null,
-        Player GuardPlayer = null
+        Player GuardPlayer = null,
+        bool IsBattle = false
         );
 }

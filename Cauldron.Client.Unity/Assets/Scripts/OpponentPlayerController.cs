@@ -16,7 +16,7 @@ public class OpponentPlayerController : MonoBehaviour, IPointerClickHandler
 
     public bool IsAttackTarget
     {
-        get => this.AttackTargetIcon?.activeSelf ?? false;
+        get => this.AttackTargetIcon.activeSelf;
         set
         {
             this.AttackTargetIcon.SetActive(value);

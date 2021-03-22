@@ -48,14 +48,14 @@ namespace Cauldron.Shared.MessagePackObjects
         }
         public CardDef(
             CardDefId Id,
-             int BaseCost,
+             int Cost,
              string FullName,
              string Name,
              string FlavorText,
              bool IsToken,
              CardType Type,
-             int BasePower,
-             int BaseToughness,
+             int Power,
+             int Toughness,
              List<CreatureAbility> Abilities,
              IReadOnlyList<CardEffect> Effects,
              int? NumTurnsToCanAttack,
@@ -63,14 +63,14 @@ namespace Cauldron.Shared.MessagePackObjects
             )
         {
             this.Id = Id;
-            this.Cost = BaseCost;
+            this.Cost = Cost;
             this.FullName = FullName;
             this.Name = Name;
             this.FlavorText = FlavorText;
             this.IsToken = IsToken;
             this.Type = Type;
-            this.Power = BasePower;
-            this.Toughness = BaseToughness;
+            this.Power = Power;
+            this.Toughness = Toughness;
             this.Abilities = Abilities;
             this.Effects = Effects;
             this.NumTurnsToCanAttack = NumTurnsToCanAttack;

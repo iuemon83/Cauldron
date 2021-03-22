@@ -1,6 +1,7 @@
 ﻿using Cauldron.Core.Entities;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using Cauldron.Shared.MessagePackObjects.Value;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,14 +13,14 @@ namespace Cauldron.Core_Test
 {
     class TestUtil
     {
-        public static RuleBook TestRuleBook => new RuleBook(10, 99, 0, 40, 40, 5, 10, 1, 10, 1, 1, 5, 0, 1);
+        public static RuleBook TestRuleBook => new(10, 99, 0, 40, 40, 5, 10, 1, 10, 1, 1, 5, 0, 1);
 
         public static GameMasterOptions GameMasterOptions(
             RuleBook ruleBook = null,
             CardRepository cardRepository = null,
             ILogger Logger = null,
             GameEventListener EventListener = null
-            ) => new GameMasterOptions(
+            ) => new(
                 ruleBook ?? TestUtil.TestRuleBook,
                 cardRepository ?? new CardRepository(ruleBook ?? TestUtil.TestRuleBook),
                 Logger ?? new TestLogger(),
@@ -34,14 +35,14 @@ namespace Cauldron.Core_Test
             Action<PlayerId, GameContext, ModifyPlayerNotifyMessage> OnModifyPlayer = null,
             Action<PlayerId, GameContext, DamageNotifyMessage> OnDamage = null,
             Func<PlayerId, ChoiceCandidates, int, ValueTask<ChoiceResult>> AskCardAction = null
-            ) => new GameEventListener(
+            ) => new(
                 OnStartTurn, OnAddCard, OnMoveCard, OnModifyCard, OnModifyPlayer,
                 OnDamage, AskCardAction
                 );
 
-        public static EffectAction TestEffectAction => new EffectAction(
+        public static EffectAction TestEffectAction => new(
             Damage: new(
-                1,
+                new NumValue(1),
                 new Choice()
                 {
                     How = Choice.ChoiceHow.All,
@@ -135,10 +136,10 @@ namespace Cauldron.Core_Test
             return newCard;
         }
 
-        public static async ValueTask Turn(GameMaster gameMaster, Action<GameMaster, PlayerId> turnAction)
+        public static async ValueTask Turn(GameMaster gameMaster, Func<GameMaster, PlayerId, ValueTask> turnAction)
         {
             await gameMaster.StartTurn();
-            turnAction(gameMaster, gameMaster.ActivePlayer.Id);
+            await turnAction(gameMaster, gameMaster.ActivePlayer.Id);
             await gameMaster.EndTurn();
         }
 

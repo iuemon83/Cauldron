@@ -16,41 +16,5 @@ namespace Cauldron.Core.Entities
             var jsonString = File.ReadAllText(jsonFilePath);
             return JsonConverter.Deserialize<CardSet>(jsonString);
         }
-
-        public static void WriteToFile(string jsonFilePath)
-        {
-            var cardSet = new CardSet(
-                "Sample",
-                new[] {
-                    TestCards.angelSnipe,
-                    TestCards.bellAngel,
-                    TestCards.mino,
-                    TestCards.kenma,
-                    TestCards.hikari,
-                    TestCards.unmei,
-                    TestCards.shieldAngel,
-                    TestCards.healingAngel,
-                    TestCards.lizardman,
-                    TestCards.angelBarrage,
-                    TestCards.gakkyoku,
-                    TestCards.ulz,
-                    TestCards.demonStraike,
-                    TestCards.meifu,
-                    TestCards.goblinDemon,
-                    TestCards.fujin,
-                    TestCards.excution,
-                    TestCards.atena,
-                    TestCards.tenyoku,
-                    TestCards.gabriel,
-                    TestCards.gilgamesh,
-                    TestCards.lucifer,
-                    TestCards.satan,
-                }
-            );
-
-            var jsonText = JsonConverter.Serialize(cardSet);
-
-            File.WriteAllText(jsonFilePath, jsonText);
-        }
     }
 }

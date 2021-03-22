@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="CardSet\test.json" />
+    <None Remove="CardSet\read_test.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="CardSet\test.json">
+    <Content Include="CardSet\read_test.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

@@ -50,13 +50,13 @@ namespace Cauldron.Core_Test
 
             Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
 
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 Assert.Equal(beforeHp - 2, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
@@ -90,19 +90,19 @@ namespace Cauldron.Core_Test
 
             // 先行
             // 効果カード出す
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
             });
             Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // 先行
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
@@ -144,14 +144,14 @@ namespace Cauldron.Core_Test
             Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // 先行
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
@@ -196,13 +196,13 @@ namespace Cauldron.Core_Test
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
             Assert.Equal(beforeHp - 2, testGameMaster.PlayersById[player1Id].CurrentHp);
 
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 Assert.Equal(beforeHp - 2, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
@@ -245,14 +245,14 @@ namespace Cauldron.Core_Test
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // 先行
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
@@ -293,14 +293,14 @@ namespace Cauldron.Core_Test
             Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // 先行
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
@@ -391,308 +391,6 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task 戦闘開始前時_すべてのクリーチャー()
-        {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 1,
-                effects: new[]{
-                    new CardEffect(
-                        new(ZonePrettyName.YouField,
-                            new(new(BattleBefore : new(EffectTimingBattleBeforeEvent.EventSource.All, CardCondition : new CardCondition())))),
-                        new[]{ TestUtil.TestEffectAction }
-                    )
-                });
-
-            var testNormalCardDef = MessageObjectExtensions.Creature(0, "test2", "test2", 1, 5, 1);
-
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
-
-            // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
-
-            // 先攻
-            var normal = await TestUtil.Turn(testGameMaster, (g, pId) =>
-            {
-                return TestUtil.NewCardAndPlayFromHand(g, pId, testNormalCardDef.Id);
-            });
-
-            var beforeHp = testGameMaster.PlayersById[player2Id].CurrentHp;
-
-            // 後攻
-            // 効果カード出す
-            var (testCard, normal2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
-            {
-                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                Assert.Equal(beforeHp, testGameMaster.PlayersById[player2Id].CurrentHp);
-                await g.AttackToCreature(pId, testCard.Id, normal.Id);
-                // 戦闘時に効果が発動する
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player2Id].CurrentHp);
-
-                var normal2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testNormalCardDef.Id);
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player2Id].CurrentHp);
-                await g.AttackToCreature(pId, normal2.Id, normal.Id);
-                // 戦闘時に効果が発動する
-                Assert.Equal(beforeHp - 2, testGameMaster.PlayersById[player2Id].CurrentHp);
-
-                return (testCard, normal2);
-            });
-
-            // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
-            {
-                Assert.Equal(beforeHp - 2, testGameMaster.PlayersById[player2Id].CurrentHp);
-                await g.AttackToCreature(pId, normal.Id, normal2.Id);
-                // 戦闘時に効果が発動する
-                Assert.Equal(beforeHp - 3, testGameMaster.PlayersById[player2Id].CurrentHp);
-            });
-        }
-
-        [Fact]
-        public async Task 戦闘開始前時_自分が攻撃()
-        {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 1,
-                effects: new[]{
-                    new CardEffect(
-                        new(ZonePrettyName.YouField,
-                            new(new(
-                                BattleBefore : new(
-                                    EffectTimingBattleBeforeEvent.EventSource.Attack,
-                                    CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })))),
-                        new[]{ TestUtil.TestEffectAction }
-                    )
-                });
-
-            var testNormalCardDef = MessageObjectExtensions.Creature(0, "test2", "test2", 1, 5, 1);
-
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
-
-            // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
-
-            // 先攻
-            var normal = await TestUtil.Turn(testGameMaster, (g, pId) =>
-            {
-                return TestUtil.NewCardAndPlayFromHand(g, pId, testNormalCardDef.Id);
-            });
-
-            var beforeHp = testGameMaster.PlayersById[player2Id].CurrentHp;
-
-            // 後攻
-            // 効果カード出す
-            var testCard = await TestUtil.Turn(testGameMaster, async (g, pId) =>
-            {
-                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                Assert.Equal(beforeHp, testGameMaster.PlayersById[player2Id].CurrentHp);
-                await g.AttackToCreature(pId, testCard.Id, normal.Id);
-                // 自分の攻撃時に発動する
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player2Id].CurrentHp);
-
-                var normal2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testNormalCardDef.Id);
-
-                await g.AttackToCreature(pId, normal2.Id, normal.Id);
-                // ほかカードの攻撃時に発動しない
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player2Id].CurrentHp);
-
-                return testCard;
-            });
-
-            // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
-            {
-                await g.AttackToCreature(pId, normal.Id, testCard.Id);
-                // 自分の防御時に発動しない
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player2Id].CurrentHp);
-            });
-        }
-
-        [Fact]
-        public async Task 戦闘開始前時_自分が防御()
-        {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 1,
-                effects: new[]{
-                    new CardEffect(
-                        new(ZonePrettyName.YouField,
-                            new(new(BattleBefore : new(
-                                EffectTimingBattleBeforeEvent.EventSource.Guard,
-                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })))),
-                        new[]{ TestUtil.TestEffectAction}
-                    )
-                });
-
-            var testNormalCardDef = MessageObjectExtensions.Creature(0, "test2", "test2", 1, 5, 1);
-
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
-
-            // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
-
-            // 先攻
-            var normal = await TestUtil.Turn(testGameMaster, (g, pId) =>
-            {
-                return TestUtil.NewCardAndPlayFromHand(g, pId, testNormalCardDef.Id);
-            });
-
-            var beforeHp = testGameMaster.PlayersById[player2Id].CurrentHp;
-
-            // 後攻
-            // 効果カード出す
-            var testCard = await TestUtil.Turn(testGameMaster, async (g, pId) =>
-            {
-                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                await g.AttackToCreature(pId, testCard.Id, normal.Id);
-                // 自分の攻撃時に発動しない
-                Assert.Equal(beforeHp, testGameMaster.PlayersById[player2Id].CurrentHp);
-
-                var normal2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testNormalCardDef.Id);
-
-                await g.AttackToCreature(pId, normal2.Id, normal.Id);
-                // ほかカードの攻撃時に発動しない
-                Assert.Equal(beforeHp, testGameMaster.PlayersById[player2Id].CurrentHp);
-
-                return testCard;
-            });
-
-            // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
-            {
-                Assert.Equal(beforeHp, testGameMaster.PlayersById[player2Id].CurrentHp);
-                await g.AttackToCreature(pId, normal.Id, testCard.Id);
-                // 自分の防御時に発動する
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player2Id].CurrentHp);
-            });
-        }
-
-        [Fact]
-        public async Task 戦闘開始前時_他カードが攻撃()
-        {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 1,
-                effects: new[]{
-                    new CardEffect(
-                        new(ZonePrettyName.YouField,
-                            new(new(BattleBefore : new(
-                                EffectTimingBattleBeforeEvent.EventSource.Attack,
-                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })))),
-                        new[]{ TestUtil.TestEffectAction}
-                    )
-                });
-
-            var testNormalCardDef = MessageObjectExtensions.Creature(0, "test2", "test2", 1, 5, 1);
-
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
-
-            // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
-
-            // 先攻
-            var normal = await TestUtil.Turn(testGameMaster, (g, pId) =>
-            {
-                return TestUtil.NewCardAndPlayFromHand(g, pId, testNormalCardDef.Id);
-            });
-
-            var beforeHp = testGameMaster.PlayersById[player2Id].CurrentHp;
-
-            // 後攻
-            // 効果カード出す
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
-            {
-                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                await g.AttackToCreature(pId, testCard.Id, normal.Id);
-                // 自分の攻撃時に発動しない
-                Assert.Equal(beforeHp, testGameMaster.PlayersById[player2Id].CurrentHp);
-
-                var normal2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testNormalCardDef.Id);
-
-                Assert.Equal(beforeHp, testGameMaster.PlayersById[player2Id].CurrentHp);
-                await g.AttackToCreature(pId, normal2.Id, normal.Id);
-                // ほかカードの攻撃時に発動する
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player2Id].CurrentHp);
-            });
-        }
-
-        [Fact]
-        public async Task 戦闘開始前時_他カードが防御()
-        {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 1,
-                effects: new[]{
-                    new CardEffect(
-                        new(ZonePrettyName.YouField,
-                            new(new(BattleBefore : new(
-                                EffectTimingBattleBeforeEvent.EventSource.Guard,
-                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })))),
-                        new[]{ TestUtil.TestEffectAction}
-                    )
-                });
-
-            var testNormalCardDef = MessageObjectExtensions.Creature(0, "test2", "test2", 1, 5, 1);
-
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
-
-            // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
-
-            // 先攻
-            var normal = await TestUtil.Turn(testGameMaster, (g, pId) =>
-            {
-                return TestUtil.NewCardAndPlayFromHand(g, pId, testNormalCardDef.Id);
-            });
-
-            var beforeHp = testGameMaster.PlayersById[player2Id].CurrentHp;
-
-            // 後攻
-            // 効果カード出す
-            var testCard = await TestUtil.Turn(testGameMaster, async (g, pId) =>
-            {
-                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                Assert.Equal(beforeHp, testGameMaster.PlayersById[player2Id].CurrentHp);
-                await g.AttackToCreature(pId, testCard.Id, normal.Id);
-                // ほかカードの防御時に発動する
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player2Id].CurrentHp);
-
-                var normal2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testNormalCardDef.Id);
-
-                await g.AttackToCreature(pId, normal2.Id, testCard.Id);
-                // 自分の防御時に発動しない
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player2Id].CurrentHp);
-
-                return testCard;
-            });
-        }
-
-        [Fact]
         public async Task 戦闘ダメージ前時_すべてのクリーチャー()
         {
             var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 0,
@@ -700,7 +398,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(ZonePrettyName.YouField,
                             new(new(DamageBefore : new(
-                                EffectTimingDamageBeforeEvent.EventSource.All,
+                                Source: EffectTimingDamageBeforeEvent.EventSource.Any,
                                 CardCondition : new CardCondition())))),
                         new[]{
                             new EffectAction(
@@ -779,7 +477,8 @@ namespace Cauldron.Core_Test
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
-                            new(new(DamageBefore : new (EffectTimingDamageBeforeEvent.EventSource.DamageSource,
+                            new(new(DamageBefore : new (
+                                Source: EffectTimingDamageBeforeEvent.EventSource.DamageSource,
                                 CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })))),
                         new[]{
                             new EffectAction(
@@ -856,7 +555,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(ZonePrettyName.YouField,
                             new(new(DamageBefore : new(
-                                EffectTimingDamageBeforeEvent.EventSource.Guard,
+                                Source: EffectTimingDamageBeforeEvent.EventSource.Take,
                                 CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })))),
                         new[]{ TestUtil.TestEffectAction}
                     )
@@ -923,7 +622,7 @@ namespace Cauldron.Core_Test
                         new(
                             ZonePrettyName.YouField,
                             new(new(DamageBefore: new(
-                                EffectTimingDamageBeforeEvent.EventSource.Guard,
+                                Source: EffectTimingDamageBeforeEvent.EventSource.Take,
                                 CardCondition: new CardCondition()
                                 {
                                     Context = CardCondition.CardConditionContext.This
@@ -945,7 +644,7 @@ namespace Cauldron.Core_Test
                             new EffectAction()
                             {
                                 Damage = new EffectActionDamage(
-                                    1,
+                                    new NumValue(1),
                                     new Choice()
                                     {
                                         CardCondition = new CardCondition()

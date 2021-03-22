@@ -35,11 +35,6 @@ namespace Cauldron.Core.Entities
 
             var baseValue = await CalcBaseValue();
 
-            //var baseValue = numValue.PureValue
-            //    ?? numValue.NumValueCalculator?.Calculate(effectOwnerCard, effectEventArgs)
-            //    ?? numValue.NumValueVariableCalculator?.Calculate(effectOwnerCard, effectEventArgs)
-            //    ?? 0;
-
             return await (numValue.NumValueModifier?.Modify(effectOwnerCard, effectEventArgs, baseValue)
                 ?? ValueTask.FromResult(baseValue));
         }
@@ -49,24 +44,24 @@ namespace Cauldron.Core.Entities
         {
             return numValueCalculator.Type switch
             {
-                NumValueCalculator.ValueType.Count => await numValueCalculator.CalculateCount(effectOwnerCard, effectEventArgs),
-                NumValueCalculator.ValueType.CardCost => await numValueCalculator.CalculateCardCost(effectOwnerCard, effectEventArgs),
+                NumValueCalculator.ValueType.Count => await CalculateCount(numValueCalculator, effectOwnerCard, effectEventArgs),
+                NumValueCalculator.ValueType.CardCost => await CalculateCardCost(numValueCalculator, effectOwnerCard, effectEventArgs),
                 _ => throw new InvalidOperationException($"{nameof(numValueCalculator.Type)}: {numValueCalculator.Type}")
             };
-        }
 
-        private static async ValueTask<int> CalculateCount(this NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
-        {
-            var pickCards = await effectEventArgs.GameMaster.ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
-            return pickCards.CardList.Length;
-        }
+            static async ValueTask<int> CalculateCount(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
+            {
+                var pickCards = await effectEventArgs.GameMaster.ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+                return pickCards.CardList.Length;
+            }
 
-        private static async ValueTask<int> CalculateCardCost(this NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
-        {
-            var pickCards = await effectEventArgs.GameMaster
-                .ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+            static async ValueTask<int> CalculateCardCost(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
+            {
+                var pickCards = await effectEventArgs.GameMaster
+                    .ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
-            return pickCards.CardList.Sum(c => c.Cost);
+                return pickCards.CardList.Sum(c => c.Cost);
+            }
         }
 
         public static async ValueTask<int> Modify(this NumValueModifier numValueModifier, Card effectOwnerCard, EffectEventArgs effectEventArgs, int value)
@@ -102,19 +97,19 @@ namespace Cauldron.Core.Entities
         {
             return textValueCalculator.Type switch
             {
-                TextValueCalculator.ValueType.CardName => await textValueCalculator.CalculateName(effectOwnerCard, effectEventArgs),
+                TextValueCalculator.ValueType.CardName => await CalculateName(textValueCalculator, effectOwnerCard, effectEventArgs),
                 _ => throw new InvalidOperationException($"{nameof(textValueCalculator.Type)}: {textValueCalculator.Type}")
             };
-        }
 
-        private static async ValueTask<string> CalculateName(this TextValueCalculator textValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
-        {
-            var choiceResult = await effectEventArgs.GameMaster
-                .ChoiceCards(effectOwnerCard, textValueCalculator.CardsChoice, effectEventArgs);
+            static async ValueTask<string> CalculateName(TextValueCalculator textValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
+            {
+                var choiceResult = await effectEventArgs.GameMaster
+                    .ChoiceCards(effectOwnerCard, textValueCalculator.CardsChoice, effectEventArgs);
 
-            var pickCards = choiceResult.CardList;
+                var pickCards = choiceResult.CardList;
 
-            return pickCards.Any() ? pickCards[0].FullName : "";
+                return pickCards.Any() ? pickCards[0].FullName : "";
+            }
         }
 
         public static async ValueTask<ZonePrettyName[]> Calculate(this ZoneValue zoneValue, Card effectOwnerCard, EffectEventArgs effectEventArgs)
@@ -132,8 +127,6 @@ namespace Cauldron.Core.Entities
 
             return zoneValue.PureValue
                 ?? await FromValueCalculator()
-                //?? zoneValue.ZoneValueCalculator?.Calculate(effectOwnerCard, effectEventArgs)
-                //    .Select(zone => zone.AsZonePrettyName(effectOwnerCard)).ToArray()
                 ?? Array.Empty<ZonePrettyName>();
         }
 
@@ -195,15 +188,17 @@ namespace Cauldron.Core.Entities
                     CardCondition.CardConditionContext.This => cardToMatch.Id == effectOwnerCard.Id,
                     CardCondition.CardConditionContext.Others => cardToMatch.Id != effectOwnerCard.Id,
                     CardCondition.CardConditionContext.EventSource => cardToMatch.Id == effectEventArgs.SourceCard.Id,
-                    CardCondition.CardConditionContext.Attack => cardToMatch.Id == effectEventArgs.BattleContext.AttackCard.Id,
-                    CardCondition.CardConditionContext.Guard => cardToMatch.Id == effectEventArgs.BattleContext.GuardCard.Id,
+                    CardCondition.CardConditionContext.DamageFrom => cardToMatch.Id == effectEventArgs.DamageContext.DamageSourceCard.Id,
+                    CardCondition.CardConditionContext.DamageTo => cardToMatch.Id == effectEventArgs.DamageContext.GuardCard.Id,
                     _ => true
                 })
                 && (cardCondition.CostCondition?.IsMatch(cardToMatch.Cost) ?? true)
                 && (cardCondition.PowerCondition?.IsMatch(cardToMatch.Power) ?? true)
                 && (cardCondition.ToughnessCondition?.IsMatch(cardToMatch.Toughness) ?? true)
                 && (await (cardCondition.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Name) ?? ValueTask.FromResult(true)))
-                && (cardCondition.TypeCondition?.IsMatch(cardToMatch.Type) ?? true);
+                && (cardCondition.TypeCondition?.IsMatch(cardToMatch.Type) ?? true)
+                && (await (cardCondition.ZoneCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Zone) ?? ValueTask.FromResult(true)))
+                ;
         }
 
         public static async ValueTask<bool> IsMatch(this CardCondition cardCondition, Card effectOwnerCard, EffectEventArgs effectEventArgs, CardDef cardDefToMatch)
@@ -287,11 +282,13 @@ namespace Cauldron.Core.Entities
 
             var done = false;
 
+            var damageValue = await effectActionDamage.Value.Calculate(effectOwnerCard, args);
+
             foreach (var playerId in choiceResult.PlayerIdList)
             {
                 var damageContext = new DamageContext(
                     effectOwnerCard,
-                    Value: effectActionDamage.Value,
+                    Value: damageValue,
                     GuardPlayer: args.GameMaster.PlayersById[playerId]
                     );
 
@@ -304,7 +301,7 @@ namespace Cauldron.Core.Entities
             {
                 var damageContext = new DamageContext(
                     effectOwnerCard,
-                    Value: effectActionDamage.Value,
+                    Value: damageValue,
                     GuardCard: card
                     );
                 await args.GameMaster.HitCreature(damageContext);
@@ -361,11 +358,14 @@ namespace Cauldron.Core.Entities
             var targets = choiceResult.CardList;
 
             var done = false;
-            var buffPower = await (effectActionModifyCard.Power?.Calculate(effectOwnerCard, effectEventArgs) ?? ValueTask.FromResult(0));
-            var buffToughness = await (effectActionModifyCard.Toughness?.Calculate(effectOwnerCard, effectEventArgs) ?? ValueTask.FromResult(0));
             foreach (var card in targets)
             {
-                await effectEventArgs.GameMaster.Buff(card, buffPower, buffToughness);
+                var buffPower = await (effectActionModifyCard.Power?.Modify(effectOwnerCard, effectEventArgs, card.Power)
+                    ?? ValueTask.FromResult(card.Power));
+                var buffToughness = await (effectActionModifyCard.Toughness?.Modify(effectOwnerCard, effectEventArgs, card.Toughness)
+                    ?? ValueTask.FromResult(card.Toughness));
+
+                await effectEventArgs.GameMaster.Buff(card, buffPower - card.Power, buffToughness - card.Toughness);
 
                 done = true;
             }
@@ -377,20 +377,6 @@ namespace Cauldron.Core.Entities
             var done = false;
 
             var result = args;
-
-            if (args.BattleContext != null)
-            {
-                var value = await effectActionModifyDamage.Value.Modify(effectOwnerCard, args, args.BattleContext.Value);
-                result = args with
-                {
-                    BattleContext = args.BattleContext with
-                    {
-                        Value = Math.Max(0, value)
-                    }
-                };
-
-                done = true;
-            }
 
             if (args.DamageContext != null)
             {
@@ -493,86 +479,78 @@ namespace Cauldron.Core.Entities
                 GameEvent.OnDestroy => effectTiming.Destroy?.IsMatch(effectOwnerCard, eventArgs.SourceCard) ?? false,
                 GameEvent.OnDamageBefore => await (effectTiming.DamageBefore?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(false)),
                 GameEvent.OnDamage => await (effectTiming.DamageAfter?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(false)),
-                GameEvent.OnBattleBefore => await (effectTiming.BattleBefore?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(false)),
-                GameEvent.OnBattle => await (effectTiming.BattleAfter?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(false)),
                 GameEvent.OnMoveCard => effectTiming.MoveCard?.IsMatch(effectOwnerCard, eventArgs) ?? false,
                 _ => false,
             };
         }
 
-        public static async ValueTask<bool> IsMatch(this EffectTimingBattleBeforeEvent effectTimingBattleBeforeEvent, Card effectOwnerCard, EffectEventArgs eventArgs)
-        {
-            var playerMatch = effectTimingBattleBeforeEvent.Source switch
-            {
-                EffectTimingBattleBeforeEvent.EventSource.All => (effectTimingBattleBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs.BattleContext.GuardPlayer, eventArgs) ?? false),
-                EffectTimingBattleBeforeEvent.EventSource.Guard => effectTimingBattleBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs.BattleContext.GuardPlayer, eventArgs) ?? false,
-                _ => false
-            };
-
-            var cardMatch = effectTimingBattleBeforeEvent.Source switch
-            {
-                EffectTimingBattleBeforeEvent.EventSource.All =>
-                    (await (effectTimingBattleBeforeEvent.CardCondition?.IsMatch(effectOwnerCard, eventArgs.BattleContext.AttackCard, eventArgs)
-                        ?? ValueTask.FromResult(false)))
-                    || (await (effectTimingBattleBeforeEvent.CardCondition?.IsMatch(effectOwnerCard, eventArgs.BattleContext.GuardCard, eventArgs)
-                        ?? ValueTask.FromResult(false)))
-                ,
-                EffectTimingBattleBeforeEvent.EventSource.Attack =>
-                    await (effectTimingBattleBeforeEvent.CardCondition?.IsMatch(effectOwnerCard, eventArgs.BattleContext.AttackCard, eventArgs)
-                        ?? ValueTask.FromResult(false)),
-                EffectTimingBattleBeforeEvent.EventSource.Guard =>
-                    await (effectTimingBattleBeforeEvent.CardCondition?.IsMatch(effectOwnerCard, eventArgs.BattleContext.GuardCard, eventArgs)
-                        ?? ValueTask.FromResult(false)),
-                _ => false
-            };
-
-            return playerMatch || cardMatch;
-        }
-
         public static async ValueTask<bool> IsMatch(this EffectTimingDamageBeforeEvent effectTimingDamageBeforeEvent, Card effectOwnerCard, EffectEventArgs eventArgs)
         {
-            var playerMatch = effectTimingDamageBeforeEvent.PlayerIsMatch(effectOwnerCard, eventArgs);
+            if (eventArgs.DamageContext == null)
+            {
+                return false;
+            }
 
-            var cardMatch = await effectTimingDamageBeforeEvent.CardIsMatch(effectOwnerCard, eventArgs);
+            if (effectTimingDamageBeforeEvent.Type == EffectTimingDamageBeforeEvent.DamageType.Battle
+                && !eventArgs.DamageContext.IsBattle)
+            {
+                return false;
+            }
+
+            var playerMatch = PlayerIsMatch(effectTimingDamageBeforeEvent, effectOwnerCard, eventArgs);
+
+            var cardMatch = await CardIsMatch(effectTimingDamageBeforeEvent, effectOwnerCard, eventArgs);
 
             return playerMatch || cardMatch;
-        }
 
-        private static bool PlayerIsMatch(this EffectTimingDamageBeforeEvent effectTimingDamageBeforeEvent, Card effectOwnerCard, EffectEventArgs eventArgs)
-        {
-            return effectTimingDamageBeforeEvent.Source switch
+            static bool PlayerIsMatch(EffectTimingDamageBeforeEvent effectTimingDamageBeforeEvent, Card effectOwnerCard, EffectEventArgs eventArgs)
             {
-                EffectTimingDamageBeforeEvent.EventSource.All => eventArgs.DamageContext.GuardPlayer != null
-                    && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs.DamageContext.GuardPlayer, eventArgs) ?? false),
-                EffectTimingDamageBeforeEvent.EventSource.Guard => eventArgs.DamageContext.GuardPlayer != null
-                    && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs.DamageContext.GuardPlayer, eventArgs) ?? false),
-                _ => false
-            };
-        }
+                return effectTimingDamageBeforeEvent.Source switch
+                {
+                    EffectTimingDamageBeforeEvent.EventSource.Any => eventArgs.DamageContext.GuardPlayer != null
+                        && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs.DamageContext.GuardPlayer, eventArgs)
+                            ?? false),
+                    EffectTimingDamageBeforeEvent.EventSource.Take => eventArgs.DamageContext.GuardPlayer != null
+                        && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs.DamageContext.GuardPlayer, eventArgs)
+                            ?? false),
+                    _ => false
+                };
+            }
 
-        private static async ValueTask<bool> CardIsMatch(this EffectTimingDamageBeforeEvent effectTimingDamageBeforeEvent, Card effectOwnerCard, EffectEventArgs eventArgs)
-        {
-            var damageSource = eventArgs.DamageContext.DamageSourceCard;
-            var guard = eventArgs.DamageContext.GuardCard;
-
-            return effectTimingDamageBeforeEvent.Source switch
+            static async ValueTask<bool> CardIsMatch(EffectTimingDamageBeforeEvent effectTimingDamageBeforeEvent, Card effectOwnerCard, EffectEventArgs eventArgs)
             {
-                EffectTimingDamageBeforeEvent.EventSource.All =>
-                    (damageSource != null
-                        && (await (effectTimingDamageBeforeEvent.CardCondition?.IsMatch(effectOwnerCard, damageSource, eventArgs)
-                            ?? ValueTask.FromResult(false))))
-                    || (guard != null
-                        && (await (effectTimingDamageBeforeEvent.CardCondition?.IsMatch(effectOwnerCard, guard, eventArgs)
-                            ?? ValueTask.FromResult(false))))
-                ,
-                EffectTimingDamageBeforeEvent.EventSource.DamageSource => damageSource != null
-                    && (await (effectTimingDamageBeforeEvent.CardCondition?.IsMatch(effectOwnerCard, damageSource, eventArgs)
-                        ?? ValueTask.FromResult(false))),
-                EffectTimingDamageBeforeEvent.EventSource.Guard => guard != null
-                    && (await (effectTimingDamageBeforeEvent.CardCondition?.IsMatch(effectOwnerCard, guard, eventArgs)
-                        ?? ValueTask.FromResult(false))),
-                _ => false
-            };
+                async ValueTask<bool> SwitchDamageSource()
+                {
+                    var damageSource = eventArgs.DamageContext.DamageSourceCard;
+                    if (damageSource == null
+                        || effectTimingDamageBeforeEvent.CardCondition == null)
+                    {
+                        return false;
+                    }
+
+                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(effectOwnerCard, damageSource, eventArgs);
+                }
+
+                async ValueTask<bool> SwitchTake()
+                {
+                    var guard = eventArgs.DamageContext.GuardCard;
+                    if (guard == null
+                        || effectTimingDamageBeforeEvent.CardCondition == null)
+                    {
+                        return false;
+                    }
+
+                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(effectOwnerCard, guard, eventArgs);
+                }
+
+                return effectTimingDamageBeforeEvent.Source switch
+                {
+                    EffectTimingDamageBeforeEvent.EventSource.Any => await SwitchDamageSource() || await SwitchTake(),
+                    EffectTimingDamageBeforeEvent.EventSource.DamageSource => await SwitchDamageSource(),
+                    EffectTimingDamageBeforeEvent.EventSource.Take => await SwitchTake(),
+                    _ => false
+                };
+            }
         }
 
         public static bool IsMatch(this EffectTimingDestroyEvent effectTimingDestroyEvent, Card ownerCard, Card source)

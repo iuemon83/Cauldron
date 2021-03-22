@@ -194,6 +194,11 @@ namespace Cauldron.Core.Entities
             //var newId = PlayerId.NewId();
             var deckCards = deckCardDefIdList.Select(id => this.cardRepository.CreateNew(id)).ToArray();
 
+            if (deckCards.Any(c => c == null))
+            {
+                return (GameMasterStatusCode.CardNotExists, default);
+            }
+
             // 提示されたデッキにトークンが含まれていてはいけない
             if (deckCards.Any(c => c.IsToken))
             {
@@ -478,8 +483,8 @@ namespace Cauldron.Core.Entities
             {
                 GameOver = this.GameOver,
                 WinnerPlayerId = this.GetWinner()?.Id ?? default,
-                You = this.PlayersById[playerId].PrivatePlayerInfo,// new PrivatePlayerInfo(this.PlayersById[playerId]),
-                Opponent = this.GetOpponent(playerId).PublicPlayerInfo,// new PublicPlayerInfo(this.GetOpponent(playerId)),
+                You = this.PlayersById[playerId].PrivatePlayerInfo,
+                Opponent = this.GetOpponent(playerId).PublicPlayerInfo,
                 RuleBook = this.RuleBook
             };
         }
@@ -565,7 +570,6 @@ namespace Cauldron.Core.Entities
             }
 
             var (cardExists, playingCard) = this.cardRepository.TryGetById(handCardId, new Zone(playerId, ZoneName.Hand));
-            //player.Hands.TryGetById(handCardId);
 
             if (!cardExists)
             {
@@ -605,48 +609,6 @@ namespace Cauldron.Core.Entities
 
             return GameMasterStatusCode.OK;
         }
-
-        ///// <summary>
-        ///// 新規に生成されるカードをプレイ（効果で召喚とか）
-        ///// </summary>
-        ///// <param name="playerId"></param>
-        ///// <param name="cardId"></param>
-        ///// <returns></returns>
-        //public GameMasterStatusCode PlayDirect(PlayerId playerId, CardId cardId)
-        //{
-        //    //var player = this.PlayersById[playerId];
-        //    if (!this.PlayersById.TryGetValue(playerId, out var player))
-        //    {
-        //        return GameMasterStatusCode.PlayerNotExists;
-        //    }
-
-        //    var (playingCardExists, playingCard) = this.cardRepository.TryGetById(cardId);
-        //    if (!playingCardExists)
-        //    {
-        //        return GameMasterStatusCode.CardNotExists;
-        //    }
-
-        //    this.logger.LogInformation($"特殊プレイ：{playingCard}({player.Name})");
-
-        //    // プレイ不能
-        //    if (!IsPlayableDirect(player, playingCard))
-        //    {
-        //        return GameMasterStatusCode.CardCantPlay;
-        //    }
-
-        //    //switch (playingCard.Type)
-        //    //{
-        //    //    case CardType.Creature:
-        //    //    case CardType.Artifact:
-        //    //        player.Field.Add(playingCard);
-        //    //        break;
-
-        //    //    default:
-        //    //        break;
-        //    //}
-
-        //    return GameMasterStatusCode.OK;
-        //}
 
         /// <summary>
         /// プレイヤーにカードを選択させます。
@@ -746,38 +708,22 @@ namespace Cauldron.Core.Entities
                 return GameMasterStatusCode.PlayerNotExists;
             }
 
-
-            var eventArgs = new EffectEventArgs(
-                GameEvent.OnBattleBefore,
-                this,
-                BattleContext: new BattleContext(
-                    AttackCard: attackCard,
-                    GuardPlayer: damagePlayer,
-                    Value: attackCard.Power
-                    )
-                );
-
-            await this.effectManager.DoEffect(eventArgs);
-
             this.logger.LogInformation($"アタック（プレイヤー）：{attackCard}({player.Name}) > {damagePlayer.Name}");
 
-            if (!CanAttack(eventArgs.BattleContext.AttackCard, eventArgs.BattleContext.GuardPlayer))
+            if (!CanAttack(attackCard, damagePlayer))
             {
                 return GameMasterStatusCode.CantAttack;
             }
 
             var damageContext = new DamageContext(
-                DamageSourceCard: eventArgs.BattleContext.AttackCard,
-                GuardPlayer: eventArgs.BattleContext.GuardPlayer,
-                Value: eventArgs.BattleContext.AttackCard.Power
+                DamageSourceCard: attackCard,
+                GuardPlayer: damagePlayer,
+                Value: attackCard.Power,
+                IsBattle: true
             );
             await this.HitPlayer(damageContext);
 
             attackCard.NumAttacksInTurn++;
-
-            var eventArgs2 = eventArgs with { GameEvent = GameEvent.OnBattle };
-
-            await this.effectManager.DoEffect(eventArgs2);
 
             return GameMasterStatusCode.OK;
         }
@@ -829,49 +775,37 @@ namespace Cauldron.Core.Entities
             var attackPlayer = this.PlayersById[attackCard.OwnerId];
             var guardPlayer = this.PlayersById[guardCard.OwnerId];
 
-            var eventArgs = new EffectEventArgs(
-                GameEvent.OnBattleBefore,
-                this,
-                BattleContext: new BattleContext(
-                    AttackCard: attackCard,
-                    GuardCard: guardCard,
-                    Value: attackCard.Power
-                ));
+            this.logger.LogInformation($"アタック（クリーチャー）：{attackCard}({attackPlayer.Name}) > {guardCard}({guardPlayer.Name})");
 
-            await this.effectManager.DoEffect(eventArgs);
-
-            this.logger.LogInformation($"アタック（クリーチャー）：{eventArgs.BattleContext.AttackCard}({attackPlayer.Name}) > {eventArgs.BattleContext.GuardCard}({guardPlayer.Name})");
-
-            if (!CanAttack(eventArgs.BattleContext.AttackCard, eventArgs.BattleContext.GuardCard, this.CreateGameContext(playerId)))
+            if (!CanAttack(attackCard, guardCard, this.CreateGameContext(playerId)))
             {
                 return GameMasterStatusCode.CantAttack;
             }
 
             // 攻撃するとステルスを失う
-            if (eventArgs.BattleContext.AttackCard.Abilities.Contains(CreatureAbility.Stealth))
+            if (attackCard.Abilities.Contains(CreatureAbility.Stealth))
             {
-                eventArgs.BattleContext.AttackCard.Abilities.Remove(CreatureAbility.Stealth);
+                attackCard.Abilities.Remove(CreatureAbility.Stealth);
             }
 
             // お互いにダメージを受ける
             var damageContext = new DamageContext(
-                DamageSourceCard: eventArgs.BattleContext.AttackCard,
-                GuardCard: eventArgs.BattleContext.GuardCard,
-                Value: eventArgs.BattleContext.AttackCard.Power
+                DamageSourceCard: attackCard,
+                GuardCard: guardCard,
+                Value: attackCard.Power,
+                IsBattle: true
             );
             await this.HitCreature(damageContext);
 
             attackCard.NumAttacksInTurn++;
 
             var damageContext2 = new DamageContext(
-                DamageSourceCard: eventArgs.BattleContext.GuardCard,
-                GuardCard: eventArgs.BattleContext.AttackCard,
-                Value: eventArgs.BattleContext.GuardCard.Power
+                DamageSourceCard: guardCard,
+                GuardCard: attackCard,
+                Value: guardCard.Power,
+                IsBattle: true
             );
             await this.HitCreature(damageContext2);
-
-            var eventArgs2 = eventArgs with { GameEvent = GameEvent.OnBattle };
-            await this.effectManager.DoEffect(eventArgs2);
 
             return GameMasterStatusCode.OK;
         }
@@ -907,7 +841,13 @@ namespace Cauldron.Core.Entities
 
             await this.effectManager.DoEffect(newEventArgs with { GameEvent = GameEvent.OnDamage });
 
-            if (newEventArgs.DamageContext.GuardCard.Toughness <= 0)
+            var isDead = (
+                newEventArgs.DamageContext.Value > 0
+                    && newEventArgs.DamageContext.DamageSourceCard.Abilities.Contains(CreatureAbility.Deadly)
+                    )
+                || newEventArgs.DamageContext.GuardCard.Toughness <= 0;
+
+            if (isDead)
             {
                 await this.DestroyCard(newEventArgs.DamageContext.GuardCard);
             }
@@ -969,7 +909,7 @@ namespace Cauldron.Core.Entities
                 .ToArray();
         }
 
-        public async ValueTask<CardDef[]> ChoiceCandidateCardDefs(Card effectOwnerCard, EffectEventArgs effectEventArgs, Choice choice, IReadOnlyList<Card> candidateCards)
+        public async ValueTask<CardDef[]> ChoiceCandidateCardDefs(Card effectOwnerCard, EffectEventArgs effectEventArgs, Choice choice)
         {
             if (choice.CardCondition?.ZoneCondition == null)
             {
@@ -993,10 +933,6 @@ namespace Cauldron.Core.Entities
             var carddefsTasks = zonePrettyNames
                 .Select(async zoneType => zoneType switch
                 {
-                    //ZonePrettyName.CardPool => this.cardRepository.CardPool
-                    //    .Where(cdef => choice.CardCondition.IsMatch(effectOwnerCard, effectEventArgs, cdef))
-                    //    .SelectMany(cdef => Enumerable.Repeat(cdef, choice.NumPicks)),
-
                     ZonePrettyName.CardPool => await GetMatchedCarddefs(),
                     _ => Array.Empty<CardDef>(),
                 });
@@ -1005,7 +941,6 @@ namespace Cauldron.Core.Entities
 
             return carddefs
                 .SelectMany(c => c)
-                .Concat(candidateCards.Select(c => this.cardRepository.CardPool.First(cd => cd.Id == c.CardDefId)))
                 .ToArray();
         }
 
@@ -1021,7 +956,7 @@ namespace Cauldron.Core.Entities
 
             var CardDefList = choice.CardCondition == null
                 ? Array.Empty<CardDef>()
-                : await this.ChoiceCandidateCardDefs(effectOwnerCard, effectEventArgs, choice, CardList);
+                : await this.ChoiceCandidateCardDefs(effectOwnerCard, effectEventArgs, choice);
 
             return new ChoiceCandidates(
                 playerList,

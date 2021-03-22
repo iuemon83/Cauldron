@@ -119,8 +119,8 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public PrivatePlayerInfo PrivatePlayerInfo => new PrivatePlayerInfo(this.PublicPlayerInfo, this.Hands.AllCards.ToArray());
-        public PublicPlayerInfo PublicPlayerInfo => new PublicPlayerInfo(
+        public PrivatePlayerInfo PrivatePlayerInfo => new(this.PublicPlayerInfo, this.Hands.AllCards.ToArray());
+        public PublicPlayerInfo PublicPlayerInfo => new(
             this.Id,
             this.Name,
             this.Field.AllCards.ToArray(),

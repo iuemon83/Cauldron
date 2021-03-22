@@ -6,9 +6,9 @@ namespace Cauldron.Server
 {
     public class QuestionManager
     {
-        private static HashSet<Guid> QuestionIdList = new();
+        private static readonly HashSet<Guid> QuestionIdList = new();
 
-        private static Dictionary<Guid, ChoiceResult> Answers = new();
+        private static readonly Dictionary<Guid, ChoiceResult> Answers = new();
 
         public static Guid AddNewQuestion()
         {

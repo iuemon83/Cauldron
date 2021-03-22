@@ -6,16 +6,19 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectActionModifyCard
     {
-        public NumValue Power { get; set; }
-        public NumValue Toughness { get; set; }
+        public NumValueModifier Cost { get; set; }
+        public NumValueModifier Power { get; set; }
+        public NumValueModifier Toughness { get; set; }
         public Choice Choice { get; set; }
 
         public EffectActionModifyCard(
-            NumValue Power,
-            NumValue Toughness,
-            Choice Choice
+            Choice Choice,
+            NumValueModifier Cost = null,
+            NumValueModifier Power = null,
+            NumValueModifier Toughness = null
             )
         {
+            this.Cost = Cost;
             this.Power = Power;
             this.Toughness = Toughness;
             this.Choice = Choice;

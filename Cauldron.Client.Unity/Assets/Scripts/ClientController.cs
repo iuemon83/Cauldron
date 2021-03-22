@@ -208,7 +208,7 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
             );
 
         var numPicked = picked.PlayerIdList.Length + picked.CardIdList.Length + picked.CardDefIdList.Length;
-        if (this.askParams.NumPicks > numPicked)
+        if (this.askParams.NumPicks < numPicked)
         {
             // ‘I‘ðŒÂ”‚ª‘½‚¢
             return (false, default);
@@ -443,6 +443,10 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
     public void OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
     {
         Debug.Log($"{nameof(OnChoiceCards)}: questionId={choiceCardsMessage.QuestionId}, ");
+
+        this.PickedPlayerIdList.Clear();
+        this.PickedCardIdList.Clear();
+        this.PickedCardDefIdList.Clear();
 
         if (choiceCardsMessage.ChoiceCandidates.PlayerIdList.Any())
         {
