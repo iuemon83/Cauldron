@@ -183,9 +183,16 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
         if (!isValid)
         {
             Debug.Log("選択している対象が正しくない");
+            return;
         }
 
         var result = await this.client.AnswerChoice(this.askParams.QuestionId, picked);
+        if (result != GameMasterStatusCode.OK)
+        {
+            Debug.Log($"result: {result}");
+
+            return;
+        }
 
         // リセット
         this.OpponentPlayerController.PickCandidateIcon.SetActive(false);
@@ -195,8 +202,6 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
             fieldCardController.PickCandidateIcon.SetActive(false);
             fieldCardController.PickedIcon.SetActive(false);
         }
-
-        Debug.Log($"result: {result}");
     }
 
     public (bool, ChoiceResult) ValidChoiceResult()

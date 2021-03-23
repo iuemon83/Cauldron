@@ -1,28 +1,33 @@
 ﻿using Cauldron.Shared.MessagePackObjects;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Cauldron.Server
 {
     public class QuestionManager
     {
-        private static readonly HashSet<Guid> QuestionIdList = new();
+        private static readonly ConcurrentDictionary<Guid, byte> QuestionIdList = new();
 
-        private static readonly Dictionary<Guid, ChoiceResult> Answers = new();
+        private static readonly ConcurrentDictionary<Guid, ChoiceResult> Answers = new();
 
         public static Guid AddNewQuestion()
         {
             var newId = Guid.NewGuid();
-            QuestionIdList.Add(newId);
+            QuestionIdList.TryAdd(newId, default);
 
             return newId;
         }
 
         public static bool SetAnswer(Guid questionId, ChoiceResult answer)
         {
-            if (QuestionIdList.Remove(questionId))
+            if (answer == null)
             {
-                Answers.Add(questionId, answer);
+                return false;
+            }
+
+            if (QuestionIdList.TryRemove(questionId, out _))
+            {
+                Answers.TryAdd(questionId, answer);
                 return true;
             }
             else
@@ -35,7 +40,7 @@ namespace Cauldron.Server
         {
             if (Answers.TryGetValue(questionId, out var result))
             {
-                Answers.Remove(questionId);
+                Answers.TryRemove(questionId, out _);
                 answer = result;
                 return true;
             }

@@ -626,8 +626,52 @@ namespace Cauldron.Core.Entities
                 throw new InvalidOperationException("ask action is undefined");
             }
 
-            var answer = await askAction(playerId, choiceCandidates, choiceNum);
-            //return choiceResult;
+            // answer が正しければtrue, そうでなければfalse
+            bool ValidAnswer(ChoiceResult answer)
+            {
+                var numPicked = answer.PlayerIdList.Length
+                    + answer.CardIdList.Length
+                    + answer.CardDefIdList.Length;
+
+                if (numPicked > choiceNum)
+                {
+                    return false;
+                }
+
+                var playerNotExists = answer.PlayerIdList
+                    .Any(p => !choiceCandidates.PlayerIdList.Contains(p));
+                if (playerNotExists)
+                {
+                    return false;
+                }
+
+                var cardNotExists = answer.CardIdList
+                    .Any(c => !choiceCandidates.CardList.Select(c => c.Id).Contains(c));
+                if (cardNotExists)
+                {
+                    return false;
+                }
+
+                var cardDefNotExists = answer.CardDefIdList
+                    .Any(c => !choiceCandidates.CardDefList.Select(c => c.Id).Contains(c));
+                if (cardDefNotExists)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            ChoiceResult answer = await Task.Run(async () =>
+            {
+                ChoiceResult tmpAnswer = default;
+                do
+                {
+                    tmpAnswer = await askAction(playerId, choiceCandidates, choiceNum);
+                } while (!ValidAnswer(tmpAnswer));
+
+                return tmpAnswer;
+            });
 
             var cards = answer.CardIdList
                 .Select(id => this.cardRepository.TryGetById(id))
@@ -646,37 +690,6 @@ namespace Cauldron.Core.Entities
                 cards,
                 carddefs
                 );
-
-            //TODO ほんとは不正なIDが指定されていないかの確認が必要
-            //switch (targetType)
-            //{
-            //    case TargetCardType.YourCreature:
-            //        {
-            //            var you = this.PlayersById[playerId];
-            //            var targetCard = you.Field.GetById(targetCardId);
-            //            if (targetCard == null)
-            //            {
-            //                throw new Exception("指定されたカードが正しくない");
-            //            }
-
-            //            return targetCard;
-            //        }
-
-            //    case TargetCardType.OpponentCreature:
-            //        {
-            //            var opponent = this.GetOpponent(playerId);
-            //            var targetCard = opponent.Field.GetById(targetCardId);
-            //            if (targetCard == null)
-            //            {
-            //                throw new Exception("指定されたカードが正しくない");
-            //            }
-
-            //            return targetCard;
-            //        }
-
-            //    default:
-            //        throw new InvalidOperationException("サポートされていない");
-            //}
         }
 
         /// <summary>

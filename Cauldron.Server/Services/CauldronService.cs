@@ -10,6 +10,11 @@ namespace Cauldron.Server.Services
     {
         public async UnaryResult<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceResult answer)
         {
+            if (answer == null)
+            {
+                return GameMasterStatusCode.InvalidQuestionId;
+            }
+
             return QuestionManager.SetAnswer(questionId, answer)
                 ? GameMasterStatusCode.OK
                 : GameMasterStatusCode.InvalidQuestionId;
