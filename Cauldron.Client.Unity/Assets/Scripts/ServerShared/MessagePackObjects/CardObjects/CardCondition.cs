@@ -7,7 +7,10 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public enum CardConditionContext
         {
-            All,
+            /// <summary>
+            /// いずれか
+            /// </summary>
+            Any,
 
             /// <summary>
             /// 自分自身

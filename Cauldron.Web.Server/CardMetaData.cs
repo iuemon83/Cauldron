@@ -16,8 +16,12 @@ namespace Cauldron.Web.Server
 
         public string[] CardTypes { get; } = GetStrings<CardType>();
         public string[] CardAbilities { get; } = GetStrings<CreatureAbility>();
+        public string[] EffectTimingDamageAfterDamageTypes { get; }
+            = GetStrings<EffectTimingDamageAfterEvent.DamageType>();
         public string[] EffectTimingDamageAfterEventSources { get; }
             = GetStrings<EffectTimingDamageAfterEvent.EventSource>();
+        public string[] EffectTimingDamageBeforeDamageTypes { get; }
+            = GetStrings<EffectTimingDamageBeforeEvent.DamageType>();
         public string[] EffectTimingDamageBeforeEventSources { get; }
             = GetStrings<EffectTimingDamageBeforeEvent.EventSource>();
         public string[] EffectTimingDestroyEventSources { get; }

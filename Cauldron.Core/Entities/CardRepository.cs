@@ -1,6 +1,5 @@
 ﻿using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,11 +29,6 @@ namespace Cauldron.Core.Entities
             {
                 foreach (var cardDef in cardset.Cards)
                 {
-                    if (cardDef.Type == CardType.Unknown)
-                    {
-                        throw new InvalidOperationException($"Card Type: {cardDef.Type}");
-                    }
-
                     cardDef.FullName = $"{cardset.Name}.{cardDef.Name}";
                     cardDef.NumTurnsToCanAttack ??= this.ruleBook.DefaultNumTurnsToCanAttack;
                     cardDef.NumAttacksLimitInTurn ??= this.ruleBook.DefaultNumAttacksLimitInTurn;

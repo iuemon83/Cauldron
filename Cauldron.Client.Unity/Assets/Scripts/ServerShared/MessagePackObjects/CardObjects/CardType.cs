@@ -3,11 +3,6 @@
     public enum CardType
     {
         /// <summary>
-        /// 不明
-        /// </summary>
-        Unknown,
-
-        /// <summary>
         /// クリーチャー
         /// </summary>
         Creature,

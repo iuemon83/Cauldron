@@ -7,13 +7,13 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public enum PlayerConditionContext
         {
-            All,
+            Any,
             EventSource
         }
 
         public enum PlayerConditionType
         {
-            All,
+            Any,
             You,
             Opponent,
             Active,
@@ -24,8 +24,8 @@ namespace Cauldron.Shared.MessagePackObjects
         public PlayerCondition.PlayerConditionType Type { get; set; }
 
         public PlayerCondition(
-            PlayerCondition.PlayerConditionContext Context = PlayerConditionContext.All,
-            PlayerCondition.PlayerConditionType Type = PlayerConditionType.All)
+            PlayerCondition.PlayerConditionContext Context = PlayerConditionContext.Any,
+            PlayerCondition.PlayerConditionType Type = PlayerConditionType.Any)
         {
             this.Context = Context;
             this.Type = Type;
