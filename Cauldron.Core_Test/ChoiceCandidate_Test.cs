@@ -666,9 +666,9 @@ namespace Cauldron.Core_Test
                 Assert.Equal(1, i);
                 TestUtil.AssertChoiceResult(expected, c);
                 return ValueTask.FromResult(new ChoiceResult(
-                    c.PlayerIdList,
-                    c.CardList.Select(c => c.Id).ToArray(),
-                    c.CardDefList.Select(c => c.Id).ToArray()
+                    Array.Empty<PlayerId>(),
+                    new[] { c.CardList[0].Id },
+                    Array.Empty<CardDefId>()
                     ));
             }
 
@@ -684,7 +684,7 @@ namespace Cauldron.Core_Test
 
             // 先行
             // ゴブリン2体出す
-            var cards = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, goblinCard2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
@@ -694,23 +694,27 @@ namespace Cauldron.Core_Test
 
             // 後攻
             // 効果クリーチャーを出す
-            var testCard = await TestUtil.Turn(testGameMaster, (g, pId) =>
+            var (goblinCard3, testcard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
-                return TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                var goblinCard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
+                var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                return (goblinCard3, testcard);
             });
 
             // 候補の検証
+            // 自軍クリーチャーは候補にならない
             expected = new ChoiceCandidates(
                 Array.Empty<PlayerId>(),
-                new[] { cards.goblinCard, cards.goblinCard2 },
+                new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
             );
             var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
-            var actual = await testGameMaster.ChoiceCandidates(testCard, testChoice, eventargs);
+            var actual = await testGameMaster.ChoiceCandidates(testcard, testChoice, eventargs);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
-            await testGameMaster.ChoiceCards(testCard, testChoice, eventargs);
+            await testGameMaster.ChoiceCards(testcard, testChoice, eventargs);
             Assert.True(isCalledAskAction);
         }
 
@@ -745,10 +749,11 @@ namespace Cauldron.Core_Test
 
                 Assert.Equal(1, i);
                 TestUtil.AssertChoiceResult(expected, c);
+
                 return ValueTask.FromResult(new ChoiceResult(
-                    c.PlayerIdList,
-                    c.CardList.Select(c => c.Id).ToArray(),
-                    c.CardDefList.Select(c => c.Id).ToArray()
+                    Array.Empty<PlayerId>(),
+                    new[] { c.CardList[0].Id },
+                    Array.Empty<CardDefId>()
                     ));
             }
 
@@ -763,28 +768,39 @@ namespace Cauldron.Core_Test
             await testGameMaster.Start(player1Id);
 
             // 先行
-            // ゴブリン2体出してから効果カード出す
-            var cards = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            // ゴブリン2体出す
+            var (goblinCard, goblinCard2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
-                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
-                return (goblinCard, goblinCard2, testCard);
+                return (goblinCard, goblinCard2);
+            });
+
+            // 後攻
+            // 効果クリーチャーを出す
+            var (goblinCard3, goblinCard4, testcard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var goblinCard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
+                var goblinCard4 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
+                var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                return (goblinCard3, goblinCard4, testcard);
             });
 
             // 候補の検証
+            // 相手クリーチャーは候補にならない
             expected = new ChoiceCandidates(
                 Array.Empty<PlayerId>(),
-                new[] { cards.goblinCard, cards.goblinCard2 },
+                new[] { goblinCard3, goblinCard4 },
                 Array.Empty<CardDef>()
             );
             var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
-            var actual = await testGameMaster.ChoiceCandidates(cards.testCard, testChoice, eventargs);
+            var actual = await testGameMaster.ChoiceCandidates(testcard, testChoice, eventargs);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
-            await testGameMaster.ChoiceCards(cards.testCard, testChoice, eventargs);
+            await testGameMaster.ChoiceCards(testcard, testChoice, eventargs);
             Assert.True(isCalledAskAction);
         }
 

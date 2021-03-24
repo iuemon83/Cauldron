@@ -995,7 +995,7 @@ namespace Cauldron.Core.Entities
                     return await this.AskCard(effectOwnerCard.OwnerId, choiceCandidates, choice.NumPicks);
 
                 case Choice.ChoiceHow.Random:
-                    var totalCount = choiceCandidates.PlayerIdList.Length + choiceCandidates.CardList.Length;// + choiceCandidates.CardDefList.Length;
+                    var totalCount = choiceCandidates.PlayerIdList.Length + choiceCandidates.CardList.Length + choiceCandidates.CardDefList.Length;
                     var totalIndexList = Enumerable.Range(0, totalCount).ToArray();
                     var pickedIndexList = RandomUtil.RandomPick(totalIndexList, choice.NumPicks);
 

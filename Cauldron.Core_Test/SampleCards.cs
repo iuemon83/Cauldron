@@ -8,25 +8,25 @@ namespace Cauldron.Core.Entities
     {
         public static readonly string CardsetName = "Sample";
 
-        public static readonly CardDef KarakuriGoblin
-            = MessageObjectExtensions.Creature(1, "からくりゴブリン", "トークン", 1, 1, isToken: true);
+        public static CardDef KarakuriGoblin
+            => MessageObjectExtensions.Creature(1, "からくりゴブリン", "トークン", 1, 1, isToken: true);
 
-        public static readonly CardDef Goblin
-            = MessageObjectExtensions.Creature(1, "ゴブリン", "ただのゴブリン", 1, 2);
+        public static CardDef Goblin
+            => MessageObjectExtensions.Creature(1, "ゴブリン", "ただのゴブリン", 1, 2);
 
-        public static readonly CardDef QuickGoblin
-            = MessageObjectExtensions.Creature(1, "素早いゴブリン", "早い", 1, 1, numTurnsToCanAttack: 0);
+        public static CardDef QuickGoblin
+            => MessageObjectExtensions.Creature(1, "素早いゴブリン", "早い", 1, 1, numTurnsToCanAttack: 0);
 
-        public static readonly CardDef ShieldGoblin
-            = MessageObjectExtensions.Creature(2, "盾持ちゴブリン", "盾になる", 1, 2,
+        public static CardDef ShieldGoblin
+            => MessageObjectExtensions.Creature(2, "盾持ちゴブリン", "盾になる", 1, 2,
                 abilities: new[] { CreatureAbility.Cover });
 
-        public static readonly CardDef DeadlyGoblin
-            = MessageObjectExtensions.Creature(3, "暗殺ゴブリン", "暗殺者", 1, 1,
+        public static CardDef DeadlyGoblin
+            => MessageObjectExtensions.Creature(3, "暗殺ゴブリン", "暗殺者", 1, 1,
                 abilities: new[] { CreatureAbility.Stealth, CreatureAbility.Deadly });
 
-        public static readonly CardDef MechanicGoblin
-            = MessageObjectExtensions.Creature(1, "ゴブリンの技師", "からくりを作り出す", 1, 1,
+        public static CardDef MechanicGoblin
+            => MessageObjectExtensions.Creature(1, "ゴブリンの技師", "からくりを作り出す", 1, 1,
             effects: new[]
             {
                 // 破壊時、からくりゴブリン１枚を手札に加える
@@ -60,8 +60,8 @@ namespace Cauldron.Core.Entities
                 )
             });
 
-        public static readonly CardDef NinjaGoblin
-            = MessageObjectExtensions.Creature(3, "分身ゴブリン", "分身する", 1, 2,
+        public static CardDef NinjaGoblin
+            => MessageObjectExtensions.Creature(3, "分身ゴブリン", "分身する", 1, 2,
                 effects: new[] {
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
@@ -87,8 +87,8 @@ namespace Cauldron.Core.Entities
                         })
                 });
 
-        public static readonly CardDef GoblinsGreed
-            = MessageObjectExtensions.Sorcery(2, "ゴブリンの強欲", "ドローするぞ",
+        public static CardDef GoblinsGreed
+            => MessageObjectExtensions.Sorcery(2, "ゴブリンの強欲", "ドローするぞ",
                 effects: new[]
                 {
                     // カードを2枚引く
@@ -117,8 +117,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef ShamanGoblin
-            = MessageObjectExtensions.Creature(3, "呪術師ゴブリン", "相手を呪い殺すぞ", 1, 1,
+        public static CardDef ShamanGoblin
+            => MessageObjectExtensions.Creature(3, "呪術師ゴブリン", "相手を呪い殺すぞ", 1, 1,
                 effects: new[]
                 {
                     new CardEffect(
@@ -144,8 +144,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef HealGoblin
-            = MessageObjectExtensions.Creature(3, "優しいゴブリン", "回復してくれる", 1, 2,
+        public static CardDef HealGoblin
+            => MessageObjectExtensions.Creature(3, "優しいゴブリン", "回復してくれる", 1, 2,
                 effects: new[]
                 {
                     new CardEffect(
@@ -171,8 +171,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef FireGoblin
-            = MessageObjectExtensions.Creature(4, "火炎のゴブリン", "火を飛ばす", 4, 2,
+        public static CardDef FireGoblin
+            => MessageObjectExtensions.Creature(4, "火炎のゴブリン", "火を飛ばす", 4, 2,
                 effects: new[]
                 {
                     new CardEffect(
@@ -206,8 +206,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef MadScientist
-            = MessageObjectExtensions.Creature(4, "マッドサイエンティスト", "どこかおかしい", 3, 3,
+        public static CardDef MadScientist
+            => MessageObjectExtensions.Creature(4, "マッドサイエンティスト", "どこかおかしい", 3, 3,
                 // 自分か相手のクリーチャーを一体破壊して、再生する
                 effects: new[]
                 {
@@ -276,8 +276,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef BraveGoblin
-            = MessageObjectExtensions.Creature(4, "ゴブリンの勇者", "勇者！", 2, 2,
+        public static CardDef BraveGoblin
+            => MessageObjectExtensions.Creature(4, "ゴブリンの勇者", "勇者！", 2, 2,
             effects: new[]
             {
                 // 自分が受けるダメージを2軽減する
@@ -351,8 +351,8 @@ namespace Cauldron.Core.Entities
                 )
             });
 
-        public static readonly CardDef GiantGoblin
-            = MessageObjectExtensions.Creature(5, "ゴブリンの巨人", "超でかい", 3, 7,
+        public static CardDef GiantGoblin
+            => MessageObjectExtensions.Creature(5, "ゴブリンの巨人", "超でかい", 3, 7,
                 abilities: new[] { CreatureAbility.Cover },
                 effects: new[]
                 {
@@ -380,8 +380,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef LeaderGoblin
-            = MessageObjectExtensions.Creature(5, "ゴブリンリーダー", "", 1, 5,
+        public static CardDef LeaderGoblin
+            => MessageObjectExtensions.Creature(5, "ゴブリンリーダー", "", 1, 5,
                 effects: new[]
                 {
                     // プレイ時：自分のクリーチャーすべてを+1/+0 する。
@@ -417,8 +417,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef TyrantGoblin
-            = MessageObjectExtensions.Creature(6, "暴君ゴブリン", "界隈一のあばれもの", 6, 6,
+        public static CardDef TyrantGoblin
+            => MessageObjectExtensions.Creature(6, "暴君ゴブリン", "界隈一のあばれもの", 6, 6,
                 effects: new[]
                 {
                     // 手札をすべて捨てて、捨てた枚数パワーアップ
@@ -466,8 +466,8 @@ namespace Cauldron.Core.Entities
                         })
                 });
 
-        public static readonly CardDef KingGoblin
-            = MessageObjectExtensions.Creature(10, "ゴブリンの王", "偉大な存在", 8, 8,
+        public static CardDef KingGoblin
+            => MessageObjectExtensions.Creature(10, "ゴブリンの王", "偉大な存在", 8, 8,
                 effects: new[]
                 {
                     //TODO 未実装
@@ -527,8 +527,8 @@ namespace Cauldron.Core.Entities
                         })
                 });
 
-        public static readonly CardDef Sword
-            = MessageObjectExtensions.Sorcery(1, "剣", "パワーアップ",
+        public static CardDef Sword
+            => MessageObjectExtensions.Sorcery(1, "剣", "パワーアップ",
             effects: new[]
             {
                 new CardEffect(
@@ -557,8 +557,8 @@ namespace Cauldron.Core.Entities
                 )
             });
 
-        public static readonly CardDef Shield
-            = MessageObjectExtensions.Sorcery(1, "盾", "タフネスアップ",
+        public static CardDef Shield
+            => MessageObjectExtensions.Sorcery(1, "盾", "タフネスアップ",
             effects: new[]
             {
                 new CardEffect(
@@ -587,8 +587,8 @@ namespace Cauldron.Core.Entities
                 )
             });
 
-        public static readonly CardDef HolyShield
-            = MessageObjectExtensions.Sorcery(2, "聖なる盾", "",
+        public static CardDef HolyShield
+            => MessageObjectExtensions.Sorcery(2, "聖なる盾", "",
                 effects: new[]
                 {
                     // 自軍クリーチャーに次の効果を付与する。
@@ -643,7 +643,7 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef ChangeHands = MessageObjectExtensions.Sorcery(2, "手札入れ替え", "",
+        public static CardDef ChangeHands = MessageObjectExtensions.Sorcery(2, "手札入れ替え", "",
             effects: new[]
             {
                 new CardEffect(
@@ -689,8 +689,8 @@ namespace Cauldron.Core.Entities
                 ),
             });
 
-        public static readonly CardDef Slap
-            = MessageObjectExtensions.Sorcery(2, "袋叩き", "",
+        public static CardDef Slap
+            => MessageObjectExtensions.Sorcery(2, "袋叩き", "",
                 effects: new[]
                 {
                     // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
@@ -730,8 +730,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef FullAttack
-            = MessageObjectExtensions.Sorcery(3, "一斉射撃", "撃てー！",
+        public static CardDef FullAttack
+            => MessageObjectExtensions.Sorcery(3, "一斉射撃", "撃てー！",
             effects: new[]
             {
                 new CardEffect(
@@ -759,8 +759,8 @@ namespace Cauldron.Core.Entities
                 )
             });
 
-        public static readonly CardDef OldShield
-            = MessageObjectExtensions.Artifact(1, "ぼろの盾", "いまにも壊れそう",
+        public static CardDef OldShield
+            => MessageObjectExtensions.Artifact(1, "ぼろの盾", "いまにも壊れそう",
                 effects: new[]
                 {
                     // 自分のクリーチャーが受けるダメージを1軽減する.その後このカードを破壊する
@@ -810,8 +810,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef OldWall
-            = MessageObjectExtensions.Artifact(1, "ぼろの壁", "いまにも壊れそう",
+        public static CardDef OldWall
+            => MessageObjectExtensions.Artifact(1, "ぼろの壁", "いまにも壊れそう",
                 effects: new[]
                 {
                     // 自分のプレイヤーまたはクリーチャーが受けるダメージを1軽減する.その後このカードを破壊する
@@ -871,8 +871,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef GoblinStatue
-            = MessageObjectExtensions.Artifact(4, "呪いのゴブリン像", "縁起は良くない",
+        public static CardDef GoblinStatue
+            => MessageObjectExtensions.Artifact(4, "呪いのゴブリン像", "縁起は良くない",
                 effects: new[]
                 {
                     new CardEffect(
@@ -909,8 +909,8 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static readonly CardDef HolyStatue
-            = MessageObjectExtensions.Artifact(4, "癒やしの像", "みんなを癒やすぞ",
+        public static CardDef HolyStatue
+            => MessageObjectExtensions.Artifact(4, "癒やしの像", "みんなを癒やすぞ",
             effects: new[]
             {
                 // 使用時、すべての自分クリーチャーを+0/+1
