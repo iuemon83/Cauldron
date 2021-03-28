@@ -759,6 +759,40 @@ namespace Cauldron.Core.Entities
                 )
             });
 
+        public static CardDef GoblinCaptureJar
+            => MessageObjectExtensions.Sorcery(4, "ゴブリン封印の壺", "ゴブリンを無力化する不思議な壺",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                Play: new(EffectTimingPlayEvent.EventSource.This)))),
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                ModifyCard = new(
+                                    new Choice()
+                                    {
+                                        How = Choice.ChoiceHow.All,
+                                        CardCondition = new()
+                                        {
+                                            NameCondition = new(new TextValue("ゴブリン"),
+                                                TextCondition.ConditionCompare.Like),
+                                            TypeCondition = new(new[]{ CardType.Creature }),
+                                            ZoneCondition = new(new(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }))
+                                        }
+                                    },
+                                    Power: new(NumValueModifier.ValueModifierOperator.Replace,
+                                        new NumValue(1)),
+                                    Ability: new(CreatureAbilityModifier.OperatorValue.Add,
+                                        CreatureAbility.Sealed)
+                                    )
+                            }
+                        }
+                    )
+                });
+
         public static CardDef OldShield
             => MessageObjectExtensions.Artifact(1, "ぼろの盾", "いまにも壊れそう",
                 effects: new[]

@@ -159,5 +159,19 @@ namespace Cauldron.Core_Test
                 choiceCandidates.CardList.Select(c => c.Id).ToArray(),
                 choiceCandidates.CardDefList.Select(c => c.Id).ToArray()));
         }
+
+        public static (GameMaster, PlayerId, PlayerId) InitTest(CardDef[] cardpool) => InitTest(cardpool, TestUtil.GameMasterOptions());
+
+        public static (GameMaster, PlayerId, PlayerId) InitTest(CardDef[] cardpool, GameMasterOptions options)
+        {
+            options.CardFactory.SetCardPool(new[] { new CardSet("Test", cardpool) });
+
+            var testGameMaster = new GameMaster(options);
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(cardpool[0].Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(cardpool[0].Id, 40));
+
+            return (testGameMaster, player1Id, player2Id);
+        }
     }
 }

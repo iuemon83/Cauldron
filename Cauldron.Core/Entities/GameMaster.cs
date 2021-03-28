@@ -14,6 +14,34 @@ namespace Cauldron.Core.Entities
 {
     public class GameMaster
     {
+        /// <summary>
+        /// 指定したアビリティが有効になっている場合はtrue、そうでなければfalse
+        /// </summary>
+        /// <param name="card"></param>
+        /// <param name="ability"></param>
+        /// <returns></returns>
+        public static bool EnableAbility(Card card, CreatureAbility ability)
+        {
+            static bool HasAbility(Card card, CreatureAbility ability)
+                => card.Abilities.Contains(ability);
+
+            if (HasAbility(card, CreatureAbility.Sealed))
+            {
+                return ability == CreatureAbility.Sealed;
+            }
+
+            return ability switch
+            {
+                CreatureAbility.Cover => HasAbility(card, ability) && !HasAbility(card, CreatureAbility.Stealth),
+                _ => HasAbility(card, ability)
+            };
+        }
+
+        /// <summary>
+        /// 攻撃可能な状態か
+        /// </summary>
+        /// <param name="attackCard"></param>
+        /// <returns></returns>
         public static bool CanAttack(Card attackCard)
         {
             return attackCard != null
@@ -22,17 +50,22 @@ namespace Cauldron.Core.Entities
                 // 召喚酔いでない
                 && attackCard.NumTurnsToCanAttack <= attackCard.NumTurnsInField
                 // 攻撃不能状態でない
-                && !attackCard.Abilities.Contains(CreatureAbility.CantAttack)
+                && !EnableAbility(attackCard, CreatureAbility.CantAttack)
                 // 1ターン中に攻撃可能な回数を超えていない
                 && attackCard.NumAttacksLimitInTurn > attackCard.NumAttacksInTurn
                 ;
         }
 
+        /// <summary>
+        /// 指定したカードが、指定したプレイヤーに攻撃可能か
+        /// </summary>
+        /// <param name="attackCard"></param>
+        /// <param name="guardPlayer"></param>
+        /// <returns></returns>
         public static bool CanAttack(Card attackCard, Player guardPlayer)
         {
             var existsCover = guardPlayer.Field.AllCards
-                .Any(c => c.Abilities.Contains(CreatureAbility.Cover)
-                    && !c.Abilities.Contains(CreatureAbility.Stealth));
+                .Any(c => EnableAbility(c, CreatureAbility.Cover));
 
             return
                 // 攻撃可能なカード
@@ -44,17 +77,23 @@ namespace Cauldron.Core.Entities
                 ;
         }
 
+        /// <summary>
+        /// 指定したカードが、指定したカードに攻撃可能か
+        /// </summary>
+        /// <param name="attackCard"></param>
+        /// <param name="guardCard"></param>
+        /// <param name="environment"></param>
+        /// <returns></returns>
         public static bool CanAttack(Card attackCard, Card guardCard, GameContext environment)
         {
-            var guardPlayer = environment.You.PublicPlayerInfo.Id == guardCard.OwnerId
-                ? environment.You.PublicPlayerInfo
-                : environment.Opponent;
-            var existsCover = guardPlayer.Field
-                .Any(c => c.Abilities.Contains(CreatureAbility.Cover)
-                    && !c.Abilities.Contains(CreatureAbility.Stealth));
+            static bool ExistsOtherCover(Card guardCard, GameContext environment)
+            {
+                var guardPlayer = environment.You.PublicPlayerInfo.Id == guardCard.OwnerId
+                    ? environment.You.PublicPlayerInfo
+                    : environment.Opponent;
 
-            var coverCheck = guardCard.Abilities.Contains(CreatureAbility.Cover)
-                || !existsCover;
+                return guardPlayer.Field.Any(c => EnableAbility(c, CreatureAbility.Cover));
+            }
 
             return
                 // 攻撃可能なカード
@@ -64,9 +103,10 @@ namespace Cauldron.Core.Entities
                 // クリーチャー以外には攻撃できない
                 && guardCard.Type == CardType.Creature
                 // ステルス状態は攻撃対象にならない
-                && !guardCard.Abilities.Contains(CreatureAbility.Stealth)
-                // カバー関連のチェック
-                && coverCheck
+                && !EnableAbility(guardCard, CreatureAbility.Stealth)
+                // 自分がカバー or 他にカバーがいない
+                && (EnableAbility(guardCard, CreatureAbility.Cover)
+                    || !ExistsOtherCover(guardCard, environment))
                 ;
         }
 
@@ -139,17 +179,6 @@ namespace Cauldron.Core.Entities
 
             // コストが払えないとプレイできない
             if (player.CurrentMp < card.Cost)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public static bool IsPlayableDirect(Player player, Card card)
-        {
-            // フィールドに出すカードはフィールドに空きがないとプレイできない
-            if (player.Field.Full)
             {
                 return false;
             }
@@ -267,40 +296,42 @@ namespace Cauldron.Core.Entities
             await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDestroy, this, SourceCard: cardToDestroy));
         }
 
-        public async ValueTask Buff(Card creatureCard, int powerBuff, int toughnessBuff)
+        public async ValueTask ModifyCard(Card card, EffectActionModifyCard effectActionModifyCard, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
-            this.logger.LogInformation($"修整：{creatureCard}({this.PlayersById[creatureCard.OwnerId].Name})-[{powerBuff},{toughnessBuff}]");
+            var newCost = await (effectActionModifyCard.Cost?.Modify(effectOwnerCard, effectEventArgs, card.Cost)
+                    ?? ValueTask.FromResult(card.Cost));
 
-            if (creatureCard.Type != CardType.Creature)
+            //this.logger.LogInformation($"修整：{card}({this.PlayersById[card.OwnerId].Name})-[{newCost}, {newPower},{newToughness}]");
+
+            card.CostBuff = newCost - card.BaseCost;
+
+            if (card.Type == CardType.Creature)
             {
-                return;
-            }
+                var newPower = await (effectActionModifyCard.Power?.Modify(effectOwnerCard, effectEventArgs, card.Power)
+                        ?? ValueTask.FromResult(card.Power));
+                var newToughness = await (effectActionModifyCard.Toughness?.Modify(effectOwnerCard, effectEventArgs, card.Toughness)
+                        ?? ValueTask.FromResult(card.Toughness));
+                var newAbilities = effectActionModifyCard.Ability?.Modify(card.Abilities)
+                        ?? card.Abilities.ToArray();
 
-            creatureCard.PowerBuff += powerBuff;
-            creatureCard.ToughnessBuff += toughnessBuff;
+                card.PowerBuff = newPower - card.BasePower;
+                card.ToughnessBuff = newToughness - card.BaseToughness;
+                card.Abilities = newAbilities.ToList();
+            }
 
             // カードの持ち主には無条件に通知する
-            this.EventListener?.OnModifyCard?.Invoke(creatureCard.OwnerId,
-                this.CreateGameContext(creatureCard.OwnerId),
+            this.EventListener?.OnModifyCard?.Invoke(card.OwnerId,
+                this.CreateGameContext(card.OwnerId),
                 new ModifyCardNotifyMessage()
                 {
-                    CardId = creatureCard.Id,
+                    CardId = card.Id,
                 });
 
-            if (creatureCard.Toughness <= 0)
+            if (card.Type == CardType.Creature && card.Toughness <= 0)
             {
-                await this.DestroyCard(creatureCard);
+                await this.DestroyCard(card);
             }
         }
-
-        //public void AddHand(Player player, Card addCard)
-        //{
-        //    player.Hands.Add(addCard);
-
-        //    this.logger.LogInformation($"手札に追加: {addCard.Name}({player.Name})");
-        //    var handsLog = string.Join(",", player.Hands.AllCards.Select(c => c.Name));
-        //    this.logger.LogInformation($"手札: {handsLog}({player.Name})");
-        //}
 
         public async ValueTask<GameMasterStatusCode> Draw(PlayerId playerId, int numCards)
         {
@@ -796,7 +827,7 @@ namespace Cauldron.Core.Entities
             }
 
             // 攻撃するとステルスを失う
-            if (attackCard.Abilities.Contains(CreatureAbility.Stealth))
+            if (EnableAbility(attackCard, CreatureAbility.Stealth))
             {
                 attackCard.Abilities.Remove(CreatureAbility.Stealth);
             }
@@ -856,7 +887,7 @@ namespace Cauldron.Core.Entities
 
             var isDead = (
                 newEventArgs.DamageContext.Value > 0
-                    && newEventArgs.DamageContext.DamageSourceCard.Abilities.Contains(CreatureAbility.Deadly)
+                    && EnableAbility(newEventArgs.DamageContext.DamageSourceCard, CreatureAbility.Deadly)
                     )
                 || newEventArgs.DamageContext.GuardCard.Toughness <= 0;
 

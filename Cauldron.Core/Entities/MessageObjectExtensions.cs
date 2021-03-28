@@ -79,6 +79,17 @@ namespace Cauldron.Core.Entities
             };
         }
 
+        public static CreatureAbility[] Modify(this CreatureAbilityModifier abilityMOdifier, IReadOnlyList<CreatureAbility> value)
+        {
+            return abilityMOdifier.Operator switch
+            {
+                CreatureAbilityModifier.OperatorValue.Add => value.Concat(new[] { abilityMOdifier.Value }).ToArray(),
+                CreatureAbilityModifier.OperatorValue.Remove => value.Where(a => a != abilityMOdifier.Value).ToArray(),
+                CreatureAbilityModifier.OperatorValue.Clear => Array.Empty<CreatureAbility>(),
+                _ => throw new InvalidOperationException()
+            };
+        }
+
         public static int Calculate(this NumValueVariableCalculator numValueVariableCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             return effectEventArgs.GameMaster.TryGetNumVariable(effectOwnerCard.Id, numValueVariableCalculator.Name, out var value)
@@ -360,12 +371,14 @@ namespace Cauldron.Core.Entities
             var done = false;
             foreach (var card in targets)
             {
-                var buffPower = await (effectActionModifyCard.Power?.Modify(effectOwnerCard, effectEventArgs, card.Power)
-                    ?? ValueTask.FromResult(card.Power));
-                var buffToughness = await (effectActionModifyCard.Toughness?.Modify(effectOwnerCard, effectEventArgs, card.Toughness)
-                    ?? ValueTask.FromResult(card.Toughness));
+                //var buffPower = await (effectActionModifyCard.Power?.Modify(effectOwnerCard, effectEventArgs, card.Power)
+                //    ?? ValueTask.FromResult(card.Power));
+                //var buffToughness = await (effectActionModifyCard.Toughness?.Modify(effectOwnerCard, effectEventArgs, card.Toughness)
+                //    ?? ValueTask.FromResult(card.Toughness));
 
-                await effectEventArgs.GameMaster.Buff(card, buffPower - card.Power, buffToughness - card.Toughness);
+                //await effectEventArgs.GameMaster.Buff(card, buffPower - card.Power, buffToughness - card.Toughness);
+
+                await effectEventArgs.GameMaster.ModifyCard(card, effectActionModifyCard, effectOwnerCard, effectEventArgs);
 
                 done = true;
             }

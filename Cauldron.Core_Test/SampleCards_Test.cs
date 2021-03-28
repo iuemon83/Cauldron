@@ -349,15 +349,7 @@ namespace Cauldron.Core_Test
                     Array.Empty<CardDefId>()));
             }
 
-            //var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-            //    cardRepository: testCardFactory,
-            //    EventListener: TestUtil.GameEventListener(AskCardAction: assertAskAction)
-            //    ));
-
-            //var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            //var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            var (testGameMaster, player1Id, player2Id) = InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions(
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions(
                 EventListener: TestUtil.GameEventListener(AskCardAction: assertAskAction)
                 ));
 
@@ -438,7 +430,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.BraveGoblin;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1Id, player2Id) = InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions());
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             await testGameMaster.Start(player1Id);
 
@@ -677,7 +669,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.HolyShield;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1Id, player2Id) = InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions());
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             await testGameMaster.Start(player1Id);
 
@@ -824,6 +816,52 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task GoblinCaptureJar()
+        {
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+            var notGoblinDef = SampleCards.Goblin;
+            notGoblinDef.Name = "ƒXƒ‰ƒCƒ€";
+            goblinDef.Cost = 0;
+            var testCardDef = SampleCards.GoblinCaptureJar;
+            testCardDef.Cost = 0;
+
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { goblinDef, notGoblinDef, testCardDef });
+
+            await testGameMaster.Start(player1Id);
+
+            // æU
+            var (goblin1, notGoblin1) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                var notGoblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, notGoblinDef.Id);
+
+                return (goblin1, notGoblin1);
+            });
+
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                var notGoblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, notGoblinDef.Id);
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // ©ŒR‚à“GŒR‚àƒSƒuƒŠƒ“‚Í••ˆó{ƒpƒ[1‚É‚È‚é
+                Assert.Contains(CreatureAbility.Sealed, goblin1.Abilities);
+                Assert.Equal(1, goblin1.Power);
+                Assert.Contains(CreatureAbility.Sealed, goblin2.Abilities);
+                Assert.Equal(1, goblin2.Power);
+
+                // ƒSƒuƒŠƒ“ˆÈŠO‚Í‚È‚É‚à‚È‚ç‚È‚¢
+                Assert.DoesNotContain(CreatureAbility.Sealed, notGoblin1.Abilities);
+                Assert.Equal(notGoblin1.BasePower, notGoblin1.Power);
+                Assert.DoesNotContain(CreatureAbility.Sealed, notGoblin2.Abilities);
+                Assert.Equal(notGoblin2.BasePower, notGoblin2.Power);
+            });
+        }
+
+
+        [Fact]
         public async Task FullAttack()
         {
             var goblinDef = SampleCards.Goblin;
@@ -868,15 +906,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
 
-            //var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            //testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
-            //var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            //var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            //var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            var (testGameMaster, player1Id, player2Id) = InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions());
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             await testGameMaster.Start(player1Id);
 
@@ -912,7 +942,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1Id, player2Id) = InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions());
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             await testGameMaster.Start(player1Id);
 
@@ -948,7 +978,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1Id, player2Id) = InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions());
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             await testGameMaster.Start(player1Id);
 
@@ -975,18 +1005,6 @@ namespace Cauldron.Core_Test
             });
         }
 
-        public static (GameMaster, PlayerId, PlayerId) InitTest(CardDef[] cardpool, GameMasterOptions options)
-        {
-            options.CardFactory.SetCardPool(new[] { new CardSet("Test", cardpool) });
-
-            var testGameMaster = new GameMaster(options);
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(cardpool[0].Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(cardpool[0].Id, 40));
-
-            return (testGameMaster, player1Id, player2Id);
-        }
-
         [Fact]
         public async Task OldWall_ƒvƒŒƒCƒ„[‚ğUŒ‚()
         {
@@ -995,7 +1013,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1Id, player2Id) = InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions());
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             await testGameMaster.Start(player1Id);
 
@@ -1027,7 +1045,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1Id, player2Id) = InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions());
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             await testGameMaster.Start(player1Id);
 
@@ -1062,7 +1080,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1Id, player2Id) = InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions());
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             await testGameMaster.Start(player1Id);
 
