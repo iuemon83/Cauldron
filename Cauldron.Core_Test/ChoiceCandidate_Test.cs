@@ -15,7 +15,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task ランダムな自分クリーチャー1体()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblinDef.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -30,11 +30,11 @@ namespace Cauldron.Core_Test
                 How = Choice.ChoiceHow.Random
             };
 
-            var testCardDef = MessageObjectExtensions.Creature(0, "テストクリーチャー", "テストクリーチャー", 2, 2, 1,
+            var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 2, 2, 1,
                 effects: new[]
                 {
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]
                         {
                             new EffectAction()
@@ -97,7 +97,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 自分のクリーチャーすべて()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -111,11 +111,11 @@ namespace Cauldron.Core_Test
                 How = Choice.ChoiceHow.All,
             };
 
-            var testCardDef = MessageObjectExtensions.Creature(0, "テストクリーチャー", "テストクリーチャー", 3, 3, 1,
+            var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 3, 3, 1,
                 effects: new[]
                 {
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]
                         {
                             new EffectAction()
@@ -174,10 +174,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task カードプールから名前指定で一枚()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
-            var fairy = MessageObjectExtensions.Creature(0, "フェアリー", "テストクリーチャー", 1, 1, 1, isToken: true);
+            var fairy = SampleCards.Creature(0, "フェアリー", "テストクリーチャー", 1, 1, 1, isToken: true);
 
             var testChoice = new Choice()
             {
@@ -192,7 +192,7 @@ namespace Cauldron.Core_Test
                 NumPicks = 1,
             };
 
-            var testCardDef = MessageObjectExtensions.Creature(0, "テストクリーチャー", "テストクリーチャー", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 1, 1, 1,
                 effects: new[]
                 {
                     new CardEffect(
@@ -257,10 +257,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task カードプールから名前指定で2枚()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
-            var fairy = MessageObjectExtensions.Creature(0, "フェアリー", "テストクリーチャー", 1, 1, 1, isToken: true);
+            var fairy = SampleCards.Creature(0, "フェアリー", "テストクリーチャー", 1, 1, 1, isToken: true);
 
             var testChoice = new Choice()
             {
@@ -275,7 +275,7 @@ namespace Cauldron.Core_Test
                 NumPicks = 2,
             };
 
-            var testCardDef = MessageObjectExtensions.Creature(0, "テストクリーチャー", "テストクリーチャー", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 1, 1, 1,
                 effects: new[]
                 {
                     new CardEffect(
@@ -340,7 +340,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 相手プレイヤーが選択される()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -350,7 +350,7 @@ namespace Cauldron.Core_Test
                     Type = PlayerCondition.PlayerConditionType.Opponent,
                 }
             };
-            var testCardDef = MessageObjectExtensions.Creature(0, "テストクリーチャー", "テストクリーチャー", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 1, 1, 1,
                 effects: new[]
                 {
                     new CardEffect(
@@ -415,7 +415,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task ターン中のプレイヤーが選択される()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -425,7 +425,7 @@ namespace Cauldron.Core_Test
                     Type = PlayerCondition.PlayerConditionType.Active
                 }
             };
-            var testCardDef = MessageObjectExtensions.Artifact(0, "test", "test", false,
+            var testCardDef = SampleCards.Artifact(0, "test", "test", false,
                 new[]
                 {
                     // ターン開始時、カレントプレイヤーに1ダメージ
@@ -508,7 +508,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task ランダムな相手クリーチャー一体()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -521,7 +521,7 @@ namespace Cauldron.Core_Test
                 },
                 NumPicks = 1
             };
-            var testCardDef = MessageObjectExtensions.Artifact(0, "test", "test", false);
+            var testCardDef = SampleCards.Artifact(0, "test", "test", false);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -572,7 +572,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 相手プレイヤーかランダムな相手クリーチャー1体()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -589,7 +589,7 @@ namespace Cauldron.Core_Test
                     ZoneCondition = new(new(new[] { ZonePrettyName.OpponentField })),
                 }
             };
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1);
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -639,7 +639,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 対象の相手クリーチャー1体()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -652,7 +652,7 @@ namespace Cauldron.Core_Test
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                 }
             };
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1);
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -721,7 +721,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 対象の自分クリーチャー1体()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -735,7 +735,7 @@ namespace Cauldron.Core_Test
                     TypeCondition = new CardTypeCondition(new[] { CardType.Creature, })
                 }
             };
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1);
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -807,7 +807,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 自分自身を選択する()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -818,7 +818,7 @@ namespace Cauldron.Core_Test
                     Context = CardCondition.CardConditionContext.This,
                 }
             };
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1);
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
@@ -863,7 +863,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task イベントソースを選択する()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 1);
             goblin.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice()
@@ -874,7 +874,7 @@ namespace Cauldron.Core_Test
                     Context = CardCondition.CardConditionContext.EventSource,
                 }
             };
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1);
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });

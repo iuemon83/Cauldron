@@ -458,9 +458,6 @@ namespace Cauldron.Core.Entities
             return (true, args);
         }
 
-        public static readonly EffectCondition Spell
-            = new(ZonePrettyName.YouField, new(new(Play: new(EffectTimingPlayEvent.EventSource.This))));
-
         public static async ValueTask<bool> IsMatch(this EffectCondition effectCondition, Card effectOwnerCard, EffectEventArgs eventArgs)
         {
             return effectCondition.IsMatchedZone(effectOwnerCard, eventArgs)
@@ -715,51 +712,6 @@ namespace Cauldron.Core.Entities
         public static void Damage(this Card card, int damage)
         {
             card.ToughnessBuff -= Math.Max(0, damage);
-        }
-
-        public static CardDef Creature(int cost, string name, string flavorText, int power, int toughness,
-            int? numTurnsToCanAttack = null, int? numAttacksInTurn = null, bool isToken = false,
-            IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect> effects = null)
-        {
-            return new CardDef()
-            {
-                Cost = cost,
-                Type = CardType.Creature,
-                Name = name,
-                FlavorText = flavorText,
-                Power = power,
-                Toughness = toughness,
-                NumTurnsToCanAttack = numTurnsToCanAttack,
-                NumAttacksLimitInTurn = numAttacksInTurn,
-                IsToken = isToken,
-                Abilities = abilities?.ToList() ?? new List<CreatureAbility>(),
-                Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
-            };
-        }
-
-        public static CardDef Artifact(int cost, string name, string flavorText, bool isToken = false, IEnumerable<CardEffect> effects = null)
-        {
-            return new CardDef()
-            {
-                Cost = cost,
-                IsToken = isToken,
-                Type = CardType.Artifact,
-                Name = name,
-                FlavorText = flavorText,
-                Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
-            };
-        }
-
-        public static CardDef Sorcery(int cost, string name, string flavorText, IEnumerable<CardEffect> effects = null)
-        {
-            return new CardDef()
-            {
-                Cost = cost,
-                Type = CardType.Sorcery,
-                Name = name,
-                FlavorText = flavorText,
-                Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
-            };
         }
 
         public static Zone FromPrettyName(PlayerId cardOwnerId, PlayerId opponentId, ZonePrettyName zonePrettyName)

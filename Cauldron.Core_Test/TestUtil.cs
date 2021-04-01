@@ -63,6 +63,12 @@ namespace Cauldron.Core_Test
 
         public static void AssertCollection<T>(IReadOnlyList<T> expected, IReadOnlyList<T> actual)
         {
+            if (expected == null)
+            {
+                Assert.Null(actual);
+                return;
+            }
+
             Assert.Equal(expected.Count, actual.Count);
 
             var orderedExpected = expected.OrderBy(x => x);
@@ -164,7 +170,7 @@ namespace Cauldron.Core_Test
 
         public static (GameMaster, PlayerId, PlayerId) InitTest(CardDef[] cardpool, GameMasterOptions options)
         {
-            options.CardFactory.SetCardPool(new[] { new CardSet("Test", cardpool) });
+            options.CardFactory.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, cardpool) });
 
             var testGameMaster = new GameMaster(options);
 

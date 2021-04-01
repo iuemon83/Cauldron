@@ -131,7 +131,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MechanicGoblin()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
             var tokenDef = SampleCards.KarakuriGoblin;
             var testCardDef = SampleCards.MechanicGoblin;
             testCardDef.Cost = 0;
@@ -328,9 +328,6 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.FireGoblin;
             testCardDef.Cost = 0;
 
-            //var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            //testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
-
             PlayerId[] expectedAskPlayerLsit = default;
             Card[] expectedAskCardLsit = default;
 
@@ -383,7 +380,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MadScientist()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2);
 
             var testCardDef = SampleCards.MadScientist;
             testCardDef.Cost = 0;
@@ -499,7 +496,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task LeaderGoblin()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
             var testCreatureDef = SampleCards.LeaderGoblin;
             testCreatureDef.Cost = 0;
 
@@ -582,7 +579,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Sword()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = SampleCards.Sword;
             testCardDef.Cost = 0;
@@ -623,7 +620,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Shield()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = SampleCards.Shield;
             testCardDef.Cost = 0;
@@ -662,9 +659,57 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task FirstAttack()
+        {
+            var testCardDef1 = SampleCards.FirstAttack;
+            testCardDef1.Cost = 0;
+
+            var testCardDef2 = SampleCards.SecondAttack;
+
+            PlayerId[] expectedChoicePlayerIdList = default;
+            Card[] expectedChoiceCardList = default;
+
+            // カードの選択処理のテスト
+            ValueTask<ChoiceResult> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            {
+                TestUtil.AssertCollection(expectedChoicePlayerIdList, c.PlayerIdList);
+                TestUtil.AssertCollection(expectedChoiceCardList, c.CardList);
+
+                return ValueTask.FromResult(new ChoiceResult(
+                    c.PlayerIdList.Take(1).ToArray(),
+                    Array.Empty<CardId>(),
+                    Array.Empty<CardDefId>()
+                ));
+            }
+
+            var (testGameMaster, player1Id, player2Id) = TestUtil.InitTest(new[] { testCardDef1, testCardDef2 },
+                TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
+
+            await testGameMaster.Start(player1Id);
+
+            expectedChoicePlayerIdList = new[] { player2Id };
+            expectedChoiceCardList = Array.Empty<Card>();
+
+            // 先攻
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var beforeHandIds = g.PlayersById[player1Id].Hands.AllCards.Select(c => c.Id).ToArray();
+                var beforeHp = g.PlayersById[player2Id].CurrentHp;
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef1.Id);
+
+                var diffCards = g.PlayersById[player1Id].Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
+                Assert.Single(diffCards);
+                Assert.Equal(testCardDef2.Id, diffCards[0].CardDefId);
+
+                Assert.Equal(beforeHp - 1, g.PlayersById[player2Id].CurrentHp);
+            });
+        }
+
+        [Fact]
         public async Task HolyShield()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, numTurnsToCanAttack: 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, numTurnsToCanAttack: 0);
 
             var testCardDef = SampleCards.HolyShield;
             testCardDef.Cost = 0;
@@ -901,7 +946,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldShield_クリーチャーの防御時()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
 
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
@@ -937,7 +982,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldShield_プレイヤーの防御時()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
 
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
@@ -973,7 +1018,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldShield_攻撃時()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "a", "", 2, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "a", "", 2, 2, 0);
 
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
@@ -1008,7 +1053,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldWall_プレイヤーを攻撃()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
 
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
@@ -1040,7 +1085,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldWall_クリーチャーを攻撃()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
 
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
@@ -1075,7 +1120,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldWall_攻撃時()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "a", "", 2, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "a", "", 2, 2, 0);
 
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
@@ -1110,7 +1155,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task GoblinStatue()
         {
-            var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 10, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 10, 0);
 
             var testCardDef = SampleCards.GoblinStatue;
             testCardDef.Cost = 0;
@@ -1164,7 +1209,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task HolyStatue()
         {
-            var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = SampleCards.HolyStatue;
             testCardDef.Cost = 0;

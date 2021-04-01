@@ -13,12 +13,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 召喚時にクリーチャーを2体出す能力()
         {
-            var testCard = MessageObjectExtensions.Creature(0, "スライム", "テストクリーチャー", 1, 1, 1,
+            var testCard = SampleCards.Creature(0, "スライム", "テストクリーチャー", 1, 1, 1,
                 effects: new[]
                 {
                     // 召喚時、スライムを2体召喚
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]
                         {
                             new EffectAction()
@@ -66,9 +66,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 無作為に手札を１枚捨ててそのカードのコスト分ライフを回復する()
         {
-            var testCardDef = MessageObjectExtensions.Sorcery(0, "test", "", new[] {
+            var testCardDef = SampleCards.Sorcery(0, "test", "", effects: new[] {
                 new CardEffect(
-                    MessageObjectExtensions.Spell,
+                    SampleCards.Spell,
                     new[]{
                         new EffectAction(MoveCard: new(
                             new Choice()
@@ -143,7 +143,7 @@ namespace Cauldron.Core_Test
         //[Fact]
         //public async Task 死亡時に相手プレイヤーに1ダメージ()
         //{
-        //    var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+        //    var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
         //    var mouseDef = TestCards.mouse;
         //    mouseDef.Cost = 0;
 
@@ -187,7 +187,7 @@ namespace Cauldron.Core_Test
         //[Fact]
         //public async Task 召喚時に自分のクリーチャーをランダムで一体を修正()
         //{
-        //    var goblinDef = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+        //    var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
         //    var testCreatureDef = TestCards.;
         //    testCreatureDef.Cost = 0;
 
@@ -227,7 +227,7 @@ namespace Cauldron.Core_Test
         //[Fact]
         //public async Task ターン終了時にランダムな相手クリーチャー1体に1ダメージ_その後このカードを破壊()
         //{
-        //    var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+        //    var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
         //    var testCardDef = TestCards.devil;
         //    testCardDef.Cost = 0;
@@ -278,7 +278,7 @@ namespace Cauldron.Core_Test
         //[Fact]
         //public async Task 相手かランダムな相手クリーチャー一体に2ダメージ()
         //{
-        //    var goblin = MessageObjectExtensions.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+        //    var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
         //    var testCardDef = TestCards.shock;
         //    testCardDef.Cost = 0;
@@ -321,7 +321,7 @@ namespace Cauldron.Core_Test
         //[Fact]
         //public void 自分のクリーチャーの攻撃ダメージを増加する()
         //{
-        //    var goblin = MessageObjectExtensions.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 3);
+        //    var goblin = SampleCards.CreatureCard(0, $"test.ゴブリン", "ゴブリン", "テストクリーチャー", 1, 3);
         //    goblin.TurnCountToCanAttack = 0;
 
         //    var testCardDef = TestCards.holyKnight;

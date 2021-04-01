@@ -16,7 +16,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task すべてのターン開始時()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -66,7 +66,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 自分のターン開始時()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -112,7 +112,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 相手のターン開始時()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -161,7 +161,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task すべてのターン終了時()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -212,7 +212,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 自分のターン終了時()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -262,7 +262,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 相手のターン終了時()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -309,15 +309,15 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task カードのプレイ時()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
 
-            var testNormalCardDef = MessageObjectExtensions.Creature(0, "test2", "test2", 1, 1, 1);
+            var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 1, 1);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
@@ -351,7 +351,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 他のカードのプレイ時()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -361,7 +361,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testNormalCardDef = MessageObjectExtensions.Creature(0, "test2", "test2", 1, 1, 1);
+            var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 1, 1);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
@@ -393,7 +393,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 戦闘ダメージ前時_すべてのクリーチャー()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 0,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 5, 0,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -416,7 +416,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testNormalCardDef = MessageObjectExtensions.Creature(0, "test2", "test2", 1, 5, 0);
+            var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 5, 0);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
@@ -473,7 +473,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 戦闘ダメージ前時_自分が攻撃()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 0,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 5, 0,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -496,7 +496,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testNormalCardDef = MessageObjectExtensions.Creature(0, "test2", "test2", 1, 5, 0);
+            var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 5, 0);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
@@ -550,7 +550,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 戦闘ダメージ前時_ほかカードが防御()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 0,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 5, 0,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -561,7 +561,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testNormalCardDef = MessageObjectExtensions.Creature(0, "test2", "test2", 1, 5, 0);
+            var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 5, 0);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef, testNormalCardDef }) });
@@ -616,7 +616,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 戦闘以外のダメージ前時_自分が防御()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 1,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -634,11 +634,11 @@ namespace Cauldron.Core_Test
                 });
 
             // クリーチャーに1ダメージの魔法
-            var testSorceryDef = MessageObjectExtensions.Sorcery(0, "test2", "test2",
+            var testSorceryDef = SampleCards.Sorcery(0, "test2", "test2",
                 effects: new[]
                 {
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]
                         {
                             new EffectAction()
@@ -686,7 +686,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 自分の破壊時()
         {
-            var testCardDef = MessageObjectExtensions.Creature(0, "test", "test", 1, 5, 1,
+            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 5, 1,
                 effects: new[]{
                     new CardEffect(
                         new(

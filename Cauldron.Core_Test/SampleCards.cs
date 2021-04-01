@@ -1,6 +1,9 @@
 ﻿using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Cauldron.Core.Entities
 {
@@ -8,25 +11,75 @@ namespace Cauldron.Core.Entities
     {
         public static readonly string CardsetName = "Sample";
 
+        public static CardDef Creature(int cost, string name, string flavorText, int power, int toughness,
+            int? numTurnsToCanAttack = null, int? numAttacksInTurn = null, bool isToken = false,
+            IEnumerable<CreatureAbility> abilities = null, IEnumerable<CardEffect> effects = null)
+        {
+            return new CardDef()
+            {
+                Cost = cost,
+                Type = CardType.Creature,
+                Name = name,
+                FlavorText = flavorText,
+                Power = power,
+                Toughness = toughness,
+                NumTurnsToCanAttack = numTurnsToCanAttack,
+                NumAttacksLimitInTurn = numAttacksInTurn,
+                IsToken = isToken,
+                Abilities = abilities?.ToList() ?? new List<CreatureAbility>(),
+                Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
+            };
+        }
+
+        public static CardDef Artifact(int cost, string name, string flavorText, bool isToken = false, IEnumerable<CardEffect> effects = null)
+        {
+            return new CardDef()
+            {
+                Cost = cost,
+                IsToken = isToken,
+                Type = CardType.Artifact,
+                Name = name,
+                FlavorText = flavorText,
+                Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
+            };
+        }
+
+        public static CardDef Sorcery(int cost, string name, string flavorText, bool isToken = false, IEnumerable<CardEffect> effects = null)
+        {
+            return new CardDef()
+            {
+                Cost = cost,
+                IsToken = isToken,
+                Type = CardType.Sorcery,
+                Name = name,
+                FlavorText = flavorText,
+                Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
+            };
+        }
+
+        public static readonly EffectCondition Spell
+            = new(ZonePrettyName.YouField, new(new(Play: new(EffectTimingPlayEvent.EventSource.This))));
+
+
         public static CardDef KarakuriGoblin
-            => MessageObjectExtensions.Creature(1, "からくりゴブリン", "トークン", 1, 1, isToken: true);
+            => SampleCards.Creature(1, "からくりゴブリン", "トークン", 1, 1, isToken: true);
 
         public static CardDef Goblin
-            => MessageObjectExtensions.Creature(1, "ゴブリン", "ただのゴブリン", 1, 2);
+            => SampleCards.Creature(1, "ゴブリン", "ただのゴブリン", 1, 2);
 
         public static CardDef QuickGoblin
-            => MessageObjectExtensions.Creature(1, "素早いゴブリン", "早い", 1, 1, numTurnsToCanAttack: 0);
+            => SampleCards.Creature(1, "素早いゴブリン", "早い", 1, 1, numTurnsToCanAttack: 0);
 
         public static CardDef ShieldGoblin
-            => MessageObjectExtensions.Creature(2, "盾持ちゴブリン", "盾になる", 1, 2,
+            => SampleCards.Creature(2, "盾持ちゴブリン", "盾になる", 1, 2,
                 abilities: new[] { CreatureAbility.Cover });
 
         public static CardDef DeadlyGoblin
-            => MessageObjectExtensions.Creature(3, "暗殺ゴブリン", "暗殺者", 1, 1,
+            => SampleCards.Creature(3, "暗殺ゴブリン", "暗殺者", 1, 1,
                 abilities: new[] { CreatureAbility.Stealth, CreatureAbility.Deadly });
 
         public static CardDef MechanicGoblin
-            => MessageObjectExtensions.Creature(1, "ゴブリンの技師", "からくりを作り出す", 1, 1,
+            => SampleCards.Creature(1, "ゴブリンの技師", "からくりを作り出す", 1, 1,
             effects: new[]
             {
                 // 破壊時、からくりゴブリン１枚を手札に加える
@@ -61,7 +114,7 @@ namespace Cauldron.Core.Entities
             });
 
         public static CardDef NinjaGoblin
-            => MessageObjectExtensions.Creature(3, "分身ゴブリン", "分身する", 1, 2,
+            => SampleCards.Creature(3, "分身ゴブリン", "分身する", 1, 2,
                 effects: new[] {
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
@@ -88,12 +141,12 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef GoblinsGreed
-            => MessageObjectExtensions.Sorcery(2, "ゴブリンの強欲", "ドローするぞ",
+            => SampleCards.Sorcery(2, "ゴブリンの強欲", "ドローするぞ",
                 effects: new[]
                 {
                     // カードを2枚引く
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]
                         {
                             new EffectAction(
@@ -118,7 +171,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef ShamanGoblin
-            => MessageObjectExtensions.Creature(3, "呪術師ゴブリン", "相手を呪い殺すぞ", 1, 1,
+            => SampleCards.Creature(3, "呪術師ゴブリン", "相手を呪い殺すぞ", 1, 1,
                 effects: new[]
                 {
                     new CardEffect(
@@ -145,7 +198,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef HealGoblin
-            => MessageObjectExtensions.Creature(3, "優しいゴブリン", "回復してくれる", 1, 2,
+            => SampleCards.Creature(3, "優しいゴブリン", "回復してくれる", 1, 2,
                 effects: new[]
                 {
                     new CardEffect(
@@ -172,7 +225,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef FireGoblin
-            => MessageObjectExtensions.Creature(4, "火炎のゴブリン", "火を飛ばす", 4, 2,
+            => SampleCards.Creature(4, "火炎のゴブリン", "火を飛ばす", 4, 2,
                 effects: new[]
                 {
                     new CardEffect(
@@ -207,13 +260,13 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef MadScientist
-            => MessageObjectExtensions.Creature(4, "マッドサイエンティスト", "どこかおかしい", 3, 3,
+            => SampleCards.Creature(4, "マッドサイエンティスト", "どこかおかしい", 3, 3,
                 // 自分か相手のクリーチャーを一体破壊して、再生する
                 effects: new[]
                 {
                     // 破壊時にコピーを場に出す効果を追加する
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]{
                             new EffectAction(AddEffect: new(
                                 new Choice()
@@ -277,7 +330,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef BraveGoblin
-            => MessageObjectExtensions.Creature(4, "ゴブリンの勇者", "勇者！", 2, 2,
+            => SampleCards.Creature(4, "ゴブリンの勇者", "勇者！", 2, 2,
             effects: new[]
             {
                 // 自分が受けるダメージを2軽減する
@@ -352,12 +405,12 @@ namespace Cauldron.Core.Entities
             });
 
         public static CardDef GiantGoblin
-            => MessageObjectExtensions.Creature(5, "ゴブリンの巨人", "超でかい", 3, 7,
+            => SampleCards.Creature(5, "ゴブリンの巨人", "超でかい", 3, 7,
                 abilities: new[] { CreatureAbility.Cover },
                 effects: new[]
                 {
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]
                         {
                             new EffectAction()
@@ -381,7 +434,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef LeaderGoblin
-            => MessageObjectExtensions.Creature(5, "ゴブリンリーダー", "", 1, 5,
+            => SampleCards.Creature(5, "ゴブリンリーダー", "", 1, 5,
                 effects: new[]
                 {
                     // プレイ時：自分のクリーチャーすべてを+1/+0 する。
@@ -418,12 +471,12 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef TyrantGoblin
-            => MessageObjectExtensions.Creature(6, "暴君ゴブリン", "界隈一のあばれもの", 6, 6,
+            => SampleCards.Creature(6, "暴君ゴブリン", "界隈一のあばれもの", 6, 6,
                 effects: new[]
                 {
                     // 手札をすべて捨てて、捨てた枚数パワーアップ
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]{
                             new EffectAction(EffectActionSetVariable: new(
                                 "x",
@@ -467,7 +520,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef KingGoblin
-            => MessageObjectExtensions.Creature(10, "ゴブリンの王", "偉大な存在", 8, 8,
+            => SampleCards.Creature(10, "ゴブリンの王", "偉大な存在", 8, 8,
                 effects: new[]
                 {
                     //TODO 未実装
@@ -528,11 +581,11 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef Sword
-            => MessageObjectExtensions.Sorcery(1, "剣", "パワーアップ",
+            => SampleCards.Sorcery(1, "剣", "パワーアップ",
             effects: new[]
             {
                 new CardEffect(
-                    MessageObjectExtensions.Spell,
+                    SampleCards.Spell,
                     new[]
                     {
                         new EffectAction()
@@ -558,11 +611,11 @@ namespace Cauldron.Core.Entities
             });
 
         public static CardDef Shield
-            => MessageObjectExtensions.Sorcery(1, "盾", "タフネスアップ",
+            => SampleCards.Sorcery(1, "盾", "タフネスアップ",
             effects: new[]
             {
                 new CardEffect(
-                    MessageObjectExtensions.Spell,
+                    SampleCards.Spell,
                     new[]
                     {
                         new EffectAction()
@@ -587,14 +640,90 @@ namespace Cauldron.Core.Entities
                 )
             });
 
+        public static CardDef FirstAttack
+            => SampleCards.Sorcery(2, "ゴブリンの一撃", "一撃目",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                Damage = new(
+                                    new NumValue(1),
+                                    new Choice()
+                                    {
+                                        How = Choice.ChoiceHow.Choose,
+                                        NumPicks = 1,
+                                        CardCondition = new()
+                                        {
+                                            ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
+                                            TypeCondition = new(new[]{ CardType.Creature })
+                                        },
+                                        PlayerCondition = new()
+                                        {
+                                            Type = PlayerCondition.PlayerConditionType.Opponent
+                                        }
+                                    }),
+                                AddCard = new(
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
+                                    new Choice()
+                                    {
+                                        How = Choice.ChoiceHow.All,
+                                        NumPicks = 1,
+                                        CardCondition = new()
+                                        {
+                                            ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                            NameCondition = new(
+                                                new TextValue($"{CardsetName}.{SecondAttack.Name}"),
+                                                TextCondition.ConditionCompare.Equality)
+                                        }
+                                    })
+                            }
+                        }
+                    )
+                });
+
+        public static CardDef SecondAttack
+            => SampleCards.Sorcery(2, "ゴブリンの二撃", "二撃目", isToken: true,
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                Damage = new(
+                                    new NumValue(2),
+                                    new Choice()
+                                    {
+                                        How = Choice.ChoiceHow.Choose,
+                                        NumPicks = 1,
+                                        CardCondition = new()
+                                        {
+                                            ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
+                                            TypeCondition = new(new[]{ CardType.Creature })
+                                        },
+                                        PlayerCondition = new()
+                                        {
+                                            Type = PlayerCondition.PlayerConditionType.Opponent
+                                        }
+                                    })
+                            }
+                        }
+                    )
+                });
+
         public static CardDef HolyShield
-            => MessageObjectExtensions.Sorcery(2, "聖なる盾", "",
+            => SampleCards.Sorcery(2, "聖なる盾", "",
                 effects: new[]
                 {
                     // 自軍クリーチャーに次の効果を付与する。
                     // 「ターン終了時まで、受けるダメージは0になる。」
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]{
                             new EffectAction(
                                 AddEffect: new(
@@ -643,11 +772,11 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static CardDef ChangeHands = MessageObjectExtensions.Sorcery(2, "手札入れ替え", "",
+        public static CardDef ChangeHands => SampleCards.Sorcery(2, "手札入れ替え", "",
             effects: new[]
             {
                 new CardEffect(
-                    MessageObjectExtensions.Spell,
+                    SampleCards.Spell,
                     new[]
                     {
                         // 手札の枚数をとっとく
@@ -690,12 +819,12 @@ namespace Cauldron.Core.Entities
             });
 
         public static CardDef Slap
-            => MessageObjectExtensions.Sorcery(2, "袋叩き", "",
+            => SampleCards.Sorcery(2, "袋叩き", "",
                 effects: new[]
                 {
                     // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
                     new CardEffect(
-                        MessageObjectExtensions.Spell,
+                        SampleCards.Spell,
                         new[]
                         {
                             new EffectAction()
@@ -731,11 +860,11 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef FullAttack
-            => MessageObjectExtensions.Sorcery(3, "一斉射撃", "撃てー！",
+            => SampleCards.Sorcery(3, "一斉射撃", "撃てー！",
             effects: new[]
             {
                 new CardEffect(
-                    MessageObjectExtensions.Spell,
+                    SampleCards.Spell,
                     new[]
                     {
                         new EffectAction()
@@ -760,7 +889,7 @@ namespace Cauldron.Core.Entities
             });
 
         public static CardDef GoblinCaptureJar
-            => MessageObjectExtensions.Sorcery(4, "ゴブリン封印の壺", "ゴブリンを無力化する不思議な壺",
+            => SampleCards.Sorcery(4, "ゴブリン封印の壺", "ゴブリンを無力化する不思議な壺",
                 effects: new[]
                 {
                     new CardEffect(
@@ -794,7 +923,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef OldShield
-            => MessageObjectExtensions.Artifact(1, "ぼろの盾", "いまにも壊れそう",
+            => SampleCards.Artifact(1, "ぼろの盾", "いまにも壊れそう",
                 effects: new[]
                 {
                     // 自分のクリーチャーが受けるダメージを1軽減する.その後このカードを破壊する
@@ -845,7 +974,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef OldWall
-            => MessageObjectExtensions.Artifact(1, "ぼろの壁", "いまにも壊れそう",
+            => SampleCards.Artifact(1, "ぼろの壁", "いまにも壊れそう",
                 effects: new[]
                 {
                     // 自分のプレイヤーまたはクリーチャーが受けるダメージを1軽減する.その後このカードを破壊する
@@ -906,7 +1035,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef GoblinStatue
-            => MessageObjectExtensions.Artifact(4, "呪いのゴブリン像", "縁起は良くない",
+            => SampleCards.Artifact(4, "呪いのゴブリン像", "縁起は良くない",
                 effects: new[]
                 {
                     new CardEffect(
@@ -944,12 +1073,12 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef HolyStatue
-            => MessageObjectExtensions.Artifact(4, "癒やしの像", "みんなを癒やすぞ",
+            => SampleCards.Artifact(4, "癒やしの像", "みんなを癒やすぞ",
             effects: new[]
             {
                 // 使用時、すべての自分クリーチャーを+0/+1
                 new CardEffect(
-                    MessageObjectExtensions.Spell,
+                    SampleCards.Spell,
                     new[]
                     {
                         new EffectAction(){
