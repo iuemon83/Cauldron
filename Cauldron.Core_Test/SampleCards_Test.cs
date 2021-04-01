@@ -529,7 +529,7 @@ namespace Cauldron.Core_Test
                 return (goblinCard, goblinCard2);
             });
 
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(testGameMaster, (g, pid) =>
             {
                 // ƒSƒuƒŠƒ“‚ª2‘Ì‚Æ‚à+1/+0 ‚Ì‚Ü‚Ü
                 Assert.Equal(1, goblin1.PowerBuff);
@@ -538,7 +538,7 @@ namespace Cauldron.Core_Test
                 Assert.Equal(0, goblin2.ToughnessBuff);
             });
 
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(testGameMaster, (g, pid) =>
             {
                 // ƒSƒuƒŠƒ“‚ª2‘Ì‚Æ‚à+2/+0 ‚É‚È‚é
                 Assert.Equal(2, goblin1.PowerBuff);

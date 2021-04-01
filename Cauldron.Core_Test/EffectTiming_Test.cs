@@ -50,13 +50,13 @@ namespace Cauldron.Core_Test
 
             Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
 
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 Assert.Equal(beforeHp - 2, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
@@ -92,17 +92,17 @@ namespace Cauldron.Core_Test
             // Œø‰ÊƒJ[ƒho‚·
             await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
-                var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
             });
 
             // ŒãU
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
             Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // æs
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
@@ -144,14 +144,14 @@ namespace Cauldron.Core_Test
             Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // ŒãU
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // æs
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
@@ -196,13 +196,13 @@ namespace Cauldron.Core_Test
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
             Assert.Equal(beforeHp - 2, testGameMaster.PlayersById[player1Id].CurrentHp);
 
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 Assert.Equal(beforeHp - 2, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
@@ -245,14 +245,14 @@ namespace Cauldron.Core_Test
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // ŒãU
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // æs
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
@@ -293,14 +293,14 @@ namespace Cauldron.Core_Test
             Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // ŒãU
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // æs
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);

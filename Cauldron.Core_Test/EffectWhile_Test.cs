@@ -128,7 +128,7 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
@@ -136,19 +136,19 @@ namespace Cauldron.Core_Test
             Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // 2ターン目
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 // 効果が発動する
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
             // 3ターン目
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 // 2度目は効果が発動しない
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
@@ -190,12 +190,12 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
             // 2ターン目
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 // 効果が発動しない
                 Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
@@ -205,12 +205,12 @@ namespace Cauldron.Core_Test
             Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
             // 3ターン目
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
@@ -253,27 +253,27 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
             // 2ターン目
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
             // 3ターン目
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
@@ -281,19 +281,19 @@ namespace Cauldron.Core_Test
             Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
 
             // 4ターン目
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 // 効果が発動する
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
             });
 
             // 3ターン目
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 // 2度目は効果が発動しない
                 Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);

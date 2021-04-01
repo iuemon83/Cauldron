@@ -142,6 +142,13 @@ namespace Cauldron.Core_Test
             return newCard;
         }
 
+        public static async ValueTask Turn(GameMaster gameMaster, Action<GameMaster, PlayerId> turnAction)
+        {
+            await gameMaster.StartTurn();
+            turnAction(gameMaster, gameMaster.ActivePlayer.Id);
+            await gameMaster.EndTurn();
+        }
+
         public static async ValueTask Turn(GameMaster gameMaster, Func<GameMaster, PlayerId, ValueTask> turnAction)
         {
             await gameMaster.StartTurn();
@@ -158,7 +165,9 @@ namespace Cauldron.Core_Test
             return cards;
         }
 
+#pragma warning disable IDE0060 // 未使用のパラメーターを削除します
         public static ValueTask<ChoiceResult> TestPick(PlayerId _, ChoiceCandidates choiceCandidates, int __)
+#pragma warning restore IDE0060 // 未使用のパラメーターを削除します
         {
             return ValueTask.FromResult(new ChoiceResult(
                 choiceCandidates.PlayerIdList,

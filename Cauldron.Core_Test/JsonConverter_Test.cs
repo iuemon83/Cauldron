@@ -9,9 +9,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public void DeserializeJson()
         {
-            var testfile = File.ReadAllText("CardSet/read_test.json");
+            var testjson = File.ReadAllText("CardSet/read_test.json");
 
-            var actual = JsonConverter.Deserialize<CardSet>(testfile);
+            var obj = JsonConverter.Deserialize<CardSet>(testjson);
+            var actual = JsonConverter.Serialize(obj);
+
+            Assert.Equal(testjson, actual);
         }
 
         [Fact]
