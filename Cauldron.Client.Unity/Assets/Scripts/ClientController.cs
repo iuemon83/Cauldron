@@ -34,6 +34,8 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
 
     public OpponentPlayerController OpponentPlayerController;
 
+    public CardDetailController CardDetailController;
+
     public FieldCardController SelectedCardController { get; set; }
 
     public List<PlayerId> PickedPlayerIdList = new List<PlayerId>();
@@ -63,23 +65,6 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
 
     void Update()
     {
-        ////メインカメラ上のマウスカーソルのある位置からRayを飛ばす
-        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        ////レイヤーマスク作成
-        ////int layerMask = LayerMaskNo.DEFAULT;
-
-        ////Rayの長さ
-        //float maxDistance = 10;
-
-        //RaycastHit2D hit = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction, maxDistance);
-
-        ////なにかと衝突した時だけそのオブジェクトの名前をログに出す
-        //if (hit.collider)
-        //{
-        //    Debug.Log(hit.collider.gameObject.name);
-        //}
-
         timeleft += Time.deltaTime;
         if (timeleft > interval)
         {

@@ -3,9 +3,10 @@ using Cauldron.Shared.MessagePackObjects;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CardController : MonoBehaviour
+public class CardDetailController : MonoBehaviour
 {
     public Text CardName;
+    public Text FlavorText;
 
     public GameObject PowerSpace;
     public GameObject ToughnessSpace;
@@ -14,38 +15,33 @@ public class CardController : MonoBehaviour
     public Text Power;
     public Text Toughness;
 
-    public GameObject PickCandidateIcon;
-    public GameObject PickedIcon;
-
-    public LineRenderer HighlightLine;
-
-    public CardId CardId => this.card.Id;
-
-    public bool IsPickCandidate => this.PickCandidateIcon.activeSelf || this.IsPicked;
-    public bool IsPicked => this.PickedIcon.activeSelf;
-
     protected Card card;
 
     // Update is called once per frame
     void Update()
     {
-        if (this.card != null)
+        if (this.card == null)
         {
-            this.CardName.text = this.card.Name;
-            this.Cost.text = this.card.Cost.ToString();
+            return;
+        }
 
-            if (this.card.Type == CardType.Creature)
-            {
+        this.CardName.text = this.card.Name;
+        this.FlavorText.text = this.card.FlavorText;
+        this.Cost.text = this.card.Cost.ToString();
+
+        switch (this.card.Type)
+        {
+            case CardType.Creature:
                 this.Power.text = this.card.Power.ToString();
                 this.Toughness.text = this.card.Toughness.ToString();
                 this.PowerSpace.SetActive(true);
                 this.ToughnessSpace.SetActive(true);
-            }
-            else
-            {
+                break;
+
+            default:
                 this.PowerSpace.SetActive(false);
                 this.ToughnessSpace.SetActive(false);
-            }
+                break;
         }
     }
 

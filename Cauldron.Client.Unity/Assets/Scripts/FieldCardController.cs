@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class FieldCardController : CardController, IPointerClickHandler
+public class FieldCardController : CardController, IPointerClickHandler, IPointerEnterHandler
 {
     public GameObject SelectedIcon;
     public GameObject AttackTargetIcon;
@@ -70,5 +70,10 @@ public class FieldCardController : CardController, IPointerClickHandler
                 await ClientController.Instance.SelectCard(this.CardId);
             }
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        ClientController.Instance.CardDetailController.SetCard(this.card);
     }
 }

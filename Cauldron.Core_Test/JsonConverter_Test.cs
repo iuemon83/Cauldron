@@ -49,6 +49,7 @@ namespace Cauldron.Core_Test
                 SampleCards.OldWall,
                 SampleCards.GoblinStatue,
                 SampleCards.HolyStatue,
+                SampleCards.GoblinCaptureJar,
             });
 
             var actual = JsonConverter.Serialize(test);

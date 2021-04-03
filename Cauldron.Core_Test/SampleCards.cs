@@ -79,7 +79,7 @@ namespace Cauldron.Core.Entities
                 abilities: new[] { CreatureAbility.Stealth, CreatureAbility.Deadly });
 
         public static CardDef MechanicGoblin
-            => SampleCards.Creature(1, "ゴブリンの技師", "からくりを作り出す", 1, 1,
+            => SampleCards.Creature(1, "ゴブリンの技師", "このカードが破壊されたとき、手札に「からくりゴブリン」1枚を加える。", 1, 1,
             effects: new[]
             {
                 // 破壊時、からくりゴブリン１枚を手札に加える
@@ -114,7 +114,7 @@ namespace Cauldron.Core.Entities
             });
 
         public static CardDef NinjaGoblin
-            => SampleCards.Creature(3, "分身ゴブリン", "分身する", 1, 2,
+            => SampleCards.Creature(3, "分身ゴブリン", "このカードが場に出たとき、「分身ゴブリン」一体を場に出す。", 1, 2,
                 effects: new[] {
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
