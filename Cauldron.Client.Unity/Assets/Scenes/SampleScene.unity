@@ -1000,11 +1000,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'TextTextTextTextTextTextTextTextTextTextTextText
-
-    TextTextTextTextTextTextTextTextTextTextTextText
-
-    TextTextTextTextTextTextTextTextTextTextTextText'
+  m_Text: 
 --- !u!222 &439428725
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2217,7 +2213,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: CardName
+  m_Text: 
 --- !u!222 &1045006159
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2361,7 +2357,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!223 &1087827257
 Canvas:
   m_ObjectHideFlags: 0
@@ -2908,6 +2904,7 @@ MonoBehaviour:
   OpponentDeckText: {fileID: 12346599}
   OpponentCemeteryText: {fileID: 1183522197}
   OpponentPlayerController: {fileID: 1584463900}
+  CardDetailController: {fileID: 1957271112}
 --- !u!4 &1305728135
 Transform:
   m_ObjectHideFlags: 0
@@ -4805,6 +4802,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1957271111}
   - component: {fileID: 1957271110}
+  - component: {fileID: 1957271112}
   m_Layer: 0
   m_Name: CardDetail
   m_TagString: Untagged
@@ -4881,6 +4879,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1957271112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957271109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc0659da481926145a3ad8aa218e4910, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CardName: {fileID: 1045006158}
+  FlavorText: {fileID: 439428724}
+  PowerSpace: {fileID: 1953897546}
+  ToughnessSpace: {fileID: 1590191083}
+  Cost: {fileID: 1414068096}
+  Power: {fileID: 1652517181}
+  Toughness: {fileID: 1423961279}
 --- !u!1 &1961674457
 GameObject:
   m_ObjectHideFlags: 0
