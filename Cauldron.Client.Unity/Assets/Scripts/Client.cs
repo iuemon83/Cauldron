@@ -22,6 +22,12 @@ public class Client
     private Action<string> Logging { get; set; }
     private Action<string> LoggingError { get; set; }
 
+    public CardId[] MyCreatureCards => this.currentContext
+        .You.PublicPlayerInfo.Field
+        .Where(card => card.Type == CardType.Creature)
+        .Select(c => c.Id)
+        .ToArray();
+
     public Client(string playerName, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
         : this(playerName, default, cauldronHubReceiver, logInfo, logError)
     {
@@ -52,15 +58,6 @@ public class Client
 
         var result = await this.magiconionClient.Test(12);
         return result;
-    }
-
-    public async ValueTask<bool> PlayTurn()
-    {
-        return
-            await this.PlayAction(() => this.StartTurn())
-            && await this.PlayAction(() => this.PlayFromHand())
-            && await this.PlayAction(() => this.Attack())
-            && await this.PlayAction(() => this.EndTurn());
     }
 
     private async ValueTask<bool> PlayAction(Func<ValueTask> action)
@@ -164,27 +161,9 @@ public class Client
         });
     }
 
-    public async ValueTask PlayFromHand()
+    public async ValueTask<(GameMasterStatusCode, CardId[])> ListPlayableCardId()
     {
-        while (true)
-        {
-            var useableMp = this.currentContext.You.PublicPlayerInfo.CurrentMp;
-            var (status, candidateCardIdList) = await this.magiconionClient.ListPlayableCardId(this.GameId);
-            if (status != GameMasterStatusCode.OK)
-            {
-                this.LoggingError($"PlayFromHand に失敗！！ status={status}");
-                return;
-            }
-
-            var cardId = Utility.RandomPick(candidateCardIdList);
-
-            if (cardId == default)
-            {
-                return;
-            }
-
-            await this.PlayFromHand(cardId);
-        }
+        return await this.magiconionClient.ListPlayableCardId(this.GameId);
     }
 
     public async ValueTask Attack(CardId attackCardId, CardId guardCardId)
@@ -204,44 +183,6 @@ public class Client
         await this.magiconionClient.AttackToPlayer(new AttackToPlayerRequest(this.GameId, this.PlayerId, attackCardId, this.currentContext.Opponent.Id));
     }
 
-    public async ValueTask Attack()
-    {
-        // フィールドのすべてのカードで敵に攻撃
-        var allCreatures = this.currentContext
-            .You.PublicPlayerInfo.Field
-            .Where(card => card.Type == CardType.Creature);
-
-        foreach (var attackCard in allCreatures)
-        {
-            var (status, (canAttackPlayerIdList, canAttackCardIdList)) = await this.magiconionClient.ListAttackTargets(this.GameId, attackCard.Id);
-            if (status != GameMasterStatusCode.OK)
-            {
-                this.LoggingError($"攻撃に失敗！！ status={status}");
-                return;
-            }
-
-            // 敵のモンスターがいる
-            if (canAttackCardIdList.Any() && UnityEngine.Random.Range(0, 100) > 50)
-            {
-                var opponentCardId = canAttackCardIdList[0];
-
-                var reply = await this.magiconionClient.AttackToCreature(new AttackToCreatureRequest(
-                    this.GameId, this.PlayerId, attackCard.Id, opponentCardId
-                    ));
-                this.currentContext = reply.GameContext;
-            }
-            else if (canAttackPlayerIdList.Any())
-            {
-                var guardPlayerId = canAttackPlayerIdList[0];
-
-                var reply = await this.magiconionClient.AttackToPlayer(new AttackToPlayerRequest(
-                    this.GameId, this.PlayerId, attackCard.Id, guardPlayerId
-                    ));
-                this.currentContext = reply.GameContext;
-            }
-        }
-    }
-
     public async ValueTask EndTurn()
     {
         await this.PlayAction(async () =>
@@ -249,29 +190,6 @@ public class Client
             var reply = await this.magiconionClient.EndTurn(new EndTurnRequest(this.GameId, this.PlayerId));
             this.currentContext = reply.GameContext;
         });
-    }
-
-    public async ValueTask<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceCandidates choiceCandidates, int numPicks)
-    {
-        this.Logging($"answer: questionId={questionId}");
-
-        var pickedPlayers = choiceCandidates.PlayerIdList.Take(numPicks).ToArray();
-        numPicks -= pickedPlayers.Length;
-
-        var pickedCards = choiceCandidates.CardList.Take(numPicks).Select(c => c.Id).ToArray();
-        numPicks -= pickedCards.Length;
-
-        var pickedCarddefs = choiceCandidates.CardDefList.Take(numPicks).Select(c => c.Id).ToArray();
-
-        var answer = new ChoiceResult(
-            pickedPlayers,
-            pickedCards,
-            pickedCarddefs
-        );
-
-        var result = await this.magiconionServiceClient.AnswerChoice(questionId, answer);
-
-        return result;
     }
 
     public async ValueTask<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceResult choiceResult)

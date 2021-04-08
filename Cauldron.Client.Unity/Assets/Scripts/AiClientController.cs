@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class AiClientController : MonoBehaviour, ICauldronHubReceiver
 {
-    private Client client;
+    private AiClient client;
     private readonly string playerName = "AI";
 
     void Start()
@@ -23,10 +23,9 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     {
         var gameId = await this.GetGameId();
 
-        this.client = new Client(this.playerName, gameId, this, Debug.Log, Debug.LogError);
+        this.client = new AiClient(this.playerName, gameId, this, Debug.Log, Debug.LogError);
 
-        await this.client.EnterGame();
-        await this.client.ReadyGame();
+        await this.client.Ready();
     }
 
     async ValueTask<GameId> GetGameId()
