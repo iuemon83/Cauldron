@@ -2,7 +2,6 @@ using Cauldron.Core.Entities;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -49,16 +48,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCardDef }) });
-
-            // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
             var goblin = await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -66,7 +56,7 @@ namespace Cauldron.Core_Test
                 return await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
             });
 
-            var beforeHp = testGameMaster.PlayersById[player2Id].CurrentHp;
+            var beforeHp = player2.CurrentHp;
 
             // 後攻
             var testCard = await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -74,10 +64,10 @@ namespace Cauldron.Core_Test
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 効果が発動する
-                Assert.Equal(beforeHp, testGameMaster.PlayersById[player2Id].CurrentHp);
+                Assert.Equal(beforeHp, player2.CurrentHp);
                 var status = await g.AttackToCreature(pId, testCard.Id, goblin.Id);
                 Assert.Equal(GameMasterStatusCode.OK, status);
-                Assert.Equal(beforeHp + 1, testGameMaster.PlayersById[player2Id].CurrentHp);
+                Assert.Equal(beforeHp + 1, player2.CurrentHp);
 
                 return testCard;
             });
@@ -86,10 +76,10 @@ namespace Cauldron.Core_Test
             await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 // ターンをまたいだので効果が発動しない
-                Assert.Equal(beforeHp + 1, testGameMaster.PlayersById[player2Id].CurrentHp);
+                Assert.Equal(beforeHp + 1, player2.CurrentHp);
                 var status = await g.AttackToCreature(pId, goblin.Id, testCard.Id);
                 Assert.Equal(GameMasterStatusCode.OK, status);
-                Assert.Equal(beforeHp + 1, testGameMaster.PlayersById[player2Id].CurrentHp);
+                Assert.Equal(beforeHp + 1, player2.CurrentHp);
             });
         }
 
@@ -108,18 +98,9 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
 
-            // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
-
-            var beforeHp = testGameMaster.PlayersById[player1Id].CurrentHp;
+            var beforeHp = player1.CurrentHp;
 
             // 1ターン目
             await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -133,13 +114,13 @@ namespace Cauldron.Core_Test
             });
 
             // 効果が発動しない
-            Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
+            Assert.Equal(beforeHp, player1.CurrentHp);
 
             // 2ターン目
             await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 // 効果が発動する
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
+                Assert.Equal(beforeHp - 1, player1.CurrentHp);
             });
 
             // 後攻
@@ -151,7 +132,7 @@ namespace Cauldron.Core_Test
             await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 // 2度目は効果が発動しない
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
+                Assert.Equal(beforeHp - 1, player1.CurrentHp);
             });
         }
 
@@ -170,18 +151,9 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
 
-            // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
-
-            var beforeHp = testGameMaster.PlayersById[player1Id].CurrentHp;
+            var beforeHp = player1.CurrentHp;
 
             // 1ターン目
             await TestUtil.Turn(testGameMaster, (g, pId) =>
@@ -198,11 +170,11 @@ namespace Cauldron.Core_Test
             await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 // 効果が発動しない
-                Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
+                Assert.Equal(beforeHp, player1.CurrentHp);
             });
 
             // 効果が発動する
-            Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
+            Assert.Equal(beforeHp - 1, player1.CurrentHp);
 
             // 後攻
             await TestUtil.Turn(testGameMaster, (g, pId) =>
@@ -215,7 +187,7 @@ namespace Cauldron.Core_Test
             });
 
             // 2度目は効果が発動しない
-            Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
+            Assert.Equal(beforeHp - 1, player1.CurrentHp);
         }
 
         [Fact]
@@ -233,18 +205,9 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
 
-            // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
-
-            var beforeHp = testGameMaster.PlayersById[player1Id].CurrentHp;
+            var beforeHp = player1.CurrentHp;
 
             // 1ターン目
             await TestUtil.Turn(testGameMaster, (g, pId) =>
@@ -278,13 +241,13 @@ namespace Cauldron.Core_Test
             });
 
             // 効果が発動しない
-            Assert.Equal(beforeHp, testGameMaster.PlayersById[player1Id].CurrentHp);
+            Assert.Equal(beforeHp, player1.CurrentHp);
 
             // 4ターン目
             await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 // 効果が発動する
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
+                Assert.Equal(beforeHp - 1, player1.CurrentHp);
             });
 
             // 後攻
@@ -296,7 +259,7 @@ namespace Cauldron.Core_Test
             await TestUtil.Turn(testGameMaster, (g, pId) =>
             {
                 // 2度目は効果が発動しない
-                Assert.Equal(beforeHp - 1, testGameMaster.PlayersById[player1Id].CurrentHp);
+                Assert.Equal(beforeHp - 1, player1.CurrentHp);
             });
         }
     }

@@ -12,7 +12,12 @@ namespace Cauldron.Shared.MessagePackObjects
             var choiceResult = await effectEventArgs.GameMaster.ChoiceCards(effectOwnerCard, effectActionAddCard.Choice, effectEventArgs);
             var newCardDefs = choiceResult.CardDefList;
 
-            var owner = effectEventArgs.GameMaster.PlayersById[effectOwnerCard.OwnerId];
+            var (exists, owner) = effectEventArgs.GameMaster.playerRepository.TryGet(effectOwnerCard.OwnerId);
+            if (!exists)
+            {
+                return (false, effectEventArgs);
+            }
+
             var opponent = effectEventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId);
 
             var zonePrettyNames = await effectActionAddCard.ZoneToAddCard.Calculate(effectOwnerCard, effectEventArgs);

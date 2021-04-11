@@ -14,7 +14,7 @@ namespace Cauldron.Core.Entities
 
         private readonly RuleBook ruleBook;
 
-        public IReadOnlyList<Card> GetAllCards => this.CardsById.Values.ToArray();
+        public IReadOnlyList<Card> AllCards => this.CardsById.Values.ToArray();
 
         public IReadOnlyList<CardDef> CardPool => this.CardDefListById.Values.ToArray();
 

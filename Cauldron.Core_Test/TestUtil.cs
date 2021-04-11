@@ -175,18 +175,24 @@ namespace Cauldron.Core_Test
                 choiceCandidates.CardDefList.Select(c => c.Id).ToArray()));
         }
 
-        public static (GameMaster, PlayerId, PlayerId) InitTest(CardDef[] cardpool) => InitTest(cardpool, TestUtil.GameMasterOptions());
+        public static async ValueTask<(GameMaster, Player, Player)> InitTest(CardDef[] cardpool) => await InitTest(cardpool, TestUtil.GameMasterOptions());
 
-        public static (GameMaster, PlayerId, PlayerId) InitTest(CardDef[] cardpool, GameMasterOptions options)
+        public static async ValueTask<(GameMaster, Player, Player)> InitTest(CardDef[] cardpool, GameMasterOptions options)
         {
-            options.CardFactory.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, cardpool) });
+            options.CardRepository.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, cardpool) });
 
             var testGameMaster = new GameMaster(options);
+            var deckCardDefIdList = Enumerable.Repeat(cardpool.First(c => !c.IsToken).Id, 40);
 
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(cardpool[0].Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(cardpool[0].Id, 40));
+            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", deckCardDefIdList);
+            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", deckCardDefIdList);
 
-            return (testGameMaster, player1Id, player2Id);
+            await testGameMaster.Start(player1Id);
+
+            var (_, player1) = testGameMaster.playerRepository.TryGet(player1Id);
+            var (_, player2) = testGameMaster.playerRepository.TryGet(player2Id);
+
+            return (testGameMaster, player1, player2);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Cauldron.Core.Entities
 {
     public record GameMasterOptions(
         RuleBook RuleBook,
-        CardRepository CardFactory,
+        CardRepository CardRepository,
         ILogger Logger,
         GameEventListener EventListener
         )

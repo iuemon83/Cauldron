@@ -16,10 +16,16 @@ namespace Cauldron.Shared.MessagePackObjects
 
             foreach (var playerId in choiceResult.PlayerIdList)
             {
+                var (exists, guardPlayer) = args.GameMaster.playerRepository.TryGet(playerId);
+                if (!exists)
+                {
+                    continue;
+                }
+
                 var damageContext = new DamageContext(
                     effectOwnerCard,
                     Value: damageValue,
-                    GuardPlayer: args.GameMaster.PlayersById[playerId]
+                    GuardPlayer: guardPlayer
                     );
 
                 await args.GameMaster.HitPlayer(damageContext);

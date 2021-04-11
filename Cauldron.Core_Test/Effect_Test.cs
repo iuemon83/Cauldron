@@ -115,28 +115,20 @@ namespace Cauldron.Core_Test
                 InitialPlayerHp: 10, MaxPlayerHp: 20, MinPlayerHp: 0, MaxNumDeckCards: 40, MinNumDeckCards: 40, InitialNumHands: 5,
                 MaxNumHands: 10, InitialMp: 1, MaxLimitMp: 10, MinMp: 1, MpByStep: 1, MaxNumFieldCars: 5, DefaultNumTurnsToCanAttack: 0,
                 DefaultNumAttacksLimitInTurn: 1);
-            var testCardFactory = new CardRepository(testRulebook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
 
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef },
+                TestUtil.GameMasterOptions(ruleBook: testRulebook));
 
             // êÊçU
             await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
-                var beforenumHands = g.PlayersById[pId].Hands.AllCards.Count;
-                var beforeHp = g.PlayersById[pId].CurrentHp;
+                var beforenumHands = player1.Hands.AllCards.Count;
+                var beforeHp = player1.CurrentHp;
                 // Å´Ç≈1ñáëùÇ¶ÇÈÇ©ÇÁ
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
-                Assert.Equal(beforenumHands - 1, g.PlayersById[pId].Hands.AllCards.Count);
-                Assert.Equal(beforeHp + testCardDef.Cost, g.PlayersById[pId].CurrentHp);
+                Assert.Equal(beforenumHands - 1, player1.Hands.AllCards.Count);
+                Assert.Equal(beforeHp + testCardDef.Cost, player1.CurrentHp);
             });
         }
 

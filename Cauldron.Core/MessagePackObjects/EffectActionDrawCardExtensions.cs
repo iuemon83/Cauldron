@@ -11,7 +11,7 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             // 対象のプレイヤー一覧
             // 順序はアクティブプレイヤー優先
-            var targetPlayers = args.GameMaster.PlayersById.Values
+            var targetPlayers = args.GameMaster.playerRepository.AllPlayers
                 .Where(p => effectActionDrawCard.PlayerCondition.IsMatch(effectOwnerCard, p, args))
                 .OrderBy(p => p.Id == args.GameMaster.ActivePlayer.Id);
 

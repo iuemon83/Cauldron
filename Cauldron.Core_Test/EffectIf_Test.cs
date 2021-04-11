@@ -2,7 +2,6 @@ using Cauldron.Core.Entities;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -42,29 +41,20 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
-
-            // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.Start(player1Id);
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
 
             // 先攻
             await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
-                var beforeHp = g.PlayersById[pId].CurrentHp;
+                var beforeHp = player1.CurrentHp;
 
                 // 場のカードが1枚なので発動しない
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-                Assert.Equal(beforeHp, g.PlayersById[pId].CurrentHp);
+                Assert.Equal(beforeHp, player1.CurrentHp);
 
                 // 場のカードが2枚なので発動する
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-                Assert.Equal(beforeHp - 1, g.PlayersById[pId].CurrentHp);
+                Assert.Equal(beforeHp - 1, player1.CurrentHp);
             });
         }
     }
