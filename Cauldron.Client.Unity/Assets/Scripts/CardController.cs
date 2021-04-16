@@ -14,12 +14,10 @@ public class CardController : MonoBehaviour
     public Text Power;
     public Text Toughness;
 
-    public SpriteRenderer CardImage;
+    public Image CardImage;
 
     public GameObject PickCandidateIcon;
     public GameObject PickedIcon;
-
-    public LineRenderer HighlightLine;
 
     public CardId CardId => this.card.Id;
 

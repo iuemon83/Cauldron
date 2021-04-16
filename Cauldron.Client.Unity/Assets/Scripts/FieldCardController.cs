@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(Rigidbody2D))]
 public class FieldCardController : CardController, IPointerClickHandler, IPointerEnterHandler
 {
     public GameObject SelectedIcon;
@@ -58,7 +57,6 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
             {
                 // カード選択済み
                 // 選択を解除する
-                this.HighlightLine.enabled = false;
                 ClientController.Instance.UnSelectCard();
             }
 

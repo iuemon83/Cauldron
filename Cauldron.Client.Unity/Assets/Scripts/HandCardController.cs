@@ -1,7 +1,5 @@
-using UnityEngine;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(Rigidbody2D))]
 public class HandCardController : CardController, IPointerClickHandler, IPointerEnterHandler
 {
     public async void OnPointerClick(PointerEventData eventData)

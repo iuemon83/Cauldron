@@ -36,6 +36,8 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
 
     public CardDetailController CardDetailController;
 
+    public GameObject UiCanvas;
+
     public FieldCardController SelectedCardController { get; set; }
 
     public List<PlayerId> PickedPlayerIdList = new List<PlayerId>();
@@ -246,7 +248,10 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
                 var handCard = youHands[handIndex];
 
                 var handCardObj = this.GetOrCreateHandCardObject(handCard.Id, handCard);
+                handCardObj.transform.SetParent(this.UiCanvas.transform, false);
                 handCardObj.transform.position = this.YouHandSpaces[handIndex].transform.position;
+
+                Debug.Log(handCardObj.transform.position);
             }
 
             var youFieldCards = you.PublicPlayerInfo.Field;
@@ -255,6 +260,7 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
                 var fieldCard = youFieldCards[fieldIndex];
 
                 var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard.Id, fieldCard);
+                fieldCardObj.transform.SetParent(this.UiCanvas.transform, false);
                 fieldCardObj.transform.position = this.YouFieldSpaces[fieldIndex].transform.position;
             }
 
@@ -282,6 +288,7 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
                 var fieldCard = opponentFieldCards[fieldIndex];
 
                 var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard.Id, fieldCard);
+                fieldCardObj.transform.SetParent(this.UiCanvas.transform, false);
                 fieldCardObj.transform.position = this.OpponentFieldSpaces[fieldIndex].transform.position;
             }
 

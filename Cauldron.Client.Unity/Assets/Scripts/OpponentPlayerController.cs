@@ -2,7 +2,6 @@ using Cauldron.Shared.MessagePackObjects;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-//[RequireComponent(typeof(Rigidbody2D))]
 public class OpponentPlayerController : MonoBehaviour, IPointerClickHandler
 {
     public GameObject AttackTargetIcon;
