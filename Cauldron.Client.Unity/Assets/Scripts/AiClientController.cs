@@ -23,7 +23,7 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     {
         var gameId = await this.GetGameId();
 
-        this.client = new AiClient(this.playerName, gameId, this, Debug.Log, Debug.LogError);
+        this.client = new AiClient(Config.ServerAddress, this.playerName, gameId, this, Debug.Log, Debug.LogError);
 
         await this.client.Ready();
     }
@@ -37,6 +37,22 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
         });
     }
 
+    async void ICauldronHubReceiver.OnStartTurn(GameContext gameContext)
+    {
+        // 自分のターン
+        Debug.Log("ターン開始: " + this.playerName);
+        await this.client.PlayTurn();
+    }
+
+    async void ICauldronHubReceiver.OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
+    {
+        Debug.Log($"{nameof(ICauldronHubReceiver.OnChoiceCards)}");
+
+        var result = await this.client.AnswerChoice(choiceCardsMessage.QuestionId, choiceCardsMessage.ChoiceCandidates, choiceCardsMessage.NumPicks);
+
+        Debug.Log($"result: {result}");
+    }
+
     void ICauldronHubReceiver.OnReady(GameContext gameContext)
     {
     }
@@ -47,13 +63,6 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
 
     void ICauldronHubReceiver.OnGameOver(GameContext gameContext)
     {
-    }
-
-    public async void OnStartTurn(GameContext gameContext)
-    {
-        // 自分のターン
-        Debug.Log("ターン開始: " + this.playerName);
-        await this.client.PlayTurn();
     }
 
     void ICauldronHubReceiver.OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)
@@ -74,14 +83,5 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
 
     void ICauldronHubReceiver.OnDamage(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)
     {
-    }
-
-    async void ICauldronHubReceiver.OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
-    {
-        Debug.Log($"{nameof(ICauldronHubReceiver.OnChoiceCards)}");
-
-        var result = await this.client.AnswerChoice(choiceCardsMessage.QuestionId, choiceCardsMessage.ChoiceCandidates, choiceCardsMessage.NumPicks);
-
-        Debug.Log($"result: {result}");
     }
 }

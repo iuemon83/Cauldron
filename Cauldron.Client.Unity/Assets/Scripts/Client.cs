@@ -13,9 +13,10 @@ public class Client
     private readonly Channel channel;
     private readonly ICauldronHub magiconionClient;
     private readonly ICauldronService magiconionServiceClient;
-    private readonly string playerName;
 
     public GameId GameId { get; private set; }
+    public readonly string PlayerName;
+
     private PlayerId PlayerId;
     private GameContext currentContext;
 
@@ -28,17 +29,17 @@ public class Client
         .Select(c => c.Id)
         .ToArray();
 
-    public Client(string playerName, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
-        : this(playerName, default, cauldronHubReceiver, logInfo, logError)
+    public Client(string serverAddress, string playerName, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+        : this(serverAddress, playerName, default, cauldronHubReceiver, logInfo, logError)
     {
     }
 
-    public Client(string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+    public Client(string serverAddress, string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
     {
-        this.playerName = playerName;
+        this.PlayerName = playerName;
         this.GameId = gameId;
 
-        this.channel = new Channel("localhost:5000", ChannelCredentials.Insecure);
+        this.channel = new Channel(serverAddress, ChannelCredentials.Insecure);
         var logger = new ClientLogger();
         this.magiconionServiceClient = MagicOnionClient.Create<ICauldronService>(channel);
         this.magiconionClient = StreamingHubClient.Connect<ICauldronHub, ICauldronHubReceiver>(channel, cauldronHubReceiver, logger: logger);
@@ -78,7 +79,7 @@ public class Client
 
     public async ValueTask<GameId> OpenNewGame()
     {
-        this.Logging("OpenNewGame: " + this.playerName);
+        this.Logging("OpenNewGame: " + this.PlayerName);
 
         var ruleBook = new RuleBook(
             InitialMp: 1,
@@ -106,11 +107,11 @@ public class Client
 
     public async ValueTask EnterGame()
     {
-        this.Logging($"GetCardPool: {this.playerName}: {this.GameId}: {this.PlayerId}");
+        this.Logging($"GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
         var cardPoolReply = await this.magiconionClient.GetCardPool(new GetCardPoolRequest(this.GameId));
 
-        this.Logging($"reponse GetCardPool: {this.playerName}: {this.GameId}: {this.PlayerId}");
+        this.Logging($"reponse GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
         var cardPool = cardPoolReply.Cards
             .Where(c => !c.IsToken)
@@ -120,18 +121,18 @@ public class Client
             .Select(_ => Utility.RandomPick(cardPool).Id)
             .ToArray();
 
-        this.Logging($"EnterGame: {this.playerName}: {this.GameId}: {this.PlayerId}");
+        this.Logging($"EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
-        var reply = await this.magiconionClient.EnterGame(new EnterGameRequest(this.GameId, this.playerName, deckCardIds));
+        var reply = await this.magiconionClient.EnterGame(new EnterGameRequest(this.GameId, this.PlayerName, deckCardIds));
 
-        this.Logging($"response EnterGame: {this.playerName}: {this.GameId}: {this.PlayerId}");
+        this.Logging($"response EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
         this.PlayerId = reply.PlayerId;
     }
 
     public async ValueTask ReadyGame()
     {
-        this.Logging($"ReadyGame: {this.playerName}: {this.GameId}: {this.PlayerId}");
+        this.Logging($"ReadyGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
         await this.magiconionClient.ReadyGame(new ReadyGameRequest(this.GameId, this.PlayerId));
     }
 

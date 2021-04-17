@@ -44,7 +44,6 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
     public List<CardId> PickedCardIdList = new List<CardId>();
     public List<CardDefId> PickedCardDefIdList = new List<CardDefId>();
 
-    private readonly string playerName = "リュウ";
     private readonly ConcurrentQueue<GameContext> gameContextQueue = new ConcurrentQueue<GameContext>();
     private readonly float interval = 0.5f;
 
@@ -209,15 +208,9 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
         return (true, picked);
     }
 
-    async void StartClient()
+    private async void StartClient()
     {
-        this.client = new Client(this.playerName, this, Debug.Log, Debug.LogError);
-
-        //this.client.test();
-
-        //var a = await this.client.AnswerChoice(Guid.NewGuid(), new ChoiceResult(new[] { PlayerId.NewId() }, new Card[0], new CardDef[0]), 12);
-        //Debug.Log(a);
-
+        this.client = new Client(Config.ServerAddress, Config.PlayerName, this, Debug.Log, Debug.LogError);
 
         Utility.GameId = await this.client.OpenNewGame();
         Debug.Log("ゲームID: " + Utility.GameId);
@@ -232,8 +225,6 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
         {
             return;
         }
-
-        Debug.Log("update");
 
         var you = gameContext.You;
         if (you != null)
@@ -354,37 +345,35 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
         }
     }
 
-    public void OnReady(GameContext gameContext)
+    void ICauldronHubReceiver.OnReady(GameContext gameContext)
     {
         Debug.Log("OnReady");
 
         this.gameContextQueue.Enqueue(gameContext);
     }
 
-    public void OnStartGame(GameContext gameContext)
+    void ICauldronHubReceiver.OnStartGame(GameContext gameContext)
     {
-        Debug.Log("ゲーム開始: " + this.playerName);
+        Debug.Log("ゲーム開始: " + this.client.PlayerName);
         this.gameContextQueue.Enqueue(gameContext);
     }
 
-    public void OnGameOver(GameContext gameContext)
+    void ICauldronHubReceiver.OnGameOver(GameContext gameContext)
     {
         Debug.Log("OnGameOver");
         this.gameContextQueue.Enqueue(gameContext);
     }
 
-    public async void OnStartTurn(GameContext gameContext)
+    async void ICauldronHubReceiver.OnStartTurn(GameContext gameContext)
     {
         // 自分のターン
-        Debug.Log("ターン開始: " + this.playerName);
+        Debug.Log("ターン開始: " + this.client.PlayerName);
         this.gameContextQueue.Enqueue(gameContext);
-
-        //await this.client.PlayTurn();
 
         await this.client.StartTurn();
     }
 
-    public void OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)
+    void ICauldronHubReceiver.OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)
     {
         var (ownerName, cardName) = Utility.GetCardName(gameContext, addCardNotifyMessage.ToZone, addCardNotifyMessage.CardId);
         var playerName = Utility.GetPlayerName(gameContext, addCardNotifyMessage.ToZone.PlayerId);
@@ -393,18 +382,18 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
         this.gameContextQueue.Enqueue(gameContext);
     }
 
-    public void OnMoveCard(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage)
+    void ICauldronHubReceiver.OnMoveCard(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage)
     {
         var (ownerName, cardName) = Utility.GetCardName(gameContext, moveCardNotifyMessage.ToZone, moveCardNotifyMessage.CardId);
         var playerName = Utility.GetPlayerName(gameContext, moveCardNotifyMessage.ToZone.PlayerId);
 
         Debug.Log($"移動: {cardName}({ownerName}) to {moveCardNotifyMessage.ToZone.ZoneName}({playerName})");
 
-        Debug.Log($"OnMoveCard({moveCardNotifyMessage.ToZone.PlayerId}): {this.playerName}");
+        Debug.Log($"OnMoveCard({moveCardNotifyMessage.ToZone.PlayerId}): {this.client.PlayerName}");
         this.gameContextQueue.Enqueue(gameContext);
     }
 
-    public void OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)
+    void ICauldronHubReceiver.OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)
     {
 
         var (ownerName, cardName) = Utility.GetCardName(gameContext, modifyCardNotifyMessage.CardId);
@@ -413,7 +402,7 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
         this.gameContextQueue.Enqueue(gameContext);
     }
 
-    public void OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage)
+    void ICauldronHubReceiver.OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage)
     {
         var playerName = Utility.GetPlayerName(gameContext, modifyPlayerNotifyMessage.PlayerId);
 
@@ -421,7 +410,7 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
         this.gameContextQueue.Enqueue(gameContext);
     }
 
-    public void OnDamage(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)
+    void ICauldronHubReceiver.OnDamage(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)
     {
         var (ownerPlayerName, cardName) = Utility.GetCardName(gameContext, damageNotifyMessage.SourceCardId);
         if (damageNotifyMessage.GuardCardId == default)
@@ -437,9 +426,9 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
         this.gameContextQueue.Enqueue(gameContext);
     }
 
-    public void OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
+    void ICauldronHubReceiver.OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
     {
-        Debug.Log($"{nameof(OnChoiceCards)}: questionId={choiceCardsMessage.QuestionId}, ");
+        Debug.Log($"questionId={choiceCardsMessage.QuestionId}");
 
         this.PickedPlayerIdList.Clear();
         this.PickedCardIdList.Clear();

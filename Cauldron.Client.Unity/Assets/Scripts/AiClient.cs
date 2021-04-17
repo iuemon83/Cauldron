@@ -12,9 +12,9 @@ public class AiClient
 
     private readonly Client client;
 
-    public AiClient(string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+    public AiClient(string serverAddress, string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
     {
-        this.client = new Client(playerName, gameId, cauldronHubReceiver, logInfo, logError);
+        this.client = new Client(serverAddress, playerName, gameId, cauldronHubReceiver, logInfo, logError);
         this.Logging = logInfo;
         this.LoggingError = logError;
     }
