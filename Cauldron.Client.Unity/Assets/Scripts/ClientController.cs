@@ -19,7 +19,9 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
     public GameObject HandCardPrefab;
     public GameObject FieldCardPrefab;
 
+    public Text YouName;
     public Text YouStatus;
+    public Text OpponentName;
     public Text OpponentStatus;
 
     public GameObject[] YouHandSpaces;
@@ -229,9 +231,11 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
         var you = gameContext.You;
         if (you != null)
         {
-            this.YouStatus.text = $"{you.PublicPlayerInfo.Name} [{you.PublicPlayerInfo.CurrentHp} / {you.PublicPlayerInfo.MaxHp}] [{you.PublicPlayerInfo.CurrentMp} / {you.PublicPlayerInfo.MaxMp}]";
-            this.YouDeckText.text = you.PublicPlayerInfo.DeckCount.ToString();
-            this.YouCemeteryText.text = you.PublicPlayerInfo.Cemetery.Length.ToString();
+            var publicInfo = you.PublicPlayerInfo;
+            this.YouName.text = publicInfo.Name;
+            this.YouStatus.text = $"[{publicInfo.CurrentHp} / {publicInfo.MaxHp}] [{publicInfo.CurrentMp} / {publicInfo.MaxMp}]";
+            this.YouDeckText.text = publicInfo.DeckCount.ToString();
+            this.YouCemeteryText.text = publicInfo.Cemetery.Length.ToString();
 
             var youHands = you.Hands;
             foreach (var handIndex in Enumerable.Range(0, Mathf.Min(youHands.Length, 10)))
@@ -245,7 +249,7 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
                 Debug.Log(handCardObj.transform.position);
             }
 
-            var youFieldCards = you.PublicPlayerInfo.Field;
+            var youFieldCards = publicInfo.Field;
             foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(youFieldCards.Length, 5)))
             {
                 var fieldCard = youFieldCards[fieldIndex];
@@ -255,7 +259,7 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
                 fieldCardObj.transform.position = this.YouFieldSpaces[fieldIndex].transform.position;
             }
 
-            var youCemeteryCards = you.PublicPlayerInfo.Cemetery;
+            var youCemeteryCards = publicInfo.Cemetery;
             foreach (var cemeteryIndex in Enumerable.Range(0, youCemeteryCards.Length))
             {
                 var cemeteryCard = youCemeteryCards[cemeteryIndex];
@@ -268,7 +272,8 @@ public class ClientController : MonoBehaviour, ICauldronHubReceiver
         {
             this.OpponentPlayerController.PlayerId = opponent.Id;
 
-            this.OpponentStatus.text = $"{opponent.Name} [{opponent.CurrentHp} / {opponent.MaxHp}] [{opponent.CurrentMp} / {opponent.MaxMp}]";
+            this.OpponentName.text = opponent.Name;
+            this.OpponentStatus.text = $"[{opponent.CurrentHp} / {opponent.MaxHp}] [{opponent.CurrentMp} / {opponent.MaxMp}]";
             this.OpponentHandText.text = opponent.HandsCount.ToString();
             this.OpponentDeckText.text = opponent.DeckCount.ToString();
             this.OpponentCemeteryText.text = opponent.Cemetery.Length.ToString();
