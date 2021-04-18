@@ -95,13 +95,13 @@ namespace Cauldron.Server.Services
 
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<int> ICauldronHub.Test(int num)
+        Task<int> ICauldronHub.Test(int num)
         {
-            return num * 2;
+            return Task.FromResult(num * 2);
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<OpenNewGameReply> ICauldronHub.OpenNewGame(OpenNewGameRequest request)
+        Task<OpenNewGameReply> ICauldronHub.OpenNewGame(OpenNewGameRequest request)
         {
             var ruleBook = request.RuleBook;
             var cardRepository = new CardRepository(ruleBook);
@@ -144,25 +144,25 @@ namespace Cauldron.Server.Services
 
             var gameId = new GameMasterRepository().Add(options);
 
-            return new OpenNewGameReply(gameId);
+            return Task.FromResult(new OpenNewGameReply(gameId));
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<CloseGameReply> ICauldronHub.CloseGame(CloseGameRequest request)
+        Task<CloseGameReply> ICauldronHub.CloseGame(CloseGameRequest request)
         {
             new GameMasterRepository().Delete(request.GameId);
 
-            return new CloseGameReply(true, "");
+            return Task.FromResult(new CloseGameReply(true, ""));
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<SetDeckReply> ICauldronHub.SetDeck(SetDeckRequest request)
+        Task<SetDeckReply> ICauldronHub.SetDeck(SetDeckRequest request)
         {
-            return new SetDeckReply();
+            return Task.FromResult(new SetDeckReply());
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<GetCardPoolReply> ICauldronHub.GetCardPool(GetCardPoolRequest request)
+        Task<GetCardPoolReply> ICauldronHub.GetCardPool(GetCardPoolRequest request)
         {
             var gameMaster = new GameMasterRepository().GetById(request.GameId);
 
@@ -170,7 +170,7 @@ namespace Cauldron.Server.Services
 
             this._logger.LogInformation($"response {cards.Length}: {this.ConnectionId}");
 
-            return new GetCardPoolReply(cards);
+            return Task.FromResult(new GetCardPoolReply(cards));
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
@@ -369,35 +369,35 @@ namespace Cauldron.Server.Services
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<(GameMasterStatusCode, CardId[])> ICauldronHub.ListPlayableCardId(GameId gameId)
+        Task<(GameMasterStatusCode, CardId[])> ICauldronHub.ListPlayableCardId(GameId gameId)
         {
             var playableStatus = IsPlayable(gameId, this.self.Id);
             if (playableStatus != GameMasterStatusCode.OK)
             {
-                return (playableStatus, default);
+                return Task.FromResult((playableStatus, default(CardId[])));
             }
 
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
             var ListPlayableCardIdResult = gameMaster.ListPlayableCardId(this.self.Id);
 
-            return ListPlayableCardIdResult;
+            return Task.FromResult(ListPlayableCardIdResult);
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<(GameMasterStatusCode, (PlayerId[], CardId[]))> ICauldronHub.ListAttackTargets(GameId gameId, CardId cardId)
+        Task<(GameMasterStatusCode, (PlayerId[], CardId[]))> ICauldronHub.ListAttackTargets(GameId gameId, CardId cardId)
         {
             var playableStatus = IsPlayable(gameId, this.self.Id);
             if (playableStatus != GameMasterStatusCode.OK)
             {
-                return (playableStatus, default);
+                return Task.FromResult((playableStatus, default((PlayerId[], CardId[]))));
             }
 
             var gameMaster = new GameMasterRepository().GetById(gameId);
 
             var attackTargetsResult = gameMaster.ListAttackTargets(cardId);
 
-            return attackTargetsResult;
+            return Task.FromResult(attackTargetsResult);
         }
     }
 }
