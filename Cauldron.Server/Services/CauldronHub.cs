@@ -1,4 +1,5 @@
-﻿using Cauldron.Core.Entities;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using Cauldron.Core.Entities;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.Services;
@@ -8,6 +9,7 @@ using MagicOnion.Server.Hubs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,7 +19,7 @@ namespace Cauldron.Server.Services
     {
         private static GameContext CreateGameContext(GameId gameId, PlayerId PlayerId)
         {
-            var gameMaster = new GameMasterRepository().GetById(gameId);
+            var gameMaster = gameMasterRepository.GetById(gameId);
 
             return gameMaster.CreateGameContext(PlayerId);
         }
@@ -45,6 +47,8 @@ namespace Cauldron.Server.Services
         }
 
         private static readonly GameMasterRepository gameMasterRepository = new();
+
+        private static readonly ConcurrentDictionary<GameId, int> numOfReadiesByGameId = new();
 
         private readonly IConfiguration configuration;
         private readonly ILogger<CauldronHub> _logger;
@@ -142,7 +146,7 @@ namespace Cauldron.Server.Services
                     AskCardAction: this.AskCard
                 ));
 
-            var gameId = new GameMasterRepository().Add(options);
+            var gameId = gameMasterRepository.Add(options);
 
             return Task.FromResult(new OpenNewGameReply(gameId));
         }
@@ -150,9 +154,15 @@ namespace Cauldron.Server.Services
         [FromTypeFilter(typeof(LoggingAttribute))]
         Task<CloseGameReply> ICauldronHub.CloseGame(CloseGameRequest request)
         {
-            new GameMasterRepository().Delete(request.GameId);
+            gameMasterRepository.Delete(request.GameId);
 
             return Task.FromResult(new CloseGameReply(true, ""));
+        }
+
+        [FromTypeFilter(typeof(LoggingAttribute))]
+        Task<GameOutline[]> ICauldronHub.ListOpenGames()
+        {
+            return Task.FromResult(gameMasterRepository.ListOpenGames());
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
@@ -164,7 +174,7 @@ namespace Cauldron.Server.Services
         [FromTypeFilter(typeof(LoggingAttribute))]
         Task<GetCardPoolReply> ICauldronHub.GetCardPool(GetCardPoolRequest request)
         {
-            var gameMaster = new GameMasterRepository().GetById(request.GameId);
+            var gameMaster = gameMasterRepository.GetById(request.GameId);
 
             var cards = gameMaster.CardPool.ToArray();
 
@@ -176,7 +186,7 @@ namespace Cauldron.Server.Services
         [FromTypeFilter(typeof(LoggingAttribute))]
         async Task<EnterGameReply> ICauldronHub.EnterGame(EnterGameRequest request)
         {
-            var gameMaster = new GameMasterRepository().GetById(request.GameId);
+            var gameMaster = gameMasterRepository.GetById(request.GameId);
 
             var numOfPlayers = this.room == null
                 ? 0
@@ -195,7 +205,17 @@ namespace Cauldron.Server.Services
                     try
                     {
                         this.self = gameMaster.PlayerDefsById[newPlayerId];
-                        (room, storage) = await this.Group.AddAsync(request.GameId.ToString(), this.self);
+                        var success = false;
+                        (success, room, storage) = await this.Group.TryAddAsync(request.GameId.ToString(), 2, true, this.self);
+                        if (success)
+                        {
+                            this.BroadcastExceptSelf(this.room).OnJoinGame();
+                        }
+                        else
+                        {
+                            //TODO 追加したプレイヤーを削除
+                            throw new RpcException(new Status(StatusCode.InvalidArgument, "room is full"));
+                        }
                     }
                     catch (Exception e)
                     {
@@ -214,14 +234,14 @@ namespace Cauldron.Server.Services
         [FromTypeFilter(typeof(LoggingAttribute))]
         async Task ICauldronHub.ReadyGame(ReadyGameRequest request)
         {
-            this.self.Ready = true;
+            var numOfReadies = numOfReadiesByGameId.AddOrUpdate(request.GameId, 1, (_, num) => num + 1);
 
             this.BroadcastToSelf(this.room).OnReady(new GameContext());
 
             var numOfPlayers = await this.room.GetMemberCountAsync();
 
             var readyAll = numOfPlayers == 2
-                && this.storage.AllValues.All(p => p.Ready);
+                && numOfReadies == 2;
 
             if (!readyAll)
             {
@@ -235,21 +255,17 @@ namespace Cauldron.Server.Services
             // ふたりとも準備完了なら開始
             this.Broadcast(this.room).OnStartGame(new GameContext());
 
-            if (this.storage.AllValues.First().Id == this.self.Id)
+            // 先行プレイヤー
+            var firstPlayerId = this.storage.AllValues.OrderBy(_ => Guid.NewGuid()).First().Id;
+
+            try
             {
-                // 一度だけ実行したいから部屋主の接続で実行する
-
-                var firstPlayerId = this.storage.AllValues.OrderBy(_ => Guid.NewGuid()).First().Id;
-
-                try
-                {
-                    var gameMaster = new GameMasterRepository().GetById(request.GameId);
-                    await gameMaster.Start(firstPlayerId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
+                var gameMaster = gameMasterRepository.GetById(request.GameId);
+                await gameMaster.Start(firstPlayerId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
         }
 
@@ -266,7 +282,7 @@ namespace Cauldron.Server.Services
                 );
             }
 
-            var gameMaster = new GameMasterRepository().GetById(request.GameId);
+            var gameMaster = gameMasterRepository.GetById(request.GameId);
             var statusCode = await gameMaster.StartTurn();
 
             return new StartTurnReply(
@@ -289,7 +305,7 @@ namespace Cauldron.Server.Services
                 );
             }
 
-            var gameMaster = new GameMasterRepository().GetById(request.GameId);
+            var gameMaster = gameMasterRepository.GetById(request.GameId);
             var statusCode = await gameMaster.EndTurn();
 
             return new EndTurnReply(
@@ -312,7 +328,7 @@ namespace Cauldron.Server.Services
                 );
             }
 
-            var gameMaster = new GameMasterRepository().GetById(request.GameId);
+            var gameMaster = gameMasterRepository.GetById(request.GameId);
             var statusCode = await gameMaster.PlayFromHand(request.PlayerId, request.HandCardId);
 
             return new PlayFromHandReply(
@@ -335,7 +351,7 @@ namespace Cauldron.Server.Services
                 );
             }
 
-            var gameMaster = new GameMasterRepository().GetById(request.GameId);
+            var gameMaster = gameMasterRepository.GetById(request.GameId);
             var statusCode = await gameMaster.AttackToCreature(request.PlayerId, request.AttackCardId, request.GuardCardId);
 
             return new AttackToCreatureReply(
@@ -358,7 +374,7 @@ namespace Cauldron.Server.Services
                 );
             }
 
-            var gameMaster = new GameMasterRepository().GetById(request.GameId);
+            var gameMaster = gameMasterRepository.GetById(request.GameId);
             var statusCode = await gameMaster.AttackToPlayer(request.PlayerId, request.AttackCardId, request.GuardPlayerId);
 
             return new AttackToPlayerReply(
@@ -377,7 +393,7 @@ namespace Cauldron.Server.Services
                 return Task.FromResult((playableStatus, default(CardId[])));
             }
 
-            var gameMaster = new GameMasterRepository().GetById(gameId);
+            var gameMaster = gameMasterRepository.GetById(gameId);
 
             var ListPlayableCardIdResult = gameMaster.ListPlayableCardId(this.self.Id);
 
@@ -393,7 +409,7 @@ namespace Cauldron.Server.Services
                 return Task.FromResult((playableStatus, default((PlayerId[], CardId[]))));
             }
 
-            var gameMaster = new GameMasterRepository().GetById(gameId);
+            var gameMaster = gameMasterRepository.GetById(gameId);
 
             var attackTargetsResult = gameMaster.ListAttackTargets(cardId);
 

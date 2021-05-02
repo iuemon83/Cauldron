@@ -6,6 +6,5 @@ namespace Cauldron.Core.Entities
 {
     public record PlayerDef(PlayerId Id, string Name, IReadOnlyList<CardDefId> DeckIdList)
     {
-        public bool Ready { get; set; } = false;
     }
 }

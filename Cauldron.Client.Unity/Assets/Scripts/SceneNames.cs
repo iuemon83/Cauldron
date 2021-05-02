@@ -3,6 +3,8 @@
     enum SceneNames
     {
         TitleScene,
+        ListGameScene,
+        WatingRoomScene,
         BattleScene
     }
 }

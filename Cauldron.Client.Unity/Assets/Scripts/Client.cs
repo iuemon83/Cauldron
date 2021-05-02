@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts;
+using Assets.Scripts.ServerShared.MessagePackObjects;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.Services;
@@ -30,16 +31,20 @@ public class Client
         .ToArray();
 
     public Client(string serverAddress, string playerName, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
-        : this(serverAddress, playerName, default, cauldronHubReceiver, logInfo, logError)
+        : this(new Channel(serverAddress, ChannelCredentials.Insecure), playerName, default, cauldronHubReceiver, logInfo, logError)
     {
     }
 
-    public Client(string serverAddress, string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+    public Client(Channel channel, string playerName, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+        : this(channel, playerName, default, cauldronHubReceiver, logInfo, logError)
+    { }
+
+    public Client(Channel channel, string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
     {
         this.PlayerName = playerName;
         this.GameId = gameId;
 
-        this.channel = new Channel(serverAddress, ChannelCredentials.Insecure);
+        this.channel = channel;
         var logger = new ClientLogger();
         this.magiconionServiceClient = MagicOnionClient.Create<ICauldronService>(channel);
         this.magiconionClient = StreamingHubClient.Connect<ICauldronHub, ICauldronHubReceiver>(channel, cauldronHubReceiver, logger: logger);
@@ -105,8 +110,10 @@ public class Client
         return this.GameId;
     }
 
-    public async ValueTask EnterGame()
+    public async ValueTask EnterGame(GameId gameId)
     {
+        this.GameId = gameId;
+
         this.Logging($"GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
         var cardPoolReply = await this.magiconionClient.GetCardPool(new GetCardPoolRequest(this.GameId));
@@ -200,5 +207,10 @@ public class Client
         var result = await this.magiconionServiceClient.AnswerChoice(questionId, choiceResult);
 
         return result;
+    }
+
+    public Task<GameOutline[]> ListOpenGames()
+    {
+        return this.magiconionClient.ListOpenGames();
     }
 }

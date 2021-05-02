@@ -4,6 +4,7 @@ namespace Cauldron.Shared.Services
 {
     public interface ICauldronHubReceiver
     {
+        void OnJoinGame();
         void OnReady(GameContext gameContext);
         void OnStartGame(GameContext gameContext);
         void OnGameOver(GameContext gameContext);

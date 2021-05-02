@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BattleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/ListGameScene.unity
+    guid: 291379c2b0a24c04eac7490730836bf0
+  - enabled: 1
+    path: Assets/Scenes/WatingRoomScene.unity
+    guid: c8474242a18fae646b025fc81a679297
   m_configObjects: {}

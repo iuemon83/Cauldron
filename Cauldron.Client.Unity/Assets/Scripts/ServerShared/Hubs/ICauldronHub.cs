@@ -1,4 +1,5 @@
-﻿using Cauldron.Shared.MessagePackObjects;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using Cauldron.Shared.MessagePackObjects;
 using MagicOnion;
 using System.Threading.Tasks;
 
@@ -15,6 +16,8 @@ namespace Cauldron.Shared.Services
         Task<CloseGameReply> CloseGame(CloseGameRequest request);
 
         Task<SetDeckReply> SetDeck(SetDeckRequest request);
+
+        Task<GameOutline[]> ListOpenGames();
 
         Task<EnterGameReply> EnterGame(EnterGameRequest request);
 

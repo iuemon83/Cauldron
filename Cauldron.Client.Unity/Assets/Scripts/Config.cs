@@ -1,4 +1,4 @@
-﻿using Grpc.Core;
+﻿using Cauldron.Shared.MessagePackObjects;
 using System.IO;
 using UnityEngine;
 
@@ -12,6 +12,5 @@ class Config
     public static string ServerAddress { get; set; }
     public static int Port { get; set; }
     public static string PlayerName { get; set; }
-
-    public static Channel Channel { get; set; }
+    public static GameId GameId { get; set; }
 }

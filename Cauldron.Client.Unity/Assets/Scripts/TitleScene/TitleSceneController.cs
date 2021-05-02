@@ -1,5 +1,4 @@
 using Assets.Scripts;
-using Grpc.Core;
 using System;
 using System.Collections;
 using System.Threading.Tasks;
@@ -42,7 +41,7 @@ public class TitleSceneController : MonoBehaviour
         // You could also load the Scene by using sceneBuildIndex. In this case Scene2 has
         // a sceneBuildIndex of 1 as shown in Build Settings.
 
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneNames.BattleScene.ToString());
+        var asyncLoad = SceneManager.LoadSceneAsync(SceneNames.ListGameScene.ToString());
 
         // Wait until the asynchronous scene fully loads
         while (!asyncLoad.isDone)
@@ -61,11 +60,7 @@ public class TitleSceneController : MonoBehaviour
 
         try
         {
-            var channel = new Channel(this.IpOrHostNameText.text, ChannelCredentials.Insecure);
-
-            await channel.ConnectAsync(DateTime.UtcNow.Add(TimeSpan.FromSeconds(5)));
-
-            Config.Channel = channel;
+            await ConnectionHolder.Create(this.IpOrHostNameText.text, this.PlayerNameText.text);
         }
         catch (Exception e)
         {

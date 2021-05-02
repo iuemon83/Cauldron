@@ -1,6 +1,8 @@
-﻿using Cauldron.Core.Entities;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using Cauldron.Core.Entities;
 using Cauldron.Shared.MessagePackObjects;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace Cauldron.Server
 {
@@ -25,6 +27,17 @@ namespace Cauldron.Server
         public GameMaster GetById(GameId gameId)
         {
             return gameMasterListByGameId[gameId];
+        }
+
+        public GameOutline[] ListOpenGames()
+        {
+            return gameMasterListByGameId
+                .Where(gameMaster => gameMaster.Value.PlayerDefsById.Count == 1)
+                .Select(gameMaster =>
+                {
+                    return new GameOutline(gameMaster.Key, gameMaster.Value.PlayerDefsById.First().Value.Name);
+                })
+                .ToArray();
         }
     }
 }

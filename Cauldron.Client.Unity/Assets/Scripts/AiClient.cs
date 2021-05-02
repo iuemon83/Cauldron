@@ -10,11 +10,15 @@ public class AiClient
     private readonly Action<string> Logging;
     private readonly Action<string> LoggingError;
 
+    private readonly GameId gameId;
+
     private readonly Client client;
 
     public AiClient(string serverAddress, string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
     {
-        this.client = new Client(serverAddress, playerName, gameId, cauldronHubReceiver, logInfo, logError);
+        this.gameId = gameId;
+
+        this.client = new Client(serverAddress, playerName, cauldronHubReceiver, logInfo, logError);
         this.Logging = logInfo;
         this.LoggingError = logError;
     }
@@ -26,7 +30,7 @@ public class AiClient
 
     public async ValueTask Ready()
     {
-        await this.client.EnterGame();
+        await this.client.EnterGame(this.gameId);
         await this.client.ReadyGame();
     }
 
