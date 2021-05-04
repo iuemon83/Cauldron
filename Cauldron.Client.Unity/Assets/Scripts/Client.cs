@@ -110,6 +110,11 @@ public class Client
         return this.GameId;
     }
 
+    public async ValueTask<GetCardPoolReply> GetCardPool()
+    {
+        return await this.magiconionClient.GetCardPool(new GetCardPoolRequest(this.GameId));
+    }
+
     public async ValueTask EnterGame(GameId gameId)
     {
         this.GameId = gameId;
