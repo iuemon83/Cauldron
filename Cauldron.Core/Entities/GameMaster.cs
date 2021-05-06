@@ -219,24 +219,45 @@ namespace Cauldron.Core.Entities
 
         public (GameMasterStatusCode, PlayerId) CreateNewPlayer(PlayerId newId, string name, IEnumerable<CardDefId> deckCardDefIdList)
         {
-            //var newId = PlayerId.NewId();
-            var deckCards = deckCardDefIdList.Select(id => this.cardRepository.CreateNew(id)).ToArray();
-
-            if (deckCards.Any(c => c == null))
+            var isValidDeck = this.IsValidDeck(deckCardDefIdList);
+            if (!isValidDeck)
             {
-                return (GameMasterStatusCode.CardNotExists, default);
-            }
-
-            // 提示されたデッキにトークンが含まれていてはいけない
-            if (deckCards.Any(c => c.IsToken))
-            {
-                return (GameMasterStatusCode.IsIncludedTokensInDeck, default);
+                return (GameMasterStatusCode.InvalidDeck, default);
             }
 
             var playerDef = new PlayerDef(newId, name, deckCardDefIdList.ToArray());
             this.PlayerDefsById.TryAdd(newId, playerDef);
 
             return (GameMasterStatusCode.OK, newId);
+        }
+
+        private bool IsValidDeck(IEnumerable<CardDefId> deckCardDefIdList)
+        {
+            var deckCards = deckCardDefIdList.Select(id => this.cardRepository.CreateNew(id)).ToArray();
+
+            if (deckCards.Any(c => c == null))
+            {
+                this.logger.LogError("includ invalid cards in deck");
+                return false;
+            }
+
+            // 提示されたデッキにトークンが含まれていてはいけない
+            if (deckCards.Any(c => c.IsToken))
+            {
+                this.logger.LogError("includ token cards in deck");
+                return false;
+            }
+
+            var invalidNumCards = deckCards.Length < this.RuleBook.MinNumDeckCards
+                || deckCards.Length > this.RuleBook.MaxNumDeckCards;
+
+            if (invalidNumCards)
+            {
+                this.logger.LogError("invalid number of deck cards");
+                return false;
+            }
+
+            return true;
         }
 
         public async ValueTask Start(PlayerId firstPlayerId)

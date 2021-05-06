@@ -30,8 +30,28 @@ public class AiClient
 
     public async ValueTask Ready()
     {
-        await this.client.EnterGame(this.gameId);
+        var randomDeck = await this.GetRandomDeck();
+
+        await this.client.EnterGame(this.gameId, randomDeck);
         await this.client.ReadyGame();
+    }
+
+    private async ValueTask<IDeck> GetRandomDeck()
+    {
+        var cardPoolReply = await this.client.GetCardPool();
+
+        var cardPool = cardPoolReply.Cards
+            .Where(c => !c.IsToken)
+            .ToArray();
+
+        var deckCardNames = Enumerable.Range(0, 40)
+            .Select(_ => Utility.RandomPick(cardPool).FullName)
+            .ToArray();
+
+        return new Deck()
+        {
+            CardDefNames = deckCardNames
+        };
     }
 
     public async ValueTask PlayTurn()

@@ -3,6 +3,7 @@ using Cauldron.Shared.MessagePackObjects;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts
@@ -57,7 +58,12 @@ namespace Assets.Scripts
             return (ownerName, card.Name);
         }
 
-        public static IEnumerator LoadAsyncSceneCoroutine(SceneNames sceneName)
+        public static void LoadAsyncScene(MonoBehaviour monoBehaviour, SceneNames sceneName)
+        {
+            monoBehaviour.StartCoroutine(LoadAsyncSceneCoroutine(sceneName));
+        }
+
+        private static IEnumerator LoadAsyncSceneCoroutine(SceneNames sceneName)
         {
 
             // The Application loads the Scene in the background as the current Scene runs.

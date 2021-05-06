@@ -6,6 +6,7 @@ using Cauldron.Shared.Services;
 using Grpc.Core;
 using MagicOnion.Client;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,8 +22,8 @@ public class Client
     private PlayerId PlayerId;
     private GameContext currentContext;
 
-    private Action<string> Logging { get; set; }
-    private Action<string> LoggingError { get; set; }
+    private Action<string> LogInfo { get; set; }
+    private Action<string> LogError { get; set; }
 
     public CardId[] MyCreatureCards => this.currentContext
         .You.PublicPlayerInfo.Field
@@ -48,8 +49,8 @@ public class Client
         var logger = new ClientLogger();
         this.magiconionServiceClient = MagicOnionClient.Create<ICauldronService>(channel);
         this.magiconionClient = StreamingHubClient.Connect<ICauldronHub, ICauldronHubReceiver>(channel, cauldronHubReceiver, logger: logger);
-        this.Logging = logInfo;
-        this.LoggingError = logError;
+        this.LogInfo = logInfo;
+        this.LogError = logError;
     }
 
     public async Task Destroy()
@@ -60,7 +61,7 @@ public class Client
 
     public async ValueTask<int> Test()
     {
-        this.Logging("Test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        this.LogInfo("Test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
         var result = await this.magiconionClient.Test(12);
         return result;
@@ -73,7 +74,7 @@ public class Client
             var winner = this.currentContext.WinnerPlayerId == this.PlayerId
                 ? this.currentContext.You.PublicPlayerInfo.Name
                 : this.currentContext.Opponent.Name;
-            this.Logging($"{winner} の勝ち！");
+            this.LogInfo($"{winner} の勝ち！");
             return false;
         }
 
@@ -84,7 +85,7 @@ public class Client
 
     public async ValueTask<GameId> OpenNewGame()
     {
-        this.Logging("OpenNewGame: " + this.PlayerName);
+        this.LogInfo("OpenNewGame: " + this.PlayerName);
 
         var ruleBook = new RuleBook(
             InitialMp: 1,
@@ -97,7 +98,7 @@ public class Client
             MaxPlayerHp: 10,
             MinPlayerHp: 0,
             MaxNumDeckCards: 40,
-            MinNumDeckCards: 40,
+            MinNumDeckCards: 10,
             MaxNumFieldCars: 5,
             DefaultNumTurnsToCanAttack: 1,
             DefaultNumAttacksLimitInTurn: 1
@@ -115,36 +116,38 @@ public class Client
         return await this.magiconionClient.GetCardPool(new GetCardPoolRequest(this.GameId));
     }
 
-    public async ValueTask EnterGame(GameId gameId)
+    public async ValueTask EnterGame(GameId gameId, IDeck deck)
     {
         this.GameId = gameId;
 
-        this.Logging($"GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
+        this.LogInfo($"GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
         var cardPoolReply = await this.magiconionClient.GetCardPool(new GetCardPoolRequest(this.GameId));
 
-        this.Logging($"reponse GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
+        this.LogInfo($"reponse GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
-        var cardPool = cardPoolReply.Cards
-            .Where(c => !c.IsToken)
-            .ToArray();
+        var deckCardIds = this.ToDeckIdList(deck, cardPoolReply.Cards).ToArray();
 
-        var deckCardIds = Enumerable.Range(0, 40)
-            .Select(_ => Utility.RandomPick(cardPool).Id)
-            .ToArray();
-
-        this.Logging($"EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
+        this.LogInfo($"EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
         var reply = await this.magiconionClient.EnterGame(new EnterGameRequest(this.GameId, this.PlayerName, deckCardIds));
 
-        this.Logging($"response EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
+        this.LogInfo($"response EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
         this.PlayerId = reply.PlayerId;
     }
 
+    private IEnumerable<CardDefId> ToDeckIdList(IDeck deck, CardDef[] cardPool)
+    {
+        return deck.CardDefNames
+            .Select(cardName => cardPool.FirstOrDefault(c => c.FullName == cardName))
+            .Where(cardDef => cardDef != null && !cardDef.IsToken)
+            .Select(cardDef => cardDef.Id);
+    }
+
     public async ValueTask ReadyGame()
     {
-        this.Logging($"ReadyGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
+        this.LogInfo($"ReadyGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
         await this.magiconionClient.ReadyGame(new ReadyGameRequest(this.GameId, this.PlayerId));
     }
 
@@ -166,7 +169,7 @@ public class Client
 
             if (!reply.Result)
             {
-                this.LoggingError(reply.ErrorMessage);
+                this.LogError(reply.ErrorMessage);
                 return;
             }
 
@@ -207,7 +210,7 @@ public class Client
 
     public async ValueTask<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceResult choiceResult)
     {
-        this.Logging($"answer: questionId={questionId}");
+        this.LogInfo($"answer: questionId={questionId}");
 
         var result = await this.magiconionServiceClient.AnswerChoice(questionId, choiceResult);
 

@@ -29,10 +29,6 @@ public class EditDeckSceneController : MonoBehaviour
     // Start is called before the first frame update
     async void Start()
     {
-        // test code
-        var holder1 = await ConnectionHolder.Create("localhost:5000", "test player");
-        await holder1.Client.OpenNewGame();
-
         this.cardPoolListContent = this.CardPoolList.transform.Find("Viewport").transform.Find("Content");
         this.deckListContent = this.DeckList.transform.Find("Viewport").transform.Find("Content");
 

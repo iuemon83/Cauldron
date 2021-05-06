@@ -10,9 +10,9 @@
         NotStart,
 
         /// <summary>
-        /// デッキにトークンが含まれている
+        /// 不正なデッキ
         /// </summary>
-        IsIncludedTokensInDeck,
+        InvalidDeck,
 
         /// <summary>
         /// 指定されたカードが存在しません

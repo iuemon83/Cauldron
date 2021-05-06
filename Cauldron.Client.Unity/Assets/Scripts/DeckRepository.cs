@@ -20,7 +20,7 @@ namespace Assets.Scripts
             }
 
             var json = File.ReadAllText(Config.DeckListFielPath);
-            return JsonUtility.FromJson<List<Deck>>(json);
+            return JsonUtility.FromJson<DeckList>(json).Decks.ToList();
         }
 
         public void Add(string name, IEnumerable<CardDef> cardDefList)
@@ -29,7 +29,7 @@ namespace Assets.Scripts
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = name,
-                CardDefNames = cardDefList.Select(c => c.Name).ToArray()
+                CardDefNames = cardDefList.Select(c => c.FullName).ToArray()
             });
 
             var json = JsonUtility.ToJson(new DeckList() { Decks = inMemoryCache.Value.ToArray() });
@@ -39,13 +39,6 @@ namespace Assets.Scripts
 
         public void Update(string id, string name, IEnumerable<CardDef> cardDefList)
         {
-            inMemoryCache.Value.Add(new Deck()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = name,
-                CardDefNames = cardDefList.Select(c => c.Name).ToArray()
-            });
-
             var deck = inMemoryCache.Value.FirstOrDefault(d => d.Id == id);
             if (deck == default)
             {
@@ -54,11 +47,16 @@ namespace Assets.Scripts
             }
 
             deck.Name = name;
-            deck.CardDefNames = cardDefList.Select(c => c.Name).ToArray();
+            deck.CardDefNames = cardDefList.Select(c => c.FullName).ToArray();
 
             var json = JsonUtility.ToJson(new DeckList() { Decks = inMemoryCache.Value.ToArray() });
 
             File.WriteAllText(Config.DeckListFielPath, json);
+        }
+
+        public IDeck[] GetAll()
+        {
+            return inMemoryCache.Value.ToArray();
         }
     }
 }

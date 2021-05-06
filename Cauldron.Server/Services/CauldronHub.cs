@@ -223,8 +223,8 @@ namespace Cauldron.Server.Services
                     }
                     return new EnterGameReply(newPlayerId);
 
-                case GameMasterStatusCode.IsIncludedTokensInDeck:
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "deck include token"));
+                case GameMasterStatusCode.InvalidDeck:
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid deck"));
 
                 default:
                     throw new RpcException(new Status(StatusCode.Unknown, "unknown error"));
