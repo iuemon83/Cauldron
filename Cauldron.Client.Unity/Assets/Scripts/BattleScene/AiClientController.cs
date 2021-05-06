@@ -23,7 +23,7 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     {
         var gameId = await this.GetGameId();
 
-        this.client = new AiClient(Config.ServerAddress, this.playerName, gameId, this, Debug.Log, Debug.LogError);
+        this.client = new AiClient(LocalData.ServerAddress, this.playerName, gameId, this, Debug.Log, Debug.LogError);
 
         await this.client.Ready();
     }

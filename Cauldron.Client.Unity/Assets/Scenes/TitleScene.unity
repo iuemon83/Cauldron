@@ -823,7 +823,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1070802227
 GameObject:
@@ -1156,10 +1156,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ErrorMessageText: {fileID: 290402994}
-  IpOrHostNameText: {fileID: 304390475}
-  PlayerNameText: {fileID: 2127635319}
+  IpOrHostNameText: {fileID: 1960442382}
+  PlayerNameText: {fileID: 2006874409}
   StartButton: {fileID: 578585977}
-  StartButtonText: {fileID: 1070802229}
 --- !u!4 &1986986003
 Transform:
   m_ObjectHideFlags: 0
@@ -1172,7 +1171,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2006874407
 GameObject:

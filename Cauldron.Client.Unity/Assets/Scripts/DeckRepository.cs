@@ -1,7 +1,6 @@
 ﻿using Cauldron.Shared.MessagePackObjects;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -14,13 +13,23 @@ namespace Assets.Scripts
 
         private static List<Deck> InitInMemoryCache()
         {
-            if (!File.Exists(Config.DeckListFielPath))
+            var json = LocalData.DeckListJson;
+
+            try
             {
+                return JsonUtility.FromJson<DeckList>(json).Decks.ToList();
+            }
+            catch
+            {
+                // デシリアライズに失敗
                 return new List<Deck>();
             }
+        }
 
-            var json = File.ReadAllText(Config.DeckListFielPath);
-            return JsonUtility.FromJson<DeckList>(json).Decks.ToList();
+        private static void Save()
+        {
+            var json = JsonUtility.ToJson(new DeckList() { Decks = inMemoryCache.Value.ToArray() });
+            LocalData.DeckListJson = json;
         }
 
         public void Add(string name, IEnumerable<CardDef> cardDefList)
@@ -32,9 +41,7 @@ namespace Assets.Scripts
                 CardDefNames = cardDefList.Select(c => c.FullName).ToArray()
             });
 
-            var json = JsonUtility.ToJson(new DeckList() { Decks = inMemoryCache.Value.ToArray() });
-
-            File.WriteAllText(Config.DeckListFielPath, json);
+            Save();
         }
 
         public void Update(string id, string name, IEnumerable<CardDef> cardDefList)
@@ -49,9 +56,7 @@ namespace Assets.Scripts
             deck.Name = name;
             deck.CardDefNames = cardDefList.Select(c => c.FullName).ToArray();
 
-            var json = JsonUtility.ToJson(new DeckList() { Decks = inMemoryCache.Value.ToArray() });
-
-            File.WriteAllText(Config.DeckListFielPath, json);
+            Save();
         }
 
         public IDeck[] GetAll()

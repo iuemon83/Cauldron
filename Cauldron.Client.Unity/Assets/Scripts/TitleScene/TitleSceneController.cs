@@ -8,11 +8,24 @@ using UnityEngine.UI;
 
 public class TitleSceneController : MonoBehaviour
 {
-    public Text ErrorMessageText;
-    public Text IpOrHostNameText;
-    public Text PlayerNameText;
-    public Button StartButton;
-    public Text StartButtonText;
+    [SerializeField]
+    private Text ErrorMessageText;
+    [SerializeField]
+    private InputField IpOrHostNameText;
+    [SerializeField]
+    private InputField PlayerNameText;
+    [SerializeField]
+    private Button StartButton;
+
+    private Text StartButtonText;
+
+    private void Start()
+    {
+        this.StartButtonText = this.StartButton.GetComponentInChildren<Text>();
+
+        this.IpOrHostNameText.text = LocalData.ServerAddress;
+        this.PlayerNameText.text = LocalData.PlayerName;
+    }
 
     /// <summary>
     /// ターン終了ボタンのクイックイベント
@@ -30,6 +43,9 @@ public class TitleSceneController : MonoBehaviour
 
             return;
         }
+
+        LocalData.ServerAddress = this.IpOrHostNameText.text;
+        LocalData.PlayerName = this.PlayerNameText.text;
 
         StartCoroutine(LoadYourAsyncScene());
     }
@@ -66,12 +82,9 @@ public class TitleSceneController : MonoBehaviour
         {
             // サーバーへの接続に失敗
             this.ShowErrorMessage("サーバーへの接続に失敗しました");
-            Debug.LogError(e);
+            Debug.LogWarning(e);
             return false;
         }
-
-        Config.ServerAddress = this.IpOrHostNameText.text;
-        Config.PlayerName = this.PlayerNameText.text;
 
         return true;
     }
