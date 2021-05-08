@@ -1,10 +1,17 @@
+using System;
+using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class FieldCardController : CardController, IPointerClickHandler, IPointerEnterHandler
 {
-    public GameObject SelectedIcon;
-    public GameObject AttackTargetIcon;
+    [SerializeField]
+    private GameObject SelectedIcon;
+    [SerializeField]
+    private GameObject AttackTargetIcon;
+    [SerializeField]
+    private TextMeshProUGUI DamageText;
 
     public bool IsAttackTarget => this.AttackTargetIcon.activeSelf;
 
@@ -73,5 +80,23 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
     public void OnPointerEnter(PointerEventData eventData)
     {
         ClientController.Instance.CardDetailController.SetCard(this.card);
+    }
+
+    public void SetAttackTarget(bool value)
+    {
+        this.AttackTargetIcon.SetActive(value);
+    }
+
+    public void SetSelect(bool value)
+    {
+        this.SelectedIcon.SetActive(value);
+    }
+
+    public async Task DamageEffect(int value)
+    {
+        this.DamageText.text = value.ToString();
+        this.DamageText.gameObject.SetActive(true);
+        await Task.Delay(TimeSpan.FromSeconds(0.3));
+        this.DamageText.gameObject.SetActive(false);
     }
 }

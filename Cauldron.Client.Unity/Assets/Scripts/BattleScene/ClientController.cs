@@ -1,6 +1,7 @@
 using Assets.Scripts;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,22 +20,17 @@ public class ClientController : MonoBehaviour
     public GameObject HandCardPrefab;
     public GameObject FieldCardPrefab;
 
-    public Text YouName;
-    public Text YouStatus;
-    public Text OpponentName;
-    public Text OpponentStatus;
-
     public GameObject[] YouHandSpaces;
     public GameObject[] YouFieldSpaces;
-    public Text YouDeckText;
-    public Text YouCemeteryText;
+
+    [SerializeField]
+    private PlayerController youPlayerController;
 
     public GameObject[] OpponentFieldSpaces;
     public Text OpponentHandText;
-    public Text OpponentDeckText;
-    public Text OpponentCemeteryText;
 
-    public PlayerController OpponentPlayerController;
+    [SerializeField]
+    private PlayerController opponentPlayerController;
 
     public CardDetailController CardDetailController;
 
@@ -46,13 +42,13 @@ public class ClientController : MonoBehaviour
     public List<CardId> PickedCardIdList = new List<CardId>();
     public List<CardDefId> PickedCardDefIdList = new List<CardDefId>();
 
-    private readonly ConcurrentQueue<GameContext> gameContextQueue = new ConcurrentQueue<GameContext>();
-    private readonly float interval = 0.5f;
+    private readonly ConcurrentQueue<Func<Task>> updateViewActionQueue = new ConcurrentQueue<Func<Task>>();
 
     private Client client;
-    private float timeleft;
 
     private ChoiceCardsMessage askParams;
+
+    private bool updating;
 
     async void Start()
     {
@@ -75,16 +71,15 @@ public class ClientController : MonoBehaviour
         await this.client.ReadyGame();
     }
 
-    void Update()
+    async void Update()
     {
-        timeleft += Time.deltaTime;
-        if (timeleft > interval)
+        if (!this.updating)
         {
-            timeleft = 0f;
-
-            if (this.gameContextQueue.TryDequeue(out var gameContext))
+            if (this.updateViewActionQueue.TryDequeue(out var updateViewAction))
             {
-                this.UpdateGameContext(gameContext);
+                this.updating = true;
+                await updateViewAction();
+                this.updating = false;
             }
         }
     }
@@ -112,14 +107,14 @@ public class ClientController : MonoBehaviour
 
         foreach (var targetPlayerId in targets.Item1)
         {
-            this.OpponentPlayerController.AttackTargetIcon.SetActive(true);
+            this.opponentPlayerController.SetAttackTarget(true);
         }
 
         foreach (var targetCardId in targets.Item2)
         {
             if (FieldCardControllersByCardId.TryGetValue(targetCardId, out var fieldCardController))
             {
-                fieldCardController.AttackTargetIcon.SetActive(true);
+                fieldCardController.SetAttackTarget(true);
             }
         }
     }
@@ -134,7 +129,7 @@ public class ClientController : MonoBehaviour
         }
 
         this.SelectedCardController = fieldCardController;
-        this.SelectedCardController.SelectedIcon.SetActive(true);
+        this.SelectedCardController.SetSelect(true);
 
         await this.MarkingAttackTargets();
     }
@@ -143,7 +138,7 @@ public class ClientController : MonoBehaviour
     {
         if (this.SelectedCardController != null)
         {
-            this.SelectedCardController.SelectedIcon.SetActive(false);
+            this.SelectedCardController.SetSelect(false);
             this.SelectedCardController = null;
         }
 
@@ -152,10 +147,10 @@ public class ClientController : MonoBehaviour
 
     public void ResetAttackTargets()
     {
-        this.OpponentPlayerController.AttackTargetIcon.SetActive(false);
+        this.opponentPlayerController.SetAttackTarget(false);
         foreach (var fieldCardController in FieldCardControllersByCardId.Values)
         {
-            fieldCardController.AttackTargetIcon.SetActive(false);
+            fieldCardController.SetAttackTarget(false);
         }
     }
 
@@ -192,8 +187,8 @@ public class ClientController : MonoBehaviour
         }
 
         // リセット
-        this.OpponentPlayerController.PickCandidateIcon.SetActive(false);
-        this.OpponentPlayerController.PickedIcon.SetActive(false);
+        this.opponentPlayerController.SetPickeCandidate(false);
+        this.opponentPlayerController.SetPicked(false);
         foreach (var fieldCardController in FieldCardControllersByCardId.Values)
         {
             fieldCardController.PickCandidateIcon.SetActive(false);
@@ -219,18 +214,7 @@ public class ClientController : MonoBehaviour
         return (true, picked);
     }
 
-    //private async void StartClient()
-    //{
-    //    //this.client = new Client(Config.ServerAddress, Config.PlayerName, this, Debug.Log, Debug.LogError);
-
-    //    Utility.GameId = await this.client.OpenNewGame();
-    //    Debug.Log("ゲームID: " + Utility.GameId);
-
-    //    await this.client.EnterGame(Utility.GameId.Value);
-    //    await this.client.ReadyGame();
-    //}
-
-    private void UpdateGameContext(GameContext gameContext)
+    private async Task UpdateGameContext(GameContext gameContext)
     {
         if (gameContext == null)
         {
@@ -241,10 +225,7 @@ public class ClientController : MonoBehaviour
         if (you != null)
         {
             var publicInfo = you.PublicPlayerInfo;
-            this.YouName.text = publicInfo.Name;
-            this.YouStatus.text = $"[{publicInfo.CurrentHp} / {publicInfo.MaxHp}] [{publicInfo.CurrentMp} / {publicInfo.MaxMp}]";
-            this.YouDeckText.text = publicInfo.DeckCount.ToString();
-            this.YouCemeteryText.text = publicInfo.Cemetery.Length.ToString();
+            this.youPlayerController.Set(publicInfo);
 
             var youHands = you.Hands;
             foreach (var handIndex in Enumerable.Range(0, Mathf.Min(youHands.Length, 10)))
@@ -279,13 +260,8 @@ public class ClientController : MonoBehaviour
         var opponent = gameContext.Opponent;
         if (opponent != null)
         {
-            this.OpponentPlayerController.PlayerId = opponent.Id;
-
-            this.OpponentName.text = opponent.Name;
-            this.OpponentStatus.text = $"[{opponent.CurrentHp} / {opponent.MaxHp}] [{opponent.CurrentMp} / {opponent.MaxMp}]";
+            this.opponentPlayerController.Set(opponent);
             this.OpponentHandText.text = opponent.HandsCount.ToString();
-            this.OpponentDeckText.text = opponent.DeckCount.ToString();
-            this.OpponentCemeteryText.text = opponent.Cemetery.Length.ToString();
 
             var opponentFieldCards = opponent.Field;
             foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(opponentFieldCards.Length, 5)))
@@ -304,6 +280,8 @@ public class ClientController : MonoBehaviour
                 RemoveCardObjectByCardId(cemeteryCard.Id);
             }
         }
+
+        await Task.Delay(TimeSpan.FromSeconds(0.3));
     }
 
     private GameObject GetOrCreateHandCardObject(CardId cardId, Card card)
@@ -363,26 +341,26 @@ public class ClientController : MonoBehaviour
     {
         Debug.Log("OnReady");
 
-        this.gameContextQueue.Enqueue(gameContext);
+        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 
     void OnStartGame(GameContext gameContext)
     {
         Debug.Log("ゲーム開始: " + this.client.PlayerName);
-        this.gameContextQueue.Enqueue(gameContext);
+        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 
     void OnGameOver(GameContext gameContext)
     {
         Debug.Log("OnGameOver");
-        this.gameContextQueue.Enqueue(gameContext);
+        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 
     async void OnStartTurn(GameContext gameContext)
     {
         // 自分のターン
         Debug.Log("ターン開始: " + this.client.PlayerName);
-        this.gameContextQueue.Enqueue(gameContext);
+        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
 
         await this.client.StartTurn();
     }
@@ -393,7 +371,7 @@ public class ClientController : MonoBehaviour
         var playerName = Utility.GetPlayerName(gameContext, addCardNotifyMessage.ToZone.PlayerId);
 
         Debug.Log($"追加: {cardName}({ownerName}) to {addCardNotifyMessage.ToZone.ZoneName}({playerName})");
-        this.gameContextQueue.Enqueue(gameContext);
+        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 
     void OnMoveCard(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage)
@@ -404,7 +382,7 @@ public class ClientController : MonoBehaviour
         Debug.Log($"移動: {cardName}({ownerName}) to {moveCardNotifyMessage.ToZone.ZoneName}({playerName})");
 
         Debug.Log($"OnMoveCard({moveCardNotifyMessage.ToZone.PlayerId}): {this.client.PlayerName}");
-        this.gameContextQueue.Enqueue(gameContext);
+        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 
     void OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)
@@ -413,7 +391,7 @@ public class ClientController : MonoBehaviour
         var (ownerName, cardName) = Utility.GetCardName(gameContext, modifyCardNotifyMessage.CardId);
 
         Debug.Log($"修整: {cardName}({ownerName})");
-        this.gameContextQueue.Enqueue(gameContext);
+        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 
     void OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage)
@@ -421,7 +399,7 @@ public class ClientController : MonoBehaviour
         var playerName = Utility.GetPlayerName(gameContext, modifyPlayerNotifyMessage.PlayerId);
 
         Debug.Log($"修整: {playerName}");
-        this.gameContextQueue.Enqueue(gameContext);
+        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 
     void OnDamage(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)
@@ -437,7 +415,30 @@ public class ClientController : MonoBehaviour
             var (guardCardOwnerName, guardCardName) = Utility.GetCardName(gameContext, damageNotifyMessage.GuardCardId);
             Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardCardName}({guardCardOwnerName}) {damageNotifyMessage.Damage}");
         }
-        this.gameContextQueue.Enqueue(gameContext);
+
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            if (damageNotifyMessage.GuardCardId == default)
+            {
+                if (this.youPlayerController.PlayerId == damageNotifyMessage.GuardPlayerId)
+                {
+                    this.youPlayerController.DamageEffect(damageNotifyMessage.Damage);
+                }
+                else
+                {
+                    this.opponentPlayerController.DamageEffect(damageNotifyMessage.Damage);
+                }
+            }
+            else
+            {
+                if (FieldCardControllersByCardId.TryGetValue(damageNotifyMessage.GuardCardId, out var fieldCard))
+                {
+                    await fieldCard.DamageEffect(damageNotifyMessage.Damage);
+                }
+            }
+
+            await this.UpdateGameContext(gameContext);
+        });
     }
 
     void OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
@@ -450,7 +451,7 @@ public class ClientController : MonoBehaviour
 
         if (choiceCardsMessage.ChoiceCandidates.PlayerIdList.Any())
         {
-            this.OpponentPlayerController.PickCandidateIcon.SetActive(true);
+            this.opponentPlayerController.SetPickeCandidate(true);
         }
 
         foreach (var card in choiceCardsMessage.ChoiceCandidates.CardList)
