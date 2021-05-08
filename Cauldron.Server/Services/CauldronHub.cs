@@ -19,14 +19,22 @@ namespace Cauldron.Server.Services
     {
         private static GameContext CreateGameContext(GameId gameId, PlayerId PlayerId)
         {
-            var gameMaster = gameMasterRepository.GetById(gameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
 
             return gameMaster.CreateGameContext(PlayerId);
         }
 
         private static GameMasterStatusCode IsPlayable(GameId gameId, PlayerId playerId)
         {
-            var gameMaster = gameMasterRepository.GetById(gameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
 
             if (!gameMaster.IsStarted)
             {
@@ -49,6 +57,23 @@ namespace Cauldron.Server.Services
         private static readonly GameMasterRepository gameMasterRepository = new();
 
         private static readonly ConcurrentDictionary<GameId, int> numOfReadiesByGameId = new();
+
+        private static readonly RuleBook defaultRulebook = new(
+            InitialMp: 1,
+            MaxLimitMp: 10,
+            MinMp: 0,
+            LimitMpToIncrease: 1,
+            InitialNumHands: 5,
+            MaxNumHands: 10,
+            InitialPlayerHp: 10,
+            MaxPlayerHp: 10,
+            MinPlayerHp: 0,
+            MaxNumDeckCards: 40,
+            MinNumDeckCards: 10,
+            MaxNumFieldCards: 5,
+            DefaultNumTurnsToCanAttack: 1,
+            DefaultNumAttacksLimitInTurn: 1
+        );
 
         private readonly IConfiguration configuration;
         private readonly ILogger<CauldronHub> _logger;
@@ -97,11 +122,25 @@ namespace Cauldron.Server.Services
             return answer;
         }
 
+        [FromTypeFilter(typeof(LoggingAttribute))]
+        Task<CardDef[]> ICauldronHub.GetCardPool()
+        {
+            var cardRepository = new CardRepository(defaultRulebook);
+            cardRepository.SetCardPool(CardPool.ReadFromDirectory(this.CardSetDirectoryPath));
+
+            return Task.FromResult(cardRepository.CardPool.ToArray());
+        }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<int> ICauldronHub.Test(int num)
+        Task<RuleBook> ICauldronHub.GetRuleBook()
         {
-            return Task.FromResult(num * 2);
+            return Task.FromResult(defaultRulebook);
+        }
+
+        [FromTypeFilter(typeof(LoggingAttribute))]
+        Task<GameOutline[]> ICauldronHub.ListOpenGames()
+        {
+            return Task.FromResult(gameMasterRepository.ListOpenGames());
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
@@ -160,33 +199,29 @@ namespace Cauldron.Server.Services
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<GameOutline[]> ICauldronHub.ListOpenGames()
+        Task<CardDef[]> ICauldronHub.GetCardPoolByGame(GameId gameId)
         {
-            return Task.FromResult(gameMasterRepository.ListOpenGames());
-        }
-
-        [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<SetDeckReply> ICauldronHub.SetDeck(SetDeckRequest request)
-        {
-            return Task.FromResult(new SetDeckReply());
-        }
-
-        [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<GetCardPoolReply> ICauldronHub.GetCardPool(GetCardPoolRequest request)
-        {
-            var gameMaster = gameMasterRepository.GetById(request.GameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
 
             var cards = gameMaster.CardPool.ToArray();
 
             this._logger.LogInformation($"response {cards.Length}: {this.ConnectionId}");
 
-            return Task.FromResult(new GetCardPoolReply(cards));
+            return Task.FromResult(cards);
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
         async Task<EnterGameReply> ICauldronHub.EnterGame(EnterGameRequest request)
         {
-            var gameMaster = gameMasterRepository.GetById(request.GameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
 
             var numOfPlayers = this.room == null
                 ? 0
@@ -260,7 +295,11 @@ namespace Cauldron.Server.Services
 
             try
             {
-                var gameMaster = gameMasterRepository.GetById(request.GameId);
+                var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
+                if (!found)
+                {
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+                }
                 await gameMaster.Start(firstPlayerId);
             }
             catch (Exception e)
@@ -282,7 +321,11 @@ namespace Cauldron.Server.Services
                 );
             }
 
-            var gameMaster = gameMasterRepository.GetById(request.GameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
             var statusCode = await gameMaster.StartTurn();
 
             return new StartTurnReply(
@@ -305,7 +348,11 @@ namespace Cauldron.Server.Services
                 );
             }
 
-            var gameMaster = gameMasterRepository.GetById(request.GameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
             var statusCode = await gameMaster.EndTurn();
 
             return new EndTurnReply(
@@ -328,7 +375,11 @@ namespace Cauldron.Server.Services
                 );
             }
 
-            var gameMaster = gameMasterRepository.GetById(request.GameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
             var statusCode = await gameMaster.PlayFromHand(request.PlayerId, request.HandCardId);
 
             return new PlayFromHandReply(
@@ -351,7 +402,11 @@ namespace Cauldron.Server.Services
                 );
             }
 
-            var gameMaster = gameMasterRepository.GetById(request.GameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
             var statusCode = await gameMaster.AttackToCreature(request.PlayerId, request.AttackCardId, request.GuardCardId);
 
             return new AttackToCreatureReply(
@@ -374,7 +429,11 @@ namespace Cauldron.Server.Services
                 );
             }
 
-            var gameMaster = gameMasterRepository.GetById(request.GameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
             var statusCode = await gameMaster.AttackToPlayer(request.PlayerId, request.AttackCardId, request.GuardPlayerId);
 
             return new AttackToPlayerReply(
@@ -393,7 +452,11 @@ namespace Cauldron.Server.Services
                 return Task.FromResult((playableStatus, default(CardId[])));
             }
 
-            var gameMaster = gameMasterRepository.GetById(gameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
 
             var ListPlayableCardIdResult = gameMaster.ListPlayableCardId(this.self.Id);
 
@@ -409,7 +472,11 @@ namespace Cauldron.Server.Services
                 return Task.FromResult((playableStatus, default((PlayerId[], CardId[]))));
             }
 
-            var gameMaster = gameMasterRepository.GetById(gameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
 
             var attackTargetsResult = gameMaster.ListAttackTargets(cardId);
 

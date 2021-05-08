@@ -401,12 +401,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a92c432c387988a4788d36d2b9458d4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardPoolList: {fileID: 672024801}
-  DeckList: {fileID: 997358811}
-  ListNodePrefab: {fileID: 8938768099748468358, guid: 2f19663fd900bd3479f4bde035161e68, type: 3}
-  DeckNameInputField: {fileID: 707628986}
-  DeckCountText: {fileID: 648455532}
-  CardDefDetailController: {fileID: 117875975}
+  cardPoolList: {fileID: 672024801}
+  deckList: {fileID: 997358811}
+  listNodePrefab: {fileID: 8938768099748468358, guid: 2f19663fd900bd3479f4bde035161e68, type: 3}
+  deckNameInputField: {fileID: 707628986}
+  deckCountText: {fileID: 648455532}
+  cardDefDetailController: {fileID: 117875975}
 --- !u!114 &117875975 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6092959791097690908, guid: 02d76ccc20453624d9a1653884007aa0, type: 3}
@@ -1380,9 +1380,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 925626523}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -1914,9 +1914,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 1213925739}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135

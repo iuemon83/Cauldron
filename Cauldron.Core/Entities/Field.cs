@@ -16,7 +16,7 @@ namespace Cauldron.Core.Entities
 
         public int Count => this.AllCards.Count;
 
-        public bool Full => this.Count >= this.RuleBook.MaxNumFieldCars;
+        public bool Full => this.Count >= this.RuleBook.MaxNumFieldCards;
 
         public Field(RuleBook ruleBook)
         {

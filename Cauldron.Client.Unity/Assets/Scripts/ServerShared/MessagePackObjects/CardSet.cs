@@ -3,13 +3,15 @@
 namespace Cauldron.Shared.MessagePackObjects
 {
     [MessagePackObject(true)]
-    public class GetCardPoolReply
+    public class CardSet
     {
+        public string Name { get; }
         public CardDef[] Cards { get; }
 
-        public GetCardPoolReply(CardDef[] Cards)
+        public CardSet(string name, CardDef[] cards)
         {
-            this.Cards = Cards;
+            this.Name = name;
+            this.Cards = cards;
         }
     }
 }

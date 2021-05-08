@@ -1,5 +1,6 @@
 ﻿using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,26 +59,18 @@ namespace Assets.Scripts
             return (ownerName, card.Name);
         }
 
-        public static void LoadAsyncScene(MonoBehaviour monoBehaviour, SceneNames sceneName)
+        public static void LoadAsyncScene(MonoBehaviour monoBehaviour, SceneNames sceneName, Action onLoadAction = null)
         {
-            monoBehaviour.StartCoroutine(LoadAsyncSceneCoroutine(sceneName));
+            monoBehaviour.StartCoroutine(LoadAsyncSceneCoroutine(sceneName, onLoadAction));
         }
 
-        private static IEnumerator LoadAsyncSceneCoroutine(SceneNames sceneName)
+        private static IEnumerator LoadAsyncSceneCoroutine(SceneNames sceneName, Action onLoadAction)
         {
+            yield return SceneManager.LoadSceneAsync(sceneName.ToString(), LoadSceneMode.Additive);
 
-            // The Application loads the Scene in the background as the current Scene runs.
-            // This is particularly good for creating loading screens.
-            // You could also load the Scene by using sceneBuildIndex. In this case Scene2 has
-            // a sceneBuildIndex of 1 as shown in Build Settings.
+            onLoadAction?.Invoke();
 
-            var asyncLoad = SceneManager.LoadSceneAsync(sceneName.ToString());
-
-            // Wait until the asynchronous scene fully loads
-            while (!asyncLoad.isDone)
-            {
-                yield return null;
-            }
+            yield return SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }

@@ -59,6 +59,13 @@ namespace Assets.Scripts
             Save();
         }
 
+        public void Delete(string id)
+        {
+            inMemoryCache.Value.RemoveAll(d => d.Id == id);
+
+            Save();
+        }
+
         public IDeck[] GetAll()
         {
             return inMemoryCache.Value.ToArray();

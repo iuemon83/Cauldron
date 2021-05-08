@@ -7,17 +7,17 @@ namespace Cauldron.Shared.Services
 {
     public interface ICauldronHub : IStreamingHub<ICauldronHub, ICauldronHubReceiver>
     {
-        Task<int> Test(int num);
+        Task<CardDef[]> GetCardPool();
+
+        Task<RuleBook> GetRuleBook();
+
+        Task<GameOutline[]> ListOpenGames();
 
         Task<OpenNewGameReply> OpenNewGame(OpenNewGameRequest request);
 
-        Task<GetCardPoolReply> GetCardPool(GetCardPoolRequest request);
-
         Task<CloseGameReply> CloseGame(CloseGameRequest request);
 
-        Task<SetDeckReply> SetDeck(SetDeckRequest request);
-
-        Task<GameOutline[]> ListOpenGames();
+        Task<CardDef[]> GetCardPoolByGame(GameId gameId);
 
         Task<EnterGameReply> EnterGame(EnterGameRequest request);
 

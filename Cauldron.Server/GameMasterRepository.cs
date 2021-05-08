@@ -24,9 +24,11 @@ namespace Cauldron.Server
             gameMasterListByGameId.TryRemove(gameId, out _);
         }
 
-        public GameMaster GetById(GameId gameId)
+        public (bool, GameMaster) TryGetById(GameId gameId)
         {
-            return gameMasterListByGameId[gameId];
+            return gameMasterListByGameId.TryGetValue(gameId, out var value)
+                ? (true, value)
+                : (false, default);
         }
 
         public GameOutline[] ListOpenGames()

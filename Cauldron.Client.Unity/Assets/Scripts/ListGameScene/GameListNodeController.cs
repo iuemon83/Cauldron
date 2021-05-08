@@ -11,17 +11,6 @@ public class GameListNodeController : MonoBehaviour
 
     private GameOutline gameOutline;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void Set(GameOutline gameOutline)
     {
         this.gameOutline = gameOutline;

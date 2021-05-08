@@ -15,8 +15,8 @@ namespace Cauldron.Shared.MessagePackObjects
         public int InitialMp { get; }
         public int MaxLimitMp { get; }
         public int MinMp { get; }
-        public int MpByStep { get; }
-        public int MaxNumFieldCars { get; }
+        public int LimitMpToIncrease { get; }
+        public int MaxNumFieldCards { get; }
         public int DefaultNumTurnsToCanAttack { get; }
         public int DefaultNumAttacksLimitInTurn { get; }
 
@@ -31,8 +31,8 @@ namespace Cauldron.Shared.MessagePackObjects
             int InitialMp,
             int MaxLimitMp,
             int MinMp,
-            int MpByStep,
-            int MaxNumFieldCars,
+            int LimitMpToIncrease,
+            int MaxNumFieldCards,
             int DefaultNumTurnsToCanAttack,
             int DefaultNumAttacksLimitInTurn
             )
@@ -47,8 +47,8 @@ namespace Cauldron.Shared.MessagePackObjects
             this.InitialMp = InitialMp;
             this.MaxLimitMp = MaxLimitMp;
             this.MinMp = MinMp;
-            this.MpByStep = MpByStep;
-            this.MaxNumFieldCars = MaxNumFieldCars;
+            this.LimitMpToIncrease = LimitMpToIncrease;
+            this.MaxNumFieldCards = MaxNumFieldCards;
             this.DefaultNumTurnsToCanAttack = DefaultNumTurnsToCanAttack;
             this.DefaultNumAttacksLimitInTurn = DefaultNumAttacksLimitInTurn;
         }

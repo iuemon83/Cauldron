@@ -38,9 +38,9 @@ public class AiClient
 
     private async ValueTask<IDeck> GetRandomDeck()
     {
-        var cardPoolReply = await this.client.GetCardPool();
+        var cardDefs = await this.client.GetCardPool();
 
-        var cardPool = cardPoolReply.Cards
+        var cardPool = cardDefs
             .Where(c => !c.IsToken)
             .ToArray();
 

@@ -59,14 +59,6 @@ public class Client
         await this.channel.ShutdownAsync();
     }
 
-    public async ValueTask<int> Test()
-    {
-        this.LogInfo("Test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-        var result = await this.magiconionClient.Test(12);
-        return result;
-    }
-
     private async ValueTask<bool> PlayAction(Func<ValueTask> action)
     {
         if (this.currentContext?.GameOver ?? false)
@@ -91,7 +83,7 @@ public class Client
             InitialMp: 1,
             MaxLimitMp: 10,
             MinMp: 0,
-            MpByStep: 1,
+            LimitMpToIncrease: 1,
             InitialNumHands: 5,
             MaxNumHands: 10,
             InitialPlayerHp: 10,
@@ -99,7 +91,7 @@ public class Client
             MinPlayerHp: 0,
             MaxNumDeckCards: 40,
             MinNumDeckCards: 10,
-            MaxNumFieldCars: 5,
+            MaxNumFieldCards: 5,
             DefaultNumTurnsToCanAttack: 1,
             DefaultNumAttacksLimitInTurn: 1
         );
@@ -111,9 +103,14 @@ public class Client
         return this.GameId;
     }
 
-    public async ValueTask<GetCardPoolReply> GetCardPool()
+    public async ValueTask<RuleBook> GetRuleBook()
     {
-        return await this.magiconionClient.GetCardPool(new GetCardPoolRequest(this.GameId));
+        return await this.magiconionClient.GetRuleBook();
+    }
+
+    public async ValueTask<CardDef[]> GetCardPool()
+    {
+        return await this.magiconionClient.GetCardPool();
     }
 
     public async ValueTask EnterGame(GameId gameId, IDeck deck)
@@ -122,11 +119,11 @@ public class Client
 
         this.LogInfo($"GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
-        var cardPoolReply = await this.magiconionClient.GetCardPool(new GetCardPoolRequest(this.GameId));
+        var cardDefs = await this.magiconionClient.GetCardPoolByGame(gameId);
 
         this.LogInfo($"reponse GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
-        var deckCardIds = this.ToDeckIdList(deck, cardPoolReply.Cards).ToArray();
+        var deckCardIds = this.ToDeckIdList(deck, cardDefs).ToArray();
 
         this.LogInfo($"EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 

@@ -1,4 +1,5 @@
 using Cauldron.Core.Entities;
+using Cauldron.Shared.MessagePackObjects;
 using System.IO;
 using Xunit;
 

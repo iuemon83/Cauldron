@@ -4,6 +4,8 @@
     {
         TitleScene,
         ListGameScene,
+        ListDeckScene,
+        EditDeckScene,
         WatingRoomScene,
         BattleScene
     }

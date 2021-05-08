@@ -602,7 +602,7 @@ namespace Cauldron.Core.Entities
             // 1ターン目はMP を増やさない
             if (this.PlayerTurnCountById[this.ActivePlayer.Id] != 1)
             {
-                this.ActivePlayer.AddMaxMp(this.RuleBook.MpByStep);
+                this.ActivePlayer.AddMaxMp(this.RuleBook.LimitMpToIncrease);
             }
 
             this.ActivePlayer.FullMp();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Cauldron.Shared.MessagePackObjects;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 

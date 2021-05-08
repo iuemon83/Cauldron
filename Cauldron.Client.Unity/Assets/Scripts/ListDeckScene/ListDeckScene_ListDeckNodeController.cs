@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ListDeckNodeController : MonoBehaviour, IPointerClickHandler
+public class ListDeckScene_ListDeckNodeController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
     private Text deckNameText;
@@ -14,7 +14,7 @@ public class ListDeckNodeController : MonoBehaviour, IPointerClickHandler
 
     public IDeck Source { get; set; }
 
-    public Action<ListDeckNodeController> SelectNodeAction { get; set; }
+    public Action<ListDeckScene_ListDeckNodeController> SelectNodeAction { get; set; }
 
     private Color DeselectedTextColor;
     private Color DeselectedBackgroundColor;

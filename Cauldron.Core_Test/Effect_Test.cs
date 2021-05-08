@@ -113,7 +113,7 @@ namespace Cauldron.Core_Test
 
             var testRulebook = new RuleBook(
                 InitialPlayerHp: 10, MaxPlayerHp: 20, MinPlayerHp: 0, MaxNumDeckCards: 40, MinNumDeckCards: 40, InitialNumHands: 5,
-                MaxNumHands: 10, InitialMp: 1, MaxLimitMp: 10, MinMp: 1, MpByStep: 1, MaxNumFieldCars: 5, DefaultNumTurnsToCanAttack: 0,
+                MaxNumHands: 10, InitialMp: 1, MaxLimitMp: 10, MinMp: 1, LimitMpToIncrease: 1, MaxNumFieldCards: 5, DefaultNumTurnsToCanAttack: 0,
                 DefaultNumAttacksLimitInTurn: 1);
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef },
