@@ -3,18 +3,19 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
-    private Text nameText;
+    private TextMeshProUGUI nameText;
     [SerializeField]
-    private Text statusText;
+    private TextMeshProUGUI statusText;
     [SerializeField]
-    private Text deckText;
+    private TextMeshProUGUI deckText;
     [SerializeField]
-    private Text cemeteryText;
+    private TextMeshProUGUI cemeteryText;
+    [SerializeField]
+    private TextMeshProUGUI handText;
     [SerializeField]
     private TextMeshProUGUI damageText;
     [SerializeField]
@@ -45,6 +46,7 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.statusText.text = $"[{publicPlayerInfo.CurrentHp} / {publicPlayerInfo.MaxHp}] [{publicPlayerInfo.CurrentMp} / {publicPlayerInfo.MaxMp}]";
         this.deckText.text = publicPlayerInfo.DeckCount.ToString();
         this.cemeteryText.text = publicPlayerInfo.Cemetery.Length.ToString();
+        this.handText.text = publicPlayerInfo.HandsCount.ToString();
     }
 
     /// <summary>
@@ -57,27 +59,27 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         {
             this.pickCandidateIcon.SetActive(true);
             this.pickedIcon.SetActive(false);
-            ClientController.Instance.PickedPlayerIdList.Remove(this.PlayerId);
+            BattleSceneController.Instance.UnPick(this.PlayerId);
         }
         else if (this.IsPickCandidate)
         {
             this.pickedIcon.SetActive(true);
             this.pickCandidateIcon.SetActive(false);
-            ClientController.Instance.PickedPlayerIdList.Add(this.PlayerId);
+            BattleSceneController.Instance.Pick(this.PlayerId);
         }
         else if (this.IsAttackTarget)
         {
-            if (ClientController.Instance.SelectedCardController != null)
+            if (BattleSceneController.Instance.SelectedCardController != null)
             {
                 // 選択済みのカードがある
 
-                var attackCardId = ClientController.Instance.SelectedCardController.CardId;
+                var attackCardId = BattleSceneController.Instance.SelectedCardController.CardId;
 
                 // 攻撃する
-                await ClientController.Instance.AttackToOpponentPlayer(attackCardId);
+                await BattleSceneController.Instance.AttackToOpponentPlayer(attackCardId);
 
                 // 攻撃後は選択済みのカードの選択を解除する
-                ClientController.Instance.UnSelectCard();
+                BattleSceneController.Instance.UnSelectCard();
             }
         }
     }

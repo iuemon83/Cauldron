@@ -1,5 +1,6 @@
 using Assets.Scripts;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,48 +8,49 @@ using UnityEngine.UI;
 public class ListDeckNodeController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
-    private Text deckNameText;
+    private TextMeshProUGUI deckNameText;
 
     [SerializeField]
     private Image backgroundImage;
 
-    public IDeck Source { get; set; }
+    public IDeck Source { get; private set; }
 
-    public Action<ListDeckNodeController> SelectNodeAction { get; set; }
+    private Action<ListDeckNodeController> selectNodeAction;
 
-    private Color DeselectedTextColor;
-    private Color DeselectedBackgroundColor;
+    private Color deselectedTextColor;
+    private Color deselectedBackgroundColor;
 
-    private Color SelectedTextColor = Color.white;
-    private Color SelectedBackgroundColor = new Color(0.8f, 0.2f, 0.2f, 0.4f);
+    private Color selectedTextColor = Color.white;
+    private Color selectedBackgroundColor = new Color(0.8f, 0.2f, 0.2f, 0.4f);
 
     // Start is called before the first frame update
     void Start()
     {
-        this.DeselectedTextColor = this.deckNameText.color;
-        this.DeselectedBackgroundColor = this.backgroundImage.color;
+        this.deselectedTextColor = this.deckNameText.color;
+        this.deselectedBackgroundColor = this.backgroundImage.color;
     }
 
-    public void Set(IDeck source)
+    public void Set(IDeck source, Action<ListDeckNodeController> selectNodeAction)
     {
         this.Source = source;
         this.deckNameText.text = source.Name;
+        this.selectNodeAction = selectNodeAction;
     }
 
     public void SetDeselectedColor()
     {
-        this.deckNameText.color = this.DeselectedTextColor;
-        this.backgroundImage.color = this.DeselectedBackgroundColor;
+        this.deckNameText.color = this.deselectedTextColor;
+        this.backgroundImage.color = this.deselectedBackgroundColor;
     }
 
     public void SetSelectedColor()
     {
-        this.deckNameText.color = this.SelectedTextColor;
-        this.backgroundImage.color = this.SelectedBackgroundColor;
+        this.deckNameText.color = this.selectedTextColor;
+        this.backgroundImage.color = this.selectedBackgroundColor;
     }
 
     void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
     {
-        this.SelectNodeAction?.Invoke(this);
+        this.selectNodeAction?.Invoke(this);
     }
 }

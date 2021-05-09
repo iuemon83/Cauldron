@@ -6,25 +6,24 @@ using UnityEngine.UI;
 public class ListDeckDialogController : MonoBehaviour
 {
     [SerializeField]
-    private GameObject DeckListView;
+    private GameObject deckListView;
 
     [SerializeField]
-    private GameObject ListNodePrefab;
+    private GameObject listNodePrefab;
 
     [SerializeField]
-    private Button OkButton;
+    private Button okButton;
 
     private Transform deckListContent;
     private ListDeckNodeController selectedNode;
 
-
-    public Action<IDeck> OnOkButtonClickAction { get; set; }
+    public Action<IDeck> OnOkButtonClickAction { get; set; } 
     public Action OnCancelButtonClickAction { get; set; }
 
     // Start is called before the first frame update
     void Start()
     {
-        this.deckListContent = this.DeckListView.transform.Find("Viewport").transform.Find("Content");
+        this.deckListContent = this.deckListView.transform.Find("Viewport").transform.Find("Content");
 
         var decks = new DeckRepository().GetAll();
 
@@ -36,10 +35,9 @@ public class ListDeckDialogController : MonoBehaviour
 
     private void AddToDeckListView(IDeck source)
     {
-        var node = Instantiate(this.ListNodePrefab, this.deckListContent.transform);
+        var node = Instantiate(this.listNodePrefab, this.deckListContent.transform);
         var controller = node.GetComponent<ListDeckNodeController>();
-        controller.SelectNodeAction = this.SelectNode;
-        controller.Set(source);
+        controller.Set(source, this.SelectNode);
     }
 
     public void OnOkButtonClick()
@@ -64,7 +62,7 @@ public class ListDeckDialogController : MonoBehaviour
         this.selectedNode = nodeController;
         this.selectedNode.SetSelectedColor();
 
-        this.OkButton.interactable = true;
+        this.okButton.interactable = true;
     }
 
     public void ShowDialog()
@@ -75,7 +73,7 @@ public class ListDeckDialogController : MonoBehaviour
             this.selectedNode = null;
         }
 
-        this.OkButton.interactable = false;
+        this.okButton.interactable = false;
 
         this.gameObject.SetActive(true);
     }

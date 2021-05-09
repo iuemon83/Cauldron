@@ -4,11 +4,11 @@ public class HandCardController : CardController, IPointerClickHandler, IPointer
 {
     public async void OnPointerClick(PointerEventData eventData)
     {
-        await ClientController.Instance.PlayFromHand(this.card.Id);
+        await BattleSceneController.Instance.PlayFromHand(this.card.Id);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        ClientController.Instance.CardDetailController.SetCard(this.card);
+        BattleSceneController.Instance.ShowCardDetail(this.card);
     }
 }

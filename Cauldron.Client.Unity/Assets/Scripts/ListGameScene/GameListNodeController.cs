@@ -1,20 +1,22 @@
 using Assets.Scripts.ServerShared.MessagePackObjects;
 using System;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GameListNodeController : MonoBehaviour
 {
-    public Text OwnerNameText;
+    [SerializeField]
+    private TextMeshProUGUI OwnerNameText;
 
-    public Action OnJoinButtonClickAction;
+    private Action onJoinButtonClickAction;
 
     private GameOutline gameOutline;
 
-    public void Set(GameOutline gameOutline)
+    public void Set(GameOutline gameOutline, Action onJoinButtonClickAction)
     {
         this.gameOutline = gameOutline;
         this.OwnerNameText.text = this.gameOutline.OwnerName;
+        this.onJoinButtonClickAction = onJoinButtonClickAction;
     }
 
     /// <summary>
@@ -24,6 +26,6 @@ public class GameListNodeController : MonoBehaviour
     {
         Debug.Log("click join Button! " + this.OwnerNameText.text);
 
-        this.OnJoinButtonClickAction?.Invoke();
+        this.onJoinButtonClickAction?.Invoke();
     }
 }

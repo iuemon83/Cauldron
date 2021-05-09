@@ -3,6 +3,7 @@ using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +18,7 @@ public class EditDeckSceneController : MonoBehaviour
     [SerializeField]
     private InputField deckNameInputField;
     [SerializeField]
-    private Text deckCountText;
+    private TextMeshProUGUI deckCountText;
     [SerializeField]
     private CardDefDetailController cardDefDetailController;
 
@@ -26,8 +27,8 @@ public class EditDeckSceneController : MonoBehaviour
     private Transform cardPoolListContent;
     private Transform deckListContent;
 
-    private readonly Dictionary<CardDefId, ListNodeController> cardPoolListByDefId = new Dictionary<CardDefId, ListNodeController>();
-    private readonly Dictionary<CardDefId, ListNodeController> deckListByDefId = new Dictionary<CardDefId, ListNodeController>();
+    private readonly Dictionary<CardDefId, EditDeckScene_ListNodeController> cardPoolListByDefId = new Dictionary<CardDefId, EditDeckScene_ListNodeController>();
+    private readonly Dictionary<CardDefId, EditDeckScene_ListNodeController> deckListByDefId = new Dictionary<CardDefId, EditDeckScene_ListNodeController>();
 
     private int currentDeckTotalCount;
 
@@ -110,7 +111,7 @@ public class EditDeckSceneController : MonoBehaviour
     private void AddToCardPool(CardDef cardDef)
     {
         var node = Instantiate(this.listNodePrefab, this.cardPoolListContent.transform);
-        var controller = node.GetComponent<ListNodeController>();
+        var controller = node.GetComponent<EditDeckScene_ListNodeController>();
         controller.Init(cardDef, 3,
             () => this.AddToDeck(cardDef.Id),
             () => this.RemoveFromDeck(cardDef.Id),
@@ -140,7 +141,7 @@ public class EditDeckSceneController : MonoBehaviour
         {
             // éwíËÇµÇΩid Ç™ë∂ç›ÇµÇ»Ç¢
             var node = Instantiate(this.listNodePrefab, this.deckListContent.transform);
-            deckListNodeController = node.GetComponent<ListNodeController>();
+            deckListNodeController = node.GetComponent<EditDeckScene_ListNodeController>();
             deckListNodeController.Init(cardPoolListNodeController.Source,
                 cardPoolListNodeController.LimitDeckCount,
                 () => this.AddToDeck(cardDefId),

@@ -43,8 +43,7 @@ public class ListGameSceneController : MonoBehaviour
     {
         var node = Instantiate(this.GameListNodePrefab, this.listContent.transform);
         var controller = node.GetComponent<GameListNodeController>();
-        controller.Set(gameOutline);
-        controller.OnJoinButtonClickAction = () =>
+        controller.Set(gameOutline, () =>
         {
             this.SelectDeckDialog.OnOkButtonClickAction = async deck =>
             {
@@ -54,7 +53,7 @@ public class ListGameSceneController : MonoBehaviour
                 Utility.LoadAsyncScene(this, SceneNames.BattleScene);
             };
             this.SelectDeckDialog.ShowDialog();
-        };
+        });
     }
 
     public void OnOpenNewGameButtonClick()

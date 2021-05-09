@@ -1,19 +1,26 @@
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CardDefDetailController : MonoBehaviour
 {
-    public Text CardName;
-    public Text FlavorText;
+    [SerializeField]
+    private TextMeshProUGUI cardNameText;
+    [SerializeField]
+    private TextMeshProUGUI flavorText;
 
-    public GameObject PowerSpace;
-    public GameObject ToughnessSpace;
+    [SerializeField]
+    private GameObject powerSpace;
+    [SerializeField]
+    private GameObject toughnessSpace;
 
-    public Text Cost;
-    public Text Power;
-    public Text Toughness;
+    [SerializeField]
+    private TextMeshProUGUI costText;
+    [SerializeField]
+    private TextMeshProUGUI powerText;
+    [SerializeField]
+    private TextMeshProUGUI toughnessText;
 
     protected CardDef source;
 
@@ -25,22 +32,22 @@ public class CardDefDetailController : MonoBehaviour
             return;
         }
 
-        this.CardName.text = this.source.Name;
-        this.FlavorText.text = this.source.FlavorText;
-        this.Cost.text = this.source.Cost.ToString();
+        this.cardNameText.text = this.source.Name;
+        this.flavorText.text = this.source.FlavorText;
+        this.costText.text = this.source.Cost.ToString();
 
         switch (this.source.Type)
         {
             case CardType.Creature:
-                this.Power.text = this.source.Power.ToString();
-                this.Toughness.text = this.source.Toughness.ToString();
-                this.PowerSpace.SetActive(true);
-                this.ToughnessSpace.SetActive(true);
+                this.powerText.text = this.source.Power.ToString();
+                this.toughnessText.text = this.source.Toughness.ToString();
+                this.powerSpace.SetActive(true);
+                this.toughnessSpace.SetActive(true);
                 break;
 
             default:
-                this.PowerSpace.SetActive(false);
-                this.ToughnessSpace.SetActive(false);
+                this.powerSpace.SetActive(false);
+                this.toughnessSpace.SetActive(false);
                 break;
         }
     }

@@ -2,6 +2,7 @@ using Assets.Scripts;
 using System;
 using System.Collections;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,22 +10,22 @@ using UnityEngine.UI;
 public class TitleSceneController : MonoBehaviour
 {
     [SerializeField]
-    private Text ErrorMessageText;
+    private TextMeshProUGUI errorMessageText;
     [SerializeField]
-    private InputField IpOrHostNameText;
+    private InputField ipOrHostNameText;
     [SerializeField]
-    private InputField PlayerNameText;
+    private InputField playerNameText;
     [SerializeField]
-    private Button StartButton;
+    private Button startButton;
 
-    private Text StartButtonText;
+    private Text startButtonText;
 
     private void Start()
     {
-        this.StartButtonText = this.StartButton.GetComponentInChildren<Text>();
+        this.startButtonText = this.startButton.GetComponentInChildren<Text>();
 
-        this.IpOrHostNameText.text = LocalData.ServerAddress;
-        this.PlayerNameText.text = LocalData.PlayerName;
+        this.ipOrHostNameText.text = LocalData.ServerAddress;
+        this.playerNameText.text = LocalData.PlayerName;
     }
 
     /// <summary>
@@ -32,20 +33,20 @@ public class TitleSceneController : MonoBehaviour
     /// </summary>
     public async void OnStartButtonClick()
     {
-        this.StartButton.interactable = false;
-        this.StartButtonText.text = "Loading...";
+        this.startButton.interactable = false;
+        this.startButtonText.text = "Loading...";
 
         var isValid = await this.DoValidation();
         if (!isValid)
         {
-            this.StartButton.interactable = true;
-            this.StartButtonText.text = "Start";
+            this.startButton.interactable = true;
+            this.startButtonText.text = "Start";
 
             return;
         }
 
-        LocalData.ServerAddress = this.IpOrHostNameText.text;
-        LocalData.PlayerName = this.PlayerNameText.text;
+        LocalData.ServerAddress = this.ipOrHostNameText.text;
+        LocalData.PlayerName = this.playerNameText.text;
 
         StartCoroutine(LoadYourAsyncScene());
     }
@@ -68,7 +69,7 @@ public class TitleSceneController : MonoBehaviour
 
     private async Task<bool> DoValidation()
     {
-        if (string.IsNullOrWhiteSpace(this.PlayerNameText.text))
+        if (string.IsNullOrWhiteSpace(this.playerNameText.text))
         {
             this.ShowErrorMessage("ÉvÉåÉCÉÑÅ[ñºÇì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢");
             return false;
@@ -76,7 +77,7 @@ public class TitleSceneController : MonoBehaviour
 
         try
         {
-            await ConnectionHolder.Create(this.IpOrHostNameText.text, this.PlayerNameText.text);
+            await ConnectionHolder.Create(this.ipOrHostNameText.text, this.playerNameText.text);
         }
         catch (Exception e)
         {
@@ -91,6 +92,6 @@ public class TitleSceneController : MonoBehaviour
 
     private void ShowErrorMessage(string message)
     {
-        this.ErrorMessageText.text = message;
+        this.errorMessageText.text = message;
     }
 }

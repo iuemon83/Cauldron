@@ -31,27 +31,27 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
         {
             this.PickCandidateIcon.SetActive(true);
             this.PickedIcon.SetActive(false);
-            ClientController.Instance.PickedCardIdList.Remove(this.CardId);
+            BattleSceneController.Instance.UnPick(this.CardId);
         }
         else if (this.IsPickCandidate)
         {
             this.PickedIcon.SetActive(true);
             this.PickCandidateIcon.SetActive(false);
-            ClientController.Instance.PickedCardIdList.Add(this.CardId);
+            BattleSceneController.Instance.Pick(this.CardId);
         }
         else if (this.IsAttackTarget)
         {
             // 相手のカード
-            if (ClientController.Instance.SelectedCardController != null)
+            if (BattleSceneController.Instance.SelectedCardController != null)
             {
-                var attackCardId = ClientController.Instance.SelectedCardController.card.Id;
+                var attackCardId = BattleSceneController.Instance.SelectedCardController.card.Id;
                 var guardCardId = this.card.Id;
 
                 // 攻撃する
-                await ClientController.Instance.Attack(attackCardId, guardCardId);
+                await BattleSceneController.Instance.Attack(attackCardId, guardCardId);
 
                 // 攻撃後は選択済みのカードの選択を解除する
-                ClientController.Instance.UnSelectCard();
+                BattleSceneController.Instance.UnSelectCard();
             }
         }
         else
@@ -60,11 +60,11 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
 
             var isSelected = this.SelectedIcon.activeSelf;
 
-            if (ClientController.Instance.SelectedCardController != null)
+            if (BattleSceneController.Instance.SelectedCardController != null)
             {
                 // カード選択済み
                 // 選択を解除する
-                ClientController.Instance.UnSelectCard();
+                BattleSceneController.Instance.UnSelectCard();
             }
 
             if (!isSelected)
@@ -72,14 +72,14 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
                 //this.SetColor(CardStatus.Select);
 
                 // 未選択のカードなら選択状態にする
-                await ClientController.Instance.SelectCard(this.CardId);
+                await BattleSceneController.Instance.SelectCard(this.CardId);
             }
         }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        ClientController.Instance.CardDetailController.SetCard(this.card);
+        BattleSceneController.Instance.ShowCardDetail(this.card);
     }
 
     public void SetAttackTarget(bool value)

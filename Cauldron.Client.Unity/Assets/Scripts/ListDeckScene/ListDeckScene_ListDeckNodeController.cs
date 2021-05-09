@@ -1,5 +1,6 @@
 using Assets.Scripts;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,12 +8,12 @@ using UnityEngine.UI;
 public class ListDeckScene_ListDeckNodeController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
-    private Text deckNameText;
+    private TextMeshProUGUI deckNameText;
 
     [SerializeField]
     private Image backgroundImage;
 
-    public IDeck Source { get; set; }
+    public IDeck Source { get; private set; }
 
     public Action<ListDeckScene_ListDeckNodeController> SelectNodeAction { get; set; }
 

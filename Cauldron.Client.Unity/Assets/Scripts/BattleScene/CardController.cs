@@ -1,18 +1,19 @@
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CardController : MonoBehaviour
 {
-    public Text CardName;
+    public TextMeshProUGUI CardNameText;
 
     public GameObject PowerSpace;
     public GameObject ToughnessSpace;
 
-    public Text Cost;
-    public Text Power;
-    public Text Toughness;
+    public TextMeshProUGUI CostText;
+    public TextMeshProUGUI PowerText;
+    public TextMeshProUGUI ToughnessText;
 
     public Image CardImage;
 
@@ -37,13 +38,13 @@ public class CardController : MonoBehaviour
 
         this.shouldUpdate = false;
 
-        this.Cost.text = this.card.Cost.ToString();
+        this.CostText.text = this.card.Cost.ToString();
 
         switch (this.card.Type)
         {
             case CardType.Creature:
-                this.Power.text = this.card.Power.ToString();
-                this.Toughness.text = this.card.Toughness.ToString();
+                this.PowerText.text = this.card.Power.ToString();
+                this.ToughnessText.text = this.card.Toughness.ToString();
                 this.PowerSpace.SetActive(true);
                 this.ToughnessSpace.SetActive(true);
                 break;
@@ -62,7 +63,7 @@ public class CardController : MonoBehaviour
         else
         {
             // âÊëúÇ™Ç»Ç¢èÍçáÇæÇØñºëOÇï\é¶Ç∑ÇÈ
-            this.CardName.text = this.card.Name;
+            this.CardNameText.text = this.card.Name;
             this.CardImage.enabled = false;
         }
     }
