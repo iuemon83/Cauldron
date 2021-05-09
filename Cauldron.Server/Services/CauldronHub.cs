@@ -154,7 +154,7 @@ namespace Cauldron.Server.Services
                 new GameEventListener(
                     OnStartTurn: (playerId, gameContext) =>
                     {
-                        this.BroadcastTo(this.room, playerId.Value).OnStartTurn(gameContext);
+                        this.Broadcast(this.room).OnStartTurn(gameContext, playerId);
                         this._logger.LogInformation($"OnStartTurn: {playerId}");
                     },
                     OnAddCard: (playerId, gameContext, message) =>

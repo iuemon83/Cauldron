@@ -69,7 +69,7 @@ public class BattleSceneController : MonoBehaviour
         holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.moveCardNotifyMessage));
         holder.Receiver.OnReady.Subscribe((a) => this.OnReady(a));
         holder.Receiver.OnStartGame.Subscribe((a) => this.OnStartGame(a));
-        holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a));
+        holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.playerId));
 
         this.client = ConnectionHolder.Find().Client;
 
@@ -360,13 +360,26 @@ public class BattleSceneController : MonoBehaviour
         this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 
-    async void OnStartTurn(GameContext gameContext)
+    void OnStartTurn(GameContext gameContext, PlayerId playerId)
     {
         // 自分のターン
         Debug.Log("ターン開始: " + this.client.PlayerName);
-        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            if (this.youPlayerController.PlayerId == playerId)
+            {
+                this.youPlayerController.SetActiveTurn(true);
+                this.opponentPlayerController.SetActiveTurn(false);
+                await this.client.StartTurn();
+            }
+            else
+            {
+                this.youPlayerController.SetActiveTurn(false);
+                this.opponentPlayerController.SetActiveTurn(true);
+            }
 
-        await this.client.StartTurn();
+            await this.UpdateGameContext(gameContext);
+        });
     }
 
     void OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)

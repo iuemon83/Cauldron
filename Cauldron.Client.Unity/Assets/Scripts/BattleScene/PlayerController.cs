@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour, IPointerClickHandler
 {
@@ -24,6 +25,8 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     private GameObject pickCandidateIcon;
     [SerializeField]
     private GameObject pickedIcon;
+    [SerializeField]
+    private Image outline;
 
     public PlayerId PlayerId { get; private set; }
 
@@ -39,6 +42,21 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    private bool isActiveTurn;
+
+    private float time;
+
+    private void Update()
+    {
+        if (this.isActiveTurn)
+        {
+            this.time += Time.deltaTime * 5.0f;
+            var color = this.outline.color;
+            color.a = Mathf.Sin(this.time) * 0.5f + 0.5f;
+            this.outline.color = color;
+        }
+    }
+
     public void Set(PublicPlayerInfo publicPlayerInfo)
     {
         this.PlayerId = publicPlayerInfo.Id;
@@ -47,6 +65,17 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.deckText.text = publicPlayerInfo.DeckCount.ToString();
         this.cemeteryText.text = publicPlayerInfo.Cemetery.Length.ToString();
         this.handText.text = publicPlayerInfo.HandsCount.ToString();
+    }
+
+    public void SetActiveTurn(bool value)
+    {
+        this.isActiveTurn = value;
+        if (!this.isActiveTurn)
+        {
+            var color = this.outline.color;
+            color.a = 0;
+            this.outline.color = color;
+        }
     }
 
     /// <summary>

@@ -37,11 +37,11 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
         });
     }
 
-    async void ICauldronHubReceiver.OnStartTurn(GameContext gameContext)
+    async void ICauldronHubReceiver.OnStartTurn(GameContext gameContext, PlayerId playerId)
     {
         // 自分のターン
-        Debug.Log("ターン開始: " + this.playerName);
-        await this.client.PlayTurn();
+        //Debug.Log("ターン開始: " + this.playerName);
+        //await this.client.PlayTurn();
     }
 
     async void ICauldronHubReceiver.OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
@@ -87,6 +87,5 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
 
     void ICauldronHubReceiver.OnJoinGame()
     {
-        throw new System.NotImplementedException();
     }
 }

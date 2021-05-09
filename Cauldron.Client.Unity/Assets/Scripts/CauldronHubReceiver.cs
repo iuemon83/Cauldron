@@ -57,10 +57,11 @@ namespace Assets.Scripts
         void ICauldronHubReceiver.OnStartGame(GameContext gameContext)
             => this.onStartGame.OnNext(gameContext);
 
-        public IObservable<GameContext> OnStartTurn => onStartTurn;
-        private readonly Subject<GameContext> onStartTurn = new Subject<GameContext>();
-        void ICauldronHubReceiver.OnStartTurn(GameContext gameContext)
-            => this.onStartTurn.OnNext(gameContext);
+        public IObservable<(GameContext gameContext, PlayerId playerId)> OnStartTurn => onStartTurn;
+        private readonly Subject<(GameContext gameContext, PlayerId playerId)> onStartTurn
+            = new Subject<(GameContext gameContext, PlayerId playerId)>();
+        void ICauldronHubReceiver.OnStartTurn(GameContext gameContext, PlayerId playerId)
+            => this.onStartTurn.OnNext((gameContext, playerId));
 
         public IObservable<Unit> OnJoinGame => onJoinGame;
         private readonly Subject<Unit> onJoinGame = new Subject<Unit>();
