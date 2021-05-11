@@ -1,5 +1,6 @@
 using Assets.Scripts;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,13 +13,16 @@ public class ListDeckDialogController : MonoBehaviour
     private GameObject listNodePrefab;
 
     [SerializeField]
+    private TextMeshProUGUI titleText;
+
+    [SerializeField]
     private Button okButton;
 
     private Transform deckListContent;
     private ListDeckNodeController selectedNode;
 
-    public Action<IDeck> OnOkButtonClickAction { get; set; } 
-    public Action OnCancelButtonClickAction { get; set; }
+    private Action<IDeck> onOkButtonClickAction;
+    private Action onCancelButtonClickAction;
 
     // Start is called before the first frame update
     void Start()
@@ -43,13 +47,13 @@ public class ListDeckDialogController : MonoBehaviour
     public void OnOkButtonClick()
     {
         this.gameObject.SetActive(false);
-        this.OnOkButtonClickAction?.Invoke(this.selectedNode.Source);
+        this.onOkButtonClickAction?.Invoke(this.selectedNode.Source);
     }
 
     public void OnCancelButtonClick()
     {
         this.gameObject.SetActive(false);
-        this.OnCancelButtonClickAction?.Invoke();
+        this.onCancelButtonClickAction?.Invoke();
     }
 
     private void SelectNode(ListDeckNodeController nodeController)
@@ -65,8 +69,12 @@ public class ListDeckDialogController : MonoBehaviour
         this.okButton.interactable = true;
     }
 
-    public void ShowDialog()
+    public void ShowDialog(string title, Action<IDeck> onOkButtonClickAction, Action onCancelButtonClickAction = null)
     {
+        this.titleText.text = title;
+        this.onOkButtonClickAction = onOkButtonClickAction;
+        this.onCancelButtonClickAction = onCancelButtonClickAction;
+
         if (this.selectedNode != null)
         {
             this.selectedNode.SetDeselectedColor();

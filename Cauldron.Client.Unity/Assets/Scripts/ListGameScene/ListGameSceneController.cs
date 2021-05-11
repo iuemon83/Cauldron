@@ -45,14 +45,14 @@ public class ListGameSceneController : MonoBehaviour
         var controller = node.GetComponent<GameListNodeController>();
         controller.Set(gameOutline, () =>
         {
-            this.SelectDeckDialog.OnOkButtonClickAction = async deck =>
-            {
-                var holder = ConnectionHolder.Find();
-                await holder.Client.EnterGame(gameOutline.GameId, deck);
+            this.SelectDeckDialog.ShowDialog("Select you deck",
+                async deck =>
+                {
+                    var holder = ConnectionHolder.Find();
+                    await holder.Client.EnterGame(gameOutline.GameId, deck);
 
-                Utility.LoadAsyncScene(this, SceneNames.BattleScene);
-            };
-            this.SelectDeckDialog.ShowDialog();
+                    Utility.LoadAsyncScene(this, SceneNames.BattleScene);
+                });
         });
     }
 
@@ -60,24 +60,24 @@ public class ListGameSceneController : MonoBehaviour
     {
         Debug.Log("click open new game Button!");
 
-        this.SelectDeckDialog.OnOkButtonClickAction = async deck =>
-        {
-            var holder = ConnectionHolder.Find();
-            var gameId = await holder.Client.OpenNewGame();
-
-            try
+        this.SelectDeckDialog.ShowDialog("Select you deck",
+            async deck =>
             {
-                await holder.Client.EnterGame(gameId, deck);
-            }
-            catch (RpcException e)
-            {
-                Debug.LogWarning(e);
-                return;
-            }
+                var holder = ConnectionHolder.Find();
+                var gameId = await holder.Client.OpenNewGame();
 
-            Utility.LoadAsyncScene(this, SceneNames.WatingRoomScene);
-        };
-        this.SelectDeckDialog.ShowDialog();
+                try
+                {
+                    await holder.Client.EnterGame(gameId, deck);
+                }
+                catch (RpcException e)
+                {
+                    Debug.LogWarning(e);
+                    return;
+                }
+
+                Utility.LoadAsyncScene(this, SceneNames.WatingRoomScene);
+            });
     }
 
     public void OnReloadButtonClick()
@@ -90,5 +90,40 @@ public class ListGameSceneController : MonoBehaviour
     public void OnDeckButtonClick()
     {
         Utility.LoadAsyncScene(this, SceneNames.ListDeckScene);
+    }
+
+    public void OnVsAiButtonClick()
+    {
+        this.SelectDeckDialog.ShowDialog("Select you deck",
+            myDeck =>
+            {
+                this.SelectDeckDialog.ShowDialog("Select AI deck",
+                    aiDeck =>
+                    {
+                        this.battleAi(myDeck, aiDeck);
+                    });
+            });
+    }
+
+    private async void battleAi(IDeck myDeck, IDeck aiDeck)
+    {
+        var holder = ConnectionHolder.Find();
+        var gameId = await holder.Client.OpenNewGame();
+
+        try
+        {
+            await holder.Client.EnterGame(gameId, myDeck);
+        }
+        catch (RpcException e)
+        {
+            Debug.LogWarning(e);
+            return;
+        }
+
+        Utility.LoadAsyncScene(this, SceneNames.BattleScene, () =>
+        {
+            var aiClientController = FindObjectOfType<AiClientController>();
+            aiClientController.StartClient(gameId, aiDeck);
+        });
     }
 }

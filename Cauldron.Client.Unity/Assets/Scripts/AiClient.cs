@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 public class AiClient
 {
+    public PlayerId PlayerId { get; private set; }
+
     private readonly Action<string> Logging;
     private readonly Action<string> LoggingError;
 
@@ -28,30 +30,10 @@ public class AiClient
         await this.client?.Destroy();
     }
 
-    public async ValueTask Ready()
+    public async ValueTask Ready(IDeck deck)
     {
-        var randomDeck = await this.GetRandomDeck();
-
-        await this.client.EnterGame(this.gameId, randomDeck);
+        this.PlayerId = await this.client.EnterGame(this.gameId, deck);
         await this.client.ReadyGame();
-    }
-
-    private async ValueTask<IDeck> GetRandomDeck()
-    {
-        var cardDefs = await this.client.GetCardPool();
-
-        var cardPool = cardDefs
-            .Where(c => !c.IsToken)
-            .ToArray();
-
-        var deckCardNames = Enumerable.Range(0, 40)
-            .Select(_ => Utility.RandomPick(cardPool).FullName)
-            .ToArray();
-
-        return new Deck()
-        {
-            CardDefNames = deckCardNames
-        };
     }
 
     public async ValueTask PlayTurn()
@@ -95,7 +77,7 @@ public class AiClient
 
             if (!attackTargetPlayerIdList.Any() && !attackTargetCardIdList.Any())
             {
-                this.LoggingError($"攻撃対象なし！！");
+                this.Logging($"攻撃対象なし！！");
                 return;
             }
 

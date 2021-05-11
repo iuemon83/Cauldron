@@ -377,8 +377,6 @@ public class BattleSceneController : MonoBehaviour
                 this.youPlayerController.SetActiveTurn(false);
                 this.opponentPlayerController.SetActiveTurn(true);
             }
-
-            await this.UpdateGameContext(gameContext);
         });
     }
 

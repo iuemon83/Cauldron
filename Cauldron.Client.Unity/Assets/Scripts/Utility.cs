@@ -11,8 +11,6 @@ namespace Assets.Scripts
 {
     static class Utility
     {
-        public static GameId? GameId = null;
-
         public static T RandomPick<T>(IReadOnlyList<T> source) => source.Any() ? source[UnityEngine.Random.Range(0, source.Count)] : default;
 
         public static string GetPlayerName(GameContext gameContext, PlayerId playerId)

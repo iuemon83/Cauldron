@@ -113,7 +113,7 @@ public class Client
         return await this.magiconionClient.GetCardPool();
     }
 
-    public async ValueTask EnterGame(GameId gameId, IDeck deck)
+    public async ValueTask<PlayerId> EnterGame(GameId gameId, IDeck deck)
     {
         this.GameId = gameId;
 
@@ -132,6 +132,8 @@ public class Client
         this.LogInfo($"response EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
         this.PlayerId = reply.PlayerId;
+
+        return this.PlayerId;
     }
 
     private IEnumerable<CardDefId> ToDeckIdList(IDeck deck, CardDef[] cardPool)

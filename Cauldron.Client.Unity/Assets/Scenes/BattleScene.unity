@@ -2750,7 +2750,6 @@ MonoBehaviour:
   pickCandidateIcon: {fileID: 900136723}
   pickedIcon: {fileID: 609277187}
   outline: {fileID: 89099927}
-  isActiveTurn: 0
 --- !u!1 &900136723
 GameObject:
   m_ObjectHideFlags: 0
@@ -3545,7 +3544,6 @@ MonoBehaviour:
   pickCandidateIcon: {fileID: 1400657796}
   pickedIcon: {fileID: 1799683433}
   outline: {fileID: 881070796}
-  isActiveTurn: 0
 --- !u!1001 &1297309787
 PrefabInstance:
   m_ObjectHideFlags: 0

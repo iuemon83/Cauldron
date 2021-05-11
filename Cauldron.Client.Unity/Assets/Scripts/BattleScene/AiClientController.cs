@@ -1,7 +1,6 @@
 using Assets.Scripts;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.Services;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class AiClientController : MonoBehaviour, ICauldronHubReceiver
@@ -9,39 +8,26 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     private AiClient client;
     private readonly string playerName = "AI";
 
-    void Start()
-    {
-        //this.StartClient();
-    }
-
     async void OnDestroy()
     {
         await this.client?.Destroy();
     }
 
-    async void StartClient()
+    public async void StartClient(GameId gameId, IDeck deck)
     {
-        var gameId = await this.GetGameId();
-
         this.client = new AiClient(LocalData.ServerAddress, this.playerName, gameId, this, Debug.Log, Debug.LogError);
 
-        await this.client.Ready();
-    }
-
-    async ValueTask<GameId> GetGameId()
-    {
-        return await Task.Run(() =>
-        {
-            while (Utility.GameId == null) { }
-            return Utility.GameId.Value;
-        });
+        await this.client.Ready(deck);
     }
 
     async void ICauldronHubReceiver.OnStartTurn(GameContext gameContext, PlayerId playerId)
     {
-        // 自分のターン
-        //Debug.Log("ターン開始: " + this.playerName);
-        //await this.client.PlayTurn();
+        if (this.client.PlayerId == playerId)
+        {
+            // 自分のターン
+            Debug.Log("ターン開始: " + this.playerName);
+            await this.client.PlayTurn();
+        }
     }
 
     async void ICauldronHubReceiver.OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
