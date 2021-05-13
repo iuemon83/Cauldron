@@ -15,6 +15,6 @@ namespace Cauldron.Shared.Services
         void OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage);
         void OnDamage(GameContext gameContext, DamageNotifyMessage damageNotifyMessage);
 
-        void OnChoiceCards(ChoiceCardsMessage choiceCardsMessage);
+        void OnAsk(AskMessage choiceCardsMessage);
     }
 }

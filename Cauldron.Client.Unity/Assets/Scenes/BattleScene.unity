@@ -3686,8 +3686,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 402459845277df641a7d83c784b0c05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handCardPrefab: {fileID: 4002027956381489772, guid: 366785259e542df4bbd7293904d2fe94, type: 3}
-  fieldCardPrefab: {fileID: 3216027232065973024, guid: f6d57eceff31c8b49bab86ddae3211bb, type: 3}
+  handCardPrefab: {fileID: 7518114258685450989, guid: 366785259e542df4bbd7293904d2fe94, type: 3}
+  fieldCardPrefab: {fileID: 2731262012295190428, guid: f6d57eceff31c8b49bab86ddae3211bb, type: 3}
   youHandSpaces:
   - {fileID: 929650753}
   - {fileID: 603392972}

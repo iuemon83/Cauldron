@@ -15,65 +15,28 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
 
     public bool IsAttackTarget => this.AttackTargetIcon.activeSelf;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        this.SelectedIcon.SetActive(false);
-    }
-
     /// <summary>
     /// フィールドカードのクリックイベント
     /// </summary>
     /// <param name="eventData"></param>
-    public async void OnPointerClick(PointerEventData eventData)
+    public void OnPointerClick(PointerEventData eventData)
     {
         if (this.IsPicked)
         {
-            this.PickCandidateIcon.SetActive(true);
-            this.PickedIcon.SetActive(false);
-            BattleSceneController.Instance.UnPick(this.CardId);
+            BattleSceneController.Instance.UnPick(this);
         }
         else if (this.IsPickCandidate)
         {
-            this.PickedIcon.SetActive(true);
-            this.PickCandidateIcon.SetActive(false);
-            BattleSceneController.Instance.Pick(this.CardId);
+            BattleSceneController.Instance.Pick(this);
         }
         else if (this.IsAttackTarget)
         {
-            // 相手のカード
-            if (BattleSceneController.Instance.SelectedCardController != null)
-            {
-                var attackCardId = BattleSceneController.Instance.SelectedCardController.card.Id;
-                var guardCardId = this.card.Id;
-
-                // 攻撃する
-                await BattleSceneController.Instance.Attack(attackCardId, guardCardId);
-
-                // 攻撃後は選択済みのカードの選択を解除する
-                BattleSceneController.Instance.UnSelectCard();
-            }
+            BattleSceneController.Instance.AttackToCardIfSelectedAttackCard(this);
         }
         else
         {
             // 自分のカード
-
-            var isSelected = this.SelectedIcon.activeSelf;
-
-            if (BattleSceneController.Instance.SelectedCardController != null)
-            {
-                // カード選択済み
-                // 選択を解除する
-                BattleSceneController.Instance.UnSelectCard();
-            }
-
-            if (!isSelected)
-            {
-                //this.SetColor(CardStatus.Select);
-
-                // 未選択のカードなら選択状態にする
-                await BattleSceneController.Instance.SelectCard(this.CardId);
-            }
+            BattleSceneController.Instance.SetAttackCard(this);
         }
     }
 
@@ -82,12 +45,12 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
         BattleSceneController.Instance.ShowCardDetail(this.card);
     }
 
-    public void SetAttackTarget(bool value)
+    public void VisibleAttackTargetIcon(bool value)
     {
         this.AttackTargetIcon.SetActive(value);
     }
 
-    public void SetSelect(bool value)
+    public void VisibleAttackIcon(bool value)
     {
         this.SelectedIcon.SetActive(value);
     }
@@ -98,5 +61,13 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
         this.DamageText.gameObject.SetActive(true);
         await Task.Delay(TimeSpan.FromSeconds(0.3));
         this.DamageText.gameObject.SetActive(false);
+    }
+
+    public override void ResetAllIcon()
+    {
+        base.ResetAllIcon();
+
+        this.VisibleAttackIcon(false);
+        this.VisibleAttackTargetIcon(false);
     }
 }

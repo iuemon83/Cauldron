@@ -14,9 +14,9 @@ public class BattleSceneController : MonoBehaviour
     public static BattleSceneController Instance;
 
     [SerializeField]
-    private GameObject handCardPrefab;
+    private HandCardController handCardPrefab;
     [SerializeField]
-    private GameObject fieldCardPrefab;
+    private FieldCardController fieldCardPrefab;
 
     [SerializeField]
     private GameObject[] youHandSpaces;
@@ -38,20 +38,20 @@ public class BattleSceneController : MonoBehaviour
     [SerializeField]
     private GameObject uiCanvas;
 
-    public FieldCardController SelectedCardController { get; set; }
+    public FieldCardController AttackCardController { get; set; }
 
     private readonly List<PlayerId> pickedPlayerIdList = new List<PlayerId>();
     private readonly List<CardId> pickedCardIdList = new List<CardId>();
     private readonly List<CardDefId> pickedCardDefIdList = new List<CardDefId>();
 
-    private readonly Dictionary<CardId, GameObject> handCardObjectsByCardId = new Dictionary<CardId, GameObject>();
+    private readonly Dictionary<CardId, HandCardController> handCardObjectsByCardId = new Dictionary<CardId, HandCardController>();
     private readonly Dictionary<CardId, FieldCardController> fieldCardControllersByCardId = new Dictionary<CardId, FieldCardController>();
 
     private readonly ConcurrentQueue<Func<Task>> updateViewActionQueue = new ConcurrentQueue<Func<Task>>();
 
     private Client client;
 
-    private ChoiceCardsMessage askParams;
+    private AskMessage askParams;
 
     private bool updating;
 
@@ -61,7 +61,7 @@ public class BattleSceneController : MonoBehaviour
 
         var holder = ConnectionHolder.Find();
         holder.Receiver.OnAddCard.Subscribe((a) => this.OnAddCard(a.gameContext, a.addCardNotifyMessage));
-        holder.Receiver.OnChoiceCards.Subscribe((a) => this.OnChoiceCards(a));
+        holder.Receiver.OnAsk.Subscribe((a) => this.OnAsk(a));
         holder.Receiver.OnDamage.Subscribe((a) => this.OnDamage(a.gameContext, a.damageNotifyMessage));
         holder.Receiver.OnGameOver.Subscribe((a) => this.OnGameOver(a));
         holder.Receiver.OnModifyCard.Subscribe((a) => this.OnModifyCard(a.gameContext, a.modifyCardNotifyMessage));
@@ -89,62 +89,92 @@ public class BattleSceneController : MonoBehaviour
         }
     }
 
-    public async ValueTask PlayFromHand(CardId cardId)
+    public async ValueTask PlayFromHand(HandCardController handCardController)
     {
-        await this.client.PlayFromHand(cardId);
+        this.ResetAllMarks();
+        await this.client.PlayFromHand(handCardController.CardId);
     }
 
-    public async ValueTask Attack(CardId attackCardId, CardId guardCardId)
+    public async ValueTask AttackToOpponentPlayerIfSelectedAttackCard()
     {
+        if (this.AttackCardController == null)
+        {
+            return;
+        }
+
+        await this.client.AttackToOpponentPlayer(this.AttackCardController.CardId);
+
+        // 攻撃後は選択済みのカードの選択を解除する
+        this.UnSelectAttackCard();
+    }
+
+    public async void AttackToCardIfSelectedAttackCard(FieldCardController guardFieldCardController)
+    {
+        if (this.AttackCardController == null)
+        {
+            // 攻撃元のカードが選択されていない
+            return;
+        }
+
+        var attackCardId = this.AttackCardController.CardId;
+        var guardCardId = guardFieldCardController.CardId;
+
+        // 攻撃する
         await this.client.Attack(attackCardId, guardCardId);
+
+        // 攻撃後は選択済みのカードの選択を解除する
+        this.UnSelectAttackCard();
     }
 
-    public async ValueTask AttackToOpponentPlayer(CardId attackCardId)
+    public async void SetAttackCard(FieldCardController attackCardController)
     {
-        await this.client.AttackToOpponentPlayer(attackCardId);
+        var isSelected = this.AttackCardController?.CardId == attackCardController.CardId;
+
+        this.ResetAllMarks();
+
+        if (!isSelected)
+        {
+            if (!fieldCardControllersByCardId.TryGetValue(attackCardController.CardId, out var fieldCardController))
+            {
+                return;
+            }
+
+            this.AttackCardController = fieldCardController;
+            this.AttackCardController.VisibleAttackIcon(true);
+
+            await this.MarkingAttackTargets();
+        }
     }
 
     public async ValueTask MarkingAttackTargets()
     {
-        var targets = await this.client.ListAttackTargets(this.SelectedCardController.CardId);
+        var targets = await this.client.ListAttackTargets(this.AttackCardController.CardId);
 
         this.ResetAttackTargets();
 
         foreach (var targetPlayerId in targets.Item1)
         {
-            this.opponentPlayerController.SetAttackTarget(true);
+            foreach (var player in new[] { this.opponentPlayerController, this.youPlayerController })
+            {
+                player.VisibleAttackTargetIcon(player.PlayerId == targetPlayerId);
+            }
         }
 
         foreach (var targetCardId in targets.Item2)
         {
             if (fieldCardControllersByCardId.TryGetValue(targetCardId, out var fieldCardController))
             {
-                fieldCardController.SetAttackTarget(true);
+                fieldCardController.VisibleAttackTargetIcon(true);
             }
         }
     }
 
-    public async ValueTask SelectCard(CardId cardId)
+    public void UnSelectAttackCard()
     {
-        this.UnSelectCard();
-
-        if (!fieldCardControllersByCardId.TryGetValue(cardId, out var fieldCardController))
+        if (this.AttackCardController != null)
         {
-            return;
-        }
-
-        this.SelectedCardController = fieldCardController;
-        this.SelectedCardController.SetSelect(true);
-
-        await this.MarkingAttackTargets();
-    }
-
-    public void UnSelectCard()
-    {
-        if (this.SelectedCardController != null)
-        {
-            this.SelectedCardController.SetSelect(false);
-            this.SelectedCardController = null;
+            this.AttackCardController.VisibleAttackIcon(false);
+            this.AttackCardController = null;
         }
 
         this.ResetAttackTargets();
@@ -152,10 +182,10 @@ public class BattleSceneController : MonoBehaviour
 
     public void ResetAttackTargets()
     {
-        this.opponentPlayerController.SetAttackTarget(false);
+        this.opponentPlayerController.VisibleAttackTargetIcon(false);
         foreach (var fieldCardController in fieldCardControllersByCardId.Values)
         {
-            fieldCardController.SetAttackTarget(false);
+            fieldCardController.VisibleAttackTargetIcon(false);
         }
     }
 
@@ -166,6 +196,7 @@ public class BattleSceneController : MonoBehaviour
     {
         Debug.Log("click endturn Button!");
 
+        this.ResetAllMarks();
         await this.client.EndTurn();
     }
 
@@ -192,13 +223,7 @@ public class BattleSceneController : MonoBehaviour
         }
 
         // リセット
-        this.opponentPlayerController.SetPickeCandidate(false);
-        this.opponentPlayerController.SetPicked(false);
-        foreach (var fieldCardController in fieldCardControllersByCardId.Values)
-        {
-            fieldCardController.PickCandidateIcon.SetActive(false);
-            fieldCardController.PickedIcon.SetActive(false);
-        }
+        this.ResetAllMarks();
     }
 
     public (bool, ChoiceResult) ValidChoiceResult()
@@ -288,7 +313,7 @@ public class BattleSceneController : MonoBehaviour
         await Task.Delay(TimeSpan.FromSeconds(0.3));
     }
 
-    private GameObject GetOrCreateHandCardObject(CardId cardId, Card card)
+    private HandCardController GetOrCreateHandCardObject(CardId cardId, Card card)
     {
         if (!handCardObjectsByCardId.TryGetValue(cardId, out var cardObj))
         {
@@ -325,10 +350,10 @@ public class BattleSceneController : MonoBehaviour
 
     private void RemoveHandCardObj(CardId cardId)
     {
-        if (handCardObjectsByCardId.TryGetValue(cardId, out var cardObject))
+        if (handCardObjectsByCardId.TryGetValue(cardId, out var cardController))
         {
             handCardObjectsByCardId.Remove(cardId);
-            Destroy(cardObject);
+            Destroy(cardController.gameObject);
         }
     }
 
@@ -456,28 +481,31 @@ public class BattleSceneController : MonoBehaviour
         });
     }
 
-    void OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
+    void OnAsk(AskMessage askMessage)
     {
-        Debug.Log($"questionId={choiceCardsMessage.QuestionId}");
+        Debug.Log($"questionId={askMessage.QuestionId}");
 
         this.pickedPlayerIdList.Clear();
         this.pickedCardIdList.Clear();
         this.pickedCardDefIdList.Clear();
 
-        if (choiceCardsMessage.ChoiceCandidates.PlayerIdList.Any())
+        foreach (var playerId in askMessage.ChoiceCandidates.PlayerIdList)
         {
-            this.opponentPlayerController.SetPickeCandidate(true);
-        }
-
-        foreach (var card in choiceCardsMessage.ChoiceCandidates.CardList)
-        {
-            if (fieldCardControllersByCardId.TryGetValue(card.Id, out var fieldCardController))
+            foreach (var player in new[] { this.youPlayerController, this.opponentPlayerController })
             {
-                fieldCardController.PickCandidateIcon.SetActive(true);
+                player.VisiblePickCandidateIcon(player.PlayerId == playerId);
             }
         }
 
-        this.askParams = choiceCardsMessage;
+        foreach (var card in askMessage.ChoiceCandidates.CardList)
+        {
+            if (fieldCardControllersByCardId.TryGetValue(card.Id, out var fieldCardController))
+            {
+                fieldCardController.VisiblePickCandidateIcon(true);
+            }
+        }
+
+        this.askParams = askMessage;
     }
 
     public void ShowCardDetail(Card card)
@@ -485,23 +513,52 @@ public class BattleSceneController : MonoBehaviour
         this.cardDetailController.SetCard(card);
     }
 
-    public void Pick(PlayerId playerId)
+    public void Pick(PlayerController playerController)
     {
-        this.pickedPlayerIdList.Add(playerId);
+        this.pickedPlayerIdList.Add(playerController.PlayerId);
+        playerController.ResetAllIcon();
+        playerController.VisiblePickedIcon(true);
     }
 
-    public void UnPick(PlayerId playerId)
+    public void UnPick(PlayerController playerController)
     {
-        this.pickedPlayerIdList.Remove(playerId);
+        this.pickedPlayerIdList.Remove(playerController.PlayerId);
+        playerController.ResetAllIcon();
+        playerController.VisiblePickCandidateIcon(true);
     }
 
-    public void Pick(CardId cardId)
+    public void Pick(CardController cardController)
     {
-        this.pickedCardIdList.Add(cardId);
+        this.pickedCardIdList.Add(cardController.CardId);
+        cardController.ResetAllIcon();
+        cardController.VisiblePickedIcon(true);
     }
 
-    public void UnPick(CardId cardId)
+    public void UnPick(CardController cardController)
     {
-        this.pickedCardIdList.Remove(cardId);
+        this.pickedCardIdList.Remove(cardController.CardId);
+        cardController.ResetAllIcon();
+        cardController.VisiblePickCandidateIcon(true);
+    }
+
+    public void ResetAllMarks()
+    {
+        foreach (var handController in this.handCardObjectsByCardId.Values)
+        {
+            handController.ResetAllIcon();
+        }
+
+        foreach (var fieldController in this.fieldCardControllersByCardId.Values)
+        {
+            fieldController.ResetAllIcon();
+        }
+
+        this.opponentPlayerController.ResetAllIcon();
+        this.youPlayerController.ResetAllIcon();
+
+        this.AttackCardController = null;
+        this.pickedCardDefIdList.Clear();
+        this.pickedCardIdList.Clear();
+        this.pickedPlayerIdList.Clear();
     }
 }

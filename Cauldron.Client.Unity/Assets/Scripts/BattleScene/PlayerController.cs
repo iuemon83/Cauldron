@@ -86,44 +86,30 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     {
         if (this.IsPicked)
         {
-            this.pickCandidateIcon.SetActive(true);
-            this.pickedIcon.SetActive(false);
-            BattleSceneController.Instance.UnPick(this.PlayerId);
+            BattleSceneController.Instance.UnPick(this);
         }
         else if (this.IsPickCandidate)
         {
-            this.pickedIcon.SetActive(true);
-            this.pickCandidateIcon.SetActive(false);
-            BattleSceneController.Instance.Pick(this.PlayerId);
+            BattleSceneController.Instance.Pick(this);
         }
         else if (this.IsAttackTarget)
         {
-            if (BattleSceneController.Instance.SelectedCardController != null)
-            {
-                // 選択済みのカードがある
-
-                var attackCardId = BattleSceneController.Instance.SelectedCardController.CardId;
-
-                // 攻撃する
-                await BattleSceneController.Instance.AttackToOpponentPlayer(attackCardId);
-
-                // 攻撃後は選択済みのカードの選択を解除する
-                BattleSceneController.Instance.UnSelectCard();
-            }
+            // 攻撃する
+            await BattleSceneController.Instance.AttackToOpponentPlayerIfSelectedAttackCard();
         }
     }
 
-    public void SetAttackTarget(bool value)
+    public void VisibleAttackTargetIcon(bool value)
     {
         this.attackTargetIcon.SetActive(value);
     }
 
-    public void SetPickeCandidate(bool value)
+    public void VisiblePickCandidateIcon(bool value)
     {
         this.pickCandidateIcon.SetActive(value);
     }
 
-    public void SetPicked(bool value)
+    public void VisiblePickedIcon(bool value)
     {
         this.pickedIcon.SetActive(value);
     }
@@ -134,5 +120,12 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.damageText.gameObject.SetActive(true);
         await Task.Delay(500);
         this.damageText.gameObject.SetActive(false);
+    }
+
+    public virtual void ResetAllIcon()
+    {
+        this.VisibleAttackTargetIcon(false);
+        this.VisiblePickCandidateIcon(false);
+        this.VisiblePickedIcon(false);
     }
 }

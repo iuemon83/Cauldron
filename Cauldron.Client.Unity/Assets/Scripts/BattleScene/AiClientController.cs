@@ -30,9 +30,9 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
         }
     }
 
-    async void ICauldronHubReceiver.OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
+    async void ICauldronHubReceiver.OnAsk(AskMessage choiceCardsMessage)
     {
-        Debug.Log($"{nameof(ICauldronHubReceiver.OnChoiceCards)}");
+        Debug.Log($"{nameof(ICauldronHubReceiver.OnAsk)}");
 
         var result = await this.client.AnswerChoice(choiceCardsMessage.QuestionId, choiceCardsMessage.ChoiceCandidates, choiceCardsMessage.NumPicks);
 

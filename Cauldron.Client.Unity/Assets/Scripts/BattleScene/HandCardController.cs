@@ -4,7 +4,7 @@ public class HandCardController : CardController, IPointerClickHandler, IPointer
 {
     public async void OnPointerClick(PointerEventData eventData)
     {
-        await BattleSceneController.Instance.PlayFromHand(this.card.Id);
+        await BattleSceneController.Instance.PlayFromHand(this);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

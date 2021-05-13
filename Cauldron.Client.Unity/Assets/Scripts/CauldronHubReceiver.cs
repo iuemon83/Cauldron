@@ -13,10 +13,10 @@ namespace Assets.Scripts
         void ICauldronHubReceiver.OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)
             => this.onAddCard.OnNext((gameContext, addCardNotifyMessage));
 
-        public IObservable<ChoiceCardsMessage> OnChoiceCards => onChoiceCards;
-        private readonly Subject<ChoiceCardsMessage> onChoiceCards = new Subject<ChoiceCardsMessage>();
-        void ICauldronHubReceiver.OnChoiceCards(ChoiceCardsMessage choiceCardsMessage)
-            => this.onChoiceCards.OnNext(choiceCardsMessage);
+        public IObservable<AskMessage> OnAsk => onAsk;
+        private readonly Subject<AskMessage> onAsk = new Subject<AskMessage>();
+        void ICauldronHubReceiver.OnAsk(AskMessage onAskMessage)
+            => this.onAsk.OnNext(onAskMessage);
 
         public IObservable<(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)> OnDamage => onDamage;
         private readonly Subject<(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)> onDamage

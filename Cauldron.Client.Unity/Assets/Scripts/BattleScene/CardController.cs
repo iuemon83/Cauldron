@@ -6,19 +6,28 @@ using UnityEngine.UI;
 
 public class CardController : MonoBehaviour
 {
-    public TextMeshProUGUI CardNameText;
+    [SerializeField]
+    protected TextMeshProUGUI CardNameText;
 
-    public GameObject PowerSpace;
-    public GameObject ToughnessSpace;
+    [SerializeField]
+    protected GameObject PowerSpace;
+    [SerializeField]
+    protected GameObject ToughnessSpace;
 
-    public TextMeshProUGUI CostText;
-    public TextMeshProUGUI PowerText;
-    public TextMeshProUGUI ToughnessText;
+    [SerializeField]
+    protected TextMeshProUGUI CostText;
+    [SerializeField]
+    protected TextMeshProUGUI PowerText;
+    [SerializeField]
+    protected TextMeshProUGUI ToughnessText;
 
-    public Image CardImage;
+    [SerializeField]
+    protected Image CardImage;
 
-    public GameObject PickCandidateIcon;
-    public GameObject PickedIcon;
+    [SerializeField]
+    protected GameObject PickCandidateIcon;
+    [SerializeField]
+    protected GameObject PickedIcon;
 
     public CardId CardId => this.card.Id;
 
@@ -72,5 +81,21 @@ public class CardController : MonoBehaviour
     {
         this.card = card;
         this.shouldUpdate = true;
+    }
+
+    public void VisiblePickCandidateIcon(bool value)
+    {
+        this.PickCandidateIcon.SetActive(value);
+    }
+
+    public void VisiblePickedIcon(bool value)
+    {
+        this.PickedIcon.SetActive(value);
+    }
+
+    public virtual void ResetAllIcon()
+    {
+        this.VisiblePickCandidateIcon(false);
+        this.VisiblePickedIcon(false);
     }
 }

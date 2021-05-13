@@ -4,7 +4,7 @@ using System;
 namespace Cauldron.Shared.MessagePackObjects
 {
     [MessagePackObject(true)]
-    public class ChoiceCardsMessage
+    public class AskMessage
     {
         public Guid QuestionId { get; set; }
         public ChoiceCandidates ChoiceCandidates { get; set; }

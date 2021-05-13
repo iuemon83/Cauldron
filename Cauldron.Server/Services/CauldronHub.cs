@@ -97,7 +97,7 @@ namespace Cauldron.Server.Services
             try
             {
                 this._logger.LogInformation($"called {nameof(AskCard)}: questionId={currentQuestionId}, choiceCandidates={choiceCandidates}");
-                this.BroadcastTo(this.room, playerId.Value).OnChoiceCards(new ChoiceCardsMessage
+                this.BroadcastTo(this.room, playerId.Value).OnAsk(new AskMessage
                 {
                     QuestionId = currentQuestionId,
                     ChoiceCandidates = choiceCandidates,
