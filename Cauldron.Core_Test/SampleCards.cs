@@ -299,6 +299,35 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
+        public static CardDef BeginnerSummoner
+            => SampleCards.Creature(4, "初心者召喚士", "このカードが破壊されたとき、ランダムなコスト2のクリーチャーを1体場に出す。", 3, 3,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouCemetery,
+                            new EffectWhen(new EffectTiming(
+                                Destroy: new(EffectTimingDestroyEvent.EventSource.This)))),
+                        new[]
+                        {
+                            new EffectAction(AddCard: new(
+                                new ZoneValue(new[]{ ZonePrettyName.YouField }),
+                                new Choice(new ChoiceSource(
+                                    orCardConditions: new[]
+                                    {
+                                        new CardCondition()
+                                        {
+                                            ZoneCondition = new ZoneCondition(new ZoneValue(
+                                                new[]{ ZonePrettyName.CardPool })),
+                                            CostCondition = new NumCondition(2,
+                                                NumCondition.ConditionCompare.Equality)
+                                        }
+                                    }),
+                                    how: Choice.ChoiceHow.Random,
+                                    numPicks: 1)))
+                        }
+                    )
+                });
+
         public static CardDef MadScientist
             => SampleCards.Creature(4, "マッドサイエンティスト", "どこかおかしい", 3, 3,
                 // 自分か相手のクリーチャーを一体破壊して、再生する

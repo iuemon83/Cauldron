@@ -369,6 +369,35 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task BeginnerSummoner()
+        {
+            var testCardDef = SampleCards.BeginnerSummoner;
+            testCardDef.Cost = 0;
+            var cost1Def = SampleCards.Goblin;
+            cost1Def.Cost = 1;
+            var cost2Def = SampleCards.Goblin;
+            cost2Def.Cost = 2;
+
+            var (testGameMaster, player1, player2)
+                = await TestUtil.InitTest(new[] { testCardDef, cost1Def, cost2Def });
+
+            // 先攻
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 場にはtestCardが1体出ている
+                Assert.Single(g.ActivePlayer.Field.AllCards);
+
+                await g.DestroyCard(testCard);
+
+                // 破壊されると2コストのカードが場に出る
+                Assert.Single(g.ActivePlayer.Field.AllCards);
+                Assert.Equal(cost2Def.Id, g.ActivePlayer.Field.AllCards[0].CardDefId);
+            });
+        }
+
+        [Fact]
         public async Task MadScientist()
         {
             var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2);

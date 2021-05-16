@@ -36,6 +36,7 @@ namespace Cauldron.Core_Test
                 SampleCards.ShamanGoblin,
                 SampleCards.HealGoblin,
                 SampleCards.FireGoblin,
+                SampleCards.BeginnerSummoner,
                 SampleCards.MadScientist,
                 SampleCards.BraveGoblin,
                 SampleCards.GiantGoblin,

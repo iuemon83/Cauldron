@@ -400,6 +400,54 @@
         },
         {
             "cost": 4,
+            "name": "初心者召喚士",
+            "flavorText": "このカードが破壊されたとき、ランダムなコスト2のクリーチャーを1体場に出す。",
+            "isToken": false,
+            "type": "creature",
+            "power": 3,
+            "toughness": 3,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youCemetery",
+                        "when": { "timing": { "destroy": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "context": "any",
+                                                "costCondition": {
+                                                    "value": 2,
+                                                    "compare": "equality",
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                    "not": false
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "how": "random",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 4,
             "name": "マッドサイエンティスト",
             "flavorText": "どこかおかしい",
             "isToken": false,
