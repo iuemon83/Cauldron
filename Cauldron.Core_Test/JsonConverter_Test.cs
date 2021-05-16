@@ -13,8 +13,9 @@ namespace Cauldron.Core_Test
             var testjson = File.ReadAllText("CardSet/read_test.json");
 
             var obj = JsonConverter.Deserialize<CardSet>(testjson);
-            var actual = JsonConverter.Serialize(obj);
+            Assert.NotNull(obj);
 
+            var actual = JsonConverter.Serialize(obj);
             Assert.Equal(testjson, actual);
         }
 
@@ -30,6 +31,7 @@ namespace Cauldron.Core_Test
                 SampleCards.DeadlyGoblin,
                 SampleCards.MechanicGoblin,
                 SampleCards.NinjaGoblin,
+                SampleCards.SuperNinjaGoblin,
                 SampleCards.GoblinsGreed,
                 SampleCards.ShamanGoblin,
                 SampleCards.HealGoblin,
@@ -42,12 +44,18 @@ namespace Cauldron.Core_Test
                 SampleCards.KingGoblin,
                 SampleCards.Sword,
                 SampleCards.Shield,
+                SampleCards.HitOrHeal,
+                SampleCards.Hit,
+                SampleCards.Heal,
+                SampleCards.FirstAttack,
+                SampleCards.SecondAttack,
                 SampleCards.HolyShield,
                 SampleCards.ChangeHands,
                 SampleCards.Slap,
                 SampleCards.FullAttack,
                 SampleCards.OldShield,
                 SampleCards.OldWall,
+                SampleCards.EmergencyFood,
                 SampleCards.GoblinStatue,
                 SampleCards.HolyStatue,
                 SampleCards.GoblinCaptureJar,

@@ -489,6 +489,19 @@ public class BattleSceneController : MonoBehaviour
         this.pickedCardIdList.Clear();
         this.pickedCardDefIdList.Clear();
 
+        //TODO carddef ‚Ì‘I‘ð‰æ–Ê‚ðŽÀ‘•‚·‚é
+        if (askMessage.ChoiceCandidates.CardDefList.Length != 0)
+        {
+            // ‚Æ‚è‚ ‚¦‚¸carddef ‚ªŒó•â‚È‚çƒ‰ƒ“ƒ_ƒ€‚É‘I‘ð‚·‚é
+            var randomPicked = askMessage.ChoiceCandidates.CardDefList
+                .OrderBy(_ => Guid.NewGuid())
+                .Take(askMessage.NumPicks)
+                .Select(c => c.Id);
+            this.pickedCardDefIdList.AddRange(randomPicked);
+            this.askParams = askMessage;
+            this.OnPickedButtonClick();
+        }
+
         foreach (var playerId in askMessage.ChoiceCandidates.PlayerIdList)
         {
             foreach (var player in new[] { this.youPlayerController, this.opponentPlayerController })

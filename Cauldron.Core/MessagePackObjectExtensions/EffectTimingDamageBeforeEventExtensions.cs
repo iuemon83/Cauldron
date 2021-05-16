@@ -29,10 +29,10 @@ namespace Cauldron.Shared.MessagePackObjects
                 return effectTimingDamageBeforeEvent.Source switch
                 {
                     EffectTimingDamageBeforeEvent.EventSource.Any => eventArgs.DamageContext.GuardPlayer != null
-                        && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs.DamageContext.GuardPlayer, eventArgs)
+                        && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer)
                             ?? false),
                     EffectTimingDamageBeforeEvent.EventSource.Take => eventArgs.DamageContext.GuardPlayer != null
-                        && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs.DamageContext.GuardPlayer, eventArgs)
+                        && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer)
                             ?? false),
                     _ => false
                 };
@@ -49,7 +49,7 @@ namespace Cauldron.Shared.MessagePackObjects
                         return false;
                     }
 
-                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(effectOwnerCard, damageSource, eventArgs);
+                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(effectOwnerCard, eventArgs, damageSource);
                 }
 
                 async ValueTask<bool> SwitchTake()
@@ -61,7 +61,7 @@ namespace Cauldron.Shared.MessagePackObjects
                         return false;
                     }
 
-                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(effectOwnerCard, guard, eventArgs);
+                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(effectOwnerCard, eventArgs, guard);
                 }
 
                 return effectTimingDamageBeforeEvent.Source switch

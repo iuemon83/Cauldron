@@ -340,11 +340,11 @@ namespace Cauldron.Core_Test
                         new[]{
                             new EffectAction(
                                 ModifyPlayer: new(
-                                    new Choice()
-                                    {
-                                        How = Choice.ChoiceHow.All,
-                                        PlayerCondition = new(Type: PlayerCondition.PlayerConditionType.You),
-                                    },
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orPlayerConditions: new[]{
+                                                new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                            })),
                                     new PlayerModifier(Hp: new NumValueModifier(
                                         NumValueModifier.ValueModifierOperator.Add,
                                         new NumValue(1)
@@ -412,11 +412,12 @@ namespace Cauldron.Core_Test
                         new[]{
                             new EffectAction(
                                 ModifyPlayer: new(
-                                    new Choice()
-                                    {
-                                        How = Choice.ChoiceHow.All,
-                                        PlayerCondition = new(Type: PlayerCondition.PlayerConditionType.You),
-                                    },
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orPlayerConditions: new[]
+                                            {
+                                                new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                            })),
                                     new PlayerModifier(Hp: new NumValueModifier(
                                         NumValueModifier.ValueModifierOperator.Add,
                                         new NumValue(1)
@@ -558,14 +559,16 @@ namespace Cauldron.Core_Test
                             {
                                 Damage = new EffectActionDamage(
                                     new NumValue(1),
-                                    new Choice()
-                                    {
-                                        CardCondition = new CardCondition()
-                                        {
-                                            ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                            TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
-                                        },
-                                    }
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
+                                                    TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
+                                                },
+                                            }))
                                 )
                             }
                         }

@@ -35,11 +35,12 @@ namespace Cauldron.Core_Test
                         new[]{
                             new EffectAction(
                                 ModifyPlayer: new(
-                                    new Choice()
-                                    {
-                                        How = Choice.ChoiceHow.All,
-                                        PlayerCondition = new(Type: PlayerCondition.PlayerConditionType.You),
-                                    },
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orPlayerConditions: new[]
+                                            {
+                                                new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                            })),
                                     new PlayerModifier(Hp: new NumValueModifier(
                                         NumValueModifier.ValueModifierOperator.Add,
                                         new NumValue(1)

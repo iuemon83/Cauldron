@@ -43,11 +43,10 @@ namespace Cauldron.Core_Test
         public static EffectAction TestEffectAction => new(
             Damage: new(
                 new NumValue(1),
-                new Choice()
-                {
-                    How = Choice.ChoiceHow.All,
-                    PlayerCondition = new(Type: PlayerCondition.PlayerConditionType.You)
-                }));
+                new Choice(new ChoiceSource(
+                    orPlayerConditions: new[]{
+                        new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                    }))));
 
         public static void AssertGameAction(Func<(bool, string)> phase)
         {
@@ -175,14 +174,21 @@ namespace Cauldron.Core_Test
                 choiceCandidates.CardDefList.Select(c => c.Id).ToArray()));
         }
 
-        public static async ValueTask<(GameMaster, Player, Player)> InitTest(CardDef[] cardpool) => await InitTest(cardpool, TestUtil.GameMasterOptions());
+        public static async ValueTask<(GameMaster, Player, Player)> InitTest(IEnumerable<CardDef> cardpool)
+            => await InitTest(cardpool, Enumerable.Repeat(cardpool.First(c => !c.IsToken), 40), TestUtil.GameMasterOptions());
 
-        public static async ValueTask<(GameMaster, Player, Player)> InitTest(CardDef[] cardpool, GameMasterOptions options)
+        public static async ValueTask<(GameMaster, Player, Player)> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck)
+            => await InitTest(cardpool, deck, TestUtil.GameMasterOptions());
+
+        public static async ValueTask<(GameMaster, Player, Player)> InitTest(IEnumerable<CardDef> cardpool, GameMasterOptions options)
+            => await InitTest(cardpool, Enumerable.Repeat(cardpool.First(c => !c.IsToken), 40), options);
+
+        public static async ValueTask<(GameMaster, Player, Player)> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck, GameMasterOptions options)
         {
-            options.CardRepository.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, cardpool) });
+            options.CardRepository.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, cardpool.ToArray()) });
 
             var testGameMaster = new GameMaster(options);
-            var deckCardDefIdList = Enumerable.Repeat(cardpool.First(c => !c.IsToken).Id, 40);
+            var deckCardDefIdList = deck.Select(c => c.Id);
 
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", deckCardDefIdList);
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", deckCardDefIdList);

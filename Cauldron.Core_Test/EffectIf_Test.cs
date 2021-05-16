@@ -26,14 +26,14 @@ namespace Cauldron.Core_Test
                                 new NumCondition(2, NumCondition.ConditionCompare.GreaterThan),
                                 new NumValue(
                                     NumValueCalculator: new(NumValueCalculator.ValueType.Count,
-                                        new Choice()
-                                        {
-                                            How = Choice.ChoiceHow.All,
-                                            CardCondition = new CardCondition()
-                                            {
-                                                ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                            }
-                                        }
+                                        new Choice(
+                                            new ChoiceSource(
+                                                orCardConditions: new[]{
+                                                    new CardCondition()
+                                                    {
+                                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
+                                                    }
+                                                }))
                                         )
                                 ))
                         ),

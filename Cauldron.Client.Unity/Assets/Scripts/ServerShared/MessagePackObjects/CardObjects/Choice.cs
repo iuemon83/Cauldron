@@ -22,23 +22,25 @@ namespace Cauldron.Shared.MessagePackObjects
         }
 
         /// <summary>
-        /// 候補からの洗濯方法
+        /// 選択候補
         /// </summary>
-        public ChoiceHow How { get; set; } = ChoiceHow.All;
+        public ChoiceSource Source { get; }
 
         /// <summary>
-        /// 候補となるプレイヤーの条件
+        /// 候補からの選択方法
         /// </summary>
-        public PlayerCondition PlayerCondition { get; set; }
-
-        /// <summary>
-        /// 候補となるカードの条件
-        /// </summary>
-        public CardCondition CardCondition { get; set; }
+        public ChoiceHow How { get; }
 
         /// <summary>
         /// 選択する数
         /// </summary>
-        public int NumPicks { get; set; } = 1;
+        public int NumPicks { get; }
+
+        public Choice(ChoiceSource source, ChoiceHow how = ChoiceHow.All, int numPicks = 1)
+        {
+            this.Source = source;
+            this.How = how;
+            this.NumPicks = numPicks;
+        }
     }
 }

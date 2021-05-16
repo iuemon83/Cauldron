@@ -181,6 +181,31 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task SuperNinjaGoblin()
+        {
+            var testCard = SampleCards.SuperNinjaGoblin;
+            testCard.Cost = 0;
+
+            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
+            testCardFactory.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, new[] { testCard }) });
+
+            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
+
+            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCard.Id, 40));
+            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCard.Id, 40));
+
+            await testGameMaster.Start(player1Id);
+            await TestUtil.AssertGameAction(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.ActivePlayer.Hands.AllCards[0].Id));
+
+            // 場には3体出ていて、ぜんぶtestcard
+            Assert.Equal(3, testGameMaster.ActivePlayer.Field.AllCards.Count);
+            foreach (var card in testGameMaster.ActivePlayer.Field.AllCards)
+            {
+                Assert.Equal(testCard.Id, card.CardDefId);
+            }
+        }
+
+        [Fact]
         public async Task GoblinsGreed()
         {
             var testCardDef = SampleCards.GoblinsGreed;
@@ -595,6 +620,50 @@ namespace Cauldron.Core_Test
 
                 Assert.Equal(0, goblinCard.PowerBuff);
                 Assert.Equal(1, goblinCard.ToughnessBuff);
+            });
+        }
+
+        [Fact]
+        public async Task HitOrHeal()
+        {
+            var testCardDef1 = SampleCards.HitOrHeal;
+            testCardDef1.Cost = 0;
+
+            var expectedChoiceCardDefList = new[] { SampleCards.Hit, SampleCards.Heal };
+            CardDefId choiceCardDefId = default;
+
+            // カードの選択処理のテスト
+            ValueTask<ChoiceResult> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            {
+                Assert.Empty(c.PlayerIdList);
+                Assert.Empty(c.CardList);
+                TestUtil.AssertCollection(
+                    expectedChoiceCardDefList.Select(c => c.Name).ToArray(),
+                    c.CardDefList.Select(c => c.Name).ToArray());
+
+                choiceCardDefId = c.CardDefList[0].Id;
+
+                return ValueTask.FromResult(new ChoiceResult(
+                    Array.Empty<PlayerId>(),
+                    Array.Empty<CardId>(),
+                    new[] { choiceCardDefId }
+                ));
+            }
+
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+                new[] { testCardDef1, SampleCards.Hit, SampleCards.Heal },
+                TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
+
+            // 先攻
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var beforeHandIds = player1.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef1.Id);
+
+                var diffCards = player1.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
+                Assert.Single(diffCards);
+                Assert.Equal(choiceCardDefId, diffCards[0].CardDefId);
             });
         }
 
@@ -1063,6 +1132,38 @@ namespace Cauldron.Core_Test
                 Assert.Equal(goblinCard2.BaseToughness - 1, goblinCard2.Toughness);
                 // 破壊される
                 Assert.Equal(ZoneName.Cemetery, testCard.Zone.ZoneName);
+            });
+        }
+
+        [Fact]
+        public async Task EmergencyFood()
+        {
+            var goblin = SampleCards.Goblin;
+            goblin.Cost = 2;
+
+            var testCardDef = SampleCards.EmergencyFood;
+            testCardDef.Cost = 0;
+
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+                new[] { goblin, testCardDef },
+                Enumerable.Repeat(goblin, 40)
+                );
+
+            // 先攻
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                // 事前にダメージ
+                player1.Damage(5);
+
+                var beforeHp = player1.CurrentHp;
+                var beforeHandIdList = player1.Hands.AllCards.Select(c => c.Id).ToArray();
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 手札が1枚減っている
+                Assert.Equal(beforeHandIdList.Length - 1, player1.Hands.AllCards.Count);
+
+                // 捨てたカードのコスト分ライフが回復している
+                Assert.Equal(beforeHp + goblin.Cost, player1.CurrentHp);
             });
         }
 
