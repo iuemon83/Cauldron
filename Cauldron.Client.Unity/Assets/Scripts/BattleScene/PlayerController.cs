@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
+    private TextMeshProUGUI firstText;
+    [SerializeField]
     private TextMeshProUGUI nameText;
     [SerializeField]
     private TextMeshProUGUI statusText;
@@ -65,6 +67,7 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.deckText.text = publicPlayerInfo.DeckCount.ToString();
         this.cemeteryText.text = publicPlayerInfo.Cemetery.Length.ToString();
         this.handText.text = publicPlayerInfo.HandsCount.ToString();
+        this.firstText.gameObject.SetActive(publicPlayerInfo.IsFirst);
     }
 
     public void SetActiveTurn(bool value)

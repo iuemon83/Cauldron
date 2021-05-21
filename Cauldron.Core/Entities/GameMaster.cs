@@ -275,13 +275,15 @@ namespace Cauldron.Core.Entities
 
                 foreach (var playerDef in this.PlayerDefsById.Values)
                 {
+                    var ifFirst = playerDef.Id == firstPlayerId;
+
                     var deckCards = playerDef.DeckIdList.Select(id => this.cardRepository.CreateNew(id)).ToArray();
 
-                    var player = this.playerRepository.CreateNew(playerDef, this.RuleBook, deckCards);
+                    var player = this.playerRepository.CreateNew(playerDef, this.RuleBook, deckCards, ifFirst);
 
                     this.PlayerTurnCountById.TryAdd(player.Id, 0);
 
-                    if (player.Id == firstPlayerId)
+                    if (ifFirst)
                     {
                         this.ActivePlayer = player;
                     }

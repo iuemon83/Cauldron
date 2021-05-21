@@ -26,6 +26,7 @@ namespace Cauldron.Core.Entities
         public Field Field { get; }
 
         public Cemetery Cemetery { get; }
+        public bool IsFirst { get; }
 
         public int MaxHp { get; private set; }
         public int UsedHp { get; private set; }
@@ -35,7 +36,7 @@ namespace Cauldron.Core.Entities
         public int UsedMp { get; private set; }
         public int CurrentMp => Math.Max(0, this.MaxMp - this.UsedMp);
 
-        public Player(PlayerId id, string name, RuleBook ruleBook, IReadOnlyList<Card> deck)
+        public Player(PlayerId id, string name, RuleBook ruleBook, IReadOnlyList<Card> deck, bool isFirst)
         {
             foreach (var card in deck)
             {
@@ -53,6 +54,7 @@ namespace Cauldron.Core.Entities
             this.Hands = new Hands();
             this.Field = new Field(this.RuleBook);
             this.Cemetery = new Cemetery();
+            this.IsFirst = isFirst;
 
             foreach (var card in deck)
             {
@@ -131,7 +133,8 @@ namespace Cauldron.Core.Entities
             this.MaxHp,
             this.CurrentHp,
             this.MaxMp,
-            this.CurrentMp
+            this.CurrentMp,
+            this.IsFirst
             );
     }
 }

@@ -20,9 +20,9 @@ namespace Cauldron.Core.Entities
                 : (false, default);
         }
 
-        public Player CreateNew(PlayerDef playerDef, RuleBook ruleBook, Card[] deckCards)
+        public Player CreateNew(PlayerDef playerDef, RuleBook ruleBook, Card[] deckCards, bool isFirst)
         {
-            var player = new Player(playerDef.Id, playerDef.Name, ruleBook, deckCards);
+            var player = new Player(playerDef.Id, playerDef.Name, ruleBook, deckCards, isFirst);
             this.PlayersById.TryAdd(player.Id, player);
 
             return player;

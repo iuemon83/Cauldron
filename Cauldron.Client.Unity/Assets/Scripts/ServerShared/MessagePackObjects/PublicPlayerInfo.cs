@@ -15,6 +15,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public int CurrentHp { get; }
         public int MaxMp { get; }
         public int CurrentMp { get; }
+        public bool IsFirst { get; }
 
         public PublicPlayerInfo(
             PlayerId Id,
@@ -26,7 +27,8 @@ namespace Cauldron.Shared.MessagePackObjects
             int MaxHp,
             int CurrentHp,
             int MaxMp,
-            int CurrentMp
+            int CurrentMp,
+            bool IsFirst
             )
         {
             this.Id = Id;
@@ -39,6 +41,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.CurrentHp = CurrentHp;
             this.MaxMp = MaxMp;
             this.CurrentMp = CurrentMp;
+            this.IsFirst = IsFirst;
         }
     }
 }
