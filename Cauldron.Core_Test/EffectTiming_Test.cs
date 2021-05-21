@@ -27,7 +27,7 @@ namespace Cauldron.Core_Test
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
 
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             var beforeHp = player1.CurrentHp;
 
@@ -69,7 +69,7 @@ namespace Cauldron.Core_Test
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
 
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             var beforeHp = player1.CurrentHp;
 
@@ -107,7 +107,7 @@ namespace Cauldron.Core_Test
                 });
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             var beforeHp = player1.CurrentHp;
 
@@ -149,7 +149,7 @@ namespace Cauldron.Core_Test
                 });
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             var beforeHp = player1.CurrentHp;
 
@@ -191,7 +191,7 @@ namespace Cauldron.Core_Test
                 });
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             var beforeHp = player1.CurrentHp;
 
@@ -233,7 +233,7 @@ namespace Cauldron.Core_Test
                 });
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             var beforeHp = player1.CurrentHp;
 
@@ -273,7 +273,7 @@ namespace Cauldron.Core_Test
             var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 1, 1);
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef, testNormalCardDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             var beforeHp = player1.CurrentHp;
 
@@ -309,7 +309,7 @@ namespace Cauldron.Core_Test
             var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 1, 1);
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef, testNormalCardDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             var beforeHp = player1.CurrentHp;
 
@@ -356,7 +356,7 @@ namespace Cauldron.Core_Test
             var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 5, 0);
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef, testNormalCardDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             // æU
             var normal = await TestUtil.Turn(testGameMaster, (g, pId) =>
@@ -429,7 +429,7 @@ namespace Cauldron.Core_Test
             var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 5, 0);
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef, testNormalCardDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             // æU
             var normal = await TestUtil.Turn(testGameMaster, (g, pId) =>
@@ -486,7 +486,7 @@ namespace Cauldron.Core_Test
             var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 5, 0);
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef, testNormalCardDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             // æU
             var normal = await TestUtil.Turn(testGameMaster, (g, pId) =>
@@ -576,7 +576,7 @@ namespace Cauldron.Core_Test
                 });
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef, testSorceryDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             var beforeHp = player1.CurrentHp;
 
@@ -606,7 +606,7 @@ namespace Cauldron.Core_Test
                 });
 
             var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
-            await testGameMaster.Start(player1.Id);
+            await testGameMaster.StartGame(player1.Id);
 
             var beforeHp = player1.CurrentHp;
 

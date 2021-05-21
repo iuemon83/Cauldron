@@ -679,6 +679,58 @@ namespace Cauldron.Core.Entities
                         })
                 });
 
+        public static CardDef TempRamp
+            => SampleCards.Sorcery(0, "一時的なランプ", "あなたの最大MPを1増加する。ターン終了時あなたの最大MPを1減少する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(Play: new(EffectTimingPlayEvent.EventSource.This)))
+                            ),
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                ModifyPlayer = new(
+                                    new Choice(new ChoiceSource(
+                                        orPlayerConditions: new[]
+                                        {
+                                            new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                        })),
+                                    new PlayerModifier(
+                                        MaxMp: new NumValueModifier(
+                                            NumValueModifier.ValueModifierOperator.Add,
+                                            new NumValue(1))
+                                        ))
+                            }
+                        }
+                    ),
+                    // ターン終了時あなたの最大MPを1減少する。
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.None,
+                            new EffectWhen(new EffectTiming(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You))),
+                            While: new(new(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You)), 0, 1)
+                            ),
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                ModifyPlayer = new(
+                                    new Choice(new ChoiceSource(
+                                        orPlayerConditions: new[]
+                                        {
+                                            new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                        })),
+                                    new PlayerModifier(
+                                        MaxMp: new NumValueModifier(
+                                            NumValueModifier.ValueModifierOperator.Sub,
+                                            new NumValue(1))
+                                        ))
+                            }
+                        }
+                    )
+                });
+
         public static CardDef Sword
             => SampleCards.Sorcery(1, "剣", "パワーアップ",
             effects: new[]
@@ -1047,6 +1099,35 @@ namespace Cauldron.Core.Entities
                                         Choice.ChoiceHow.Choose,
                                         1)
                                 )
+                            }
+                        }
+                    )
+                });
+
+        public static CardDef Ramp
+            => SampleCards.Sorcery(2, "ランプ", "あなたのMPの最大値を1増加し、利用可能なMPを1減少する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                ModifyPlayer = new(
+                                    new Choice(new ChoiceSource(
+                                        orPlayerConditions: new[]
+                                        {
+                                            new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                        })),
+                                    new PlayerModifier(
+                                        MaxMp: new NumValueModifier(
+                                            NumValueModifier.ValueModifierOperator.Add,
+                                            new NumValue(1)),
+                                        Mp: new NumValueModifier(
+                                            NumValueModifier.ValueModifierOperator.Sub,
+                                            new NumValue(1))
+                                        ))
                             }
                         }
                     )

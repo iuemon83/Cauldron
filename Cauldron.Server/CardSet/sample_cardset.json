@@ -983,6 +983,89 @@
             ]
         },
         {
+            "cost": 0,
+            "name": "一時的なランプ",
+            "flavorText": "あなたの最大MPを1増加する。ターン終了時あなたの最大MPを1減少する。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "modifyPlayer": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [
+                                            {
+                                                "context": "any",
+                                                "type": "you"
+                                            }
+                                        ],
+                                        "orCardConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                },
+                                "playerModifier": {
+                                    "maxMp": {
+                                        "operator": "add",
+                                        "value": { "pureValue": 1 }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "none",
+                        "when": { "timing": { "endTurn": { "source": "you" } } },
+                        "while": {
+                            "timing": { "endTurn": { "source": "you" } },
+                            "skip": 0,
+                            "take": 1
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyPlayer": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [
+                                            {
+                                                "context": "any",
+                                                "type": "you"
+                                            }
+                                        ],
+                                        "orCardConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                },
+                                "playerModifier": {
+                                    "maxMp": {
+                                        "operator": "sub",
+                                        "value": { "pureValue": 1 }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "cost": 1,
             "name": "剣",
             "flavorText": "パワーアップ",
@@ -1513,6 +1596,55 @@
                                 "playerCondition": {
                                     "context": "any",
                                     "type": "you"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 2,
+            "name": "ランプ",
+            "flavorText": "あなたのMPの最大値を1増加し、利用可能なMPを1減少する。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "modifyPlayer": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [
+                                            {
+                                                "context": "any",
+                                                "type": "you"
+                                            }
+                                        ],
+                                        "orCardConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                },
+                                "playerModifier": {
+                                    "maxMp": {
+                                        "operator": "add",
+                                        "value": { "pureValue": 1 }
+                                    },
+                                    "mp": {
+                                        "operator": "sub",
+                                        "value": { "pureValue": 1 }
+                                    }
                                 }
                             }
                         }

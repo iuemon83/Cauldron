@@ -300,7 +300,7 @@ namespace Cauldron.Server.Services
                 {
                     throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
                 }
-                await gameMaster.Start(firstPlayerId);
+                await gameMaster.StartGame(firstPlayerId);
             }
             catch (Exception e)
             {

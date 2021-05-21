@@ -8,12 +8,9 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectWhile
     {
-        [Key(1)]
-        public EffectTiming Timing { get; set; }
-        [Key(2)]
-        public int Skip { get; set; }
-        [Key(3)]
-        public int Take { get; set; }
+        public EffectTiming Timing { get; }
+        public int Skip { get; }
+        public int Take { get; }
 
         public EffectWhile(EffectTiming Timing, int Skip, int Take)
         {

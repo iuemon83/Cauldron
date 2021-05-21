@@ -24,7 +24,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
             await TestUtil.Turn(testGameMaster, async (g, pid) =>
             {
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
@@ -53,7 +53,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
             var (normal, test) = await TestUtil.Turn(testGameMaster, async (g, pid) =>
             {
                 var normalCard = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
@@ -94,7 +94,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
             var test = await TestUtil.Turn(testGameMaster, async (g, pid) =>
             {
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
@@ -169,7 +169,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCard.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCard.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
             await TestUtil.AssertGameAction(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.ActivePlayer.Hands.AllCards[0].Id));
 
             // 場には2体出ていて、ぜんぶtestcard
@@ -194,7 +194,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCard.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCard.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
             await TestUtil.AssertGameAction(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.ActivePlayer.Hands.AllCards[0].Id));
 
             // 場には3体出ていて、ぜんぶtestcard
@@ -219,7 +219,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先攻
             await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -511,7 +511,7 @@ namespace Cauldron.Core_Test
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCreatureDef.Id, 40));
 
             // ゴブリン２体出してから効果クリーチャーを出す
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
             var (goblin1, goblin2) = await TestUtil.Turn(testGameMaster, async (g, pid) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
@@ -571,6 +571,53 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task TempRamp()
+        {
+            var testCardDef = SampleCards.TempRamp;
+
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
+
+            // 先攻1ターン目
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                Assert.Equal(1, player1.MaxMp);
+                Assert.Equal(1, player1.CurrentMp);
+
+                var c = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 最大値が１増える。未使用のMPも増える。
+                Assert.Equal(2, player1.MaxMp);
+                Assert.Equal(2, player1.CurrentMp);
+            });
+
+            // 最大値が１減る。未使用のMPも減る。
+            Assert.Equal(1, player1.MaxMp);
+            Assert.Equal(1, player1.CurrentMp);
+
+            // 後攻
+            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            {
+            });
+
+            // 先攻2ターン目
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                Assert.Equal(2, player1.MaxMp);
+                Assert.Equal(2, player1.CurrentMp);
+
+                var c = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 最大値が１増える。未使用のMPも増える。
+                Assert.Equal(3, player1.MaxMp);
+                Assert.Equal(3, player1.CurrentMp);
+            });
+
+            // 最大値が１減る。未使用のMPも減る。
+            Assert.Equal(2, player1.MaxMp);
+            Assert.Equal(2, player1.CurrentMp);
+        }
+
+        [Fact]
         public async Task Sword()
         {
             var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
@@ -598,7 +645,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先攻
             await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -639,7 +686,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先攻
             await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -800,7 +847,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先攻
             await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -818,6 +865,28 @@ namespace Cauldron.Core_Test
                 {
                     Assert.True(beforeHandIdList.All(beforeHandId => beforeHandId != handCard.Id));
                 }
+            });
+        }
+
+        [Fact]
+        public async Task Ramp()
+        {
+            var testCardDef = SampleCards.Ramp;
+            testCardDef.Cost = 1;
+
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
+
+            // 先攻
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                Assert.Equal(1, g.ActivePlayer.MaxMp);
+                Assert.Equal(1, g.ActivePlayer.CurrentMp);
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 最大値が１増える。未使用のMPは増えない。
+                Assert.Equal(2, g.ActivePlayer.MaxMp);
+                Assert.Equal(0, g.ActivePlayer.CurrentMp);
             });
         }
 
@@ -858,7 +927,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先攻
             var (goblin1, goblin11) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -1258,7 +1327,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先攻
             await TestUtil.Turn(testGameMaster, async (g, pId) =>

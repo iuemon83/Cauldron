@@ -13,10 +13,12 @@ namespace Cauldron.Shared.MessagePackObjects
             var done = false;
             foreach (var card in targets)
             {
-                var toZone = effectActionMoveCard.To.FromPrettyName(effectOwnerCard.OwnerId, args.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Id);
-                await args.GameMaster.MoveCard(card.Id, new(card.Zone, toZone));
-
-                done = true;
+                var (success, toZone) = effectActionMoveCard.To.TryGetZone(effectOwnerCard.OwnerId, args.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Id);
+                if (success)
+                {
+                    await args.GameMaster.MoveCard(card.Id, new(card.Zone, toZone));
+                    done = true;
+                }
             }
 
             if (!string.IsNullOrEmpty(effectActionMoveCard.Name))

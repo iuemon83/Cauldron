@@ -59,7 +59,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, goblinCard2, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -145,7 +145,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, goblinCard2, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -235,7 +235,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -324,7 +324,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -405,7 +405,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -486,7 +486,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
@@ -573,7 +573,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先行
             // ゴブリン2体出す
@@ -650,7 +650,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先行
             // ゴブリン2体出す
@@ -734,7 +734,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先行
             // ゴブリン2体出す
@@ -825,7 +825,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先行
             // ゴブリン2体出す
@@ -894,7 +894,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先行
             // ゴブリンと効果カード出す
@@ -955,7 +955,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             // 先行
             // ゴブリンと効果カード出す

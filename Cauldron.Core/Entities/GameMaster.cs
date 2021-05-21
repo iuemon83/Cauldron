@@ -260,7 +260,7 @@ namespace Cauldron.Core.Entities
             return true;
         }
 
-        public async ValueTask Start(PlayerId firstPlayerId)
+        public async ValueTask StartGame(PlayerId firstPlayerId)
         {
             if (this.IsStarted) return;
 
@@ -672,16 +672,12 @@ namespace Cauldron.Core.Entities
 
             await this.MoveCard(handCardId, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Field)));
 
+            this.effectManager.RegisterEffectIfAnyZoneEffect(playingCard);
+
             await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnPlay, this, SourceCard: playingCard));
 
             switch (playingCard.Type)
             {
-                case CardType.Creature:
-                case CardType.Artifact:
-
-                    //player.Field.Add(playingCard);
-                    break;
-
                 case CardType.Sorcery:
                     await this.MoveCard(handCardId, new(new(playerId, ZoneName.Field), new(playerId, ZoneName.Cemetery)));
 

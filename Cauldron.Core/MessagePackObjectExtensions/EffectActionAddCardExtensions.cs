@@ -27,7 +27,11 @@ namespace Cauldron.Shared.MessagePackObjects
                 return (false, effectEventArgs);
             }
 
-            var zone = zonePrettyNames[0].FromPrettyName(owner.Id, opponent.Id);
+            var (success, zone) = zonePrettyNames[0].TryGetZone(owner.Id, opponent.Id);
+            if (!success)
+            {
+                return (false, effectEventArgs);
+            }
 
             var newCards = newCardDefs.Select(cd => effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone)).ToArray();
 

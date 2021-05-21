@@ -193,7 +193,7 @@ namespace Cauldron.Core_Test
             var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", deckCardDefIdList);
             var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", deckCardDefIdList);
 
-            await testGameMaster.Start(player1Id);
+            await testGameMaster.StartGame(player1Id);
 
             var (_, player1) = testGameMaster.playerRepository.TryGet(player1Id);
             var (_, player2) = testGameMaster.playerRepository.TryGet(player2Id);

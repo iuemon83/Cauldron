@@ -1,5 +1,6 @@
 ﻿using Cauldron.Core.Entities;
 using Cauldron.Core.Entities.Effect;
+using System;
 using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -19,6 +20,40 @@ namespace Cauldron.Shared.MessagePackObjects
                 GameEvent.OnMoveCard => effectTiming.MoveCard?.IsMatch(effectOwnerCard, eventArgs) ?? false,
                 _ => false,
             };
+        }
+
+        public static GameEvent ToGameEvent(this EffectTiming effectTiming)
+        {
+            if (effectTiming.DamageAfter != null)
+            {
+                return GameEvent.OnDamage;
+            }
+            else if (effectTiming.DamageBefore != null)
+            {
+                return GameEvent.OnDamageBefore;
+            }
+            else if (effectTiming.Destroy != null)
+            {
+                return GameEvent.OnDestroy;
+            }
+            else if (effectTiming.EndTurn != null)
+            {
+                return GameEvent.OnEndTurn;
+            }
+            else if (effectTiming.MoveCard != null)
+            {
+                return GameEvent.OnMoveCard;
+            }
+            else if (effectTiming.Play != null)
+            {
+                return GameEvent.OnPlay;
+            }
+            else if (effectTiming.StartTurn != null)
+            {
+                return GameEvent.OnStartTurn;
+            }
+
+            throw new InvalidOperationException("invalid card effect timing");
         }
     }
 }
