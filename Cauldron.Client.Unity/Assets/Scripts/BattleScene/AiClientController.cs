@@ -47,10 +47,6 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     {
     }
 
-    void ICauldronHubReceiver.OnGameOver(GameContext gameContext)
-    {
-    }
-
     void ICauldronHubReceiver.OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)
     {
     }

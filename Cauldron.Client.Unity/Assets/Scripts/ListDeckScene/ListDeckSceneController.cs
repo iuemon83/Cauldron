@@ -70,8 +70,10 @@ public class ListDeckSceneController : MonoBehaviour
     public void OnDeleteButtonClick()
     {
         // 確認ダイアログ
+        var title = "デッキの削除";
+        var message = $"「{this.selectedNode.Source.Name}」を削除してもよろしいですか？";
         var dialog = Instantiate(this.confirmDialogController);
-        dialog.Init("デッキの削除", $"「{this.selectedNode.Source.Name}」を削除してもよろしいですか？");
+        dialog.Init(title, message, ConfirmDialogController.DialogType.Confirm);
         dialog.OnOkButtonClickAction = () =>
         {
             new DeckRepository().Delete(this.selectedNode.Source.Id);

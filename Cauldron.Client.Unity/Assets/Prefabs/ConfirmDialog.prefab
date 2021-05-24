@@ -82,6 +82,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   titleText: {fileID: 5758756209130569924}
   messageText: {fileID: 3602472774238631719}
+  cancelButton: {fileID: 5758756208270194658}
 --- !u!1 &4369845812435443448
 GameObject:
   m_ObjectHideFlags: 0

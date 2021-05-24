@@ -19,6 +19,11 @@ public class BattleSceneController : MonoBehaviour
     private FieldCardController fieldCardPrefab;
 
     [SerializeField]
+    private Canvas canvas;
+    [SerializeField]
+    private ConfirmDialogController confirmDialogController;
+
+    [SerializeField]
     private GameObject[] youHandSpaces;
     [SerializeField]
     private GameObject[] youFieldSpaces;
@@ -34,9 +39,6 @@ public class BattleSceneController : MonoBehaviour
 
     [SerializeField]
     private CardDetailController cardDetailController;
-
-    [SerializeField]
-    private GameObject uiCanvas;
 
     public FieldCardController AttackCardController { get; set; }
 
@@ -55,25 +57,38 @@ public class BattleSceneController : MonoBehaviour
 
     private bool updating;
 
+    private List<IDisposable> disposableList = new List<IDisposable>();
+
     async void Start()
     {
         Instance = this;
 
         var holder = ConnectionHolder.Find();
-        holder.Receiver.OnAddCard.Subscribe((a) => this.OnAddCard(a.gameContext, a.addCardNotifyMessage));
-        holder.Receiver.OnAsk.Subscribe((a) => this.OnAsk(a));
-        holder.Receiver.OnDamage.Subscribe((a) => this.OnDamage(a.gameContext, a.damageNotifyMessage));
-        holder.Receiver.OnGameOver.Subscribe((a) => this.OnGameOver(a));
-        holder.Receiver.OnModifyCard.Subscribe((a) => this.OnModifyCard(a.gameContext, a.modifyCardNotifyMessage));
-        holder.Receiver.OnModifyPlayer.Subscribe((a) => this.OnModifyPlayer(a.gameContext, a.modifyPlayerNotifyMessage));
-        holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.moveCardNotifyMessage));
-        holder.Receiver.OnReady.Subscribe((a) => this.OnReady(a));
-        holder.Receiver.OnStartGame.Subscribe((a) => this.OnStartGame(a));
-        holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.playerId));
+
+        this.disposableList.AddRange(new[]
+        {
+            holder.Receiver.OnAddCard.Subscribe((a) => this.OnAddCard(a.gameContext, a.addCardNotifyMessage)),
+            holder.Receiver.OnAsk.Subscribe((a) => this.OnAsk(a)),
+            holder.Receiver.OnDamage.Subscribe((a) => this.OnDamage(a.gameContext, a.damageNotifyMessage)),
+            holder.Receiver.OnModifyCard.Subscribe((a) => this.OnModifyCard(a.gameContext, a.modifyCardNotifyMessage)),
+            holder.Receiver.OnModifyPlayer.Subscribe((a) => this.OnModifyPlayer(a.gameContext, a.modifyPlayerNotifyMessage)),
+            holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.moveCardNotifyMessage)),
+            holder.Receiver.OnReady.Subscribe((a) => this.OnReady(a)),
+            holder.Receiver.OnStartGame.Subscribe((a) => this.OnStartGame(a)),
+            holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.playerId)),
+        });
 
         this.client = ConnectionHolder.Find().Client;
 
         await this.client.ReadyGame();
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var disposable in this.disposableList)
+        {
+            disposable.Dispose();
+        }
     }
 
     async void Update()
@@ -263,7 +278,7 @@ public class BattleSceneController : MonoBehaviour
                 var handCard = youHands[handIndex];
 
                 var handCardObj = this.GetOrCreateHandCardObject(handCard.Id, handCard);
-                handCardObj.transform.SetParent(this.uiCanvas.transform, false);
+                handCardObj.transform.SetParent(this.canvas.transform, false);
                 handCardObj.transform.position = this.youHandSpaces[handIndex].transform.position;
 
                 Debug.Log(handCardObj.transform.position);
@@ -275,7 +290,7 @@ public class BattleSceneController : MonoBehaviour
                 var fieldCard = youFieldCards[fieldIndex];
 
                 var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard.Id, fieldCard);
-                fieldCardObj.transform.SetParent(this.uiCanvas.transform, false);
+                fieldCardObj.transform.SetParent(this.canvas.transform, false);
                 fieldCardObj.transform.position = this.youFieldSpaces[fieldIndex].transform.position;
             }
 
@@ -298,7 +313,7 @@ public class BattleSceneController : MonoBehaviour
                 var fieldCard = opponentFieldCards[fieldIndex];
 
                 var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard.Id, fieldCard);
-                fieldCardObj.transform.SetParent(this.uiCanvas.transform, false);
+                fieldCardObj.transform.SetParent(this.canvas.transform, false);
                 fieldCardObj.transform.position = this.opponentFieldSpaces[fieldIndex].transform.position;
             }
 
@@ -308,6 +323,11 @@ public class BattleSceneController : MonoBehaviour
                 var cemeteryCard = opponentCemeteryCards[cemeteryIndex];
                 RemoveCardObjectByCardId(cemeteryCard.Id);
             }
+        }
+
+        if (gameContext.GameOver)
+        {
+            this.ShowEndGameDialog(gameContext.WinnerPlayerId);
         }
 
         await Task.Delay(TimeSpan.FromSeconds(0.3));
@@ -366,6 +386,21 @@ public class BattleSceneController : MonoBehaviour
         }
     }
 
+    public void ShowEndGameDialog(PlayerId winnerPlayerId)
+    {
+        var title = "ゲーム終了";
+        var message = winnerPlayerId == this.youPlayerController.PlayerId
+            ? "あなたの勝ち!"
+            : "あなたの負け...";
+        var dialog = Instantiate(this.confirmDialogController);
+        dialog.Init(title, message, ConfirmDialogController.DialogType.Message);
+        dialog.OnOkButtonClickAction = () =>
+        {
+            Utility.LoadAsyncScene(this, SceneNames.ListGameScene);
+        };
+        dialog.transform.SetParent(this.canvas.transform, false);
+    }
+
     void OnReady(GameContext gameContext)
     {
         Debug.Log("OnReady");
@@ -376,12 +411,6 @@ public class BattleSceneController : MonoBehaviour
     void OnStartGame(GameContext gameContext)
     {
         Debug.Log("ゲーム開始: " + this.client.PlayerName);
-        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
-    }
-
-    void OnGameOver(GameContext gameContext)
-    {
-        Debug.Log("OnGameOver");
         this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 

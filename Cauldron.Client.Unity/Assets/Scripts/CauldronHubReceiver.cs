@@ -24,11 +24,6 @@ namespace Assets.Scripts
         void ICauldronHubReceiver.OnDamage(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)
             => this.onDamage.OnNext((gameContext, damageNotifyMessage));
 
-        public IObservable<GameContext> OnGameOver => onGameOver;
-        private readonly Subject<GameContext> onGameOver = new Subject<GameContext>();
-        void ICauldronHubReceiver.OnGameOver(GameContext gameContext)
-            => this.onGameOver.OnNext(gameContext);
-
         public IObservable<(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)> OnModifyCard => onModifyCard;
         private readonly Subject<(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)> onModifyCard
             = new Subject<(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)>();
