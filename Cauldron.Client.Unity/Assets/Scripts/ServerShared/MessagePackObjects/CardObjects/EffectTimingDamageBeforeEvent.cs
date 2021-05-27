@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -10,16 +11,19 @@ namespace Cauldron.Shared.MessagePackObjects
             /// <summary>
             /// いずれか
             /// </summary>
+            [DisplayText("いずれか")]
             Any,
 
             /// <summary>
             /// 戦闘ダメージ
             /// </summary>
+            [DisplayText("戦闘ダメージ")]
             Battle,
 
             /// <summary>
             /// 戦闘以外のダメージ
             /// </summary>
+            [DisplayText("戦闘以外のダメージ")]
             NonBattle,
         }
 
@@ -28,16 +32,19 @@ namespace Cauldron.Shared.MessagePackObjects
             /// <summary>
             /// いずれか
             /// </summary>
+            [DisplayText("いずれか")]
             Any,
 
             /// <summary>
             /// ダメージを与える
             /// </summary>
+            [DisplayText("ダメージを与える")]
             DamageSource,
 
             /// <summary>
             /// ダメージを受ける
             /// </summary>
+            [DisplayText("ダメージを受ける")]
             Take,
         }
 

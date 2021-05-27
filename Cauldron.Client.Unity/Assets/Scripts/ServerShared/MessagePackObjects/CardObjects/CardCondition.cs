@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -10,41 +11,49 @@ namespace Cauldron.Shared.MessagePackObjects
             /// <summary>
             /// いずれか
             /// </summary>
+            [DisplayText("いずれか")]
             Any,
 
             /// <summary>
             /// 自分自身
             /// </summary>
+            [DisplayText("このカード")]
             This,
 
             /// <summary>
             /// 自分以外
             /// </summary>
+            [DisplayText("他のカード")]
             Others,
 
             /// <summary>
             /// イベントの発生元
             /// </summary>
+            [DisplayText("イベントの発生源")]
             EventSource,
 
             /// <summary>
             /// 攻撃クリーチャー
             /// </summary>
+            [DisplayText("攻撃クリーチャー")]
             Attack,
 
             /// <summary>
             /// 防御クリーチャー
             /// </summary>
+            [DisplayText("防御クリーチャー")]
             Guard,
 
             /// <summary>
             /// ダメージの発生源
             /// </summary>
+            [DisplayText("ダメージの発生源")]
             DamageFrom,
 
             /// <summary>
             /// ダメージを受ける側
             /// </summary>
+            [DisplayText("ダメージを受ける側")]
             DamageTo,
         }
 

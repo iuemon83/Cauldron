@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects.Value
 {
@@ -7,10 +8,15 @@ namespace Cauldron.Shared.MessagePackObjects.Value
     {
         public enum ValueModifierOperator
         {
+            [DisplayText("＋")]
             Add,
+            [DisplayText("－")]
             Sub,
+            [DisplayText("×")]
             Multi,
+            [DisplayText("÷")]
             Div,
+            [DisplayText("置換")]
             Replace,
         }
 

@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -7,8 +8,11 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public enum EventSource
         {
+            [DisplayText("あなた")]
             You,
+            [DisplayText("相手")]
             Opponent,
+            [DisplayText("両方")]
             Both
         }
 

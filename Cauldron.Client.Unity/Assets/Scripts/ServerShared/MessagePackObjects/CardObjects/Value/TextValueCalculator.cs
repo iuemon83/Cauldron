@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects.Value
 {
@@ -7,6 +8,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
     {
         public enum ValueType
         {
+            [DisplayText("カード名")]
             CardName,
         }
 

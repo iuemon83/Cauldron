@@ -1,4 +1,5 @@
-﻿using Cauldron.Shared.MessagePackObjects.Value;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -8,7 +9,9 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public enum ConditionCompare
         {
+            [DisplayText("等しい")]
             Equality,
+            [DisplayText("含む")]
             Like,
         }
 
