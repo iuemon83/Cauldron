@@ -207,11 +207,11 @@ public class Client
         });
     }
 
-    public async ValueTask<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceResult choiceResult)
+    public async ValueTask<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceAnswer choiceAnswer)
     {
         this.LogInfo($"answer: questionId={questionId}");
 
-        var result = await this.magiconionServiceClient.AnswerChoice(questionId, choiceResult);
+        var result = await this.magiconionServiceClient.AnswerChoice(questionId, choiceAnswer);
 
         return result;
     }

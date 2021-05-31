@@ -102,7 +102,7 @@ namespace Cauldron.Core.Entities
                                             {
                                                 ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
                                                 NameCondition = new(
-                                                    new TextValue($"{CardsetName}.{KarakuriGoblin.Name}"),
+                                                    new TextValue(KarakuriGoblin.Name),
                                                     TextCondition.ConditionCompare.Equality
                                                 )
                                             },
@@ -131,10 +131,7 @@ namespace Cauldron.Core.Entities
                                             {
                                                 new CardCondition()
                                                 {
-                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
-                                                    NameCondition = new(
-                                                        new TextValue($"{CardsetName}.分身ゴブリン"),
-                                                        TextCondition.ConditionCompare.Equality)
+                                                    Context = CardCondition.CardConditionContext.This
                                                 }
                                             }))
                                     ))
@@ -151,7 +148,7 @@ namespace Cauldron.Core.Entities
                         new[]
                         {
                             new EffectAction(
-                                AddCard:new(
+                                AddCard: new(
                                     new ZoneValue(new[]{ZonePrettyName.YouField }),
                                     new Choice(
                                         new ChoiceSource(
@@ -159,13 +156,10 @@ namespace Cauldron.Core.Entities
                                             {
                                                 new CardCondition()
                                                 {
-                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
-                                                    NameCondition = new(
-                                                        new TextValue($"{CardsetName}.多重分身ゴブリン"),
-                                                        TextCondition.ConditionCompare.Equality)
+                                                    Context = CardCondition.CardConditionContext.This,
                                                 }
-                                            }),
-                                        numPicks: 2)
+                                            })),
+                                    NumOfAddCards: 2
                                     ))
                         })
                 });
@@ -368,22 +362,7 @@ namespace Cauldron.Core.Entities
                                                         {
                                                             new CardCondition()
                                                             {
-                                                                NameCondition = new TextCondition(
-                                                                    new TextValue(TextValueCalculator: new(
-                                                                        TextValueCalculator.ValueType.CardName,
-                                                                        new Choice(
-                                                                            new ChoiceSource(
-                                                                                orCardConditions: new[]
-                                                                                {
-                                                                                    new CardCondition()
-                                                                                    {
-                                                                                        Context = CardCondition.CardConditionContext.This,
-                                                                                    }
-                                                                                }))
-                                                                        )),
-                                                                    TextCondition.ConditionCompare.Equality),
-                                                                ZoneCondition = new ZoneCondition(
-                                                                    new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                                                Context = CardCondition.CardConditionContext.This,
                                                             }
                                                         }))
                                                 ))
@@ -849,15 +828,17 @@ namespace Cauldron.Core.Entities
                                         new CardCondition()
                                         {
                                             ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                            CardSetCondition = new(CardSetCondition.ConditionType.This),
                                             NameCondition = new TextCondition(
-                                                new TextValue($"{CardsetName}.{Hit.Name}"),
+                                                new TextValue(Hit.Name),
                                                 TextCondition.ConditionCompare.Equality)
                                         },
                                         new CardCondition()
                                         {
                                             ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                            CardSetCondition = new(CardSetCondition.ConditionType.This),
                                             NameCondition = new TextCondition(
-                                                new TextValue($"{CardsetName}.{Heal.Name}"),
+                                                new TextValue(Heal.Name),
                                                 TextCondition.ConditionCompare.Equality)
                                         },
                                     }),
@@ -865,6 +846,63 @@ namespace Cauldron.Core.Entities
                                     numPicks: 1
                                     )))
                         })
+                });
+
+        public static CardDef Copy
+            => SampleCards.Sorcery(2, "複製", "相手の場のカードを一枚選択する。そのカードと同名のカードを一枚あなたの手札に加える。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                AddCard = new(
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
+                                                }
+                                            }),
+                                        Choice.ChoiceHow.Choose,
+                                        1))
+                            }
+                        }
+                    )
+                });
+
+        public static CardDef DoubleCopy
+            => SampleCards.Sorcery(3, "二重複製", "相手の場のカードを一枚選択する。そのカードと同名のカードを二枚あなたの手札に加える。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                AddCard = new(
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
+                                                }
+                                            }),
+                                        Choice.ChoiceHow.Choose
+                                        ),
+                                    NumOfAddCards: 2)
+                            }
+                        }
+                    )
                 });
 
         public static CardDef FirstAttack
@@ -907,8 +945,9 @@ namespace Cauldron.Core.Entities
                                                 new CardCondition()
                                                 {
                                                     ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                                    CardSetCondition = new(CardSetCondition.ConditionType.This),
                                                     NameCondition = new(
-                                                        new TextValue($"{CardsetName}.{SecondAttack.Name}"),
+                                                        new TextValue(SecondAttack.Name),
                                                         TextCondition.ConditionCompare.Equality)
                                                 }
                                             }),

@@ -9,7 +9,7 @@ namespace Cauldron.Server.Services
     public class CauldronService : ServiceBase<ICauldronService>, ICauldronService
     {
 #pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
-        public async UnaryResult<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceResult answer)
+        public async UnaryResult<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceAnswer answer)
 #pragma warning restore CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
         {
             if (answer == null)

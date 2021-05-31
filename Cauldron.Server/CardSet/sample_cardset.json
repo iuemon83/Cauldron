@@ -76,6 +76,7 @@
                         {
                             "addCard": {
                                 "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -85,7 +86,7 @@
                                             {
                                                 "context": "any",
                                                 "nameCondition": {
-                                                    "value": { "pureValue": "Sample.からくりゴブリン" },
+                                                    "value": { "pureValue": "からくりゴブリン" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
@@ -124,25 +125,13 @@
                         {
                             "addCard": {
                                 "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
-                                            {
-                                                "context": "any",
-                                                "nameCondition": {
-                                                    "value": { "pureValue": "Sample.分身ゴブリン" },
-                                                    "compare": "equality",
-                                                    "not": false
-                                                },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
-                                                    "not": false
-                                                }
-                                            }
-                                        ]
+                                        "orCardConditions": [ { "context": "this" } ]
                                     },
                                     "how": "all",
                                     "numPicks": 1
@@ -172,28 +161,16 @@
                         {
                             "addCard": {
                                 "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 2,
                                 "choice": {
                                     "source": {
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
-                                            {
-                                                "context": "any",
-                                                "nameCondition": {
-                                                    "value": { "pureValue": "Sample.多重分身ゴブリン" },
-                                                    "compare": "equality",
-                                                    "not": false
-                                                },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
-                                                    "not": false
-                                                }
-                                            }
-                                        ]
+                                        "orCardConditions": [ { "context": "this" } ]
                                     },
                                     "how": "all",
-                                    "numPicks": 2
+                                    "numPicks": 1
                                 }
                             }
                         }
@@ -417,6 +394,7 @@
                         {
                             "addCard": {
                                 "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -496,39 +474,13 @@
                                             {
                                                 "addCard": {
                                                     "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                                    "numOfAddCards": 1,
                                                     "choice": {
                                                         "source": {
                                                             "how": "all",
                                                             "numPicks": 1,
                                                             "orPlayerConditions": [],
-                                                            "orCardConditions": [
-                                                                {
-                                                                    "context": "any",
-                                                                    "nameCondition": {
-                                                                        "value": {
-                                                                            "textValueCalculator": {
-                                                                                "type": "cardName",
-                                                                                "cardsChoice": {
-                                                                                    "source": {
-                                                                                        "how": "all",
-                                                                                        "numPicks": 1,
-                                                                                        "orPlayerConditions": [],
-                                                                                        "orCardConditions": [ { "context": "this" } ]
-                                                                                    },
-                                                                                    "how": "all",
-                                                                                    "numPicks": 1
-                                                                                }
-                                                                            }
-                                                                        },
-                                                                        "compare": "equality",
-                                                                        "not": false
-                                                                    },
-                                                                    "zoneCondition": {
-                                                                        "value": { "pureValue": [ "cardPool" ] },
-                                                                        "not": false
-                                                                    }
-                                                                }
-                                                            ]
+                                                            "orCardConditions": [ { "context": "this" } ]
                                                         },
                                                         "how": "all",
                                                         "numPicks": 1
@@ -1184,6 +1136,7 @@
                         {
                             "addCard": {
                                 "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -1192,8 +1145,9 @@
                                         "orCardConditions": [
                                             {
                                                 "context": "any",
+                                                "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
-                                                    "value": { "pureValue": "Sample.ヒット" },
+                                                    "value": { "pureValue": "ヒット" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
@@ -1204,13 +1158,102 @@
                                             },
                                             {
                                                 "context": "any",
+                                                "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
-                                                    "value": { "pureValue": "Sample.ヒール" },
+                                                    "value": { "pureValue": "ヒール" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "cardPool" ] },
+                                                    "not": false
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "how": "choose",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 2,
+            "name": "複製",
+            "flavorText": "相手の場のカードを一枚選択する。そのカードと同名のカードを一枚あなたの手札に加える。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1,
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "context": "any",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "opponentField" ] },
+                                                    "not": false
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "how": "choose",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 3,
+            "name": "二重複製",
+            "flavorText": "相手の場のカードを一枚選択する。そのカードと同名のカードを二枚あなたの手札に加える。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 2,
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "context": "any",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "opponentField" ] },
                                                     "not": false
                                                 }
                                             }
@@ -1359,6 +1402,7 @@
                             },
                             "addCard": {
                                 "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -1367,8 +1411,9 @@
                                         "orCardConditions": [
                                             {
                                                 "context": "any",
+                                                "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
-                                                    "value": { "pureValue": "Sample.ゴブリンの二撃" },
+                                                    "value": { "pureValue": "ゴブリンの二撃" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },

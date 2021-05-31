@@ -11,6 +11,6 @@ namespace Cauldron.Core.Entities
         Action<PlayerId, GameContext, ModifyCardNotifyMessage> OnModifyCard,
         Action<PlayerId, GameContext, ModifyPlayerNotifyMessage> OnModifyPlayer,
         Action<PlayerId, GameContext, DamageNotifyMessage> OnDamage,
-        Func<PlayerId, ChoiceCandidates, int, ValueTask<ChoiceResult>> AskCardAction
+        Func<PlayerId, ChoiceCandidates, int, ValueTask<ChoiceAnswer>> AskCardAction
         );
 }

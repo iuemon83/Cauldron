@@ -6,6 +6,6 @@ namespace Cauldron.Shared.Services
 {
     public interface ICauldronService : IService<ICauldronService>
     {
-        UnaryResult<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceResult choiceResult);
+        UnaryResult<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceAnswer choiceAnswer);
     }
 }

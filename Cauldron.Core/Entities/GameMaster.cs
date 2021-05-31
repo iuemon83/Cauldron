@@ -699,7 +699,7 @@ namespace Cauldron.Core.Entities
         /// <param name="choiceCandidates"></param>
         /// <param name="choiceNum"></param>
         /// <returns></returns>
-        public async ValueTask<ChoiceResult2> AskCard(PlayerId playerId, ChoiceCandidates choiceCandidates, int choiceNum)
+        public async ValueTask<ChoiceResult> AskCard(PlayerId playerId, ChoiceCandidates choiceCandidates, int choiceNum)
         {
             var askAction = this.EventListener?.AskCardAction;
 
@@ -709,7 +709,7 @@ namespace Cauldron.Core.Entities
             }
 
             // answer が正しければtrue, そうでなければfalse
-            bool ValidAnswer(ChoiceResult answer)
+            bool ValidAnswer(ChoiceAnswer answer)
             {
                 var numPicked = answer.PlayerIdList.Length
                     + answer.CardIdList.Length
@@ -744,9 +744,9 @@ namespace Cauldron.Core.Entities
                 return true;
             }
 
-            ChoiceResult answer = await Task.Run(async () =>
+            ChoiceAnswer answer = await Task.Run(async () =>
             {
-                ChoiceResult tmpAnswer = default;
+                ChoiceAnswer tmpAnswer = default;
                 do
                 {
                     tmpAnswer = await askAction(playerId, choiceCandidates, choiceNum);
@@ -767,7 +767,7 @@ namespace Cauldron.Core.Entities
                 .Select(x => x.Item2)
                 .ToArray();
 
-            return new ChoiceResult2(
+            return new ChoiceResult(
                 answer.PlayerIdList,
                 cards,
                 carddefs
@@ -961,58 +961,74 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public async ValueTask<ChoiceResult2> ChoiceCards(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
+        public async ValueTask<ChoiceResult> ChoiceCards(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
         {
             var choiceCandidates = await choice.Source
                 .ChoiceCandidates(effectOwnerCard, eventArgs, this.playerRepository, this.cardRepository, choice.NumPicks);
 
-            switch (choice.How)
+            ChoiceResult All() => new ChoiceResult(
+                choiceCandidates.PlayerIdList,
+                choiceCandidates.CardList,
+                choiceCandidates.CardDefList
+                );
+
+            async ValueTask<ChoiceResult> Choose()
+                => await this.AskCard(effectOwnerCard.OwnerId, choiceCandidates, choice.NumPicks);
+
+            ChoiceResult Random()
             {
-                case Choice.ChoiceHow.All:
-                    return new ChoiceResult2(
-                        choiceCandidates.PlayerIdList,
-                        choiceCandidates.CardList,
-                        choiceCandidates.CardDefList
-                        );
+                var totalCount = choiceCandidates.PlayerIdList.Length + choiceCandidates.CardList.Length + choiceCandidates.CardDefList.Length;
+                var totalIndexList = Enumerable.Range(0, totalCount).ToArray();
+                var pickedIndexList = RandomUtil.RandomPick(totalIndexList, choice.NumPicks);
 
-                case Choice.ChoiceHow.Choose:
-                    return await this.AskCard(effectOwnerCard.OwnerId, choiceCandidates, choice.NumPicks);
-
-                case Choice.ChoiceHow.Random:
-                    var totalCount = choiceCandidates.PlayerIdList.Length + choiceCandidates.CardList.Length + choiceCandidates.CardDefList.Length;
-                    var totalIndexList = Enumerable.Range(0, totalCount).ToArray();
-                    var pickedIndexList = RandomUtil.RandomPick(totalIndexList, choice.NumPicks);
-
-                    var randomPickedPlayerList = new List<PlayerId>();
-                    var randomPickedCardList = new List<Card>();
-                    var randomPickedCardDefList = new List<CardDef>();
-                    foreach (var pickedIndex in pickedIndexList)
+                var randomPickedPlayerList = new List<PlayerId>();
+                var randomPickedCardList = new List<Card>();
+                var randomPickedCardDefList = new List<CardDef>();
+                foreach (var pickedIndex in pickedIndexList)
+                {
+                    if (pickedIndex < choiceCandidates.PlayerIdList.Length)
                     {
-                        if (pickedIndex < choiceCandidates.PlayerIdList.Length)
-                        {
-                            randomPickedPlayerList.Add(choiceCandidates.PlayerIdList[pickedIndex]);
-                        }
-                        else if (pickedIndex < choiceCandidates.PlayerIdList.Length + choiceCandidates.CardList.Length)
-                        {
-                            var cardIndex = pickedIndex - choiceCandidates.PlayerIdList.Length;
-                            randomPickedCardList.Add(choiceCandidates.CardList[cardIndex]);
-                        }
-                        else
-                        {
-                            var cardIndex = pickedIndex - choiceCandidates.PlayerIdList.Length - choiceCandidates.CardList.Length;
-                            randomPickedCardDefList.Add(choiceCandidates.CardDefList[cardIndex]);
-                        }
+                        randomPickedPlayerList.Add(choiceCandidates.PlayerIdList[pickedIndex]);
                     }
+                    else if (pickedIndex < choiceCandidates.PlayerIdList.Length + choiceCandidates.CardList.Length)
+                    {
+                        var cardIndex = pickedIndex - choiceCandidates.PlayerIdList.Length;
+                        randomPickedCardList.Add(choiceCandidates.CardList[cardIndex]);
+                    }
+                    else
+                    {
+                        var cardIndex = pickedIndex - choiceCandidates.PlayerIdList.Length - choiceCandidates.CardList.Length;
+                        randomPickedCardDefList.Add(choiceCandidates.CardDefList[cardIndex]);
+                    }
+                }
 
-                    return new ChoiceResult2(
-                        randomPickedPlayerList.ToArray(),
-                        randomPickedCardList.ToArray(),
-                        randomPickedCardDefList.ToArray()
-                    );
-
-                default:
-                    throw new Exception($"how={choice.How}");
+                return new ChoiceResult(
+                    randomPickedPlayerList.ToArray(),
+                    randomPickedCardList.ToArray(),
+                    randomPickedCardDefList.ToArray()
+                );
             }
+
+            var choiceResult = choice.How switch
+            {
+                Choice.ChoiceHow.All => All(),
+                Choice.ChoiceHow.Choose => await Choose(),
+                Choice.ChoiceHow.Random => Random(),
+                _ => throw new Exception($"how={choice.How}")
+            };
+
+            // card をcarddef に追加
+            var carddefListFromCardList = choiceResult.CardList
+                .Select(c => this.cardRepository.TryGetCardDefById(c.CardDefId))
+                .Where(x => x.Item1)
+                .Select(x => x.Item2);
+
+            var newCardDefList = choiceResult.CardDefList
+                .Concat(carddefListFromCardList)
+                .Distinct()
+                .ToArray();
+
+            return choiceResult with { CardDefList = newCardDefList };
         }
 
         public async ValueTask ModifyPlayer(ModifyPlayerContext modifyPlayerContext, Card effectOwnerCard, EffectEventArgs effectEventArgs)

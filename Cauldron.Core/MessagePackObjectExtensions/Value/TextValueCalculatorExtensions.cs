@@ -22,7 +22,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
 
                 var pickCards = choiceResult.CardList;
 
-                return pickCards.Any() ? pickCards[0].FullName : "";
+                return pickCards.Any() ? pickCards[0].Name : "";
             }
         }
     }

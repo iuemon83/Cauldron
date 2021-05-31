@@ -65,6 +65,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public NumCondition CostCondition { get; set; }
         public NumCondition PowerCondition { get; set; }
         public NumCondition ToughnessCondition { get; set; }
+        public CardSetCondition CardSetCondition { get; set; }
         public TextCondition NameCondition { get; set; }
         public CardTypeCondition TypeCondition { get; set; }
         public ZoneCondition ZoneCondition { get; set; }

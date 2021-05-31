@@ -324,7 +324,7 @@ namespace Cauldron.Core_Test
             PlayerId[] expectedAskPlayerLsit = default;
             Card[] expectedAskCardLsit = default;
 
-            ValueTask<ChoiceResult> assertAskAction(PlayerId _, ChoiceCandidates c, int i)
+            ValueTask<ChoiceAnswer> assertAskAction(PlayerId _, ChoiceCandidates c, int i)
             {
                 Assert.Equal(1, i);
                 TestUtil.AssertCollection(expectedAskPlayerLsit, c.PlayerIdList);
@@ -333,7 +333,7 @@ namespace Cauldron.Core_Test
                     c.CardList.Select(c => c.Id).ToArray());
                 Assert.Empty(c.CardDefList);
 
-                return ValueTask.FromResult(new ChoiceResult(
+                return ValueTask.FromResult(new ChoiceAnswer(
                     c.PlayerIdList.Take(1).ToArray(),
                     Array.Empty<CardId>(),
                     Array.Empty<CardDefId>()));
@@ -629,9 +629,9 @@ namespace Cauldron.Core_Test
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
 
             // カードの選択処理のテスト
-            static ValueTask<ChoiceResult> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            static ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
             {
-                return ValueTask.FromResult(new ChoiceResult(
+                return ValueTask.FromResult(new ChoiceAnswer(
                     Array.Empty<PlayerId>(),
                     c.CardList.Select(c => c.Id).Take(1).ToArray(),
                     Array.Empty<CardDefId>()
@@ -670,9 +670,9 @@ namespace Cauldron.Core_Test
             testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
 
             // カードの選択処理のテスト
-            static ValueTask<ChoiceResult> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            static ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
             {
-                return ValueTask.FromResult(new ChoiceResult(
+                return ValueTask.FromResult(new ChoiceAnswer(
                     Array.Empty<PlayerId>(),
                     c.CardList.Select(c => c.Id).Take(1).ToArray(),
                     Array.Empty<CardDefId>()
@@ -709,7 +709,7 @@ namespace Cauldron.Core_Test
             CardDefId choiceCardDefId = default;
 
             // カードの選択処理のテスト
-            ValueTask<ChoiceResult> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
             {
                 Assert.Empty(c.PlayerIdList);
                 Assert.Empty(c.CardList);
@@ -719,7 +719,7 @@ namespace Cauldron.Core_Test
 
                 choiceCardDefId = c.CardDefList[0].Id;
 
-                return ValueTask.FromResult(new ChoiceResult(
+                return ValueTask.FromResult(new ChoiceAnswer(
                     Array.Empty<PlayerId>(),
                     Array.Empty<CardId>(),
                     new[] { choiceCardDefId }
@@ -737,9 +737,118 @@ namespace Cauldron.Core_Test
 
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef1.Id);
 
-                var diffCards = player1.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
-                Assert.Single(diffCards);
-                Assert.Equal(choiceCardDefId, diffCards[0].CardDefId);
+                var diffHands = player1.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
+                Assert.Single(diffHands);
+                Assert.Equal(choiceCardDefId, diffHands[0].CardDefId);
+            });
+        }
+
+        [Fact]
+        public async Task Copy()
+        {
+            var testCardDef1 = SampleCards.Copy;
+            testCardDef1.Cost = 0;
+
+            var goblin1Def = SampleCards.Goblin;
+            goblin1Def.Cost = 0;
+            var goblin2Def = SampleCards.QuickGoblin;
+            goblin2Def.Cost = 0;
+
+            CardId[] expectedChoiceCardIdList = default;
+            CardDefId answerCardDefId = default;
+
+            // カードの選択処理のテスト
+            ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            {
+                TestUtil.AssertCollection(expectedChoiceCardIdList, c.CardList.Select(v => v.Id).ToArray());
+
+                answerCardDefId = c.CardList[0].CardDefId;
+
+                return ValueTask.FromResult(new ChoiceAnswer(
+                    Array.Empty<PlayerId>(),
+                    new[] { c.CardList[0].Id },
+                    Array.Empty<CardDefId>()
+                ));
+            }
+
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef1, goblin1Def, goblin2Def },
+                TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
+
+            // 先攻
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var c1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin1Def.Id);
+                var c2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin1Def.Id);
+                var c3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin2Def.Id);
+
+                expectedChoiceCardIdList = new[] { c1.Id, c2.Id, c3.Id };
+            });
+
+            // 後攻
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var beforeHandIds = player2.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef1.Id);
+
+                var diffHands = player2.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
+                Assert.Single(diffHands);
+                Assert.Equal(answerCardDefId, diffHands[0].CardDefId);
+            });
+        }
+
+        [Fact]
+        public async Task DoubleCopy()
+        {
+            var testCardDef1 = SampleCards.DoubleCopy;
+            testCardDef1.Cost = 0;
+
+            var goblin1Def = SampleCards.Goblin;
+            goblin1Def.Cost = 0;
+            var goblin2Def = SampleCards.QuickGoblin;
+            goblin2Def.Cost = 0;
+
+            CardId[] expectedChoiceCardIdList = default;
+            CardDefId answerCardDefId = default;
+
+            // カードの選択処理のテスト
+            ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            {
+                TestUtil.AssertCollection(expectedChoiceCardIdList, c.CardList.Select(v => v.Id).ToArray());
+
+                answerCardDefId = c.CardList[0].CardDefId;
+
+                return ValueTask.FromResult(new ChoiceAnswer(
+                    Array.Empty<PlayerId>(),
+                    new[] { c.CardList[0].Id },
+                    Array.Empty<CardDefId>()
+                ));
+            }
+
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef1, goblin1Def, goblin2Def },
+                TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
+
+            // 先攻
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var c1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin1Def.Id);
+                var c2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin1Def.Id);
+                var c3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin2Def.Id);
+
+                expectedChoiceCardIdList = new[] { c1.Id, c2.Id, c3.Id };
+            });
+
+            // 後攻
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var beforeHandIds = player2.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef1.Id);
+
+                var diffHands = player2.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
+                Assert.Equal(2, diffHands.Length);
+                Assert.Equal(answerCardDefId, diffHands[0].CardDefId);
+                Assert.Equal(answerCardDefId, diffHands[1].CardDefId);
             });
         }
 
@@ -755,12 +864,12 @@ namespace Cauldron.Core_Test
             Card[] expectedChoiceCardList = default;
 
             // カードの選択処理のテスト
-            ValueTask<ChoiceResult> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
             {
                 TestUtil.AssertCollection(expectedChoicePlayerIdList, c.PlayerIdList);
                 TestUtil.AssertCollection(expectedChoiceCardList, c.CardList);
 
-                return ValueTask.FromResult(new ChoiceResult(
+                return ValueTask.FromResult(new ChoiceAnswer(
                     c.PlayerIdList.Take(1).ToArray(),
                     Array.Empty<CardId>(),
                     Array.Empty<CardDefId>()
@@ -904,7 +1013,7 @@ namespace Cauldron.Core_Test
 
             Card[] candidateCardList = default;
             CardId choiceCardId = default;
-            ValueTask<ChoiceResult> assertAskAction(PlayerId _, ChoiceCandidates c, int i)
+            ValueTask<ChoiceAnswer> assertAskAction(PlayerId _, ChoiceCandidates c, int i)
             {
                 Assert.Equal(1, i);
                 Assert.Empty(c.PlayerIdList);
@@ -913,7 +1022,7 @@ namespace Cauldron.Core_Test
                     c.CardList.Select(c => c.Id).ToArray());
                 Assert.Empty(c.CardDefList);
 
-                return ValueTask.FromResult(new ChoiceResult(
+                return ValueTask.FromResult(new ChoiceAnswer(
                     Array.Empty<PlayerId>(),
                     new[] { choiceCardId },
                     Array.Empty<CardDefId>()));

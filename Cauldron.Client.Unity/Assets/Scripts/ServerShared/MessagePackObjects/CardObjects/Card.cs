@@ -18,9 +18,11 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public int CostBuff { get; set; }
 
-        public string FullName { get; set; }
+        public string CardSetName { get; set; }
 
         public string Name { get; set; }
+
+        public string FullName => $"{this.CardSetName}.{this.Name}";
 
         public string FlavorText { get; set; }
 
@@ -77,7 +79,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.BaseCost = cardDef.Cost;
             this.IsToken = cardDef.IsToken;
             this.Type = cardDef.Type;
-            this.FullName = cardDef.FullName;
+            this.CardSetName = cardDef.CardSetName;
             this.Name = cardDef.Name;
             this.FlavorText = cardDef.FlavorText;
 
@@ -103,13 +105,6 @@ namespace Cauldron.Shared.MessagePackObjects
                 default:
                     return $"{this.Name}[{this.Cost},{this.Power},{this.Toughness}]";
             }
-
-            //return this.Type switch
-            //{
-            //    CardType.Artifact => $"{this.Name}[{this.Cost}]",
-            //    CardType.Sorcery => $"{this.Name}[{this.Cost}]",
-            //    _ => $"{this.Name}[{this.Cost},{this.Power},{this.Toughness}]",
-            //};
         }
     }
 }

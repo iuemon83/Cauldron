@@ -13,15 +13,6 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public static async ValueTask<Card[]> ChoiceCandidateCards(this CardCondition cardCondition, Card effectOwnerCard, EffectEventArgs effectEventArgs, CardRepository cardRepository, PlayerRepository playerRepository)
         {
-            //var tasks = cardCondition.ChoiceCandidateSourceCards(effectOwnerCard, effectEventArgs, cardRepository)
-            //    .Select(async c => (Card: c, IsMatch: await cardCondition.mat choice.Source.IsMatch(effectOwnerCard, effectEventArgs, c)));
-
-            //var cardAndIsMatch = await Task.WhenAll(tasks);
-
-            //var source = cardAndIsMatch
-            //    .Where(c => c.IsMatch)
-            //    .Select(c => c.Card);
-
             var source = await cardCondition.ListMatchedCards(effectOwnerCard, effectEventArgs, cardRepository);
 
             if (cardCondition.ZoneCondition == null)
@@ -50,7 +41,8 @@ namespace Cauldron.Shared.MessagePackObjects
                 .ToArray();
         }
 
-        public static async ValueTask<CardDef[]> ChoiceCandidateCardDefs(this CardCondition cardCondition, Card effectOwnerCard, EffectEventArgs effectEventArgs, CardRepository cardRepository)
+        public static async ValueTask<CardDef[]> ChoiceCandidateCardDefs(this CardCondition cardCondition,
+            Card effectOwnerCard, EffectEventArgs effectEventArgs, CardRepository cardRepository)
         {
             if (cardCondition.ZoneCondition == null)
             {
@@ -69,7 +61,6 @@ namespace Cauldron.Shared.MessagePackObjects
                 return carddefAndIsMatch
                     .Where(x => x.IsMatch)
                     .Select(x => x.Carddef);
-                //.SelectMany(x => Enumerable.Repeat(x.Carddef, numDuplicates));
             }
 
             var carddefsTasks = zonePrettyNames
@@ -132,6 +123,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 && (cardCondition.CostCondition?.IsMatch(cardToMatch.Cost) ?? true)
                 && (cardCondition.PowerCondition?.IsMatch(cardToMatch.Power) ?? true)
                 && (cardCondition.ToughnessCondition?.IsMatch(cardToMatch.Toughness) ?? true)
+                && (await (cardCondition.CardSetCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch) ?? ValueTask.FromResult(true)))
                 && (await (cardCondition.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Name) ?? ValueTask.FromResult(true)))
                 && (cardCondition.TypeCondition?.IsMatch(cardToMatch.Type) ?? true)
                 && (await (cardCondition.ZoneCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Zone) ?? ValueTask.FromResult(true)))
@@ -144,7 +136,8 @@ namespace Cauldron.Shared.MessagePackObjects
                 (cardCondition.CostCondition?.IsMatch(cardDefToMatch.Cost) ?? true)
                 && (cardCondition.PowerCondition?.IsMatch(cardDefToMatch.Power) ?? true)
                 && (cardCondition.ToughnessCondition?.IsMatch(cardDefToMatch.Toughness) ?? true)
-                && (await (cardCondition.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardDefToMatch.FullName) ?? ValueTask.FromResult(true)))
+                && (await (cardCondition.CardSetCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardDefToMatch) ?? ValueTask.FromResult(true)))
+                && (await (cardCondition.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardDefToMatch.Name) ?? ValueTask.FromResult(true)))
                 && (cardCondition.TypeCondition?.IsMatch(cardDefToMatch.Type) ?? true);
         }
     }

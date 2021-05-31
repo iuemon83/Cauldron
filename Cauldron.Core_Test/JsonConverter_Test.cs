@@ -47,6 +47,8 @@ namespace Cauldron.Core_Test
                 SampleCards.Sword,
                 SampleCards.Shield,
                 SampleCards.HitOrHeal,
+                SampleCards.Copy,
+                SampleCards.DoubleCopy,
                 SampleCards.Hit,
                 SampleCards.Heal,
                 SampleCards.FirstAttack,

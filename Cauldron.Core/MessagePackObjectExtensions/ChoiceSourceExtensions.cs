@@ -74,19 +74,5 @@ namespace Cauldron.Shared.MessagePackObjects
             return mathedCards.Values
                 .SelectMany(c => Enumerable.Repeat(c, numDuplicates));
         }
-
-        public static bool IsMatch(this ChoiceSource choiceSource, Card effectOwnerCard, EffectEventArgs effectEventArgs, Player playerToMatch)
-        {
-            foreach (var cond in choiceSource.OrPlayerConditions)
-            {
-                var isMatched = cond.IsMatch(effectOwnerCard, effectEventArgs, playerToMatch);
-                if (isMatched)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 }

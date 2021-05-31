@@ -8,7 +8,7 @@ namespace Cauldron.Server
     {
         private static readonly ConcurrentDictionary<Guid, byte> QuestionIdList = new();
 
-        private static readonly ConcurrentDictionary<Guid, ChoiceResult> Answers = new();
+        private static readonly ConcurrentDictionary<Guid, ChoiceAnswer> Answers = new();
 
         public static Guid AddNewQuestion()
         {
@@ -18,7 +18,7 @@ namespace Cauldron.Server
             return newId;
         }
 
-        public static bool SetAnswer(Guid questionId, ChoiceResult answer)
+        public static bool SetAnswer(Guid questionId, ChoiceAnswer answer)
         {
             if (answer == null)
             {
@@ -36,7 +36,7 @@ namespace Cauldron.Server
             }
         }
 
-        public static bool TryGetAnswer(Guid questionId, out ChoiceResult answer)
+        public static bool TryGetAnswer(Guid questionId, out ChoiceAnswer answer)
         {
             if (Answers.TryGetValue(questionId, out var result))
             {

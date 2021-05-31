@@ -222,7 +222,7 @@ public class BattleSceneController : MonoBehaviour
     {
         Debug.Log("click picked button!");
 
-        var (isValid, picked) = this.ValidChoiceResult();
+        var (isValid, picked) = this.ValidChoiceAnwser();
         if (!isValid)
         {
             Debug.Log("ëIëÇµÇƒÇ¢ÇÈëŒè€Ç™ê≥ÇµÇ≠Ç»Ç¢");
@@ -241,9 +241,9 @@ public class BattleSceneController : MonoBehaviour
         this.ResetAllMarks();
     }
 
-    public (bool, ChoiceResult) ValidChoiceResult()
+    public (bool, ChoiceAnswer) ValidChoiceAnwser()
     {
-        var picked = new ChoiceResult(
+        var picked = new ChoiceAnswer(
             this.pickedPlayerIdList.ToArray(),
             this.pickedCardIdList.ToArray(),
             this.pickedCardDefIdList.ToArray()

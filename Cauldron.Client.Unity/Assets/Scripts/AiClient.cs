@@ -107,7 +107,7 @@ public class AiClient
 
         var pickedCarddefs = choiceCandidates.CardDefList.Take(numPicks).Select(c => c.Id).ToArray();
 
-        var answer = new ChoiceResult(
+        var answer = new ChoiceAnswer(
             pickedPlayers,
             pickedCards,
             pickedCarddefs

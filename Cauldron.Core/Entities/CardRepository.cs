@@ -29,7 +29,7 @@ namespace Cauldron.Core.Entities
             {
                 foreach (var cardDef in cardset.Cards)
                 {
-                    cardDef.FullName = $"{cardset.Name}.{cardDef.Name}";
+                    cardDef.CardSetName = cardset.Name;
                     cardDef.NumTurnsToCanAttack ??= this.ruleBook.DefaultNumTurnsToCanAttack;
                     cardDef.NumAttacksLimitInTurn ??= this.ruleBook.DefaultNumAttacksLimitInTurn;
 

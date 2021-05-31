@@ -34,7 +34,7 @@ namespace Cauldron.Core_Test
             Action<PlayerId, GameContext, ModifyCardNotifyMessage> OnModifyCard = null,
             Action<PlayerId, GameContext, ModifyPlayerNotifyMessage> OnModifyPlayer = null,
             Action<PlayerId, GameContext, DamageNotifyMessage> OnDamage = null,
-            Func<PlayerId, ChoiceCandidates, int, ValueTask<ChoiceResult>> AskCardAction = null
+            Func<PlayerId, ChoiceCandidates, int, ValueTask<ChoiceAnswer>> AskCardAction = null
             ) => new(
                 OnStartTurn, OnAddCard, OnMoveCard, OnModifyCard, OnModifyPlayer,
                 OnDamage, AskCardAction
@@ -93,7 +93,7 @@ namespace Cauldron.Core_Test
             //    expected.CardList.Select(c => c.Id).ToArray(),
             //    actual.CardList.Select(c => c.Id).ToArray());
 
-            var actualResult = new ChoiceResult2(
+            var actualResult = new ChoiceResult(
                 actual.PlayerIdList,
                 actual.CardList,
                 actual.CardDefList
@@ -105,7 +105,7 @@ namespace Cauldron.Core_Test
                 + expected.CardList.Length);
         }
 
-        public static void AssertChoiceResult(ChoiceCandidates candidatesExpected, ChoiceResult2 actual, int numOfAny)
+        public static void AssertChoiceResult(ChoiceCandidates candidatesExpected, ChoiceResult actual, int numOfAny)
         {
             // ぜんぶ候補に含まれている
             Assert.True(actual.PlayerIdList.All(a => candidatesExpected.PlayerIdList.Contains(a)));
@@ -119,7 +119,7 @@ namespace Cauldron.Core_Test
             Assert.Equal(numOfAny, actualChoiceCount);
         }
 
-        public static void AssertChoiceResult(ChoiceResult2 candidatesExpected, ChoiceResult2 actual)
+        public static void AssertChoiceResult(ChoiceResult candidatesExpected, ChoiceResult actual)
         {
             // ぜんぶ候補に含まれている
             Assert.True(actual.PlayerIdList.All(a => candidatesExpected.PlayerIdList.Contains(a)));
@@ -165,10 +165,10 @@ namespace Cauldron.Core_Test
         }
 
 #pragma warning disable IDE0060 // 未使用のパラメーターを削除します
-        public static ValueTask<ChoiceResult> TestPick(PlayerId _, ChoiceCandidates choiceCandidates, int __)
+        public static ValueTask<ChoiceAnswer> TestPick(PlayerId _, ChoiceCandidates choiceCandidates, int __)
 #pragma warning restore IDE0060 // 未使用のパラメーターを削除します
         {
-            return ValueTask.FromResult(new ChoiceResult(
+            return ValueTask.FromResult(new ChoiceAnswer(
                 choiceCandidates.PlayerIdList,
                 choiceCandidates.CardList.Select(c => c.Id).ToArray(),
                 choiceCandidates.CardDefList.Select(c => c.Id).ToArray()));

@@ -9,9 +9,6 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionAddCard effectActionAddCard, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
-            var choiceResult = await effectEventArgs.GameMaster.ChoiceCards(effectOwnerCard, effectActionAddCard.Choice, effectEventArgs);
-            var newCardDefs = choiceResult.CardDefList;
-
             var (exists, owner) = effectEventArgs.GameMaster.playerRepository.TryGet(effectOwnerCard.OwnerId);
             if (!exists)
             {
@@ -33,7 +30,14 @@ namespace Cauldron.Shared.MessagePackObjects
                 return (false, effectEventArgs);
             }
 
-            var newCards = newCardDefs.Select(cd => effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone)).ToArray();
+            var choiceResult = await effectEventArgs.GameMaster
+                .ChoiceCards(effectOwnerCard, effectActionAddCard.Choice, effectEventArgs);
+            var newCardDefs = choiceResult.CardDefList;
+
+            var newCards = newCardDefs
+                .SelectMany(cd => Enumerable.Repeat(cd, effectActionAddCard.NumOfAddCards))
+                .Select(cd => effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone))
+                .ToArray();
 
             return (true, effectEventArgs);
         }

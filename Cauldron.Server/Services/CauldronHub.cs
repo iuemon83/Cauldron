@@ -90,7 +90,7 @@ namespace Cauldron.Server.Services
             this._logger = logger;
         }
 
-        private async ValueTask<ChoiceResult> AskCard(PlayerId playerId, ChoiceCandidates choiceCandidates, int numPicks)
+        private async ValueTask<ChoiceAnswer> AskCard(PlayerId playerId, ChoiceCandidates choiceCandidates, int numPicks)
         {
             var currentQuestionId = QuestionManager.AddNewQuestion();
 
@@ -111,7 +111,7 @@ namespace Cauldron.Server.Services
 
             var answer = await Task.Run(() =>
             {
-                ChoiceResult answer;
+                ChoiceAnswer answer;
                 while (!QuestionManager.TryGetAnswer(currentQuestionId, out answer)) ;
 
                 return answer;

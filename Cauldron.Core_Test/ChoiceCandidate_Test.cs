@@ -172,7 +172,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
-            var expected2 = new ChoiceResult2(
+            var expected2 = new ChoiceResult(
                 Array.Empty<PlayerId>(),
                 new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
@@ -260,7 +260,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
-            var expected2 = new ChoiceResult2(
+            var expected2 = new ChoiceResult(
                 Array.Empty<PlayerId>(),
                 Array.Empty<Card>(),
                 new[] { fairy }
@@ -349,7 +349,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
-            var expected2 = new ChoiceResult2(
+            var expected2 = new ChoiceResult(
                 Array.Empty<PlayerId>(),
                 Array.Empty<Card>(),
                 new[] { fairy, fairy }
@@ -430,7 +430,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
-            var expected2 = new ChoiceResult2(
+            var expected2 = new ChoiceResult(
                 new[] { player2Id },
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
@@ -508,7 +508,7 @@ namespace Cauldron.Core_Test
                 TestUtil.AssertChoiceResult(expected, actual);
 
                 // 抽出結果の検証
-                var expected2 = new ChoiceResult2(
+                var expected2 = new ChoiceResult(
                      new[] { player1Id },
                      Array.Empty<Card>(),
                      Array.Empty<CardDef>()
@@ -533,7 +533,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
-            var expected2 = new ChoiceResult2(
+            var expected2 = new ChoiceResult(
                 new[] { player2Id },
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
@@ -714,12 +714,12 @@ namespace Cauldron.Core_Test
             // カードの選択処理のテスト
             var isCalledAskAction = false;
             ChoiceCandidates expected = null;
-            ValueTask<ChoiceResult> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
             {
                 isCalledAskAction = true;
                 Assert.Equal(1, i);
                 TestUtil.AssertChoiceResult(expected, c);
-                return ValueTask.FromResult(new ChoiceResult(
+                return ValueTask.FromResult(new ChoiceAnswer(
                     Array.Empty<PlayerId>(),
                     new[] { c.CardList[0].Id },
                     Array.Empty<CardDefId>()
@@ -803,14 +803,14 @@ namespace Cauldron.Core_Test
             // カードの選択処理のテスト
             var isCalledAskAction = false;
             ChoiceCandidates expected = null;
-            ValueTask<ChoiceResult> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
             {
                 isCalledAskAction = true;
 
                 Assert.Equal(1, i);
                 TestUtil.AssertChoiceResult(expected, c);
 
-                return ValueTask.FromResult(new ChoiceResult(
+                return ValueTask.FromResult(new ChoiceAnswer(
                     Array.Empty<PlayerId>(),
                     new[] { c.CardList[0].Id },
                     Array.Empty<CardDefId>()
@@ -920,7 +920,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
-            var expected2 = new ChoiceResult2(
+            var expected2 = new ChoiceResult(
                 Array.Empty<PlayerId>(),
                 new[] { cards.testCard },
                 Array.Empty<CardDef>()
@@ -981,7 +981,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
-            var expected2 = new ChoiceResult2(
+            var expected2 = new ChoiceResult(
                 Array.Empty<PlayerId>(),
                 new[] { goblinCard },
                 Array.Empty<CardDef>()

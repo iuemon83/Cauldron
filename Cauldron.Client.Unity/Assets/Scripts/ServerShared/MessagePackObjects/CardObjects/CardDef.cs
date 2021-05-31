@@ -14,9 +14,12 @@ namespace Cauldron.Shared.MessagePackObjects
         public int Cost { get; set; }
 
         [JsonIgnore]
-        public string FullName { get; set; } = "";
+        public string CardSetName { get; set; } = "";
 
         public string Name { get; set; } = "";
+
+        [JsonIgnore]
+        public string FullName => $"{this.CardSetName}.{this.Name}";
 
         public string FlavorText { get; set; } = "";
 
@@ -48,23 +51,23 @@ namespace Cauldron.Shared.MessagePackObjects
         }
         public CardDef(
             CardDefId Id,
-             int Cost,
-             string FullName,
-             string Name,
-             string FlavorText,
-             bool IsToken,
-             CardType Type,
-             int Power,
-             int Toughness,
-             List<CreatureAbility> Abilities,
-             IReadOnlyList<CardEffect> Effects,
-             int? NumTurnsToCanAttack,
-              int? NumAttacksLimitInTurn
+            int Cost,
+            string CardSetName,
+            string Name,
+            string FlavorText,
+            bool IsToken,
+            CardType Type,
+            int Power,
+            int Toughness,
+            List<CreatureAbility> Abilities,
+            IReadOnlyList<CardEffect> Effects,
+            int? NumTurnsToCanAttack,
+            int? NumAttacksLimitInTurn
             )
         {
             this.Id = Id;
             this.Cost = Cost;
-            this.FullName = FullName;
+            this.CardSetName = CardSetName;
             this.Name = Name;
             this.FlavorText = FlavorText;
             this.IsToken = IsToken;
