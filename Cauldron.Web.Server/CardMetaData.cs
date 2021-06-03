@@ -66,6 +66,6 @@ namespace Cauldron.Web.Server
         public MetaDataElm[] CardConditionContexts { get; } = Convert<CardCondition.CardConditionContext>();
         public MetaDataElm[] PlayerConditionContexts { get; } = Convert<PlayerCondition.PlayerConditionContext>();
         public MetaDataElm[] PlayerConditionTypes { get; } = Convert<PlayerCondition.PlayerConditionType>();
-
+        public MetaDataElm[] CardSetConditionTypes { get; } = Convert<CardSetCondition.ConditionType>();
     }
 }
