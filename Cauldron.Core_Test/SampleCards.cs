@@ -68,7 +68,7 @@ namespace Cauldron.Core.Entities
             => SampleCards.Creature(1, "ゴブリン", "ただのゴブリン", 1, 2);
 
         public static CardDef QuickGoblin
-            => SampleCards.Creature(1, "素早いゴブリン", "早い", 1, 1, numTurnsToCanAttack: 0);
+            => SampleCards.Creature(1, "素早いゴブリン", "このカードは場に出したターンに攻撃できる。", 1, 1, numTurnsToCanAttack: 0);
 
         public static CardDef ShieldGoblin
             => SampleCards.Creature(2, "盾持ちゴブリン", "盾になる", 1, 2,
@@ -101,6 +101,7 @@ namespace Cauldron.Core.Entities
                                             new CardCondition()
                                             {
                                                 ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
+                                                CardSetCondition = new(CardSetCondition.ConditionType.This),
                                                 NameCondition = new(
                                                     new TextValue(KarakuriGoblin.Name),
                                                     TextCondition.ConditionCompare.Equality
@@ -165,7 +166,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef GoblinsGreed
-            => SampleCards.Sorcery(2, "ゴブリンの強欲", "ドローするぞ",
+            => SampleCards.Sorcery(2, "ゴブリンの強欲", "あなたはカードを2枚ドローする。このカードが手札から捨てられたとき、あなたはカードを1枚ドローする。",
                 effects: new[]
                 {
                     // カードを2枚引く
@@ -195,7 +196,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef ShamanGoblin
-            => SampleCards.Creature(3, "呪術師ゴブリン", "相手を呪い殺すぞ", 1, 1,
+            => SampleCards.Creature(3, "呪術師ゴブリン", "このカードが場に出たとき、相手の場にあるランダムなクリーチャーカード1枚を破壊する。", 1, 1,
                 effects: new[]
                 {
                     new CardEffect(
@@ -226,7 +227,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef HealGoblin
-            => SampleCards.Creature(3, "優しいゴブリン", "回復してくれる", 1, 2,
+            => SampleCards.Creature(3, "優しいゴブリン", "このカードが場に出たとき、あなたのHPを2回復する。", 1, 2,
                 effects: new[]
                 {
                     new CardEffect(
@@ -254,7 +255,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef FireGoblin
-            => SampleCards.Creature(4, "火炎のゴブリン", "火を飛ばす", 4, 2,
+            => SampleCards.Creature(4, "火炎のゴブリン", "このカードが場に出たとき、相手プレイヤーか、相手の場にいるクリーチャーカード1枚に2ダメージを与える。", 4, 2,
                 effects: new[]
                 {
                     new CardEffect(
@@ -323,14 +324,13 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef MadScientist
-            => SampleCards.Creature(4, "マッドサイエンティスト", "どこかおかしい", 3, 3,
-                // 自分か相手のクリーチャーを一体破壊して、再生する
+            => SampleCards.Creature(4, "マッドサイエンティスト", "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーを場に出す。", 3, 3,
                 effects: new[]
                 {
-                    // 破壊時にコピーを場に出す効果を追加する
                     new CardEffect(
                         SampleCards.Spell,
                         new[]{
+                            // 破壊時にコピーを場に出す効果を追加する
                             new EffectAction(AddEffect: new(
                                 new Choice(
                                     new ChoiceSource(
@@ -387,7 +387,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef BraveGoblin
-            => SampleCards.Creature(4, "ゴブリンの勇者", "勇者！", 2, 2,
+            => SampleCards.Creature(4, "ゴブリンの勇者", "自分が受けるダメージを2軽減する。自分の場の他のクリーチャーカードが戦闘で与えるダメージを1増加する。", 2, 2,
             effects: new[]
             {
                 // 自分が受けるダメージを2軽減する
@@ -466,7 +466,7 @@ namespace Cauldron.Core.Entities
             });
 
         public static CardDef GiantGoblin
-            => SampleCards.Creature(5, "ゴブリンの巨人", "超でかい", 3, 7,
+            => SampleCards.Creature(5, "ゴブリンの巨人", "このカードが場に出たとき、自分の場にある他のクリチャーカードに3ダメージを与える。", 3, 7,
                 abilities: new[] { CreatureAbility.Cover },
                 effects: new[]
                 {
@@ -496,7 +496,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef LeaderGoblin
-            => SampleCards.Creature(5, "ゴブリンリーダー", "", 1, 5,
+            => SampleCards.Creature(5, "ゴブリンリーダー", "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのクリーチャーのパワーを1増加する。", 1, 5,
                 effects: new[]
                 {
                     // プレイ時：自分のクリーチャーすべてを+1/+0 する。
@@ -534,7 +534,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef TyrantGoblin
-            => SampleCards.Creature(6, "暴君ゴブリン", "界隈一のあばれもの", 6, 6,
+            => SampleCards.Creature(6, "暴君ゴブリン", "このカードが場に出たとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。", 6, 6,
                 effects: new[]
                 {
                     // 手札をすべて捨てて、捨てた枚数パワーアップ
@@ -711,7 +711,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef Sword
-            => SampleCards.Sorcery(1, "剣", "パワーアップ",
+            => SampleCards.Sorcery(1, "剣", "あなたの場にあるクリチャー1体を選択する。それは+1/+0 の修整を受ける。",
             effects: new[]
             {
                 new CardEffect(
@@ -743,7 +743,7 @@ namespace Cauldron.Core.Entities
             });
 
         public static CardDef Shield
-            => SampleCards.Sorcery(1, "盾", "タフネスアップ",
+            => SampleCards.Sorcery(1, "盾", "あなたの場にあるクリチャー1体を選択する。それは+0/+1 の修整を受ける。",
             effects: new[]
             {
                 new CardEffect(
@@ -906,7 +906,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef FirstAttack
-            => SampleCards.Sorcery(2, "ゴブリンの一撃", "一撃目",
+            => SampleCards.Sorcery(2, "ゴブリンの一撃", "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに1ダメージを与える。あなたの手札に「ゴブリンの二撃」1枚を加える。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -959,7 +959,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef SecondAttack
-            => SampleCards.Sorcery(2, "ゴブリンの二撃", "二撃目", isToken: true,
+            => SampleCards.Sorcery(2, "ゴブリンの二撃", "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに2ダメージを与える。", isToken: true,
                 effects: new[]
                 {
                     new CardEffect(
@@ -995,11 +995,9 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef HolyShield
-            => SampleCards.Sorcery(2, "聖なる盾", "",
+            => SampleCards.Sorcery(2, "聖なる盾", "あなたの場にある他のカードに次の効果を付与する。「ターン終了時まで、受けるダメージは0になる。」",
                 effects: new[]
                 {
-                    // 自軍クリーチャーに次の効果を付与する。
-                    // 「ターン終了時まで、受けるダメージは0になる。」
                     new CardEffect(
                         SampleCards.Spell,
                         new[]{
@@ -1053,7 +1051,7 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
-        public static CardDef ChangeHands => SampleCards.Sorcery(2, "手札入れ替え", "",
+        public static CardDef ChangeHands => SampleCards.Sorcery(2, "手札入れ替え", "あなたは手札をすべて捨てる。あなたは捨てた枚数カードをドローする。",
             effects: new[]
             {
                 new CardEffect(
@@ -1100,7 +1098,7 @@ namespace Cauldron.Core.Entities
             });
 
         public static CardDef Slap
-            => SampleCards.Sorcery(2, "袋叩き", "",
+            => SampleCards.Sorcery(2, "袋叩き", "相手の場にあるクリーチャー1体を選択する。それにXダメージを与える。X=あなたの場にあるクリーチャーの数",
                 effects: new[]
                 {
                     // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
@@ -1173,7 +1171,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef FullAttack
-            => SampleCards.Sorcery(3, "一斉射撃", "撃てー！",
+            => SampleCards.Sorcery(3, "一斉射撃", "相手プレイヤーか、相手の場にあるクリーチャーすべてに、1ダメージを与える。",
             effects: new[]
             {
                 new CardEffect(
@@ -1204,7 +1202,7 @@ namespace Cauldron.Core.Entities
             });
 
         public static CardDef GoblinCaptureJar
-            => SampleCards.Sorcery(4, "ゴブリン封印の壺", "ゴブリンを無力化する不思議な壺",
+            => SampleCards.Sorcery(4, "ゴブリン封印の壺", "あなたの場か、相手の場にあるクリーチャーのうち、名前に「ゴブリン」を含むカードすべてのパワーを1にし、「封印」状態にする。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -1239,10 +1237,9 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef OldShield
-            => SampleCards.Artifact(1, "ぼろの盾", "いまにも壊れそう",
+            => SampleCards.Artifact(1, "ぼろの盾", "あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
                 effects: new[]
                 {
-                    // 自分のクリーチャーが受けるダメージを1軽減する.その後このカードを破壊する
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
@@ -1293,10 +1290,9 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef OldWall
-            => SampleCards.Artifact(1, "ぼろの壁", "いまにも壊れそう",
+            => SampleCards.Artifact(1, "ぼろの壁", "あなたか、あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
                 effects: new[]
                 {
-                    // 自分のプレイヤーまたはクリーチャーが受けるダメージを1軽減する.その後このカードを破壊する
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
@@ -1359,7 +1355,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef EmergencyFood
-            => SampleCards.Sorcery(1, "非常食", "ランダムに手札を1枚捨てる。あなたはそのカードのコスト分のライフを得る。",
+            => SampleCards.Sorcery(1, "非常食", "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
                 effects: new[] {
                     new CardEffect(
                         SampleCards.Spell,
@@ -1404,7 +1400,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef GoblinStatue
-            => SampleCards.Artifact(4, "呪いのゴブリン像", "縁起は良くない",
+            => SampleCards.Artifact(4, "呪いのゴブリン像", "あなたのターン終了時、もしあなたの墓地が30枚以上なら、相手プレイヤー、相手の場にあるクリーチャーすべてに6ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -1443,7 +1439,7 @@ namespace Cauldron.Core.Entities
                 });
 
         public static CardDef HolyStatue
-            => SampleCards.Artifact(4, "癒やしの像", "みんなを癒やすぞ",
+            => SampleCards.Artifact(4, "癒やしの像", "あなたの場にあるクリーチャーすべては+0/+1 の修整を受ける。あなたが場にクリーチャーを出したとき、それは+0/+1 の修整を受ける。",
             effects: new[]
             {
                 // 使用時、すべての自分クリーチャーを+0/+1
