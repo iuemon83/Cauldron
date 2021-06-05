@@ -711,11 +711,7 @@ namespace Cauldron.Core.Entities
             // answer が正しければtrue, そうでなければfalse
             bool ValidAnswer(ChoiceAnswer answer)
             {
-                var numPicked = answer.PlayerIdList.Length
-                    + answer.CardIdList.Length
-                    + answer.CardDefIdList.Length;
-
-                if (numPicked > choiceNum)
+                if (answer.Count() > choiceNum)
                 {
                     return false;
                 }

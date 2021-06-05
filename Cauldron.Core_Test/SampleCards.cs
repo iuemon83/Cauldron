@@ -314,7 +314,8 @@ namespace Cauldron.Core.Entities
                                             ZoneCondition = new ZoneCondition(new ZoneValue(
                                                 new[]{ ZonePrettyName.CardPool })),
                                             CostCondition = new NumCondition(2,
-                                                NumCondition.ConditionCompare.Equality)
+                                                NumCondition.ConditionCompare.Equality),
+                                            TypeCondition = new(new[]{ CardType.Creature }),
                                         }
                                     }),
                                     how: Choice.ChoiceHow.Random,

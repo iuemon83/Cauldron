@@ -73,6 +73,9 @@ public class EditDeckSceneController : MonoBehaviour
         }
     }
 
+    private bool IsValidNumCards() => this.currentDeckTotalCount >= this.ruleBook.MinNumDeckCards
+        && this.currentDeckTotalCount <= this.ruleBook.MaxNumDeckCards;
+
     public void OnSaveButtonClick()
     {
         var deckName = this.deckNameInputField.text;
@@ -82,9 +85,9 @@ public class EditDeckSceneController : MonoBehaviour
             return;
         }
 
-        if (!this.IsLimitTotalNum)
+        if (!this.IsValidNumCards())
         {
-            Debug.LogWarning("デッキ枚数が不足");
+            Debug.LogWarning("デッキ枚数が不正");
             return;
         }
 

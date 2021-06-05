@@ -409,6 +409,10 @@
                                                     "compare": "equality",
                                                     "not": false
                                                 },
+                                                "typeCondition": {
+                                                    "value": [ "creature" ],
+                                                    "not": false
+                                                },
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "cardPool" ] },
                                                     "not": false

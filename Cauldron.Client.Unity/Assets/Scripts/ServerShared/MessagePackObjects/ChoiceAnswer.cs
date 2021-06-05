@@ -10,11 +10,15 @@ namespace Cauldron.Shared.MessagePackObjects
         public CardId[] CardIdList { get; } = Array.Empty<CardId>();
         public CardDefId[] CardDefIdList { get; } = Array.Empty<CardDefId>();
 
+        public int Count() => (this.PlayerIdList?.Length ?? 0)
+            + (this.CardIdList?.Length ?? 0)
+            + (this.CardDefIdList?.Length ?? 0);
+
         public ChoiceAnswer(PlayerId[] PlayerIdList, CardId[] CardIdList, CardDefId[] CardDefIdList)
         {
-            this.PlayerIdList = PlayerIdList;
-            this.CardIdList = CardIdList;
-            this.CardDefIdList = CardDefIdList;
+            this.PlayerIdList = PlayerIdList ?? Array.Empty<PlayerId>();
+            this.CardIdList = CardIdList ?? Array.Empty<CardId>();
+            this.CardDefIdList = CardDefIdList ?? Array.Empty<CardDefId>();
         }
     }
 }

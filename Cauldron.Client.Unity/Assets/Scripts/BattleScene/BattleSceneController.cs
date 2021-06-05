@@ -22,6 +22,8 @@ public class BattleSceneController : MonoBehaviour
     private Canvas canvas;
     [SerializeField]
     private ConfirmDialogController confirmDialogController;
+    [SerializeField]
+    private ChoiceDialogController choiceDialogController;
 
     [SerializeField]
     private GameObject[] youHandSpaces;
@@ -257,6 +259,33 @@ public class BattleSceneController : MonoBehaviour
         }
 
         return (true, picked);
+    }
+
+    public void ShowChoiceDialog()
+    {
+        var dialog = Instantiate(this.choiceDialogController);
+        dialog.Init(this.askParams, async answer =>
+        {
+            if (answer.Count() > this.askParams.NumPicks)
+            {
+                // 選択した数が多い
+                return;
+            }
+
+            var result = await this.client.AnswerChoice(this.askParams.QuestionId, answer);
+            if (result != GameMasterStatusCode.OK)
+            {
+                Debug.Log($"result: {result}");
+
+                return;
+            }
+
+            // リセット
+            this.ResetAllMarks();
+            Destroy(dialog.gameObject);
+        });
+
+        dialog.transform.SetParent(this.canvas.transform, false);
     }
 
     private async Task UpdateGameContext(GameContext gameContext)
@@ -518,17 +547,12 @@ public class BattleSceneController : MonoBehaviour
         this.pickedCardIdList.Clear();
         this.pickedCardDefIdList.Clear();
 
-        //TODO carddef の選択画面を実装する
+        this.askParams = askMessage;
+
         if (askMessage.ChoiceCandidates.CardDefList.Length != 0)
         {
-            // とりあえずcarddef が候補ならランダムに選択する
-            var randomPicked = askMessage.ChoiceCandidates.CardDefList
-                .OrderBy(_ => Guid.NewGuid())
-                .Take(askMessage.NumPicks)
-                .Select(c => c.Id);
-            this.pickedCardDefIdList.AddRange(randomPicked);
-            this.askParams = askMessage;
-            this.OnPickedButtonClick();
+            this.ShowChoiceDialog();
+            return;
         }
 
         foreach (var playerId in askMessage.ChoiceCandidates.PlayerIdList)
@@ -546,8 +570,6 @@ public class BattleSceneController : MonoBehaviour
                 fieldCardController.VisiblePickCandidateIcon(true);
             }
         }
-
-        this.askParams = askMessage;
     }
 
     public void ShowCardDetail(Card card)
