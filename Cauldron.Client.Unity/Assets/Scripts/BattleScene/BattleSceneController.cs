@@ -491,11 +491,11 @@ public class BattleSceneController : MonoBehaviour
             {
                 if (this.youPlayerController.PlayerId == damageNotifyMessage.GuardPlayerId)
                 {
-                    this.youPlayerController.DamageEffect(damageNotifyMessage.Damage);
+                    await this.youPlayerController.DamageEffect(damageNotifyMessage.Damage);
                 }
                 else
                 {
-                    this.opponentPlayerController.DamageEffect(damageNotifyMessage.Damage);
+                    await this.opponentPlayerController.DamageEffect(damageNotifyMessage.Damage);
                 }
             }
             else

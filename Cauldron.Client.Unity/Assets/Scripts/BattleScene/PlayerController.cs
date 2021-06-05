@@ -117,7 +117,7 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.pickedIcon.SetActive(value);
     }
 
-    public async void DamageEffect(int value)
+    public async Task DamageEffect(int value)
     {
         this.damageText.text = value.ToString();
         this.damageText.gameObject.SetActive(true);
