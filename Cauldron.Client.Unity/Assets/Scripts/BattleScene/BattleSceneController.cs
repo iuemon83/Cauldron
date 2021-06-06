@@ -59,7 +59,7 @@ public class BattleSceneController : MonoBehaviour
 
     private bool updating;
 
-    private List<IDisposable> disposableList = new List<IDisposable>();
+    private readonly List<IDisposable> disposableList = new List<IDisposable>();
 
     async void Start()
     {
@@ -364,16 +364,15 @@ public class BattleSceneController : MonoBehaviour
 
     private HandCardController GetOrCreateHandCardObject(CardId cardId, Card card)
     {
-        if (!handCardObjectsByCardId.TryGetValue(cardId, out var cardObj))
+        if (!handCardObjectsByCardId.TryGetValue(cardId, out var controller))
         {
-            cardObj = Instantiate(this.handCardPrefab);
-            handCardObjectsByCardId.Add(cardId, cardObj);
+            controller = Instantiate(this.handCardPrefab);
+            handCardObjectsByCardId.Add(cardId, controller);
         }
 
-        var cardController = cardObj.GetComponent<CardController>();
-        cardController.SetCard(card);
+        controller.Init(card);
 
-        return cardObj;
+        return controller;
     }
 
     private FieldCardController GetOrCreateFieldCardObject(CardId cardId, Card card)
@@ -382,11 +381,11 @@ public class BattleSceneController : MonoBehaviour
         {
             this.RemoveHandCardObj(cardId);
 
-            cardController = Instantiate(this.fieldCardPrefab).GetComponent<FieldCardController>();
+            cardController = Instantiate(this.fieldCardPrefab);
             fieldCardControllersByCardId.Add(cardId, cardController);
         }
 
-        cardController.SetCard(card);
+        cardController.Init(card);
 
         return cardController;
     }
