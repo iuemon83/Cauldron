@@ -309,8 +309,6 @@ public class BattleSceneController : MonoBehaviour
                 var handCardObj = this.GetOrCreateHandCardObject(handCard.Id, handCard);
                 handCardObj.transform.SetParent(this.canvas.transform, false);
                 handCardObj.transform.position = this.youHandSpaces[handIndex].transform.position;
-
-                Debug.Log(handCardObj.transform.position);
             }
 
             var youFieldCards = publicInfo.Field;
@@ -499,38 +497,54 @@ public class BattleSceneController : MonoBehaviour
         this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 
-    void OnDamage(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)
+    void OnDamage(GameContext gameContext, DamageNotifyMessage notify)
     {
-        var (ownerPlayerName, cardName) = Utility.GetCardName(gameContext, damageNotifyMessage.SourceCardId);
-        if (damageNotifyMessage.GuardCardId == default)
+        switch (notify.Reason)
         {
-            var guardPlayerName = Utility.GetPlayerName(gameContext, damageNotifyMessage.GuardPlayerId);
-            Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardPlayerName} {damageNotifyMessage.Damage}");
-        }
-        else
-        {
-            var (guardCardOwnerName, guardCardName) = Utility.GetCardName(gameContext, damageNotifyMessage.GuardCardId);
-            Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardCardName}({guardCardOwnerName}) {damageNotifyMessage.Damage}");
+            case DamageNotifyMessage.ReasonCode.DrawDeath:
+                {
+                    var guardPlayerName = Utility.GetPlayerName(gameContext, notify.GuardPlayerId);
+                    Debug.Log($"ダメージ: [{notify.Reason}] {guardPlayerName} {notify.Damage}");
+                    break;
+                }
+
+            case DamageNotifyMessage.ReasonCode.Attack:
+            case DamageNotifyMessage.ReasonCode.Effect:
+                {
+                    var (ownerPlayerName, cardName) = Utility.GetCardName(gameContext, notify.SourceCardId);
+                    if (notify.GuardCardId == default)
+                    {
+                        var guardPlayerName = Utility.GetPlayerName(gameContext, notify.GuardPlayerId);
+                        Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardPlayerName} {notify.Damage}");
+                    }
+                    else
+                    {
+                        var (guardCardOwnerName, guardCardName) = Utility.GetCardName(gameContext, notify.GuardCardId);
+                        Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardCardName}({guardCardOwnerName}) {notify.Damage}");
+                    }
+
+                    break;
+                }
         }
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            if (damageNotifyMessage.GuardCardId == default)
+            if (notify.GuardCardId == default)
             {
-                if (this.youPlayerController.PlayerId == damageNotifyMessage.GuardPlayerId)
+                if (this.youPlayerController.PlayerId == notify.GuardPlayerId)
                 {
-                    await this.youPlayerController.DamageEffect(damageNotifyMessage.Damage);
+                    await this.youPlayerController.DamageEffect(notify.Damage);
                 }
                 else
                 {
-                    await this.opponentPlayerController.DamageEffect(damageNotifyMessage.Damage);
+                    await this.opponentPlayerController.DamageEffect(notify.Damage);
                 }
             }
             else
             {
-                if (fieldCardControllersByCardId.TryGetValue(damageNotifyMessage.GuardCardId, out var fieldCard))
+                if (fieldCardControllersByCardId.TryGetValue(notify.GuardCardId, out var fieldCard))
                 {
-                    await fieldCard.DamageEffect(damageNotifyMessage.Damage);
+                    await fieldCard.DamageEffect(notify.Damage);
                 }
             }
 

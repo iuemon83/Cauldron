@@ -29,10 +29,10 @@ namespace Assets.Scripts
             var card = zone.ZoneName switch
             {
                 ZoneName.Hand => gameContext.You.PublicPlayerInfo.Id == zone.PlayerId
-                    ? gameContext.You.Hands.First(c => c.Id == cardId)
+                    ? gameContext.You.Hands.FirstOrDefault(c => c.Id == cardId)
                     : null,
-                ZoneName.Field => zonePlayer.Field.First(c => c.Id == cardId),
-                ZoneName.Cemetery => zonePlayer.Cemetery.First(c => c.Id == cardId),
+                ZoneName.Field => zonePlayer.Field.FirstOrDefault(c => c.Id == cardId),
+                ZoneName.Cemetery => zonePlayer.Cemetery.FirstOrDefault(c => c.Id == cardId),
                 _ => null
             };
 

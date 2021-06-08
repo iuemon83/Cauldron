@@ -23,16 +23,16 @@ namespace Cauldron.Core.Entities
             this.cards = new(this.cards.Where(c => c.Id != card.Id));
         }
 
-        public Card Draw()
+        public (bool, Card) TryDraw()
         {
-            if (!this.cards.Any()) return null;
+            if (!this.cards.Any()) return (false, default);
 
             if (!this.cards.TryDequeue(out var card))
             {
-                throw new System.Exception("デッキからデキューに失敗!!!!!!!!!!!!!!");
+                throw new Exception("デッキからデキューに失敗!!!!!!!!!!!!!!");
             }
 
-            return card;
+            return (true, card);
         }
 
         public void Shuffle()

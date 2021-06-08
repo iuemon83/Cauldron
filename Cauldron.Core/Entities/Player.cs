@@ -62,21 +62,30 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public Card Draw()
+        public (bool, Card) Draw()
         {
-            var newCard = this.Deck.Draw();
-            if (newCard == null)
+            var (success, newCard) = this.Deck.TryDraw();
+            if (success)
             {
-                this.Damage(1);
+                newCard.Zone = new(newCard.OwnerId, ZoneName.Hand);
+
+                if (this.Hands.Count == this.RuleBook.MaxNumHands)
+                {
+                    // 手札が上限
+                    this.Cemetery.Add(newCard);
+                    return (false, newCard);
+                }
+                else
+                {
+                    this.Hands.Add(newCard);
+                    return (true, newCard);
+                }
             }
             else
             {
-                Console.WriteLine("draw");
-                newCard.Zone = new(newCard.OwnerId, ZoneName.Hand);
-                this.Hands.Add(newCard);
+                this.Damage(1);
+                return (false, default);
             }
-
-            return newCard;
         }
 
         public void AddMaxMp(int x)

@@ -61,6 +61,7 @@ namespace Cauldron.Core_Test
                 SampleCards.OldShield,
                 SampleCards.OldWall,
                 SampleCards.EmergencyFood,
+                SampleCards.Gather,
                 SampleCards.GoblinStatue,
                 SampleCards.HolyStatue,
                 SampleCards.GoblinCaptureJar,

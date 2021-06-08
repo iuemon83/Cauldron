@@ -2070,6 +2070,56 @@
             ]
         },
         {
+            "cost": 1,
+            "name": "集合",
+            "flavorText": "あなたの手札に「ゴブリン」を3枚加える。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 3,
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "context": "any",
+                                                "cardSetCondition": { "type": "this" },
+                                                "nameCondition": {
+                                                    "value": { "pureValue": "ゴブリン" },
+                                                    "compare": "equality",
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                    "not": false
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "cost": 4,
             "name": "呪いのゴブリン像",
             "flavorText": "あなたのターン終了時、もしあなたの墓地が30枚以上なら、相手プレイヤー、相手の場にあるクリーチャーすべてに6ダメージを与える。",

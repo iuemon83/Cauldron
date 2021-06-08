@@ -1400,6 +1400,36 @@ namespace Cauldron.Core.Entities
                         })
                 });
 
+        public static CardDef Gather
+            => SampleCards.Sorcery(1, "集合", "あなたの手札に「ゴブリン」を3枚加える。",
+                effects: new[] {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                AddCard = new(
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
+                                                    CardSetCondition = new(CardSetCondition.ConditionType.This),
+                                                    NameCondition = new(
+                                                        new TextValue(Goblin.Name),
+                                                        TextCondition.ConditionCompare.Equality
+                                                    )
+                                                },
+                                            })),
+                                    NumOfAddCards: 3)
+                            }
+                        })
+                });
+
         public static CardDef GoblinStatue
             => SampleCards.Artifact(4, "呪いのゴブリン像", "あなたのターン終了時、もしあなたの墓地が30枚以上なら、相手プレイヤー、相手の場にあるクリーチャーすべてに6ダメージを与える。",
                 effects: new[]

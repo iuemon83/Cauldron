@@ -374,87 +374,85 @@ namespace Cauldron.Core.Entities
 
             foreach (var _ in Enumerable.Range(0, numCards))
             {
-                var drawCard = player.Draw();
+                var (success, drawCard) = player.Draw();
+                var isDrawed = success;
+                var isDiscarded = !success && drawCard != default;
+                var deckIsEmpty = !success && drawCard == default;
 
-                this.logger.LogInformation($"ドロー: {player.Name}: {drawCard.Name}");
-
-                await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
-                await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
-                      MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
-
-                foreach (var p in this.playerRepository.AllPlayers)
+                if (deckIsEmpty)
                 {
-                    this.EventListener?.OnMoveCard?.Invoke(p.Id,
-                        this.CreateGameContext(p.Id),
-                        new MoveCardNotifyMessage()
-                        {
-                            CardId = drawCard.Id,
-                            ToZone = new Zone(
-                                playerId,
-                                ZoneName.Hand
-                            )
-                        });
+                    this.logger.LogInformation($"デッキが0: {player.Name}: {drawCard.Name}");
+
+                    // notify
+                    foreach (var p in this.playerRepository.AllPlayers)
+                    {
+                        this.EventListener?.OnDamage?.Invoke(p.Id,
+                            this.CreateGameContext(p.Id),
+                            new DamageNotifyMessage(
+                                DamageNotifyMessage.ReasonCode.DrawDeath,
+                                1,
+                                GuardPlayerId: playerId));
+                    }
+                }
+                else if (isDiscarded)
+                {
+                    this.logger.LogInformation($"手札が一杯で墓地へ: {player.Name}: {drawCard.Name}");
+
+                    // notify
+                    foreach (var p in this.playerRepository.AllPlayers)
+                    {
+                        this.EventListener?.OnMoveCard?.Invoke(p.Id,
+                            this.CreateGameContext(p.Id),
+                            new MoveCardNotifyMessage()
+                            {
+                                CardId = drawCard.Id,
+                                ToZone = new Zone(
+                                    playerId,
+                                    ZoneName.Cemetery
+                                )
+                            });
+                    }
+
+                    // event
+                    // デッキから直接墓地
+                    await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
+                          MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Cemetery))));
+                }
+                else if (isDrawed)
+                {
+                    this.logger.LogInformation($"ドロー: {player.Name}: {drawCard.Name}");
+
+                    foreach (var p in this.playerRepository.AllPlayers)
+                    {
+                        this.EventListener?.OnMoveCard?.Invoke(p.Id,
+                            this.CreateGameContext(p.Id),
+                            new MoveCardNotifyMessage()
+                            {
+                                CardId = drawCard.Id,
+                                ToZone = new Zone(
+                                    playerId,
+                                    ZoneName.Hand
+                                )
+                            });
+                    }
+
+                    await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
+                    await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
+                          MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
                 }
             }
 
             return GameMasterStatusCode.OK;
         }
 
-        public Card GenerateNewCard(CardDefId cardDefId, Zone zone)
+        public async ValueTask<Card> GenerateNewCard(CardDefId cardDefId, Zone zone)
         {
             var card = this.cardRepository.CreateNew(cardDefId);
             card.OwnerId = zone.PlayerId;
 
-            var (exists, player) = this.playerRepository.TryGet(zone.PlayerId);
-            if (!exists)
-            {
-                throw new InvalidOperationException($"player not exists. id={zone.PlayerId}");
-            }
-
-            switch (zone.ZoneName)
-            {
-                case ZoneName.Cemetery:
-                    player.Cemetery.Add(card);
-                    break;
-
-                case ZoneName.Deck:
-                    //this.PlayersById[zone.playerid].Deck.Add(card);
-                    break;
-
-                case ZoneName.Field:
-                    player.Field.Add(card);
-                    break;
-
-                case ZoneName.Hand:
-                    player.Hands.Add(card);
-                    break;
-
-                default:
-                    throw new InvalidOperationException();
-            }
-
-            card.Zone = zone;
-
-            // カードの持ち主には無条件に通知する
-            this.EventListener?.OnAddCard?.Invoke(card.OwnerId,
-                this.CreateGameContext(card.OwnerId),
-                new AddCardNotifyMessage()
-                {
-                    CardId = card.Id,
-                    ToZone = zone
-                });
-
-            var isPublic = zone.IsPublic();
-
-            // カードの持ち主以外への通知は
-            // 移動元か移動後どちらかの領域が公開領域の場合のみ
-            this.EventListener?.OnAddCard?.Invoke(this.GetOpponent(card.OwnerId).Id,
-                this.CreateGameContext(this.GetOpponent(card.OwnerId).Id),
-                new AddCardNotifyMessage()
-                {
-                    CardId = isPublic ? card.Id : default,
-                    ToZone = zone
-                });
+            await this.MoveCard(card.Id, new(
+                new Zone(zone.PlayerId, ZoneName.CardPool),
+                zone));
 
             return card;
         }
@@ -464,7 +462,7 @@ namespace Cauldron.Core.Entities
             var (exists, card) = this.cardRepository.TryGetById(cardId);
             if (!exists)
             {
-                return;
+                throw new InvalidOperationException($"card not exists. id={card.Id}");
             }
 
             var (fromPlayerExists, fromPlayer) = this.playerRepository.TryGet(moveCardContext.From.PlayerId);
@@ -497,6 +495,10 @@ namespace Cauldron.Core.Entities
                     fromPlayer.Hands.Remove(card);
                     break;
 
+                case ZoneName.CardPool:
+                    // 追加の場合はCardPool でくる
+                    break;
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -512,10 +514,24 @@ namespace Cauldron.Core.Entities
                     break;
 
                 case ZoneName.Field:
+                    if (toPlayer.Field.Full)
+                    {
+                        this.logger.LogInformation("field is full");
+                        await this.MoveCard(card.Id, new(moveCardContext.From, new Zone(toPlayer.Id, ZoneName.Cemetery)));
+                        return;
+                    }
+
                     toPlayer.Field.Add(card);
                     break;
 
                 case ZoneName.Hand:
+                    if (toPlayer.Hands.Count == this.RuleBook.MaxNumHands)
+                    {
+                        this.logger.LogInformation("hand is full");
+                        await this.MoveCard(card.Id, new(moveCardContext.From, new Zone(toPlayer.Id, ZoneName.Cemetery)));
+                        return;
+                    }
+
                     toPlayer.Hands.Add(card);
                     break;
 
@@ -525,33 +541,55 @@ namespace Cauldron.Core.Entities
 
             card.Zone = moveCardContext.To;
 
-            // カードの持ち主には無条件に通知する
-            this.EventListener?.OnMoveCard?.Invoke(card.OwnerId,
-                this.CreateGameContext(card.OwnerId),
-                new MoveCardNotifyMessage()
-                {
-                    CardId = card.Id,
-                    ToZone = new Zone(
-                        moveCardContext.To.PlayerId,
-                        moveCardContext.To.ZoneName
-                    )
-                });
+            var isAdd = moveCardContext.From.ZoneName == ZoneName.CardPool;
 
-            var isPublic = moveCardContext.From.IsPublic()
-                || moveCardContext.To.IsPublic();
+            if (isAdd)
+            {
+                // カードの持ち主には無条件に通知する
+                this.EventListener?.OnAddCard?.Invoke(card.OwnerId,
+                    this.CreateGameContext(card.OwnerId),
+                    new AddCardNotifyMessage()
+                    {
+                        CardId = card.Id,
+                        ToZone = moveCardContext.To
+                    });
 
-            // カードの持ち主以外への通知は
-            // 移動元か移動後どちらかの領域が公開領域の場合のみ
-            this.EventListener?.OnMoveCard?.Invoke(this.GetOpponent(card.OwnerId).Id,
-                this.CreateGameContext(this.GetOpponent(card.OwnerId).Id),
-                new MoveCardNotifyMessage()
-                {
-                    CardId = isPublic ? card.Id : default,
-                    ToZone = new Zone(
-                        moveCardContext.To.PlayerId,
-                        moveCardContext.To.ZoneName
-                    )
-                });
+                var isPublic = moveCardContext.To.IsPublic();
+
+                // カードの持ち主以外への通知は
+                // 移動後の領域が公開領域の場合のみ
+                this.EventListener?.OnAddCard?.Invoke(this.GetOpponent(card.OwnerId).Id,
+                    this.CreateGameContext(this.GetOpponent(card.OwnerId).Id),
+                    new AddCardNotifyMessage()
+                    {
+                        CardId = isPublic ? card.Id : default,
+                        ToZone = moveCardContext.To
+                    });
+            }
+            else
+            {
+                // カードの持ち主には無条件に通知する
+                this.EventListener?.OnMoveCard?.Invoke(card.OwnerId,
+                    this.CreateGameContext(card.OwnerId),
+                    new MoveCardNotifyMessage()
+                    {
+                        CardId = card.Id,
+                        ToZone = moveCardContext.To
+                    });
+
+                var isPublic = moveCardContext.From.IsPublic()
+                    || moveCardContext.To.IsPublic();
+
+                // カードの持ち主以外への通知は
+                // 移動元か移動後どちらかの領域が公開領域の場合のみ
+                this.EventListener?.OnMoveCard?.Invoke(this.GetOpponent(card.OwnerId).Id,
+                    this.CreateGameContext(this.GetOpponent(card.OwnerId).Id),
+                    new MoveCardNotifyMessage()
+                    {
+                        CardId = isPublic ? card.Id : default,
+                        ToZone = moveCardContext.To
+                    });
+            }
 
             // カードの移動イベント
             await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: card, MoveCardContext: moveCardContext));
@@ -835,13 +873,12 @@ namespace Cauldron.Core.Entities
             {
                 this.EventListener?.OnDamage?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
-                    new DamageNotifyMessage()
-                    {
-                        Reason = DamageNotifyMessage.ReasonCode.Attack,
-                        Damage = newEventArgs.DamageContext.Value,
-                        SourceCardId = newEventArgs.DamageContext.DamageSourceCard.Id,
-                        GuardPlayerId = newEventArgs.DamageContext.GuardPlayer.Id
-                    });
+                    new DamageNotifyMessage(
+                        DamageNotifyMessage.ReasonCode.Attack,
+                        newEventArgs.DamageContext.Value,
+                        SourceCardId: newEventArgs.DamageContext.DamageSourceCard.Id,
+                        GuardPlayerId: newEventArgs.DamageContext.GuardPlayer.Id
+                        ));
             }
 
             await this.effectManager.DoEffect(newEventArgs with { GameEvent = GameEvent.OnDamage });
@@ -934,13 +971,12 @@ namespace Cauldron.Core.Entities
             {
                 this.EventListener?.OnDamage?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
-                    new DamageNotifyMessage()
-                    {
-                        Reason = DamageNotifyMessage.ReasonCode.Attack,
-                        Damage = newDamageContext.Value,
-                        SourceCardId = newDamageContext.DamageSourceCard.Id,
-                        GuardCardId = newDamageContext.GuardCard.Id
-                    });
+                    new DamageNotifyMessage(
+                        DamageNotifyMessage.ReasonCode.Attack,
+                        newDamageContext.Value,
+                        SourceCardId: newDamageContext.DamageSourceCard.Id,
+                        GuardCardId: newDamageContext.GuardCard.Id
+                        ));
             }
 
             await this.effectManager.DoEffect(newEventArgs with { GameEvent = GameEvent.OnDamage });
@@ -962,7 +998,7 @@ namespace Cauldron.Core.Entities
             var choiceCandidates = await choice.Source
                 .ChoiceCandidates(effectOwnerCard, eventArgs, this.playerRepository, this.cardRepository, choice.NumPicks);
 
-            ChoiceResult All() => new ChoiceResult(
+            ChoiceResult All() => new(
                 choiceCandidates.PlayerIdList,
                 choiceCandidates.CardList,
                 choiceCandidates.CardDefList
