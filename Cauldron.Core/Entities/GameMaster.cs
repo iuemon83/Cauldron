@@ -233,23 +233,27 @@ namespace Cauldron.Core.Entities
 
         private bool IsValidDeck(IEnumerable<CardDefId> deckCardDefIdList)
         {
-            var deckCards = deckCardDefIdList.Select(id => this.cardRepository.CreateNew(id)).ToArray();
+            var deckCardDefList = deckCardDefIdList
+                .Select(id => this.cardRepository.TryGetCardDefById(id))
+                .Where(x => x.Item1)
+                .Select(x => x.Item2)
+                .ToArray();
 
-            if (deckCards.Any(c => c == null))
+            if (deckCardDefList.Length != deckCardDefIdList.Count())
             {
                 this.logger.LogError("includ invalid cards in deck");
                 return false;
             }
 
             // 提示されたデッキにトークンが含まれていてはいけない
-            if (deckCards.Any(c => c.IsToken))
+            if (deckCardDefList.Any(c => c.IsToken))
             {
                 this.logger.LogError("includ token cards in deck");
                 return false;
             }
 
-            var invalidNumCards = deckCards.Length < this.RuleBook.MinNumDeckCards
-                || deckCards.Length > this.RuleBook.MaxNumDeckCards;
+            var invalidNumCards = deckCardDefList.Length < this.RuleBook.MinNumDeckCards
+                || deckCardDefList.Length > this.RuleBook.MaxNumDeckCards;
 
             if (invalidNumCards)
             {

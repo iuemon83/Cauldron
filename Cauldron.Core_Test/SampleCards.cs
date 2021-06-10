@@ -849,6 +849,81 @@ namespace Cauldron.Core.Entities
                         })
                 });
 
+        public static CardDef EmergencyFood
+            => SampleCards.Sorcery(1, "非常食", "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
+                effects: new[] {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]{
+                            new EffectAction(MoveCard: new(
+                                new Choice(new ChoiceSource(
+                                    orCardConditions: new[]
+                                    {
+                                        new CardCondition()
+                                        {
+                                            ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
+                                        }
+                                    }),
+                                    Choice.ChoiceHow.Random,
+                                    1),
+                                ZonePrettyName.YouCemetery,
+                                "moveCard"
+                                )),
+                            new EffectAction(ModifyPlayer: new(
+                                new Choice(new ChoiceSource(
+                                    orPlayerConditions: new[]
+                                    {
+                                        new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                    })),
+                                new PlayerModifier(
+                                    Hp: new(
+                                        NumValueModifier.ValueModifierOperator.Add,
+                                        new NumValue(NumValueCalculator: new(
+                                            NumValueCalculator.ValueType.CardCost,
+                                            new Choice(new ChoiceSource(
+                                                orCardConditions: new[]
+                                                {
+                                                    new CardCondition()
+                                                    {
+                                                        ActionContext = new(ActionContextCardsOfMoveCard: new(
+                                                            "moveCard",
+                                                            ActionContextCardsOfMoveCard.ValueType.Moved
+                                                            ))
+                                                    }
+                                                }))))))))
+                        })
+                });
+
+        public static CardDef Gather
+            => SampleCards.Sorcery(1, "集合", "あなたの手札に「ゴブリン」を3枚加える。",
+                effects: new[] {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                AddCard = new(
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
+                                                    CardSetCondition = new(CardSetCondition.ConditionType.This),
+                                                    NameCondition = new(
+                                                        new TextValue(Goblin.Name),
+                                                        TextCondition.ConditionCompare.Equality
+                                                    )
+                                                },
+                                            })),
+                                    NumOfAddCards: 3)
+                            }
+                        })
+                });
+
         public static CardDef Copy
             => SampleCards.Sorcery(2, "複製", "相手の場のカードを一枚選択する。そのカードと同名のカードを一枚あなたの手札に加える。",
                 effects: new[]
@@ -872,35 +947,6 @@ namespace Cauldron.Core.Entities
                                             }),
                                         Choice.ChoiceHow.Choose,
                                         1))
-                            }
-                        }
-                    )
-                });
-
-        public static CardDef DoubleCopy
-            => SampleCards.Sorcery(3, "二重複製", "相手の場のカードを一枚選択する。そのカードと同名のカードを二枚あなたの手札に加える。",
-                effects: new[]
-                {
-                    new CardEffect(
-                        SampleCards.Spell,
-                        new[]
-                        {
-                            new EffectAction()
-                            {
-                                AddCard = new(
-                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
-                                                }
-                                            }),
-                                        Choice.ChoiceHow.Choose
-                                        ),
-                                    NumOfAddCards: 2)
                             }
                         }
                     )
@@ -1171,6 +1217,35 @@ namespace Cauldron.Core.Entities
                     )
                 });
 
+        public static CardDef DoubleCopy
+            => SampleCards.Sorcery(3, "二重複製", "相手の場のカードを一枚選択する。そのカードと同名のカードを二枚あなたの手札に加える。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                AddCard = new(
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
+                                                }
+                                            }),
+                                        Choice.ChoiceHow.Choose
+                                        ),
+                                    NumOfAddCards: 2)
+                            }
+                        }
+                    )
+                });
+
         public static CardDef FullAttack
             => SampleCards.Sorcery(3, "一斉射撃", "相手プレイヤーか、相手の場にあるクリーチャーすべてに、1ダメージを与える。",
             effects: new[]
@@ -1201,6 +1276,54 @@ namespace Cauldron.Core.Entities
                     }
                 )
             });
+
+        public static CardDef Search
+            => SampleCards.Sorcery(3, "探索", "あなたのデッキからランダムなカード1枚を、あなたの手札に加える。そのカードのコストを半分にする。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.YouDeck })),
+                                                }
+                                            }),
+                                        Choice.ChoiceHow.Random,
+                                        numPicks: 1),
+                                    ZonePrettyName.YouHand,
+                                    Name: "search_card")
+                            ),
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ActionContext = new(ActionContextCardsOfMoveCard: new(
+                                                        "search_card",
+                                                        ActionContextCardsOfMoveCard.ValueType.Moved
+                                                        ))
+                                                }
+                                            }
+                                        )),
+                                    Cost: new(
+                                        NumValueModifier.ValueModifierOperator.Div,
+                                        new NumValue(2)
+                                        ))
+                            )
+                        }
+                    )
+                });
 
         public static CardDef GoblinCaptureJar
             => SampleCards.Sorcery(4, "ゴブリン封印の壺", "あなたの場か、相手の場にあるクリーチャーのうち、名前に「ゴブリン」を含むカードすべてのパワーを1にし、「封印」状態にする。",
@@ -1353,81 +1476,6 @@ namespace Cauldron.Core.Entities
                             }
                         }
                     )
-                });
-
-        public static CardDef EmergencyFood
-            => SampleCards.Sorcery(1, "非常食", "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
-                effects: new[] {
-                    new CardEffect(
-                        SampleCards.Spell,
-                        new[]{
-                            new EffectAction(MoveCard: new(
-                                new Choice(new ChoiceSource(
-                                    orCardConditions: new[]
-                                    {
-                                        new CardCondition()
-                                        {
-                                            ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
-                                        }
-                                    }),
-                                    Choice.ChoiceHow.Random,
-                                    1),
-                                ZonePrettyName.YouCemetery,
-                                "moveCard"
-                                )),
-                            new EffectAction(ModifyPlayer: new(
-                                new Choice(new ChoiceSource(
-                                    orPlayerConditions: new[]
-                                    {
-                                        new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
-                                    })),
-                                new PlayerModifier(
-                                    Hp: new(
-                                        NumValueModifier.ValueModifierOperator.Add,
-                                        new NumValue(NumValueCalculator: new(
-                                            NumValueCalculator.ValueType.CardCost,
-                                            new Choice(new ChoiceSource(
-                                                orCardConditions: new[]
-                                                {
-                                                    new CardCondition()
-                                                    {
-                                                        ActionContext = new(ActionContextCardsOfMoveCard: new(
-                                                            "moveCard",
-                                                            ActionContextCardsOfMoveCard.ValueType.Moved
-                                                            ))
-                                                    }
-                                                }))))))))
-                        })
-                });
-
-        public static CardDef Gather
-            => SampleCards.Sorcery(1, "集合", "あなたの手札に「ゴブリン」を3枚加える。",
-                effects: new[] {
-                    new CardEffect(
-                        SampleCards.Spell,
-                        new[]
-                        {
-                            new EffectAction()
-                            {
-                                AddCard = new(
-                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
-                                                    CardSetCondition = new(CardSetCondition.ConditionType.This),
-                                                    NameCondition = new(
-                                                        new TextValue(Goblin.Name),
-                                                        TextCondition.ConditionCompare.Equality
-                                                    )
-                                                },
-                                            })),
-                                    NumOfAddCards: 3)
-                            }
-                        })
                 });
 
         public static CardDef GoblinStatue

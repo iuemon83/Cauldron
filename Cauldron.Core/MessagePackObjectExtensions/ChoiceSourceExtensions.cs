@@ -63,7 +63,7 @@ namespace Cauldron.Shared.MessagePackObjects
             var mathedCards = new Dictionary<CardDefId, CardDef>();
             foreach (var cond in choiceSource.OrCardConditions)
             {
-                var carddefs = await cond.ChoiceCandidateCardDefs(effectOwnerCard, eventArgs, cardRepository);
+                var carddefs = await cond.ListMatchedCardDefs(effectOwnerCard, eventArgs, cardRepository);
                 foreach (var c in carddefs)
                 {
                     // 重複はいらない

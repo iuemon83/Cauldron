@@ -17,8 +17,6 @@ namespace Cauldron.Core.Entities
 
         public string Name { get; } = "";
 
-        public Dictionary<CardId, Card> CardsById { get; } = new();
-
         public Hands Hands { get; }
 
         public Deck Deck { get; }
@@ -58,7 +56,7 @@ namespace Cauldron.Core.Entities
 
             foreach (var card in deck)
             {
-                this.CardsById.Add(card.Id, card);
+                card.Zone = new Zone(id, ZoneName.Deck);
             }
         }
 

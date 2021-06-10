@@ -11,37 +11,8 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class CardConditionExtensions
     {
-        public static async ValueTask<Card[]> ChoiceCandidateCards(this CardCondition cardCondition, Card effectOwnerCard, EffectEventArgs effectEventArgs, CardRepository cardRepository, PlayerRepository playerRepository)
-        {
-            var source = await cardCondition.ListMatchedCards(effectOwnerCard, effectEventArgs, cardRepository);
 
-            if (cardCondition.ZoneCondition == null)
-            {
-                return source.ToArray();
-            }
-
-            var zonPrettyNames = await cardCondition.ZoneCondition.Value.Calculate(effectOwnerCard, effectEventArgs);
-            var (exists, player) = playerRepository.TryGet(effectOwnerCard.OwnerId);
-
-            var sourceByZone = zonPrettyNames
-                .SelectMany(zoneType => zoneType switch
-                {
-                    ZonePrettyName.YouField => player.Field.AllCards,
-                    ZonePrettyName.OpponentField => playerRepository.Opponents(effectOwnerCard.OwnerId)[0].Field.AllCards,
-                    ZonePrettyName.YouHand => player.Hands.AllCards,
-                    ZonePrettyName.OpponentHand => playerRepository.Opponents(effectOwnerCard.OwnerId)[0].Hands.AllCards,
-                    ZonePrettyName.YouCemetery => player.Cemetery.AllCards,
-                    ZonePrettyName.OpponentCemetery => playerRepository.Opponents(effectOwnerCard.OwnerId)[0].Cemetery.AllCards,
-                    _ => Array.Empty<Card>(),
-                })
-                .ToArray();
-
-            return source
-                .Where(c => sourceByZone.Any(cz => cz.Id == c.Id))
-                .ToArray();
-        }
-
-        public static async ValueTask<CardDef[]> ChoiceCandidateCardDefs(this CardCondition cardCondition,
+        public static async ValueTask<CardDef[]> ListMatchedCardDefs(this CardCondition cardCondition,
             Card effectOwnerCard, EffectEventArgs effectEventArgs, CardRepository cardRepository)
         {
             if (cardCondition.ZoneCondition == null)

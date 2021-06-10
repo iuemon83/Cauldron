@@ -11,6 +11,8 @@ namespace Cauldron.Core.Entities
 
         public int Count => this.cards.Count;
 
+        public IReadOnlyList<Card> AllCards => this.cards.ToArray();
+
         public Deck(IEnumerable<Card> cards)
         {
             this.cards = new(cards);

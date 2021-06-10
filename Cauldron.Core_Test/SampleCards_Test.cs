@@ -1115,7 +1115,6 @@ namespace Cauldron.Core_Test
             });
         }
 
-
         [Fact]
         public async Task FullAttack()
         {
@@ -1142,6 +1141,34 @@ namespace Cauldron.Core_Test
                 Assert.Equal(goblin1.BaseToughness - 1, goblin1.Toughness);
                 Assert.Equal(goblin2.BaseToughness - 1, goblin1.Toughness);
                 Assert.Equal(TestUtil.TestRuleBook.InitialPlayerHp - 1, player1.CurrentHp);
+            });
+        }
+
+        [Fact]
+        public async Task Search()
+        {
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 4;
+            var testCardDef = SampleCards.Search;
+            testCardDef.Cost = 0;
+
+            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+                new[] { goblinDef, testCardDef },
+                Enumerable.Repeat(goblinDef, TestUtil.TestRuleBook.MinNumDeckCards));
+
+            // æU
+            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            {
+                var beforeHands = player1.Hands.AllCards.ToArray();
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var afterHands = player1.Hands.AllCards.ToArray();
+                var diffHands = afterHands.Where(a => !beforeHands.Any(b => b.Id == a.Id)).ToArray();
+
+                Assert.Single(diffHands);
+                Assert.Equal(goblinDef.Id, diffHands[0].CardDefId);
+                Assert.Equal(goblinDef.Cost * 0.5, diffHands[0].Cost);
             });
         }
 
