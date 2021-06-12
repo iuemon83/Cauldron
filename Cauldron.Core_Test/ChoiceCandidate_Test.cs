@@ -82,6 +82,7 @@ namespace Cauldron.Core_Test
                 new EffectEventArgs(GameEvent.OnBattle, testGameMaster),
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
@@ -168,6 +169,7 @@ namespace Cauldron.Core_Test
                 testCard, eventargs,
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
@@ -256,6 +258,7 @@ namespace Cauldron.Core_Test
                 testCard, null,
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
@@ -345,6 +348,7 @@ namespace Cauldron.Core_Test
                 testCard, null,
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
@@ -426,6 +430,7 @@ namespace Cauldron.Core_Test
                 testCard, null,
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
@@ -504,6 +509,7 @@ namespace Cauldron.Core_Test
                     testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster),
                     testGameMaster.playerRepository,
                     testCardFactory,
+                    testChoice.How,
                     testChoice.NumPicks);
                 TestUtil.AssertChoiceResult(expected, actual);
 
@@ -529,6 +535,7 @@ namespace Cauldron.Core_Test
                 testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster),
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
@@ -603,6 +610,7 @@ namespace Cauldron.Core_Test
                     testCard, eventargs,
                     testGameMaster.playerRepository,
                     testCardFactory,
+                    testChoice.How,
                     testChoice.NumPicks);
                 TestUtil.AssertChoiceResult(expected, actual);
 
@@ -680,6 +688,7 @@ namespace Cauldron.Core_Test
                 testCard, eventargs,
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
@@ -768,6 +777,7 @@ namespace Cauldron.Core_Test
                 testcard, eventargs,
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
@@ -860,6 +870,7 @@ namespace Cauldron.Core_Test
                 testcard, eventargs,
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
@@ -916,6 +927,7 @@ namespace Cauldron.Core_Test
                 cards.testCard, null,
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
@@ -977,6 +989,7 @@ namespace Cauldron.Core_Test
                 testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster, SourceCard: goblinCard),
                 testGameMaster.playerRepository,
                 testCardFactory,
+                testChoice.How,
                 testChoice.NumPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 

@@ -25,7 +25,7 @@ namespace Cauldron.Shared.MessagePackObjects
             async ValueTask<IEnumerable<CardDef>> GetMatchedCarddefs()
             {
                 var carddefAndIsMatchTasks = cardRepository.CardPool
-                    .Select(async cdef => (Carddef: cdef, IsMatch: await cardCondition.IsMatch(effectOwnerCard, effectEventArgs, cdef)));
+                    .Select(async cdef => (Carddef: cdef, IsMatch: await cardCondition.IsMatch(cdef, effectOwnerCard, effectEventArgs)));
 
                 var carddefAndIsMatch = await Task.WhenAll(carddefAndIsMatchTasks);
 
@@ -55,7 +55,7 @@ namespace Cauldron.Shared.MessagePackObjects
             var mathedCards = new List<Card>();
             foreach (var card in source)
             {
-                var isMathed = await cardCondition.IsMatch(effectOwnerCard, eventArgs, card);
+                var isMathed = await cardCondition.IsMatch(card, effectOwnerCard, eventArgs);
 
                 if (isMathed)
                 {
@@ -79,7 +79,7 @@ namespace Cauldron.Shared.MessagePackObjects
             }
         }
 
-        public static async ValueTask<bool> IsMatch(this CardCondition cardCondition, Card effectOwnerCard, EffectEventArgs effectEventArgs, Card cardToMatch)
+        public static async ValueTask<bool> IsMatch(this CardCondition cardCondition, Card cardToMatch, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             return
                 (cardCondition.Context switch
@@ -101,7 +101,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 ;
         }
 
-        public static async ValueTask<bool> IsMatch(this CardCondition cardCondition, Card effectOwnerCard, EffectEventArgs effectEventArgs, CardDef cardDefToMatch)
+        public static async ValueTask<bool> IsMatch(this CardCondition cardCondition, CardDef cardDefToMatch, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             return
                 (cardCondition.CostCondition?.IsMatch(cardDefToMatch.Cost) ?? true)

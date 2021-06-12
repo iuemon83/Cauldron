@@ -49,7 +49,7 @@ namespace Cauldron.Shared.MessagePackObjects
                         return false;
                     }
 
-                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(effectOwnerCard, eventArgs, damageSource);
+                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(damageSource, effectOwnerCard, eventArgs);
                 }
 
                 async ValueTask<bool> SwitchTake()
@@ -61,7 +61,7 @@ namespace Cauldron.Shared.MessagePackObjects
                         return false;
                     }
 
-                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(effectOwnerCard, eventArgs, guard);
+                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(guard, effectOwnerCard, eventArgs);
                 }
 
                 return effectTimingDamageBeforeEvent.Source switch

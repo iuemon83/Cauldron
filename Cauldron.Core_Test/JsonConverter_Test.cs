@@ -44,6 +44,8 @@ namespace Cauldron.Core_Test
                 SampleCards.TyrantGoblin,
                 SampleCards.KingGoblin,
                 SampleCards.TempRamp,
+                SampleCards.Fire,
+                SampleCards.Lightning,
                 SampleCards.Sword,
                 SampleCards.Shield,
                 SampleCards.HitOrHeal,

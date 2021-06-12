@@ -8,21 +8,32 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class ChoiceSourceExtensions
     {
-        public static async ValueTask<ChoiceCandidates> ChoiceCandidates(this ChoiceSource choiceSource, Card effectOwnerCard, EffectEventArgs effectEventArgs, PlayerRepository playerRepository, CardRepository cardRepository, int numDuplicates)
+        public static async ValueTask<ChoiceCandidates> ChoiceCandidates(this ChoiceSource choiceSource, Card effectOwnerCard, EffectEventArgs effectEventArgs, PlayerRepository playerRepository, CardRepository cardRepository, Choice.ChoiceHow choiceHow, int numDuplicates)
         {
             var playerList = choiceSource
                 .ListMatchedPlayers(effectOwnerCard, effectEventArgs, playerRepository)
                 .Select(p => p.Id)
                 .ToArray();
 
-            var CardList = await choiceSource.ListMatchedCards(effectOwnerCard, effectEventArgs, cardRepository);
+            var cardList = await choiceSource.ListMatchedCards(effectOwnerCard, effectEventArgs, cardRepository);
 
-            var CardDefList = await choiceSource.ListMatchedCardDefs(effectOwnerCard, effectEventArgs, cardRepository, numDuplicates);
+            if (choiceHow == Choice.ChoiceHow.Choose)
+            {
+                cardList = cardList.Where(c =>
+                {
+                    var isStealth = c.OwnerId != effectOwnerCard.OwnerId
+                        && GameMaster.EnableAbility(c, CreatureAbility.Stealth);
+
+                    return !isStealth;
+                });
+            }
+
+            var cardDefList = await choiceSource.ListMatchedCardDefs(effectOwnerCard, effectEventArgs, cardRepository, numDuplicates);
 
             return new ChoiceCandidates(
                 playerList,
-                CardList.ToArray(),
-                CardDefList.ToArray()
+                cardList.ToArray(),
+                cardDefList.ToArray()
             );
         }
 

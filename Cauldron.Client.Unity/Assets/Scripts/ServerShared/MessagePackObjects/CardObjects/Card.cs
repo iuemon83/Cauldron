@@ -86,7 +86,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.BasePower = cardDef.Power;
             this.BaseToughness = cardDef.Toughness;
 
-            this.Abilities = cardDef.Abilities;
+            this.Abilities = new List<CreatureAbility>(cardDef.Abilities);
             this.Effects = cardDef.Effects.ToList();
             this.NumTurnsToCanAttack = cardDef.NumTurnsToCanAttack.Value;
             this.NumAttacksLimitInTurn = cardDef.NumAttacksLimitInTurn.Value;

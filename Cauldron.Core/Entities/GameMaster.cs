@@ -23,6 +23,11 @@ namespace Cauldron.Core.Entities
         /// <returns></returns>
         public static bool EnableAbility(Card card, CreatureAbility ability)
         {
+            if (card.Zone.ZoneName != ZoneName.Field)
+            {
+                return false;
+            }
+
             static bool HasAbility(Card card, CreatureAbility ability)
                 => card.Abilities.Contains(ability);
 
@@ -385,7 +390,7 @@ namespace Cauldron.Core.Entities
 
                 if (deckIsEmpty)
                 {
-                    this.logger.LogInformation($"デッキが0: {player.Name}: {drawCard.Name}");
+                    this.logger.LogInformation($"デッキが0: {player.Name}");
 
                     // notify
                     foreach (var p in this.playerRepository.AllPlayers)
@@ -846,6 +851,12 @@ namespace Cauldron.Core.Entities
                 return GameMasterStatusCode.CantAttack;
             }
 
+            // 攻撃するとステルスを失う
+            if (EnableAbility(attackCard, CreatureAbility.Stealth))
+            {
+                attackCard.Abilities.Remove(CreatureAbility.Stealth);
+            }
+
             var damageContext = new DamageContext(
                 DamageSourceCard: attackCard,
                 GuardPlayer: damagePlayer,
@@ -1000,7 +1011,7 @@ namespace Cauldron.Core.Entities
         public async ValueTask<ChoiceResult> ChoiceCards(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
         {
             var choiceCandidates = await choice.Source
-                .ChoiceCandidates(effectOwnerCard, eventArgs, this.playerRepository, this.cardRepository, choice.NumPicks);
+                .ChoiceCandidates(effectOwnerCard, eventArgs, this.playerRepository, this.cardRepository, choice.How, choice.NumPicks);
 
             ChoiceResult All() => new(
                 choiceCandidates.PlayerIdList,

@@ -568,12 +568,9 @@ public class BattleSceneController : MonoBehaviour
             return;
         }
 
-        foreach (var playerId in askMessage.ChoiceCandidates.PlayerIdList)
+        foreach (var player in new[] { this.youPlayerController, this.opponentPlayerController })
         {
-            foreach (var player in new[] { this.youPlayerController, this.opponentPlayerController })
-            {
-                player.VisiblePickCandidateIcon(player.PlayerId == playerId);
-            }
+            player.VisiblePickCandidateIcon(askMessage.ChoiceCandidates.PlayerIdList.Contains(player.PlayerId));
         }
 
         foreach (var card in askMessage.ChoiceCandidates.CardList)

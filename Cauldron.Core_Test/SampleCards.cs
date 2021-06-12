@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Cauldron.Core.Entities
+namespace Cauldron.Core_Test
 {
     public class SampleCards
     {
@@ -706,6 +706,77 @@ namespace Cauldron.Core.Entities
                                             NumValueModifier.ValueModifierOperator.Sub,
                                             new NumValue(1))
                                         ))
+                            }
+                        }
+                    )
+                });
+
+        public static CardDef Fire
+            => SampleCards.Sorcery(1, "ファイア", "プレイヤーか、場のクリーチャー1体を選択する。それに1ダメージを与える。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                Damage = new(
+                                    new NumValue(1),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(new[]{
+                                                        ZonePrettyName.YouField,
+                                                        ZonePrettyName.OpponentField
+                                                    })),
+                                                    TypeCondition = new(new[]{ CardType.Creature })
+                                                },
+                                            },
+                                            orPlayerConditions: new[]
+                                            {
+                                                new PlayerCondition()
+                                                {
+                                                    Type = PlayerCondition.PlayerConditionType.Any
+                                                }
+                                            }),
+                                        Choice.ChoiceHow.Choose,
+                                        1)),
+                            }
+                        }
+                    )
+                });
+
+        public static CardDef Lightning
+            => SampleCards.Sorcery(1, "稲妻", "ランダムな場のクリーチャー1体に2ダメージを与える。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                Damage = new(
+                                    new NumValue(2),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(new[]{
+                                                        ZonePrettyName.YouField,
+                                                        ZonePrettyName.OpponentField
+                                                    })),
+                                                    TypeCondition = new(new[]{ CardType.Creature })
+                                                },
+                                            }),
+                                        Choice.ChoiceHow.Random,
+                                        1)),
                             }
                         }
                     )
