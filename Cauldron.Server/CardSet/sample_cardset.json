@@ -432,7 +432,7 @@
         {
             "cost": 4,
             "name": "マッドサイエンティスト",
-            "flavorText": "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーを場に出す。",
+            "flavorText": "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーをもとの場に出す。",
             "isToken": false,
             "type": "creature",
             "power": 3,
@@ -1285,6 +1285,222 @@
             ]
         },
         {
+            "cost": 1,
+            "name": "サルベージ",
+            "flavorText": "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "moveCard": {
+                                "cardsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "context": "any",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youCemetery", "opponentCemetery" ] },
+                                                    "not": false
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "how": "choose",
+                                    "numPicks": 1
+                                },
+                                "to": "youHand",
+                                "name": "move"
+                            }
+                        },
+                        {
+                            "modifyCard": {
+                                "toughness": {
+                                    "operator": "replace",
+                                    "value": {
+                                        "numValueCalculator": {
+                                            "type": "cardBaseToughness",
+                                            "cardsChoice": {
+                                                "source": {
+                                                    "how": "all",
+                                                    "numPicks": 1,
+                                                    "orPlayerConditions": [],
+                                                    "orCardConditions": [
+                                                        {
+                                                            "context": "any",
+                                                            "actionContext": {
+                                                                "actionContextCardsOfMoveCard": {
+                                                                    "actionName": "move",
+                                                                    "type": "moved"
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                "how": "all",
+                                                "numPicks": 1
+                                            }
+                                        }
+                                    }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "context": "any",
+                                                "actionContext": {
+                                                    "actionContextCardsOfMoveCard": {
+                                                        "actionName": "move",
+                                                        "type": "moved"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "リサイクル",
+            "flavorText": "墓地のカードを1枚選択する。それのコピーをあなたの手札に加える。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1,
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "context": "any",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youCemetery", "opponentCemetery" ] },
+                                                    "not": false
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "how": "choose",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "簡易蘇生",
+            "flavorText": "墓地のクリーチャーをランダムに1体選択する。それをあなたの場に出す。それのタフネスを1にする。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "moveCard": {
+                                "cardsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "context": "any",
+                                                "typeCondition": {
+                                                    "value": [ "creature" ],
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youCemetery", "opponentCemetery" ] },
+                                                    "not": false
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "how": "random",
+                                    "numPicks": 1
+                                },
+                                "to": "youField",
+                                "name": "move"
+                            }
+                        },
+                        {
+                            "modifyCard": {
+                                "toughness": {
+                                    "operator": "replace",
+                                    "value": { "pureValue": 1 }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "context": "any",
+                                                "actionContext": {
+                                                    "actionContextCardsOfMoveCard": {
+                                                        "actionName": "move",
+                                                        "type": "moved"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "cost": 2,
             "name": "複製",
             "flavorText": "相手の場のカードを一枚選択する。そのカードと同名のカードを一枚あなたの手札に加える。",
@@ -1615,6 +1831,10 @@
                                         "orCardConditions": [
                                             {
                                                 "context": "others",
+                                                "typeCondition": {
+                                                    "value": [ "creature" ],
+                                                    "not": false
+                                                },
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField" ] },
                                                     "not": false

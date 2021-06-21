@@ -20,5 +20,10 @@ namespace Cauldron.Core.Entities
         {
             this.Cards.Add(card);
         }
+
+        public void Remove(Card card)
+        {
+            this.Cards.Remove(card);
+        }
     }
 }

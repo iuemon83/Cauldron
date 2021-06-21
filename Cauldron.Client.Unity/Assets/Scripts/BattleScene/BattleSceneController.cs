@@ -364,6 +364,8 @@ public class BattleSceneController : MonoBehaviour
     {
         if (!handCardObjectsByCardId.TryGetValue(cardId, out var controller))
         {
+            this.RemoveCardObjectByCardId(cardId);
+
             controller = Instantiate(this.handCardPrefab);
             handCardObjectsByCardId.Add(cardId, controller);
         }
@@ -377,7 +379,7 @@ public class BattleSceneController : MonoBehaviour
     {
         if (!fieldCardControllersByCardId.TryGetValue(cardId, out var cardController))
         {
-            this.RemoveHandCardObj(cardId);
+            this.RemoveCardObjectByCardId(cardId);
 
             cardController = Instantiate(this.fieldCardPrefab);
             fieldCardControllersByCardId.Add(cardId, cardController);

@@ -19,9 +19,9 @@ namespace Cauldron.Core_Test
             testCardDef.Cost = 0;
             testCardDef.Abilities.Add(CreatureAbility.Cover);
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { normalcardDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { normalcardDef, testCardDef });
 
-            var (normal, test) = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var (normal, test) = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var normalCard = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
                 var covercard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
@@ -29,7 +29,7 @@ namespace Cauldron.Core_Test
                 return (normalCard, covercard);
             });
 
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var normal2 = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
 
@@ -54,16 +54,16 @@ namespace Cauldron.Core_Test
             deadlyCardDef.Cost = 0;
             deadlyCardDef.Abilities.Add(CreatureAbility.Deadly);
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef });
+            var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef });
 
-            var normal = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var normal = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var normal = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
 
                 return normal;
             });
 
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var deadlyCard = await TestUtil.NewCardAndPlayFromHand(g, pid, deadlyCardDef.Id);
 
@@ -86,16 +86,16 @@ namespace Cauldron.Core_Test
             deadlyCardDef.Cost = 0;
             deadlyCardDef.Abilities.Add(CreatureAbility.Deadly);
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef });
+            var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef });
 
-            var deadlyCard = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var deadlyCard = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var deadlyCard = await TestUtil.NewCardAndPlayFromHand(g, pid, deadlyCardDef.Id);
 
                 return deadlyCard;
             });
 
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var normal = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
 
@@ -121,17 +121,17 @@ namespace Cauldron.Core_Test
             normalcardDef.Toughness = 10;
             normalcardDef.NumTurnsToCanAttack = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+            var c = await TestUtil.InitTest(
                 new[] { normalcardDef, stealthCardDef, });
 
-            var stealthCard = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var stealthCard = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var stealthCard = await TestUtil.NewCardAndPlayFromHand(g, pid, stealthCardDef.Id);
 
                 return stealthCard;
             });
 
-            var normal = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var normal = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var normal = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
 
@@ -172,14 +172,14 @@ namespace Cauldron.Core_Test
                     Array.Empty<CardDefId>()));
             }
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+            var c = await TestUtil.InitTest(
                 new[] { stealthCardDef, choiceCarddef },
                 TestUtil.GameMasterOptions(
                     EventListener: TestUtil.GameEventListener(AskCardAction: assertAskAction)
                 ));
 
             // 先攻
-            var stealthCard = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var stealthCard = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var stealthCard = await TestUtil.NewCardAndPlayFromHand(g, pid, stealthCardDef.Id);
 
@@ -187,7 +187,7 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 // 相手のカードの効果の対象にならない
                 await TestUtil.NewCardAndPlayFromHand(g, pid, choiceCarddef.Id);
@@ -224,14 +224,14 @@ namespace Cauldron.Core_Test
                     Array.Empty<CardDefId>()));
             }
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+            var c = await TestUtil.InitTest(
                 new[] { stealthCardDef, choiceCarddef },
                 TestUtil.GameMasterOptions(
                     EventListener: TestUtil.GameEventListener(AskCardAction: assertAskAction)
                 ));
 
             // 先攻
-            var stealthCard = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var stealthCard = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var stealthCard = await TestUtil.NewCardAndPlayFromHand(g, pid, stealthCardDef.Id);
 
@@ -239,13 +239,13 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, (g, pid) =>
             {
             });
 
             expectedAskCardLsit = new[] { stealthCard };
 
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 // 自分のカードの効果の対象になる
                 await TestUtil.NewCardAndPlayFromHand(g, pid, choiceCarddef.Id);
@@ -265,17 +265,17 @@ namespace Cauldron.Core_Test
             var randomChoiceCarddef = SampleCards.Lightning;
             randomChoiceCarddef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+            var c = await TestUtil.InitTest(
                 new[] { stealthCardDef, randomChoiceCarddef });
 
             // 先攻
-            var stealthCard = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var stealthCard = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 return await TestUtil.NewCardAndPlayFromHand(g, pid, stealthCardDef.Id);
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 // 相手カードのランダム選択の対象になる
                 await TestUtil.NewCardAndPlayFromHand(g, pid, randomChoiceCarddef.Id);
@@ -296,10 +296,10 @@ namespace Cauldron.Core_Test
             normalcardDef.Toughness = 10;
             normalcardDef.NumTurnsToCanAttack = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+            var c = await TestUtil.InitTest(
                 new[] { normalcardDef, stealthCardDef, });
 
-            var (stealthCard1, stealthCard2) = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var (stealthCard1, stealthCard2) = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var stealthCard1 = await TestUtil.NewCardAndPlayFromHand(g, pid, stealthCardDef.Id);
                 var stealthCard2 = await TestUtil.NewCardAndPlayFromHand(g, pid, stealthCardDef.Id);
@@ -307,14 +307,14 @@ namespace Cauldron.Core_Test
                 return (stealthCard1, stealthCard2);
             });
 
-            var normal = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var normal = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var normal = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
 
                 return normal;
             });
 
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 // クリーチャーに攻撃
                 {

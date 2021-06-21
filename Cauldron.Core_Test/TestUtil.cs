@@ -174,16 +174,18 @@ namespace Cauldron.Core_Test
                 choiceCandidates.CardDefList.Select(c => c.Id).ToArray()));
         }
 
-        public static async ValueTask<(GameMaster, Player, Player)> InitTest(IEnumerable<CardDef> cardpool)
+        public record TestContext(GameMaster GameMaster, Player Player1, Player Player2, CardRepository CardRepository);
+
+        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool)
             => await InitTest(cardpool, Enumerable.Repeat(cardpool.First(c => !c.IsToken), 40), TestUtil.GameMasterOptions());
 
-        public static async ValueTask<(GameMaster, Player, Player)> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck)
+        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck)
             => await InitTest(cardpool, deck, TestUtil.GameMasterOptions());
 
-        public static async ValueTask<(GameMaster, Player, Player)> InitTest(IEnumerable<CardDef> cardpool, GameMasterOptions options)
+        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, GameMasterOptions options)
             => await InitTest(cardpool, Enumerable.Repeat(cardpool.First(c => !c.IsToken), 40), options);
 
-        public static async ValueTask<(GameMaster, Player, Player)> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck, GameMasterOptions options)
+        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck, GameMasterOptions options)
         {
             options.CardRepository.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, cardpool.ToArray()) });
 
@@ -198,7 +200,7 @@ namespace Cauldron.Core_Test
             var (_, player1) = testGameMaster.playerRepository.TryGet(player1Id);
             var (_, player2) = testGameMaster.playerRepository.TryGet(player2Id);
 
-            return (testGameMaster, player1, player2);
+            return new(testGameMaster, player1, player2, options.CardRepository);
         }
     }
 }

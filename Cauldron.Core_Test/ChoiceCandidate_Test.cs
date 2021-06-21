@@ -218,8 +218,8 @@ namespace Cauldron.Core_Test
                             new EffectAction()
                             {
                                 AddCard = new(
-                                    new ZoneValue(new[]{ ZonePrettyName.OpponentField }),
-                                    testChoice
+                                    testChoice,
+                                    new ZoneValue(new[]{ ZonePrettyName.OpponentField })
                                 )
                             }
                         }
@@ -308,8 +308,8 @@ namespace Cauldron.Core_Test
                             new EffectAction()
                             {
                                 AddCard = new(
-                                    new ZoneValue(new[]{ ZonePrettyName.OpponentField }),
-                                    testChoice
+                                    testChoice,
+                                    new ZoneValue(new[]{ ZonePrettyName.OpponentField })
                                 )
                             }
                         }

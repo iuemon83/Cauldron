@@ -1,4 +1,3 @@
-using Cauldron.Core.Entities;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
@@ -41,20 +40,20 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
+            var c = await TestUtil.InitTest(new[] { testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                var beforeHp = player1.CurrentHp;
+                var beforeHp = c.Player1.CurrentHp;
 
                 // 場のカードが1枚なので発動しない
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-                Assert.Equal(beforeHp, player1.CurrentHp);
+                Assert.Equal(beforeHp, c.Player1.CurrentHp);
 
                 // 場のカードが2枚なので発動する
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-                Assert.Equal(beforeHp - 1, player1.CurrentHp);
+                Assert.Equal(beforeHp - 1, c.Player1.CurrentHp);
             });
         }
     }

@@ -65,9 +65,9 @@ public class CardController : MonoBehaviour
         {
             this.abilityView.SetActive(true);
 
-            this.currentAbilityIndex = this.currentAbilityIndex == this.card.Abilities.Count - 1
-                ? 0
-                : this.currentAbilityIndex + 1;
+            this.currentAbilityIndex = this.currentAbilityIndex < this.card.Abilities.Count - 1
+                ? this.currentAbilityIndex + 1
+                : 0;
 
             var (success, icon) = AbilityIconCache.TryGet(this.card.Abilities[this.currentAbilityIndex]);
             if (success)

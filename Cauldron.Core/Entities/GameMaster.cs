@@ -480,16 +480,16 @@ namespace Cauldron.Core.Entities
                 throw new InvalidOperationException($"player not exists. id={moveCardContext.From.PlayerId}");
             }
 
-            var (toPlayerExists, toPlayer) = this.playerRepository.TryGet(moveCardContext.From.PlayerId);
+            var (toPlayerExists, toPlayer) = this.playerRepository.TryGet(moveCardContext.To.PlayerId);
             if (!toPlayerExists)
             {
-                throw new InvalidOperationException($"player not exists. id={moveCardContext.From.PlayerId}");
+                throw new InvalidOperationException($"player not exists. id={moveCardContext.To.PlayerId}");
             }
 
             switch (moveCardContext.From.ZoneName)
             {
                 case ZoneName.Cemetery:
-                    //this.PlayersById[moveCardContext.From.PlayerId].Cemetery.Remove(card);
+                    fromPlayer.Cemetery.Remove(card);
                     break;
 
                 case ZoneName.Deck:
@@ -549,6 +549,7 @@ namespace Cauldron.Core.Entities
             }
 
             card.Zone = moveCardContext.To;
+            card.OwnerId = toPlayer.Id;
 
             var isAdd = moveCardContext.From.ZoneName == ZoneName.CardPool;
 

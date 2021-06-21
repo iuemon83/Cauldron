@@ -93,7 +93,6 @@ namespace Cauldron.Core_Test
                         new EffectAction()
                         {
                             AddCard = new(
-                                new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
@@ -107,7 +106,8 @@ namespace Cauldron.Core_Test
                                                     TextCondition.ConditionCompare.Equality
                                                 )
                                             },
-                                        }))
+                                        })),
+                                new ZoneValue(new[]{ ZonePrettyName.YouHand })
                             )
                         }
                     }
@@ -125,7 +125,6 @@ namespace Cauldron.Core_Test
                         {
                             new EffectAction(
                                 AddCard:new(
-                                    new ZoneValue(new[]{ZonePrettyName.YouField }),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
@@ -134,7 +133,8 @@ namespace Cauldron.Core_Test
                                                 {
                                                     Context = CardCondition.CardConditionContext.This
                                                 }
-                                            }))
+                                            })),
+                                    new ZoneValue(new[]{ZonePrettyName.YouField })
                                     ))
                         })
                 });
@@ -150,7 +150,6 @@ namespace Cauldron.Core_Test
                         {
                             new EffectAction(
                                 AddCard: new(
-                                    new ZoneValue(new[]{ZonePrettyName.YouField }),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
@@ -160,6 +159,7 @@ namespace Cauldron.Core_Test
                                                     Context = CardCondition.CardConditionContext.This,
                                                 }
                                             })),
+                                    new ZoneValue(new[]{ZonePrettyName.YouField }),
                                     NumOfAddCards: 2
                                     ))
                         })
@@ -305,7 +305,6 @@ namespace Cauldron.Core_Test
                         new[]
                         {
                             new EffectAction(AddCard: new(
-                                new ZoneValue(new[]{ ZonePrettyName.YouField }),
                                 new Choice(new ChoiceSource(
                                     orCardConditions: new[]
                                     {
@@ -319,13 +318,15 @@ namespace Cauldron.Core_Test
                                         }
                                     }),
                                     how: Choice.ChoiceHow.Random,
-                                    numPicks: 1)))
+                                    numPicks: 1),
+                                new ZoneValue(new[]{ ZonePrettyName.YouField })
+                                ))
                         }
                     )
                 });
 
         public static CardDef MadScientist
-            => SampleCards.Creature(4, "マッドサイエンティスト", "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーを場に出す。", 3, 3,
+            => SampleCards.Creature(4, "マッドサイエンティスト", "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーをもとの場に出す。", 3, 3,
                 effects: new[]
                 {
                     new CardEffect(
@@ -356,7 +357,6 @@ namespace Cauldron.Core_Test
                                         new[]
                                         {
                                             new EffectAction(AddCard: new(
-                                                new ZoneValue(new[]{ ZonePrettyName.YouField }),
                                                 new Choice(
                                                     new ChoiceSource(
                                                         orCardConditions: new[]
@@ -365,7 +365,8 @@ namespace Cauldron.Core_Test
                                                             {
                                                                 Context = CardCondition.CardConditionContext.This,
                                                             }
-                                                        }))
+                                                        })),
+                                                new ZoneValue(new[]{ ZonePrettyName.YouField })
                                                 ))
                                         })
                                 }, "addEffect")),
@@ -782,6 +783,134 @@ namespace Cauldron.Core_Test
                     )
                 });
 
+        public static CardDef Salvage
+            => SampleCards.Sorcery(1, "サルベージ", "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(orCardConditions: new[]
+                                        {
+                                            new CardCondition()
+                                            {
+                                                ZoneCondition = new(new ZoneValue(
+                                                    new[]{ ZonePrettyName.YouCemetery, ZonePrettyName.OpponentCemetery })),
+                                            }
+                                        }),
+                                        Choice.ChoiceHow.Choose,
+                                        1),
+                                    ZonePrettyName.YouHand,
+                                    "move"
+                                    )),
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(orCardConditions: new[]
+                                        {
+                                            new CardCondition()
+                                            {
+                                                ActionContext = new(
+                                                    ActionContextCardsOfMoveCard: new(
+                                                        "move",
+                                                        ActionContextCardsOfMoveCard.ValueType.Moved))
+                                            }
+                                        })),
+                                    Toughness: new(
+                                        NumValueModifier.ValueModifierOperator.Replace,
+                                        new NumValue(NumValueCalculator: new(
+                                            NumValueCalculator.ValueType.CardBaseToughness,
+                                            new Choice(
+                                                new ChoiceSource(orCardConditions: new[]
+                                                {
+                                                    new CardCondition()
+                                                    {
+                                                        ActionContext = new(
+                                                            ActionContextCardsOfMoveCard: new(
+                                                                "move",
+                                                                ActionContextCardsOfMoveCard.ValueType.Moved))
+                                                    }
+                                                })))))))
+                        }
+                    )
+                });
+
+        public static CardDef Recycle
+            => SampleCards.Sorcery(1, "リサイクル", "墓地のカードを1枚選択する。それのコピーをあなたの手札に加える。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                AddCard: new(
+                                    new Choice(
+                                        new ChoiceSource(orCardConditions: new[]
+                                        {
+                                            new CardCondition()
+                                            {
+                                                ZoneCondition = new(new ZoneValue(
+                                                    new[]{ ZonePrettyName.YouCemetery, ZonePrettyName.OpponentCemetery })),
+                                            }
+                                        }),
+                                        Choice.ChoiceHow.Choose,
+                                        1),
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand })
+                                    )),
+                        }
+                    )
+                });
+
+        public static CardDef SimpleReborn
+            => SampleCards.Sorcery(1, "簡易蘇生", "墓地のクリーチャーをランダムに1体選択する。それをあなたの場に出す。それのタフネスを1にする。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(orCardConditions: new[]
+                                        {
+                                            new CardCondition()
+                                            {
+                                                ZoneCondition = new(new ZoneValue(
+                                                    new[]{ZonePrettyName.YouCemetery, ZonePrettyName.OpponentCemetery })),
+                                                TypeCondition = new(new[]{ CardType.Creature }),
+                                            }
+                                        }),
+                                        Choice.ChoiceHow.Random,
+                                        1),
+                                    ZonePrettyName.YouField,
+                                    "move"
+                                    )),
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(orCardConditions: new[]
+                                        {
+                                            new CardCondition()
+                                            {
+                                                ActionContext = new(
+                                                    ActionContextCardsOfMoveCard: new(
+                                                        "move",
+                                                        ActionContextCardsOfMoveCard.ValueType.Moved))
+                                            }
+                                        })),
+                                    Toughness: new(
+                                        NumValueModifier.ValueModifierOperator.Replace,
+                                        new NumValue(1))))
+                        }
+                    )
+                });
+
         public static CardDef Sword
             => SampleCards.Sorcery(1, "剣", "あなたの場にあるクリチャー1体を選択する。それは+1/+0 の修整を受ける。",
             effects: new[]
@@ -893,7 +1022,6 @@ namespace Cauldron.Core_Test
                         new[]
                         {
                             new EffectAction(AddCard: new(
-                                new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                 new Choice(new ChoiceSource(
                                     orCardConditions: new[]
                                     {
@@ -916,7 +1044,9 @@ namespace Cauldron.Core_Test
                                     }),
                                     how: Choice.ChoiceHow.Choose,
                                     numPicks: 1
-                                    )))
+                                    ),
+                                new ZoneValue(new[]{ ZonePrettyName.YouHand })
+                                ))
                         })
                 });
 
@@ -975,7 +1105,6 @@ namespace Cauldron.Core_Test
                             new EffectAction()
                             {
                                 AddCard = new(
-                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
@@ -990,6 +1119,7 @@ namespace Cauldron.Core_Test
                                                     )
                                                 },
                                             })),
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                     NumOfAddCards: 3)
                             }
                         })
@@ -1006,7 +1136,6 @@ namespace Cauldron.Core_Test
                             new EffectAction()
                             {
                                 AddCard = new(
-                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
@@ -1017,7 +1146,9 @@ namespace Cauldron.Core_Test
                                                 }
                                             }),
                                         Choice.ChoiceHow.Choose,
-                                        1))
+                                        1),
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand })
+                                    )
                             }
                         }
                     )
@@ -1055,7 +1186,6 @@ namespace Cauldron.Core_Test
                                         Choice.ChoiceHow.Choose,
                                         1)),
                                 AddCard = new(
-                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
@@ -1070,7 +1200,9 @@ namespace Cauldron.Core_Test
                                                 }
                                             }),
                                         Choice.ChoiceHow.All,
-                                        1))
+                                        1),
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand })
+                                    )
                             }
                         }
                     )
@@ -1128,6 +1260,7 @@ namespace Cauldron.Core_Test
                                                 new CardCondition()
                                                 {
                                                     ZoneCondition = new (new(new[]{ ZonePrettyName.YouField })),
+                                                    TypeCondition = new(new[]{ CardType.Creature }),
                                                     Context = CardCondition.CardConditionContext.Others,
                                                 }
                                             })),
@@ -1299,7 +1432,6 @@ namespace Cauldron.Core_Test
                             new EffectAction()
                             {
                                 AddCard = new(
-                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
@@ -1311,6 +1443,7 @@ namespace Cauldron.Core_Test
                                             }),
                                         Choice.ChoiceHow.Choose
                                         ),
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                     NumOfAddCards: 2)
                             }
                         }

@@ -16,20 +16,13 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.QuickGoblin;
             testCardDef.Cost = 0;
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, new[] { testCardDef }) });
+            var c = await TestUtil.InitTest(new[] { testCardDef });
 
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
 
-                var status = await g.AttackToPlayer(pid, testcard.Id, player2Id);
+                var status = await g.AttackToPlayer(pid, testcard.Id, c.Player2.Id);
 
                 // 速攻持ちなので攻撃できる
                 Assert.Equal(GameMasterStatusCode.OK, status);
@@ -44,20 +37,20 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.MechanicGoblin;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { tokenDef, testCardDef, goblinDef });
+            var c = await TestUtil.InitTest(new[] { tokenDef, testCardDef, goblinDef });
 
             // 先攻
             // testcardを出す
-            await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
 
-                var beforeHands = player1.Hands.AllCards.Select(c => c.Id).ToArray();
+                var beforeHands = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
 
                 await g.DestroyCard(testcard);
 
                 // 手札にトークンが一枚増える
-                var addedHands = player1.Hands.AllCards.Where(c => !beforeHands.Contains(c.Id)).ToArray();
+                var addedHands = c.Player1.Hands.AllCards.Where(c => !beforeHands.Contains(c.Id)).ToArray();
                 Assert.Single(addedHands);
                 Assert.Equal(tokenDef.Id, addedHands[0].CardDefId);
             });
@@ -69,20 +62,14 @@ namespace Cauldron.Core_Test
             var testCard = SampleCards.NinjaGoblin;
             testCard.Cost = 0;
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, new[] { testCard }) });
+            var c = await TestUtil.InitTest(new[] { testCard });
 
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCard.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCard.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
-            await TestUtil.AssertGameAction(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.ActivePlayer.Hands.AllCards[0].Id));
+            await TestUtil.AssertGameAction(() =>
+                c.GameMaster.PlayFromHand(c.Player1.Id, c.GameMaster.ActivePlayer.Hands.AllCards[0].Id));
 
             // 場には2体出ていて、ぜんぶtestcard
-            Assert.Equal(2, testGameMaster.ActivePlayer.Field.AllCards.Count);
-            foreach (var card in testGameMaster.ActivePlayer.Field.AllCards)
+            Assert.Equal(2, c.GameMaster.ActivePlayer.Field.AllCards.Count);
+            foreach (var card in c.GameMaster.ActivePlayer.Field.AllCards)
             {
                 Assert.Equal(testCard.Id, card.CardDefId);
             }
@@ -94,20 +81,14 @@ namespace Cauldron.Core_Test
             var testCard = SampleCards.SuperNinjaGoblin;
             testCard.Cost = 0;
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, new[] { testCard }) });
+            var c = await TestUtil.InitTest(new[] { testCard });
 
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCard.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCard.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
-            await TestUtil.AssertGameAction(() => testGameMaster.PlayFromHand(player1Id, testGameMaster.ActivePlayer.Hands.AllCards[0].Id));
+            await TestUtil.AssertGameAction(() =>
+                c.GameMaster.PlayFromHand(c.Player1.Id, c.GameMaster.ActivePlayer.Hands.AllCards[0].Id));
 
             // 場には3体出ていて、ぜんぶtestcard
-            Assert.Equal(3, testGameMaster.ActivePlayer.Field.AllCards.Count);
-            foreach (var card in testGameMaster.ActivePlayer.Field.AllCards)
+            Assert.Equal(3, c.GameMaster.ActivePlayer.Field.AllCards.Count);
+            foreach (var card in c.GameMaster.ActivePlayer.Field.AllCards)
             {
                 Assert.Equal(testCard.Id, card.CardDefId);
             }
@@ -119,18 +100,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.GoblinsGreed;
             testCardDef.Cost = 0;
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
-
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var beforeNumOfDecks = g.ActivePlayer.Deck.Count;
                 var beforeNumOfHands = g.ActivePlayer.Hands.AllCards.Count;
@@ -151,10 +124,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.GoblinsGreed;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
+            var c = await TestUtil.InitTest(new[] { testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var beforeNumOfDecks = g.ActivePlayer.Deck.Count;
                 var beforeNumOfHands = g.ActivePlayer.Hands.AllCards.Count;
@@ -176,23 +149,23 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.ShamanGoblin;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
+            var c = await TestUtil.InitTest(new[] { testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                var beforeNumFields = player1.Field.Count;
+                var beforeNumFields = c.Player1.Field.Count;
 
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
-                var afterNumFields = player1.Field.Count;
+                var afterNumFields = c.Player1.Field.Count;
 
                 // 1枚破壊されているはず
                 Assert.Equal(beforeNumFields - 1, afterNumFields);
@@ -205,19 +178,19 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.HealGoblin;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
+            var c = await TestUtil.InitTest(new[] { testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 // 事前にダメージ
-                player1.Damage(5);
+                c.Player1.Damage(5);
 
-                var beforeHp = player1.CurrentHp;
+                var beforeHp = c.Player1.CurrentHp;
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 2回復している
-                Assert.Equal(beforeHp + 2, player1.CurrentHp);
+                Assert.Equal(beforeHp + 2, c.Player1.CurrentHp);
             });
         }
 
@@ -247,12 +220,12 @@ namespace Cauldron.Core_Test
                     Array.Empty<CardDefId>()));
             }
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions(
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef }, TestUtil.GameMasterOptions(
                 EventListener: TestUtil.GameEventListener(AskCardAction: assertAskAction)
                 ));
 
             // 先攻
-            var (goblin1, goblin2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblin1, goblin2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -260,11 +233,11 @@ namespace Cauldron.Core_Test
                 return (goblin1, goblin2);
             });
 
-            expectedAskPlayerLsit = new[] { player1.Id };
+            expectedAskPlayerLsit = new[] { c.Player1.Id };
             expectedAskCardLsit = new[] { goblin1, goblin2 };
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var beforeHp = g.GetOpponent(pId).CurrentHp;
 
@@ -286,11 +259,10 @@ namespace Cauldron.Core_Test
             var cost2Def = SampleCards.Goblin;
             cost2Def.Cost = 2;
 
-            var (testGameMaster, player1, player2)
-                = await TestUtil.InitTest(new[] { testCardDef, cost1Def, cost2Def });
+            var c = await TestUtil.InitTest(new[] { testCardDef, cost1Def, cost2Def });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
@@ -313,27 +285,27 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.MadScientist;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+            var c = await TestUtil.InitTest(
                 new[] { goblinDef, testCardDef },
                 options: TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick))
                 );
 
             // 先攻
-            var goblin = await TestUtil.Turn(testGameMaster, (g, pId) =>
+            var goblin = await TestUtil.Turn(c.GameMaster, (g, pId) =>
             {
                 return TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                Assert.Equal(1, player1.Field.Count);
-                Assert.Equal(goblin.Id, player1.Field.AllCards[0].Id);
+                Assert.Equal(1, c.Player1.Field.Count);
+                Assert.Equal(goblin.Id, c.Player1.Field.AllCards[0].Id);
 
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
-                Assert.Equal(1, player1.Field.Count);
-                Assert.NotEqual(goblin.Id, player1.Field.AllCards[0].Id);
+                Assert.Equal(1, c.Player1.Field.Count);
+                Assert.NotEqual(goblin.Id, c.Player1.Field.AllCards[0].Id);
             });
         }
 
@@ -347,10 +319,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.BraveGoblin;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -360,15 +332,15 @@ namespace Cauldron.Core_Test
                 Assert.Equal(testcard.BaseToughness - 1, testcard.Toughness);
 
                 // ほかクリーチャーの攻撃が強化される
-                var beforeHp = player2.CurrentHp;
-                await g.AttackToPlayer(pId, goblin.Id, player2.Id);
-                var afterHp = player2.CurrentHp;
+                var beforeHp = c.Player2.CurrentHp;
+                await g.AttackToPlayer(pId, goblin.Id, c.Player2.Id);
+                var afterHp = c.Player2.CurrentHp;
                 Assert.Equal(beforeHp - (goblin.Power + 1), afterHp);
 
                 // 自分の攻撃は強化されない
-                beforeHp = player2.CurrentHp;
-                await g.AttackToPlayer(pId, testcard.Id, player2.Id);
-                afterHp = player2.CurrentHp;
+                beforeHp = c.Player2.CurrentHp;
+                await g.AttackToPlayer(pId, testcard.Id, c.Player2.Id);
+                afterHp = c.Player2.CurrentHp;
                 Assert.Equal(beforeHp - testcard.Power, afterHp);
             });
         }
@@ -383,15 +355,15 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.GiantGoblin;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
 
-                var beforeHp = player1.CurrentHp;
+                var beforeHp = c.Player1.CurrentHp;
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 味方クリーチャーにダメージ
@@ -399,7 +371,7 @@ namespace Cauldron.Core_Test
                 Assert.Equal(goblin2.BaseToughness - 3, goblin2.Toughness);
 
                 // プレイヤーにはダメージなし
-                Assert.Equal(beforeHp, player1.CurrentHp);
+                Assert.Equal(beforeHp, c.Player1.CurrentHp);
             });
         }
 
@@ -410,17 +382,10 @@ namespace Cauldron.Core_Test
             var testCreatureDef = SampleCards.LeaderGoblin;
             testCreatureDef.Cost = 0;
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCreatureDef }) });
-
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCreatureDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCreatureDef.Id, 40));
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCreatureDef });
 
             // ゴブリン２体出してから効果クリーチャーを出す
-            await testGameMaster.StartGame(player1Id);
-            var (goblin1, goblin2) = await TestUtil.Turn(testGameMaster, async (g, pid) =>
+            var (goblin1, goblin2) = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
@@ -439,7 +404,7 @@ namespace Cauldron.Core_Test
                 return (goblinCard, goblinCard2);
             });
 
-            await TestUtil.Turn(testGameMaster, (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, (g, pid) =>
             {
                 // ゴブリンが2体とも+1/+0 のまま
                 Assert.Equal(1, goblin1.PowerBuff);
@@ -448,7 +413,7 @@ namespace Cauldron.Core_Test
                 Assert.Equal(0, goblin2.ToughnessBuff);
             });
 
-            await TestUtil.Turn(testGameMaster, (g, pid) =>
+            await TestUtil.Turn(c.GameMaster, (g, pid) =>
             {
                 // ゴブリンが2体とも+2/+0 になる
                 Assert.Equal(2, goblin1.PowerBuff);
@@ -464,13 +429,13 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.TyrantGoblin;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
+            var c = await TestUtil.InitTest(new[] { testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 // ↓で1枚増えるから
-                var numHands = player1.Hands.AllCards.Count;
+                var numHands = c.Player1.Hands.AllCards.Count;
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 Assert.Equal(testCard.BasePower + numHands, testCard.Power);
@@ -483,46 +448,215 @@ namespace Cauldron.Core_Test
         {
             var testCardDef = SampleCards.TempRamp;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
+            var c = await TestUtil.InitTest(new[] { testCardDef });
 
             // 先攻1ターン目
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                Assert.Equal(1, player1.MaxMp);
-                Assert.Equal(1, player1.CurrentMp);
+                Assert.Equal(1, c.Player1.MaxMp);
+                Assert.Equal(1, c.Player1.CurrentMp);
 
-                var c = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 最大値が１増える。未使用のMPも増える。
-                Assert.Equal(2, player1.MaxMp);
-                Assert.Equal(2, player1.CurrentMp);
+                Assert.Equal(2, c.Player1.MaxMp);
+                Assert.Equal(2, c.Player1.CurrentMp);
             });
 
             // 最大値が１減る。未使用のMPも減る。
-            Assert.Equal(1, player1.MaxMp);
-            Assert.Equal(1, player1.CurrentMp);
+            Assert.Equal(1, c.Player1.MaxMp);
+            Assert.Equal(1, c.Player1.CurrentMp);
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
             {
             });
 
             // 先攻2ターン目
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                Assert.Equal(2, player1.MaxMp);
-                Assert.Equal(2, player1.CurrentMp);
+                Assert.Equal(2, c.Player1.MaxMp);
+                Assert.Equal(2, c.Player1.CurrentMp);
 
-                var c = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 最大値が１増える。未使用のMPも増える。
-                Assert.Equal(3, player1.MaxMp);
-                Assert.Equal(3, player1.CurrentMp);
+                Assert.Equal(3, c.Player1.MaxMp);
+                Assert.Equal(3, c.Player1.CurrentMp);
             });
 
             // 最大値が１減る。未使用のMPも減る。
-            Assert.Equal(2, player1.MaxMp);
-            Assert.Equal(2, player1.CurrentMp);
+            Assert.Equal(2, c.Player1.MaxMp);
+            Assert.Equal(2, c.Player1.CurrentMp);
+        }
+
+        [Fact]
+        public async Task Salvage()
+        {
+            var goblinDef = SampleCards.MechanicGoblin;
+            goblinDef.Cost = 0;
+
+            var testCardDef = SampleCards.Salvage;
+            testCardDef.Cost = 0;
+
+            CardId[] expectedChoiceCardIdList = default;
+
+            // カードの選択処理のテスト
+            ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            {
+                Assert.Empty(c.PlayerIdList);
+                TestUtil.AssertCollection(expectedChoiceCardIdList,
+                    c.CardList.Select(c => c.Id).ToArray());
+                Assert.Empty(c.CardDefList);
+
+                return ValueTask.FromResult(new ChoiceAnswer(
+                    Array.Empty<PlayerId>(),
+                    new[] { c.CardList[0].Id },
+                    Array.Empty<CardDefId>()
+                ));
+            }
+
+            var c = await TestUtil.InitTest(
+                new[] { goblinDef, testCardDef, SampleCards.DeadlyGoblin },
+                TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+
+                expectedChoiceCardIdList = new[] { goblin.Id };
+
+                await g.HitCreature(new Core.Entities.Effect.DamageContext(goblin, 5, goblin));
+
+                Assert.Empty(c.Player1.Field.AllCards);
+                Assert.Equal(0, goblin.Toughness);
+
+                var beforeHandCardIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                // 自分のカードが対象
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var afterHandIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
+                var diffHandIdList = afterHandIdList.Except(beforeHandCardIdList).ToArray();
+
+                // 墓地のカードが手札に移動している
+                Assert.Single(diffHandIdList);
+
+                // タフネスが回復している
+                var (_, diffHandCard) = c.CardRepository.TryGetById(diffHandIdList[0]);
+                Assert.Equal(goblin.Id, diffHandCard.Id);
+                Assert.Equal(goblin.BaseToughness, diffHandCard.Toughness);
+            });
+        }
+
+        [Fact]
+        public async Task Recycle()
+        {
+            var goblinDef = SampleCards.MechanicGoblin;
+            goblinDef.Cost = 0;
+
+            var testCardDef = SampleCards.Recycle;
+            testCardDef.Cost = 0;
+
+            CardId[] expectedChoiceCardIdList = default;
+
+            // カードの選択処理のテスト
+            ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
+            {
+                Assert.Empty(c.PlayerIdList);
+                TestUtil.AssertCollection(expectedChoiceCardIdList,
+                    c.CardList.Select(c => c.Id).ToArray());
+                Assert.Empty(c.CardDefList);
+
+                return ValueTask.FromResult(new ChoiceAnswer(
+                    Array.Empty<PlayerId>(),
+                    new[] { c.CardList[0].Id },
+                    Array.Empty<CardDefId>()
+                ));
+            }
+
+            var c = await TestUtil.InitTest(
+                new[] { goblinDef, testCardDef, SampleCards.DeadlyGoblin },
+                TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+
+                expectedChoiceCardIdList = new[] { goblin.Id };
+
+                await g.HitCreature(new Core.Entities.Effect.DamageContext(goblin, 5, goblin));
+
+                Assert.Empty(c.Player1.Field.AllCards);
+                Assert.Equal(0, goblin.Toughness);
+
+                var beforeHandCardIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                // 自分のカードが対象
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var afterHandIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
+                var diffHandIdList = afterHandIdList.Except(beforeHandCardIdList).ToArray();
+
+                // 墓地のカードが手札に移動している
+                Assert.Single(diffHandIdList);
+
+                // コピーが手札に加わる
+                var (_, diffHandCard) = c.CardRepository.TryGetById(diffHandIdList[0]);
+                Assert.NotEqual(goblin.Id, diffHandCard.Id);
+                Assert.Equal(goblin.CardDefId, diffHandCard.CardDefId);
+            });
+        }
+
+        [Fact]
+        public async Task SimpleReborn()
+        {
+            var goblinDef = SampleCards.MechanicGoblin;
+            goblinDef.Cost = 0;
+            goblinDef.Toughness = 2;
+            goblinDef.Abilities.Add(CreatureAbility.Cover);
+
+            var testCardDef = SampleCards.SimpleReborn;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { goblinDef, testCardDef, SampleCards.DeadlyGoblin });
+
+            // 先攻
+            var goblin = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+
+                await g.DestroyCard(goblin);
+
+                Assert.Empty(c.Player1.Field.AllCards);
+
+                // 自分のカードが対象
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Single(c.Player1.Field.AllCards);
+                Assert.Equal(goblinDef.Id, c.Player1.Field.AllCards[0].CardDefId);
+                Assert.Equal(1, c.Player1.Field.AllCards[0].Toughness);
+
+                return goblin;
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                await g.DestroyCard(goblin);
+
+                Assert.Empty(c.Player2.Field.AllCards);
+
+                // 相手のカードが対象
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Single(c.Player2.Field.AllCards);
+                Assert.Equal(goblinDef.Id, c.Player2.Field.AllCards[0].CardDefId);
+                Assert.Equal(1, c.Player2.Field.AllCards[0].Toughness);
+            });
         }
 
         [Fact]
@@ -532,9 +666,6 @@ namespace Cauldron.Core_Test
 
             var testCardDef = SampleCards.Sword;
             testCardDef.Cost = 0;
-
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
 
             // カードの選択処理のテスト
             static ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
@@ -546,17 +677,11 @@ namespace Cauldron.Core_Test
                 ));
             }
 
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
+                TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -587,17 +712,13 @@ namespace Cauldron.Core_Test
                 ));
             }
 
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
+                TestUtil.GameMasterOptions(
                 cardRepository: testCardFactory,
                 EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
 
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
-
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -634,18 +755,18 @@ namespace Cauldron.Core_Test
                 ));
             }
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+            var c = await TestUtil.InitTest(
                 new[] { testCardDef1, SampleCards.Hit, SampleCards.Heal },
                 TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                var beforeHandIds = player1.Hands.AllCards.Select(c => c.Id).ToArray();
+                var beforeHandIds = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
 
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef1.Id);
 
-                var diffHands = player1.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
+                var diffHands = c.Player1.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
                 Assert.Single(diffHands);
                 Assert.Equal(choiceCardDefId, diffHands[0].CardDefId);
             });
@@ -679,11 +800,11 @@ namespace Cauldron.Core_Test
                 ));
             }
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef1, goblin1Def, goblin2Def },
+            var c = await TestUtil.InitTest(new[] { testCardDef1, goblin1Def, goblin2Def },
                 TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var c1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin1Def.Id);
                 var c2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin1Def.Id);
@@ -693,13 +814,13 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                var beforeHandIds = player2.Hands.AllCards.Select(c => c.Id).ToArray();
+                var beforeHandIds = c.Player2.Hands.AllCards.Select(c => c.Id).ToArray();
 
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef1.Id);
 
-                var diffHands = player2.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
+                var diffHands = c.Player2.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
                 Assert.Single(diffHands);
                 Assert.Equal(answerCardDefId, diffHands[0].CardDefId);
             });
@@ -733,11 +854,11 @@ namespace Cauldron.Core_Test
                 ));
             }
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef1, goblin1Def, goblin2Def },
+            var c = await TestUtil.InitTest(new[] { testCardDef1, goblin1Def, goblin2Def },
                 TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var c1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin1Def.Id);
                 var c2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin1Def.Id);
@@ -747,13 +868,13 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                var beforeHandIds = player2.Hands.AllCards.Select(c => c.Id).ToArray();
+                var beforeHandIds = c.Player2.Hands.AllCards.Select(c => c.Id).ToArray();
 
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef1.Id);
 
-                var diffHands = player2.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
+                var diffHands = c.Player2.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
                 Assert.Equal(2, diffHands.Length);
                 Assert.Equal(answerCardDefId, diffHands[0].CardDefId);
                 Assert.Equal(answerCardDefId, diffHands[1].CardDefId);
@@ -784,40 +905,40 @@ namespace Cauldron.Core_Test
                 ));
             }
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef1, testCardDef2 },
+            var c = await TestUtil.InitTest(new[] { testCardDef1, testCardDef2 },
                 TestUtil.GameMasterOptions(EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
 
-            expectedChoicePlayerIdList = new[] { player2.Id };
+            expectedChoicePlayerIdList = new[] { c.Player2.Id };
             expectedChoiceCardList = Array.Empty<Card>();
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                var beforeHandIds = player1.Hands.AllCards.Select(c => c.Id).ToArray();
-                var beforeHp = player2.CurrentHp;
+                var beforeHandIds = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
+                var beforeHp = c.Player2.CurrentHp;
 
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef1.Id);
 
-                var diffCards = player1.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
+                var diffCards = c.Player1.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
                 Assert.Single(diffCards);
                 Assert.Equal(testCardDef2.Id, diffCards[0].CardDefId);
 
-                Assert.Equal(beforeHp - 1, player2.CurrentHp);
+                Assert.Equal(beforeHp - 1, c.Player2.CurrentHp);
             });
         }
 
         [Fact]
         public async Task HolyShield()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, numTurnsToCanAttack: 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "", 2, 3, numTurnsToCanAttack: 0);
 
             var testCardDef = SampleCards.HolyShield;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            var (goblin1, goblin2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblin1, goblin2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -826,7 +947,7 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            var goblin3 = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var goblin3 = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -834,19 +955,19 @@ namespace Cauldron.Core_Test
                 // ゴブリンで敵を攻撃
                 // 攻撃した方はダメージを受けない
                 await g.AttackToCreature(pId, goblin3.Id, goblin1.Id);
-                Assert.Equal(0, goblin1.Toughness);
+                Assert.Equal(goblinDef.Toughness - goblinDef.Power, goblin1.Toughness);
                 Assert.Equal(goblin3.BaseToughness, goblin3.Toughness);
 
                 return goblin3;
             });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 // 次のターンなので、お互いにダメージを受ける
                 await g.AttackToCreature(pId, goblin2.Id, goblin3.Id);
-                Assert.Equal(0, goblin2.Toughness);
-                Assert.Equal(0, goblin3.Toughness);
+                Assert.Equal(goblinDef.Toughness - goblinDef.Power, goblin2.Toughness);
+                Assert.Equal(goblinDef.Toughness - goblinDef.Power, goblin3.Toughness);
             });
         }
 
@@ -856,18 +977,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.ChangeHands;
             testCardDef.Cost = 0;
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { testCardDef }) });
-
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var beforeNumOfHands = g.ActivePlayer.Hands.AllCards.Count;
                 var beforeHandIdList = g.ActivePlayer.Hands.AllCards.Select(c => c.Id).ToArray();
@@ -891,10 +1004,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Ramp;
             testCardDef.Cost = 1;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { testCardDef });
+            var c = await TestUtil.InitTest(new[] { testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 Assert.Equal(1, g.ActivePlayer.MaxMp);
                 Assert.Equal(1, g.ActivePlayer.CurrentMp);
@@ -916,9 +1029,6 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Slap;
             testCardDef.Cost = 0;
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCardDef }) });
-
             Card[] candidateCardList = default;
             CardId choiceCardId = default;
             ValueTask<ChoiceAnswer> assertAskAction(PlayerId _, ChoiceCandidates c, int i)
@@ -936,18 +1046,13 @@ namespace Cauldron.Core_Test
                     Array.Empty<CardDefId>()));
             }
 
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: assertAskAction)
-                ));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: assertAskAction)
+                    ));
 
             // 先攻
-            var (goblin1, goblin11) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblin1, goblin11) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblin11 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -957,7 +1062,7 @@ namespace Cauldron.Core_Test
 
             candidateCardList = new[] { goblin1, goblin11 };
 
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblin3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -991,10 +1096,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.GoblinCaptureJar;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, notGoblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, notGoblinDef, testCardDef });
 
             // 先攻
-            var (goblin1, notGoblin1) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblin1, notGoblin1) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var notGoblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, notGoblinDef.Id);
@@ -1002,7 +1107,7 @@ namespace Cauldron.Core_Test
                 return (goblin1, notGoblin1);
             });
 
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var notGoblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, notGoblinDef.Id);
@@ -1031,10 +1136,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.FullAttack;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            var (goblin1, goblin2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblin1, goblin2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -1042,13 +1147,13 @@ namespace Cauldron.Core_Test
                 return (goblin1, goblin2);
             });
 
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 Assert.Equal(goblin1.BaseToughness - 1, goblin1.Toughness);
                 Assert.Equal(goblin2.BaseToughness - 1, goblin1.Toughness);
-                Assert.Equal(TestUtil.TestRuleBook.InitialPlayerHp - 1, player1.CurrentHp);
+                Assert.Equal(TestUtil.TestRuleBook.InitialPlayerHp - 1, c.Player1.CurrentHp);
             });
         }
 
@@ -1060,18 +1165,18 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Search;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+            var c = await TestUtil.InitTest(
                 new[] { goblinDef, testCardDef },
                 Enumerable.Repeat(goblinDef, TestUtil.TestRuleBook.MinNumDeckCards));
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                var beforeHands = player1.Hands.AllCards.ToArray();
+                var beforeHands = c.Player1.Hands.AllCards.ToArray();
 
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
-                var afterHands = player1.Hands.AllCards.ToArray();
+                var afterHands = c.Player1.Hands.AllCards.ToArray();
                 var diffHands = afterHands.Where(a => !beforeHands.Any(b => b.Id == a.Id)).ToArray();
 
                 Assert.Single(diffHands);
@@ -1088,10 +1193,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            var (goblinCard, goblinCard11, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, goblinCard11, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblinCard11 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -1102,10 +1207,10 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                await testGameMaster.AttackToCreature(pId, goblinCard2.Id, goblinCard.Id);
+                await c.GameMaster.AttackToCreature(pId, goblinCard2.Id, goblinCard.Id);
 
                 // クリーチャーは1ダメージしか受けない
                 Assert.Equal(goblinCard.BaseToughness - 1, goblinCard.Toughness);
@@ -1122,10 +1227,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            var (goblinCard, goblinCard11, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, goblinCard11, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblinCard11 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -1136,13 +1241,13 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                await testGameMaster.AttackToPlayer(pId, goblinCard2.Id, player1.Id);
+                await c.GameMaster.AttackToPlayer(pId, goblinCard2.Id, c.Player1.Id);
 
                 // プレイヤーは2ダメージ受ける
-                Assert.Equal(TestUtil.TestRuleBook.InitialPlayerHp - 2, player1.CurrentHp);
+                Assert.Equal(TestUtil.TestRuleBook.InitialPlayerHp - 2, c.Player1.CurrentHp);
                 // 破壊されない
                 Assert.Equal(ZoneName.Field, testCard.Zone.ZoneName);
             });
@@ -1151,15 +1256,18 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldShield_攻撃時()
         {
-            var goblinDef = SampleCards.Creature(0, "a", "", 2, 2, 0);
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+            goblinDef.Power = 2;
+            goblinDef.Toughness = 5;
 
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            var goblinCard = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var goblinCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
 
@@ -1167,15 +1275,15 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-                await testGameMaster.AttackToCreature(pId, goblinCard2.Id, goblinCard.Id);
+                await c.GameMaster.AttackToCreature(pId, goblinCard2.Id, goblinCard.Id);
 
                 // 自軍クリーチャーも対象になる
-                Assert.Equal(goblinCard.BaseToughness - 2, goblinCard.Toughness);
-                Assert.Equal(goblinCard2.BaseToughness - 1, goblinCard2.Toughness);
+                Assert.Equal(goblinCard.BaseToughness - goblinDef.Power, goblinCard.Toughness);
+                Assert.Equal(goblinCard2.BaseToughness - (goblinDef.Power - 1), goblinCard2.Toughness);
                 // 破壊される
                 Assert.Equal(ZoneName.Cemetery, testCard.Zone.ZoneName);
             });
@@ -1189,24 +1297,24 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            var testcard = await TestUtil.Turn(testGameMaster, (g, pId) =>
+            var testcard = await TestUtil.Turn(c.GameMaster, (g, pId) =>
             {
                 return TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
 
-                var beforeHp = player1.CurrentHp;
-                await testGameMaster.AttackToPlayer(pId, goblinCard.Id, player1.Id);
+                var beforeHp = c.Player1.CurrentHp;
+                await c.GameMaster.AttackToPlayer(pId, goblinCard.Id, c.Player1.Id);
 
                 // 1ダメージしか受けない
-                Assert.Equal(beforeHp - 1, player1.CurrentHp);
+                Assert.Equal(beforeHp - 1, c.Player1.CurrentHp);
                 Assert.Equal(ZoneName.Cemetery, testcard.Zone.ZoneName);
             });
         }
@@ -1219,10 +1327,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            var (goblin, testcard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblin, testcard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -1231,12 +1339,12 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
 
-                var beforeHp = player1.CurrentHp;
-                await testGameMaster.AttackToCreature(pId, goblin2.Id, goblin.Id);
+                var beforeHp = c.Player1.CurrentHp;
+                await c.GameMaster.AttackToCreature(pId, goblin2.Id, goblin.Id);
 
                 // 1ダメージしか受けない
                 Assert.Equal(goblin.BaseToughness - 1, goblin.Toughness);
@@ -1247,15 +1355,18 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldWall_攻撃時()
         {
-            var goblinDef = SampleCards.Creature(0, "a", "", 2, 2, 0);
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+            goblinDef.Power = 2;
+            goblinDef.Toughness = 5;
 
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            var goblinCard = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var goblinCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
 
@@ -1263,15 +1374,15 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-                await testGameMaster.AttackToCreature(pId, goblinCard2.Id, goblinCard.Id);
+                await c.GameMaster.AttackToCreature(pId, goblinCard2.Id, goblinCard.Id);
 
-                // 自軍クリーチャーも対象になる
-                Assert.Equal(goblinCard.BaseToughness - 2, goblinCard.Toughness);
-                Assert.Equal(goblinCard2.BaseToughness - 1, goblinCard2.Toughness);
+                // 攻撃時も対象になる
+                Assert.Equal(goblinCard.BaseToughness - goblinDef.Power, goblinCard.Toughness);
+                Assert.Equal(goblinCard2.BaseToughness - (goblinDef.Power - 1), goblinCard2.Toughness);
                 // 破壊される
                 Assert.Equal(ZoneName.Cemetery, testCard.Zone.ZoneName);
             });
@@ -1286,26 +1397,26 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.EmergencyFood;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(
+            var c = await TestUtil.InitTest(
                 new[] { goblin, testCardDef },
                 Enumerable.Repeat(goblin, 40)
                 );
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 // 事前にダメージ
-                player1.Damage(5);
+                c.Player1.Damage(5);
 
-                var beforeHp = player1.CurrentHp;
-                var beforeHandIdList = player1.Hands.AllCards.Select(c => c.Id).ToArray();
+                var beforeHp = c.Player1.CurrentHp;
+                var beforeHandIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 手札が1枚減っている
-                Assert.Equal(beforeHandIdList.Length - 1, player1.Hands.AllCards.Count);
+                Assert.Equal(beforeHandIdList.Length - 1, c.Player1.Hands.AllCards.Count);
 
                 // 捨てたカードのコスト分ライフが回復している
-                Assert.Equal(beforeHp + goblin.Cost, player1.CurrentHp);
+                Assert.Equal(beforeHp + goblin.Cost, c.Player1.CurrentHp);
             });
         }
 
@@ -1317,10 +1428,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.GoblinStatue;
             testCardDef.Cost = 0;
 
-            var (testGameMaster, player1, player2) = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            var (goblin1, goblin2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblin1, goblin2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -1329,7 +1440,7 @@ namespace Cauldron.Core_Test
             });
 
             // 後攻
-            var goblin3 = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var goblin3 = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblin3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
 
@@ -1346,38 +1457,30 @@ namespace Cauldron.Core_Test
             });
 
             // 相手プレイヤーとクリーチャーに6ダメージ
-            Assert.Equal(testGameMaster.RuleBook.InitialPlayerHp - 6, player1.CurrentHp);
+            Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp - 6, c.Player1.CurrentHp);
             Assert.Equal(goblin1.BaseToughness - 6, goblin1.Toughness);
             Assert.Equal(goblin2.BaseToughness - 6, goblin2.Toughness);
 
             // 自分プレイヤーと自分クリーチャーはダメージを受けない
-            Assert.Equal(testGameMaster.RuleBook.InitialPlayerHp, player2.CurrentHp);
+            Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp, c.Player2.CurrentHp);
             Assert.Equal(goblin3.BaseToughness, goblin3.Toughness);
         }
 
         [Fact]
         public async Task HolyStatue()
         {
-            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
 
             var testCardDef = SampleCards.HolyStatue;
             testCardDef.Cost = 0;
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
 
             // 先攻
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
-                var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
+                var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
 
                 var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
@@ -1385,7 +1488,7 @@ namespace Cauldron.Core_Test
                 Assert.True(goblinCard.PowerBuff == 0 && goblinCard.ToughnessBuff == 1);
                 Assert.True(goblinCard2.PowerBuff == 0 && goblinCard2.ToughnessBuff == 1);
 
-                var goblinCard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
+                var goblinCard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
 
                 // あとに場に出たゴブリンだけが修正される
                 Assert.True(goblinCard.PowerBuff == 0 && goblinCard.ToughnessBuff == 1);

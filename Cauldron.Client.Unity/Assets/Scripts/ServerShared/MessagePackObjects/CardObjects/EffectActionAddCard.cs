@@ -19,7 +19,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public Choice Choice { get; }
 
-        public EffectActionAddCard(ZoneValue ZoneToAddCard, Choice choice, int NumOfAddCards = 1)
+        public EffectActionAddCard(Choice choice, ZoneValue ZoneToAddCard, int NumOfAddCards = 1)
         {
             this.ZoneToAddCard = ZoneToAddCard;
             this.NumOfAddCards = NumOfAddCards;

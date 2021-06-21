@@ -12,6 +12,16 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             Count,
             [DisplayText("カードのコスト")]
             CardCost,
+            [DisplayText("カードの元々のコスト")]
+            CardBaseCost,
+            [DisplayText("カードのパワー")]
+            CardPower,
+            [DisplayText("カードの元々のパワー")]
+            CardBasePower,
+            [DisplayText("カードのタフネス")]
+            CardToughness,
+            [DisplayText("カードの元々のタフネス")]
+            CardBaseToughness,
         }
 
         public NumValueCalculator.ValueType Type { get; set; }
@@ -20,7 +30,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
 
         public NumValueCalculator(
             NumValueCalculator.ValueType Type,
-           Choice CardsChoice)
+            Choice CardsChoice)
         {
             this.Type = Type;
             this.CardsChoice = CardsChoice;
