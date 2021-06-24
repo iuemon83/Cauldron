@@ -4,21 +4,25 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class ChoiceDialog_ListNodeController : MonoBehaviour, IPointerEnterHandler
 {
     [SerializeField]
     private TextMeshProUGUI cardNameText;
     [SerializeField]
-    private TextMeshProUGUI cardStatsText;
-    [SerializeField]
     private TextMeshProUGUI currentCountText;
     [SerializeField]
     private TextMeshProUGUI limitCountText;
+    [SerializeField]
+    private Image controllerIconImage;
+    [SerializeField]
+    private Image zoneIconImage;
 
-    private Action AddToDeckAction { get; set; }
-    private Action RemoveFromDeckAction { get; set; }
-    private Action<CardDef> ShowDetailAction { get; set; }
+    private Action addToDeckAction;
+    private Action removeFromDeckAction;
+    private Action<Card> showCardDetailAction;
+    private Action<CardDef> showCardDefDetailAction;
 
     public int CurrentCount => int.TryParse(this.currentCountText.text, out var intValue) ? intValue : 0;
 
@@ -28,21 +32,60 @@ public class ChoiceDialog_ListNodeController : MonoBehaviour, IPointerEnterHandl
 
     public bool IsEmpty => this.CurrentCount == 0;
 
-    public CardDef Source { get; set; }
+    public CardDef SourceCardDef { get; private set; }
+
+    public Card SourceCard { get; private set; }
 
     public void Init(CardDef source, int limit, Action AddToDeckAction, Action RemoveFromDeckAction, Action<CardDef> ShowDetailAction)
     {
-        this.Source = source;
-        this.AddToDeckAction = AddToDeckAction;
-        this.RemoveFromDeckAction = RemoveFromDeckAction;
-        this.ShowDetailAction = ShowDetailAction;
+        this.SourceCardDef = source;
+        this.addToDeckAction = AddToDeckAction;
+        this.removeFromDeckAction = RemoveFromDeckAction;
+        this.showCardDefDetailAction = ShowDetailAction;
 
-        this.cardNameText.text = $"{this.Source.Name}";
-        this.cardStatsText.text = this.Source.Type == CardType.Creature
-            ? $"{this.Source.Cost}/{this.Source.Power}/{this.Source.Toughness}"
-            : $"{this.Source.Cost}/-/-";
+        this.cardNameText.text = $"{this.SourceCardDef.Name}";
         this.currentCountText.text = "0";
         this.limitCountText.text = $"{limit}";
+
+        var (controllerSuccess, controllerIcon) = ControllerIconCache.TryGet(ControllerIconCache.IconType.You);
+        if (controllerSuccess)
+        {
+            this.controllerIconImage.sprite = controllerIcon;
+        }
+
+        var (zoneSuccess, zoneIcon) = ZoneIconCache.TryGet(ZoneName.CardPool);
+        if (zoneSuccess)
+        {
+            this.controllerIconImage.sprite = zoneIcon;
+        }
+    }
+
+    public void Init(Card source, int limit, Action AddToDeckAction, Action RemoveFromDeckAction, Action<Card> ShowDetailAction)
+    {
+        this.SourceCard = source;
+        this.addToDeckAction = AddToDeckAction;
+        this.removeFromDeckAction = RemoveFromDeckAction;
+        this.showCardDetailAction = ShowDetailAction;
+
+        this.cardNameText.text = $"{this.SourceCard.Name}";
+        this.currentCountText.text = "0";
+        this.limitCountText.text = $"{limit}";
+
+        var controllerIconType = BattleSceneController.Instance.YouId == source.OwnerId
+            ? ControllerIconCache.IconType.You
+            : ControllerIconCache.IconType.Opponent;
+
+        var (controllerSuccess, controllerIcon) = ControllerIconCache.TryGet(controllerIconType);
+        if (controllerSuccess)
+        {
+            this.controllerIconImage.sprite = controllerIcon;
+        }
+
+        var (zoneSuccess, zoneIcon) = ZoneIconCache.TryGet(source.Zone.ZoneName);
+        if (zoneSuccess)
+        {
+            this.zoneIconImage.sprite = zoneIcon;
+        }
     }
 
     /// <summary>
@@ -50,7 +93,7 @@ public class ChoiceDialog_ListNodeController : MonoBehaviour, IPointerEnterHandl
     /// </summary>
     public void OnAddButtonClick()
     {
-        this.AddToDeckAction();
+        this.addToDeckAction();
     }
 
     /// <summary>
@@ -58,7 +101,7 @@ public class ChoiceDialog_ListNodeController : MonoBehaviour, IPointerEnterHandl
     /// </summary>
     public void OnRemoveButtonClick()
     {
-        this.RemoveFromDeckAction();
+        this.removeFromDeckAction();
     }
 
     public void AddOne()
@@ -81,6 +124,13 @@ public class ChoiceDialog_ListNodeController : MonoBehaviour, IPointerEnterHandl
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
-        this.ShowDetailAction(this.Source);
+        if (this.SourceCardDef != default)
+        {
+            this.showCardDefDetailAction(this.SourceCardDef);
+        }
+        else if (this.SourceCard != default)
+        {
+            this.showCardDetailAction(this.SourceCard);
+        }
     }
 }

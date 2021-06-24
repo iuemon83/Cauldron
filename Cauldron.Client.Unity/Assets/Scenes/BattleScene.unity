@@ -4514,7 +4514,7 @@ MonoBehaviour:
   fieldCardPrefab: {fileID: 2731262012295190428, guid: f6d57eceff31c8b49bab86ddae3211bb, type: 3}
   canvas: {fileID: 1511447165}
   confirmDialogController: {fileID: 206061174593263470, guid: 311bc35d10666ad47bfcbe81f0e33cd7, type: 3}
-  choiceDialogController: {fileID: 4736122812907344280, guid: 2fcc0bff1b85df044af8fea53dac08dc, type: 3}
+  choiceDialogController: {fileID: 1252227299665276918, guid: a9d3743390399a8439c3a6d86f1480b3, type: 3}
   youHandSpaces:
   - {fileID: 929650753}
   - {fileID: 603392972}
@@ -4541,6 +4541,7 @@ MonoBehaviour:
   - {fileID: 564594490}
   opponentPlayerController: {fileID: 884760668}
   cardDetailController: {fileID: 1297309789}
+  choiceCardButton: {fileID: 969926887}
 --- !u!4 &1305728135
 Transform:
   m_ObjectHideFlags: 0

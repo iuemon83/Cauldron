@@ -13,7 +13,7 @@ public class ChoiceDialogController : MonoBehaviour
     [SerializeField]
     private ChoiceDialog_ListNodeController listNodePrefab;
     [SerializeField]
-    private CardDefDetailController cardDefDetailController;
+    private CardDetailController cardDetailController;
     [SerializeField]
     private Button okButton;
     [SerializeField]
@@ -32,12 +32,17 @@ public class ChoiceDialogController : MonoBehaviour
     {
         this.cardPoolListContent = this.CandidatesView.transform.Find("Viewport").transform.Find("Content");
 
+        foreach (var card in askMessage.ChoiceCandidates.CardList)
+        {
+            this.AddListNode(card);
+        }
+
         foreach (var group in askMessage.ChoiceCandidates.CardDefList.ToLookup(c => c.FullName))
         {
             var cardDef = group.First();
             var limit = group.Count();
 
-            this.AddToCardPool(cardDef, limit);
+            this.AddListNode(cardDef, limit);
         }
     }
 
@@ -49,10 +54,17 @@ public class ChoiceDialogController : MonoBehaviour
 
     public void OnOkButtonClick()
     {
-        var selectedList = this.nodeList
-            .SelectMany(x => Enumerable.Repeat(x.Source.Id, x.CurrentCount))
+        var selectedCardIdList = this.nodeList
+            .Where(x => x.SourceCard != null)
+            .SelectMany(x => Enumerable.Repeat(x.SourceCard.Id, x.CurrentCount))
             .ToArray();
-        var answer = new ChoiceAnswer(default, default, selectedList);
+
+        var selectedDefIdList = this.nodeList
+            .Where(x => x.SourceCardDef != null)
+            .SelectMany(x => Enumerable.Repeat(x.SourceCardDef.Id, x.CurrentCount))
+            .ToArray();
+
+        var answer = new ChoiceAnswer(default, selectedCardIdList, selectedDefIdList);
 
         this.okAction?.Invoke(answer);
     }
@@ -79,14 +91,27 @@ public class ChoiceDialogController : MonoBehaviour
         this.UpdateDeckTotalCountText();
     }
 
-    private void AddToCardPool(CardDef cardDef, int limit)
+    private void AddListNode(Card card)
+    {
+        var node = Instantiate(this.listNodePrefab, this.cardPoolListContent.transform);
+        var controller = node.GetComponent<ChoiceDialog_ListNodeController>();
+        controller.Init(card, 1,
+            () => this.Choice(controller),
+            () => this.UnChoice(controller),
+            this.cardDetailController.SetCard
+            );
+
+        this.nodeList.Add(controller);
+    }
+
+    private void AddListNode(CardDef cardDef, int limit)
     {
         var node = Instantiate(this.listNodePrefab, this.cardPoolListContent.transform);
         var controller = node.GetComponent<ChoiceDialog_ListNodeController>();
         controller.Init(cardDef, limit,
             () => this.Choice(controller),
             () => this.UnChoice(controller),
-            this.cardDefDetailController.SetCard
+            this.cardDetailController.SetCardDef
             );
 
         this.nodeList.Add(controller);

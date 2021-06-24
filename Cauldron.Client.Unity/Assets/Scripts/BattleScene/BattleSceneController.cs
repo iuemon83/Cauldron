@@ -8,10 +8,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BattleSceneController : MonoBehaviour
 {
     public static BattleSceneController Instance;
+
+    public PlayerId YouId => this.youPlayerController.PlayerId;
 
     [SerializeField]
     private HandCardController handCardPrefab;
@@ -42,6 +45,9 @@ public class BattleSceneController : MonoBehaviour
     [SerializeField]
     private CardDetailController cardDetailController;
 
+    [SerializeField]
+    private Button choiceCardButton;
+
     public FieldCardController AttackCardController { get; set; }
 
     private readonly List<PlayerId> pickedPlayerIdList = new List<PlayerId>();
@@ -61,9 +67,11 @@ public class BattleSceneController : MonoBehaviour
 
     private readonly List<IDisposable> disposableList = new List<IDisposable>();
 
-    async void Start()
+    private async void Start()
     {
         Instance = this;
+
+        this.choiceCardButton.interactable = false;
 
         var holder = ConnectionHolder.Find();
 
@@ -93,7 +101,7 @@ public class BattleSceneController : MonoBehaviour
         }
     }
 
-    async void Update()
+    private async void Update()
     {
         if (!this.updating)
         {
@@ -222,12 +230,13 @@ public class BattleSceneController : MonoBehaviour
     /// </summary>
     public async void OnPickedButtonClick()
     {
-        Debug.Log("click picked button!");
+        this.choiceCardButton.interactable = false;
 
         var (isValid, picked) = this.ValidChoiceAnwser();
         if (!isValid)
         {
             Debug.Log("選択している対象が正しくない");
+            this.choiceCardButton.interactable = true;
             return;
         }
 
@@ -564,7 +573,14 @@ public class BattleSceneController : MonoBehaviour
 
         this.askParams = askMessage;
 
-        if (askMessage.ChoiceCandidates.CardDefList.Length != 0)
+        // ダイアログで選択させるか、フィールドから選択させるかの判定
+        var choiceFromDialog = askMessage.ChoiceCandidates.CardDefList.Length != 0
+            || askMessage.ChoiceCandidates.CardList
+                .Any(x => x.Zone.ZoneName == ZoneName.Cemetery
+                    || x.Zone.ZoneName == ZoneName.Deck
+                    || x.Zone.ZoneName == ZoneName.CardPool);
+
+        if (choiceFromDialog)
         {
             this.ShowChoiceDialog();
             return;
@@ -582,6 +598,8 @@ public class BattleSceneController : MonoBehaviour
                 fieldCardController.VisiblePickCandidateIcon(true);
             }
         }
+
+        this.choiceCardButton.interactable = true;
     }
 
     public void ShowCardDetail(Card card)
