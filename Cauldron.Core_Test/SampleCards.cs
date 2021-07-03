@@ -58,7 +58,7 @@ namespace Cauldron.Core_Test
         }
 
         public static readonly EffectCondition Spell
-            = new(ZonePrettyName.YouField, new(new(Play: new(EffectTimingPlayEvent.EventSource.This))));
+            = new(ZonePrettyName.YouField, new(new(Play: new(EffectTimingPlayEvent.SourceValue.This))));
 
 
         public static CardDef KarakuriGoblin
@@ -103,7 +103,7 @@ namespace Cauldron.Core_Test
                                                 CardSetCondition = new(CardSetCondition.ConditionType.This),
                                                 NameCondition = new(
                                                     new TextValue(KarakuriGoblin.Name),
-                                                    TextCondition.ConditionCompare.Equality
+                                                    TextCondition.CompareValue.Equality
                                                 )
                                             },
                                         })),
@@ -114,13 +114,156 @@ namespace Cauldron.Core_Test
                 )
             });
 
+        public static CardDef MagicBook
+            => SampleCards.Creature(1, "魔法の本",
+                "このカードが場に出たとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
+                1, 1,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                Play: new(EffectTimingPlayEvent.SourceValue.This)))),
+                        new[]{
+                            new EffectAction(
+                                AddCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(new[]{
+                                                        ZonePrettyName.CardPool
+                                                    })),
+                                                    TypeCondition = new(new[]{ CardType.Sorcery })
+                                                }
+                                            }),
+                                        how: Choice.ChoiceHow.Random,
+                                        1),
+                                    new ZoneValue(new[]{ ZonePrettyName.YouHand })))
+                        })
+                });
+
+        public static CardDef GoblinFollower
+            => SampleCards.Creature(1, "ゴブリンフォロワー",
+                "あなたが「ゴブリン」と名のつくクリーチャーカードをプレイしたとき、このカードをデッキから場に出す。",
+                1, 1,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouDeck,
+                            new EffectWhen(new EffectTiming(
+                                Play: new(
+                                    EffectTimingPlayEvent.SourceValue.Other,
+                                    new CardCondition() {
+                                        NameCondition = new(
+                                            new TextValue("ゴブリン"),
+                                            TextCondition.CompareValue.Contains),
+                                        ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.YouField })),
+                                        TypeCondition = new(new[]{ CardType.Creature })
+                                    })))),
+                        new[]{
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ContextCondition = CardCondition.ContextConditionValue.This
+                                                }
+                                            })),
+                                    ZonePrettyName.YouField))
+                        })
+                });
+
+        public static CardDef GoblinsPet
+            => SampleCards.Creature(2, "ゴブリンのペット",
+                "このカードが場に出たとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
+                2, 6, abilities: new[] { CreatureAbility.Cover },
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]{
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]{
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(new[]
+                                                    {
+                                                        ZonePrettyName.OpponentHand
+                                                    })),
+                                                    TypeCondition = new(new[]{ CardType.Creature }),
+                                                }
+                                            }),
+                                        how: Choice.ChoiceHow.Random,
+                                        1),
+                                    ZonePrettyName.OpponentField))
+                        })
+                });
+
+        public static CardDef MindController
+            => SampleCards.Creature(3, "催眠術師",
+                "このカードが場に出たとき、敵のフィールドにクリーチャーが4体以上いるなら、ランダムに1体を選択し、それをあなたの場に移動する。",
+                3, 3,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                Play: new(EffectTimingPlayEvent.SourceValue.This))),
+                            If: new(
+                                new NumCondition(4, NumCondition.ConditionCompare.GreaterThan),
+                                new NumValue(NumValueCalculator: new(
+                                    NumValueCalculator.ValueType.Count,
+                                    new Choice(
+                                        new ChoiceSource(orCardConditions: new[]{
+                                            new CardCondition()
+                                            {
+                                                ZoneCondition = new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.OpponentField
+                                                })),
+                                                TypeCondition = new(new[]
+                                                {
+                                                    CardType.Creature
+                                                })
+                                            }
+                                        })))))),
+                        new[]{
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]{
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(new[]
+                                                    {
+                                                        ZonePrettyName.OpponentField
+                                                    })),
+                                                    TypeCondition = new(new[]{ CardType.Creature }),
+                                                }
+                                            }),
+                                        how: Choice.ChoiceHow.Random,
+                                        1),
+                                    ZonePrettyName.YouField))
+                        })
+                });
+
         public static CardDef NinjaGoblin
             => SampleCards.Creature(3, "分身ゴブリン", "このカードが場に出たとき、「分身ゴブリン」一体を場に出す。", 1, 2,
                 effects: new[] {
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                Play: new(EffectTimingPlayEvent.EventSource.This)))),
+                                Play: new(EffectTimingPlayEvent.SourceValue.This)))),
                         new[]
                         {
                             new EffectAction(
@@ -131,7 +274,7 @@ namespace Cauldron.Core_Test
                                             {
                                                 new CardCondition()
                                                 {
-                                                    Context = CardCondition.CardConditionContext.This
+                                                    ContextCondition = CardCondition.ContextConditionValue.This
                                                 }
                                             })),
                                     new ZoneValue(new[]{ZonePrettyName.YouField })
@@ -145,7 +288,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                Play: new(EffectTimingPlayEvent.EventSource.This)))),
+                                Play: new(EffectTimingPlayEvent.SourceValue.This)))),
                         new[]
                         {
                             new EffectAction(
@@ -156,7 +299,7 @@ namespace Cauldron.Core_Test
                                             {
                                                 new CardCondition()
                                                 {
-                                                    Context = CardCondition.CardConditionContext.This,
+                                                    ContextCondition = CardCondition.ContextConditionValue.This,
                                                 }
                                             })),
                                     new ZoneValue(new[]{ZonePrettyName.YouField }),
@@ -202,7 +345,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                Play: new(EffectTimingPlayEvent.EventSource.This)))),
+                                Play: new(EffectTimingPlayEvent.SourceValue.This)))),
                         new[]
                         {
                             new EffectAction()
@@ -233,7 +376,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                Play: new(EffectTimingPlayEvent.EventSource.This)))),
+                                Play: new(EffectTimingPlayEvent.SourceValue.This)))),
                         new[]
                         {
                             new EffectAction(
@@ -261,7 +404,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                Play: new(EffectTimingPlayEvent.EventSource.This)))),
+                                Play: new(EffectTimingPlayEvent.SourceValue.This)))),
                         new[]
                         {
                             new EffectAction()
@@ -281,7 +424,7 @@ namespace Cauldron.Core_Test
                                             {
                                                 new CardCondition()
                                                 {
-                                                    Context = CardCondition.CardConditionContext.Others,
+                                                    ContextCondition = CardCondition.ContextConditionValue.Others,
                                                     TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                                     ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
                                                 }
@@ -340,7 +483,7 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition()
                                             {
-                                                Context = CardCondition.CardConditionContext.Others,
+                                                ContextCondition = CardCondition.ContextConditionValue.Others,
                                                 ZoneCondition = new(new(new[]{
                                                     ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
                                                 TypeCondition = new(new[]{ CardType.Creature })
@@ -363,7 +506,7 @@ namespace Cauldron.Core_Test
                                                         {
                                                             new CardCondition()
                                                             {
-                                                                Context = CardCondition.CardConditionContext.This,
+                                                                ContextCondition = CardCondition.ContextConditionValue.This,
                                                             }
                                                         })),
                                                 new ZoneValue(new[]{ ZonePrettyName.YouField })
@@ -389,83 +532,118 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef BraveGoblin
-            => SampleCards.Creature(4, "ゴブリンの勇者", "自分が受けるダメージを2軽減する。自分の場の他のクリーチャーカードが戦闘で与えるダメージを1増加する。", 2, 2,
-            effects: new[]
-            {
-                // 自分が受けるダメージを2軽減する
-                new CardEffect(
-                    new(
-                        ZonePrettyName.YouField,
-                        new(new(
-                            DamageBefore: new(
-                                Source: EffectTimingDamageBeforeEvent.EventSource.Take,
-                                CardCondition: new CardCondition()
-                                {
-                                    Context = CardCondition.CardConditionContext.This
-                                }))
-                        )
-                    ),
-                    new[]
-                    {
-                        new EffectAction()
-                        {
-                            ModifyDamage = new EffectActionModifyDamage(
-                                new NumValueModifier(
-                                    NumValueModifier.ValueModifierOperator.Sub,
-                                    new NumValue(2)
-                                ),
-                                new Choice(
-                                    new ChoiceSource(
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition()
-                                            {
-                                                Context = CardCondition.CardConditionContext.EventSource,
-                                            }
-                                        }))
+            => SampleCards.Creature(4, "ゴブリンの勇者", "自分が受けるダメージを2軽減する。自分の場の他のクリーチャーカードが戦闘で与えるダメージを1増加する。",
+                2, 2,
+                effects: new[]
+                {
+                    // 自分が受けるダメージを2軽減する
+                    new CardEffect(
+                        new(
+                            ZonePrettyName.YouField,
+                            new(new(
+                                DamageBefore: new(
+                                    Source: EffectTimingDamageBeforeEvent.EventSource.Take,
+                                    CardCondition: new CardCondition()
+                                    {
+                                        ContextCondition = CardCondition.ContextConditionValue.This
+                                    }))
                             )
-                        }
-                    }
-                ),
-                // 自分の他のクリーチャーが戦闘で与えるダメージを1増加する
-                new CardEffect(
-                    new EffectCondition(
-                        ZonePrettyName.YouField,
-                        new EffectWhen(new EffectTiming(
-                            DamageBefore: new(
-                                Type: EffectTimingDamageBeforeEvent.DamageType.Battle,
-                                Source: EffectTimingDamageBeforeEvent.EventSource.DamageSource,
-                                CardCondition: new CardCondition()
-                                {
-                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                    TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                    Context = CardCondition.CardConditionContext.Others,
-                                }))
-                        )
-                    ),
-                    new[]
-                    {
-                        new EffectAction()
+                        ),
+                        new[]
                         {
-                            ModifyDamage = new EffectActionModifyDamage(
-                                new NumValueModifier(
-                                    NumValueModifier.ValueModifierOperator.Add,
-                                    new NumValue(1)
-                                ),
-                                new Choice(
-                                    new ChoiceSource(
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition()
+                            new EffectAction()
+                            {
+                                ModifyDamage = new EffectActionModifyDamage(
+                                    new NumValueModifier(
+                                        NumValueModifier.ValueModifierOperator.Sub,
+                                        new NumValue(2)
+                                    ),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
                                             {
-                                                Context = CardCondition.CardConditionContext.EventSource,
-                                            }
-                                        }))
-                            )
+                                                new CardCondition()
+                                                {
+                                                    ContextCondition = CardCondition.ContextConditionValue.EventSource,
+                                                }
+                                            }))
+                                )
+                            }
                         }
-                    }
-                )
-            });
+                    ),
+                    // 自分の他のクリーチャーが戦闘で与えるダメージを1増加する
+                    new CardEffect(
+                        new EffectCondition(
+                            ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                DamageBefore: new(
+                                    Type: EffectTimingDamageBeforeEvent.DamageType.Battle,
+                                    Source: EffectTimingDamageBeforeEvent.EventSource.DamageSource,
+                                    CardCondition: new CardCondition()
+                                    {
+                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
+                                        TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
+                                        ContextCondition = CardCondition.ContextConditionValue.Others,
+                                    }))
+                            )
+                        ),
+                        new[]
+                        {
+                            new EffectAction()
+                            {
+                                ModifyDamage = new EffectActionModifyDamage(
+                                    new NumValueModifier(
+                                        NumValueModifier.ValueModifierOperator.Add,
+                                        new NumValue(1)
+                                    ),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ContextCondition = CardCondition.ContextConditionValue.EventSource,
+                                                }
+                                            }))
+                                )
+                            }
+                        }
+                    )
+                });
+
+        public static CardDef MagicDragon
+            => SampleCards.Creature(5, "マジックドラゴン",
+                "このカードが場に出たとき、あなたはカードを1枚ドローする。このカードが場にある限り、あなたがプレイした魔法カードによるダメージを+1する。",
+                4, 4,
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]{
+                            new EffectAction(
+                                DrawCard: new(
+                                    new NumValue(1),
+                                    new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)))
+                        }),
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                DamageBefore: new(
+                                    Type: EffectTimingDamageBeforeEvent.DamageType.NonBattle,
+                                    CardCondition: new()
+                                    {
+                                        TypeCondition = new(new[]{ CardType.Sorcery }),
+                                        OwnerCondition = CardCondition.OwnerConditionValue.You,
+                                    })))),
+                        new[]{
+                            new EffectAction(
+                                ModifyDamage: new(
+                                    new NumValueModifier(
+                                        NumValueModifier.ValueModifierOperator.Add,
+                                        new NumValue(1)),
+                                    default))
+                        }),
+                });
 
         public static CardDef GiantGoblin
             => SampleCards.Creature(5, "ゴブリンの巨人", "このカードが場に出たとき、自分の場にある他のクリチャーカードに3ダメージを与える。", 3, 7,
@@ -488,7 +666,7 @@ namespace Cauldron.Core_Test
                                                 {
                                                     ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                                     TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                                    Context = CardCondition.CardConditionContext.Others,
+                                                    ContextCondition = CardCondition.ContextConditionValue.Others,
                                                 }
                                             }))
                                 )
@@ -507,7 +685,7 @@ namespace Cauldron.Core_Test
                         new(
                             ZonePrettyName.YouField,
                             new(new(
-                                Play: new (EffectTimingPlayEvent.EventSource.This),
+                                Play: new (EffectTimingPlayEvent.SourceValue.This),
                                 StartTurn: new (EffectTimingStartTurnEvent.EventSource.You)
                                 ))),
                         new[]
@@ -523,7 +701,7 @@ namespace Cauldron.Core_Test
                                                 {
                                                     ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                                     TypeCondition = new (new[]{ CardType.Creature }),
-                                                    Context = CardCondition.CardConditionContext.Others,
+                                                    ContextCondition = CardCondition.ContextConditionValue.Others,
                                                 }
                                             })),
                                     Power: new NumValueModifier(
@@ -575,7 +753,7 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition()
                                             {
-                                                Context = CardCondition.CardConditionContext.This
+                                                ContextCondition = CardCondition.ContextConditionValue.This
                                             }
                                         })),
                                 Power: new NumValueModifier(
@@ -585,6 +763,103 @@ namespace Cauldron.Core_Test
                                     NumValueModifier.ValueModifierOperator.Add,
                                     new NumValue(NumValueVariableCalculator: new("x")))
                                 ))
+                        })
+                });
+
+        public static CardDef DoctorBomb
+            => SampleCards.Creature(1, "ドクターボム",
+                "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーに4ダメージを与える。",
+                1, 1, isToken: true,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouCemetery,
+                            new EffectWhen(new EffectTiming(
+                                Destroy: new(EffectTimingDestroyEvent.EventSource.This)))),
+                        new[]{
+                            new EffectAction(
+                                Damage: new(
+                                    new NumValue(4),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orPlayerConditions: new[]
+                                            {
+                                                new PlayerCondition(Type: PlayerCondition.PlayerConditionType.Opponent)
+                                            },
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(
+                                                        new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
+                                                    TypeCondition = new(new[]{ CardType.Creature }),
+                                                }
+                                            }),
+                                        how: Choice.ChoiceHow.Random,
+                                        numPicks: 1)))
+                        })
+                });
+
+        public static CardDef Doctor
+            => SampleCards.Creature(7, "ドクター",
+                "このカードが場に出たとき、「ドクターボム」2枚をあなたの場に追加する。", 7, 7,
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]{
+                            new EffectAction(
+                                AddCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
+                                                    CardSetCondition = new(CardSetCondition.ConditionType.This),
+                                                    NameCondition = new(
+                                                        new TextValue(DoctorBomb.Name),
+                                                        TextCondition.CompareValue.Equality)
+                                                }
+                                            })),
+                                    new ZoneValue(new[]{ ZonePrettyName.YouField }),
+                                    NumOfAddCards: 2
+                                    ))
+                        })
+                });
+
+        public static CardDef Firelord
+            => SampleCards.Creature(8, "炎の王", "このカードが場にあるとき、あなたのターン終了時に、ランダムな敵クリーチャー1体か敵プレイヤーに8ダメージを与える。",
+                8, 8, abilities: new[] { CreatureAbility.CantAttack },
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                EndTurn: new(EffectTimingEndTurnEvent.EventSource.You)))),
+                        new[]
+                        {
+                            new EffectAction(
+                                Damage: new(
+                                    new NumValue(8),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orPlayerConditions: new[]
+                                            {
+                                                new PlayerCondition(Type: PlayerCondition.PlayerConditionType.Opponent)
+                                            },
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(
+                                                        new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
+                                                    TypeCondition = new(new[]{ CardType.Creature }),
+                                                }
+                                            }),
+                                        how: Choice.ChoiceHow.Random,
+                                        numPicks: 1)))
                         })
                 });
 
@@ -619,7 +894,7 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition()
                                             {
-                                                Context = CardCondition.CardConditionContext.This
+                                                ContextCondition = CardCondition.ContextConditionValue.This
                                             }
                                         })),
                                 Cost: new NumValueModifier(
@@ -631,7 +906,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(Play: new(
-                                EffectTimingPlayEvent.EventSource.This))),
+                                EffectTimingPlayEvent.SourceValue.This))),
                             If: new(new NumCondition(4, NumCondition.ConditionCompare.GreaterThan),
                                     new NumValue(NumValueCalculator: new(
                                         NumValueCalculator.ValueType.Count,
@@ -641,7 +916,7 @@ namespace Cauldron.Core_Test
                                                 {
                                                     new CardCondition()
                                                     {
-                                                        Context = CardCondition.CardConditionContext.Others,
+                                                        ContextCondition = CardCondition.ContextConditionValue.Others,
                                                         ZoneCondition = new(new ZoneValue(new[]{ZonePrettyName.YouField})),
                                                     }
                                                 })))))),
@@ -653,7 +928,7 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition()
                                             {
-                                                Context = CardCondition.CardConditionContext.Others,
+                                                ContextCondition = CardCondition.ContextConditionValue.Others,
                                                 ZoneCondition = new(new(new[]{ZonePrettyName.YouField}))
                                             }
                                         }))))
@@ -666,7 +941,7 @@ namespace Cauldron.Core_Test
                 {
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
-                            new EffectWhen(new EffectTiming(Play: new(EffectTimingPlayEvent.EventSource.This)))
+                            new EffectWhen(new EffectTiming(Play: new(EffectTimingPlayEvent.SourceValue.This)))
                             ),
                         new[]
                         {
@@ -1031,7 +1306,7 @@ namespace Cauldron.Core_Test
                                             CardSetCondition = new(CardSetCondition.ConditionType.This),
                                             NameCondition = new TextCondition(
                                                 new TextValue(Hit.Name),
-                                                TextCondition.ConditionCompare.Equality)
+                                                TextCondition.CompareValue.Equality)
                                         },
                                         new CardCondition()
                                         {
@@ -1039,7 +1314,7 @@ namespace Cauldron.Core_Test
                                             CardSetCondition = new(CardSetCondition.ConditionType.This),
                                             NameCondition = new TextCondition(
                                                 new TextValue(Heal.Name),
-                                                TextCondition.ConditionCompare.Equality)
+                                                TextCondition.CompareValue.Equality)
                                         },
                                     }),
                                     how: Choice.ChoiceHow.Choose,
@@ -1115,7 +1390,7 @@ namespace Cauldron.Core_Test
                                                     CardSetCondition = new(CardSetCondition.ConditionType.This),
                                                     NameCondition = new(
                                                         new TextValue(Goblin.Name),
-                                                        TextCondition.ConditionCompare.Equality
+                                                        TextCondition.CompareValue.Equality
                                                     )
                                                 },
                                             })),
@@ -1196,7 +1471,7 @@ namespace Cauldron.Core_Test
                                                     CardSetCondition = new(CardSetCondition.ConditionType.This),
                                                     NameCondition = new(
                                                         new TextValue(SecondAttack.Name),
-                                                        TextCondition.ConditionCompare.Equality)
+                                                        TextCondition.CompareValue.Equality)
                                                 }
                                             }),
                                         Choice.ChoiceHow.All,
@@ -1261,7 +1536,7 @@ namespace Cauldron.Core_Test
                                                 {
                                                     ZoneCondition = new (new(new[]{ ZonePrettyName.YouField })),
                                                     TypeCondition = new(new[]{ CardType.Creature }),
-                                                    Context = CardCondition.CardConditionContext.Others,
+                                                    ContextCondition = CardCondition.ContextConditionValue.Others,
                                                 }
                                             })),
                                     new[]
@@ -1271,7 +1546,7 @@ namespace Cauldron.Core_Test
                                                 new EffectWhen(new EffectTiming(DamageBefore: new(
                                                     Source: EffectTimingDamageBeforeEvent.EventSource.Take,
                                                     CardCondition: new(){
-                                                        Context = CardCondition.CardConditionContext.This,
+                                                        ContextCondition = CardCondition.ContextConditionValue.This,
                                                     }))),
                                                 While: new(new EffectTiming(EndTurn: new(
                                                     EffectTimingEndTurnEvent.EventSource.You)),
@@ -1290,7 +1565,7 @@ namespace Cauldron.Core_Test
                                                                 {
                                                                     new CardCondition()
                                                                     {
-                                                                        Context = CardCondition.CardConditionContext.This,
+                                                                        ContextCondition = CardCondition.ContextConditionValue.This,
                                                                     }
                                                                 }))
                                                     )
@@ -1536,7 +1811,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                Play: new(EffectTimingPlayEvent.EventSource.This)))),
+                                Play: new(EffectTimingPlayEvent.SourceValue.This)))),
                         new[]
                         {
                             new EffectAction()
@@ -1549,7 +1824,7 @@ namespace Cauldron.Core_Test
                                                 new CardCondition()
                                                 {
                                                     NameCondition = new(new TextValue("ゴブリン"),
-                                                        TextCondition.ConditionCompare.Like),
+                                                        TextCondition.CompareValue.Contains),
                                                     TypeCondition = new(new[]{ CardType.Creature }),
                                                     ZoneCondition = new(new(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }))
                                                 }
@@ -1578,7 +1853,7 @@ namespace Cauldron.Core_Test
                                     {
                                         TypeCondition = new(new[]{ CardType.Creature }),
                                         ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                        Context = CardCondition.CardConditionContext.Others
+                                        ContextCondition = CardCondition.ContextConditionValue.Others
                                     })))),
                         new[]
                         {
@@ -1595,7 +1870,7 @@ namespace Cauldron.Core_Test
                                             {
                                                 new CardCondition()
                                                 {
-                                                    Context = CardCondition.CardConditionContext.EventSource,
+                                                    ContextCondition = CardCondition.ContextConditionValue.EventSource,
                                                 }
                                             }))
                                 )
@@ -1608,7 +1883,7 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition()
                                             {
-                                                Context = CardCondition.CardConditionContext.This
+                                                ContextCondition = CardCondition.ContextConditionValue.This
                                             }
                                         }))
                                 )
@@ -1635,7 +1910,7 @@ namespace Cauldron.Core_Test
                                     {
                                         TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
                                         ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                        Context = CardCondition.CardConditionContext.Others
+                                        ContextCondition = CardCondition.ContextConditionValue.Others
                                     }))
                             )
                         ),
@@ -1660,7 +1935,7 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition()
                                             {
-                                                Context = CardCondition.CardConditionContext.EventSource,
+                                                ContextCondition = CardCondition.ContextConditionValue.EventSource,
                                             }
                                         }))
                                 )
@@ -1673,7 +1948,7 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition()
                                             {
-                                                Context = CardCondition.CardConditionContext.This
+                                                ContextCondition = CardCondition.ContextConditionValue.This
                                             }
                                         }))
                                 )
@@ -1769,7 +2044,7 @@ namespace Cauldron.Core_Test
                                             {
                                                 ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                                 TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                                Context = CardCondition.CardConditionContext.EventSource,
+                                                ContextCondition = CardCondition.ContextConditionValue.EventSource,
                                             }
                                         })),
                                 Toughness: new NumValueModifier(

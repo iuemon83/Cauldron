@@ -6,7 +6,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTimingPlayEvent
     {
-        public enum EventSource
+        public enum SourceValue
         {
             [DisplayText("このカード")]
             This,
@@ -14,11 +14,14 @@ namespace Cauldron.Shared.MessagePackObjects
             Other
         }
 
-        public EffectTimingPlayEvent.EventSource Source { get; }
+        public SourceValue Source { get; }
 
-        public EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource Source)
+        public CardCondition CardCondition { get; }
+
+        public EffectTimingPlayEvent(SourceValue Source, CardCondition CardCondition = null)
         {
             this.Source = Source;
+            this.CardCondition = CardCondition;
         }
     }
 }

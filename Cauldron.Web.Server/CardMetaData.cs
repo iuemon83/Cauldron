@@ -53,17 +53,17 @@ namespace Cauldron.Web.Server
         public MetaDataElm[] EffectTimingMoveCardEventSources { get; }
             = Convert<EffectTimingMoveCardEvent.EventSource>();
         public MetaDataElm[] EffectTimingPlayEventSources { get; }
-            = Convert<EffectTimingPlayEvent.EventSource>();
+            = Convert<EffectTimingPlayEvent.SourceValue>();
         public MetaDataElm[] EffectTimingStartTurnEventSources { get; }
             = Convert<EffectTimingStartTurnEvent.EventSource>();
         public MetaDataElm[] ChoiceHowList { get; } = Convert<Choice.ChoiceHow>();
         public MetaDataElm[] NumConditionCompares { get; } = Convert<NumCondition.ConditionCompare>();
         public MetaDataElm[] NumValueCalculatorValueTypes { get; } = Convert<NumValueCalculator.ValueType>();
         public MetaDataElm[] NumValueModifierOperators { get; } = Convert<NumValueModifier.ValueModifierOperator>();
-        public MetaDataElm[] TextConditionCompares { get; } = Convert<TextCondition.ConditionCompare>();
+        public MetaDataElm[] TextConditionCompares { get; } = Convert<TextCondition.CompareValue>();
         public MetaDataElm[] TextValueCalculatorValueTypes { get; } = Convert<TextValueCalculator.ValueType>();
         public MetaDataElm[] ZoneNames { get; } = Convert<ZonePrettyName>();
-        public MetaDataElm[] CardConditionContexts { get; } = Convert<CardCondition.CardConditionContext>();
+        public MetaDataElm[] CardConditionContexts { get; } = Convert<CardCondition.ContextConditionValue>();
         public MetaDataElm[] PlayerConditionContexts { get; } = Convert<PlayerCondition.PlayerConditionContext>();
         public MetaDataElm[] PlayerConditionTypes { get; } = Convert<PlayerCondition.PlayerConditionType>();
         public MetaDataElm[] CardSetConditionTypes { get; } = Convert<CardSetCondition.ConditionType>();

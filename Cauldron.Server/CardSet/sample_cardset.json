@@ -36,6 +36,166 @@
             "numTurnsToCanAttack": 0
         },
         {
+            "cost": 1,
+            "name": "魔法の本",
+            "flavorText": "このカードが場に出たとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
+            "isToken": false,
+            "type": "creature",
+            "power": 1,
+            "toughness": 1,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1,
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "typeCondition": {
+                                                    "value": [ "sorcery" ],
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "random",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "ゴブリンフォロワー",
+            "flavorText": "あなたが「ゴブリン」と名のつくクリーチャーカードをプレイしたとき、このカードをデッキから場に出す。",
+            "isToken": false,
+            "type": "creature",
+            "power": 1,
+            "toughness": 1,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youDeck",
+                        "when": {
+                            "timing": {
+                                "play": {
+                                    "source": "other",
+                                    "cardCondition": {
+                                        "contextCondition": "any",
+                                        "nameCondition": {
+                                            "value": { "pureValue": "ゴブリン" },
+                                            "compare": "contains",
+                                            "not": false
+                                        },
+                                        "typeCondition": {
+                                            "value": [ "creature" ],
+                                            "not": false
+                                        },
+                                        "zoneCondition": {
+                                            "value": { "pureValue": [ "youField" ] },
+                                            "not": false
+                                        },
+                                        "ownerCondition": "any"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "moveCard": {
+                                "cardsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                },
+                                "to": "youField"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 2,
+            "name": "ゴブリンのペット",
+            "flavorText": "このカードが場に出たとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
+            "isToken": false,
+            "type": "creature",
+            "power": 2,
+            "toughness": 6,
+            "abilities": [ "cover" ],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "moveCard": {
+                                "cardsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "typeCondition": {
+                                                    "value": [ "creature" ],
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "opponentHand" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "random",
+                                    "numPicks": 1
+                                },
+                                "to": "opponentField"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "cost": 2,
             "name": "盾持ちゴブリン",
             "flavorText": "盾になる",
@@ -56,6 +216,89 @@
             "toughness": 1,
             "abilities": [ "stealth", "deadly" ],
             "effects": []
+        },
+        {
+            "cost": 3,
+            "name": "催眠術師",
+            "flavorText": "このカードが場に出たとき、敵のフィールドにクリーチャーが4体以上いるなら、ランダムに1体を選択し、それをあなたの場に移動する。",
+            "isToken": false,
+            "type": "creature",
+            "power": 3,
+            "toughness": 3,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } },
+                        "if": {
+                            "numCondition": {
+                                "value": 4,
+                                "compare": "greaterThan",
+                                "not": false
+                            },
+                            "numValue": {
+                                "numValueCalculator": {
+                                    "type": "count",
+                                    "cardsChoice": {
+                                        "source": {
+                                            "how": "all",
+                                            "numPicks": 1,
+                                            "orPlayerConditions": [],
+                                            "orCardConditions": [
+                                                {
+                                                    "contextCondition": "any",
+                                                    "typeCondition": {
+                                                        "value": [ "creature" ],
+                                                        "not": false
+                                                    },
+                                                    "zoneCondition": {
+                                                        "value": { "pureValue": [ "opponentField" ] },
+                                                        "not": false
+                                                    },
+                                                    "ownerCondition": "any"
+                                                }
+                                            ]
+                                        },
+                                        "how": "all",
+                                        "numPicks": 1
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "moveCard": {
+                                "cardsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "typeCondition": {
+                                                    "value": [ "creature" ],
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "opponentField" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "random",
+                                    "numPicks": 1
+                                },
+                                "to": "youField"
+                            }
+                        }
+                    ]
+                }
+            ]
         },
         {
             "cost": 1,
@@ -84,7 +327,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "からくりゴブリン" },
@@ -94,7 +337,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "cardPool" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -132,7 +376,12 @@
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [ { "context": "this" } ]
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
                                     },
                                     "how": "all",
                                     "numPicks": 1
@@ -168,7 +417,12 @@
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [ { "context": "this" } ]
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
                                     },
                                     "how": "all",
                                     "numPicks": 1
@@ -258,7 +512,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -266,7 +520,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -355,7 +610,7 @@
                                         ],
                                         "orCardConditions": [
                                             {
-                                                "context": "others",
+                                                "contextCondition": "others",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -363,7 +618,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -403,7 +659,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "costCondition": {
                                                     "value": 2,
                                                     "compare": "equality",
@@ -416,7 +672,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "cardPool" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -454,7 +711,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "others",
+                                                "contextCondition": "others",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -462,7 +719,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField", "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -485,7 +743,12 @@
                                                             "how": "all",
                                                             "numPicks": 1,
                                                             "orPlayerConditions": [],
-                                                            "orCardConditions": [ { "context": "this" } ]
+                                                            "orCardConditions": [
+                                                                {
+                                                                    "contextCondition": "this",
+                                                                    "ownerCondition": "any"
+                                                                }
+                                                            ]
                                                         },
                                                         "how": "all",
                                                         "numPicks": 1
@@ -507,13 +770,14 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "actionContext": {
                                                     "actionContextCardsOfAddEffect": {
                                                         "actionName": "addEffect",
                                                         "type": "targetCards"
                                                     }
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -544,7 +808,10 @@
                                 "damageBefore": {
                                     "type": "any",
                                     "source": "take",
-                                    "cardCondition": { "context": "this" }
+                                    "cardCondition": {
+                                        "contextCondition": "this",
+                                        "ownerCondition": "any"
+                                    }
                                 }
                             }
                         }
@@ -561,7 +828,12 @@
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [ { "context": "eventSource" } ]
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "eventSource",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
                                     },
                                     "how": "all",
                                     "numPicks": 1
@@ -579,7 +851,7 @@
                                     "type": "battle",
                                     "source": "damageSource",
                                     "cardCondition": {
-                                        "context": "others",
+                                        "contextCondition": "others",
                                         "typeCondition": {
                                             "value": [ "creature" ],
                                             "not": false
@@ -587,7 +859,8 @@
                                         "zoneCondition": {
                                             "value": { "pureValue": [ "youField" ] },
                                             "not": false
-                                        }
+                                        },
+                                        "ownerCondition": "any"
                                     }
                                 }
                             }
@@ -605,10 +878,75 @@
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [ { "context": "eventSource" } ]
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "eventSource",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
                                     },
                                     "how": "all",
                                     "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 5,
+            "name": "マジックドラゴン",
+            "flavorText": "このカードが場に出たとき、あなたはカードを1枚ドローする。このカードが場にある限り、あなたがプレイした魔法カードによるダメージを\u002B1する。",
+            "isToken": false,
+            "type": "creature",
+            "power": 4,
+            "toughness": 4,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "drawCard": {
+                                "numCards": { "pureValue": 1 },
+                                "playerCondition": {
+                                    "context": "any",
+                                    "type": "you"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": {
+                            "timing": {
+                                "damageBefore": {
+                                    "type": "nonBattle",
+                                    "source": "any",
+                                    "cardCondition": {
+                                        "contextCondition": "any",
+                                        "typeCondition": {
+                                            "value": [ "sorcery" ],
+                                            "not": false
+                                        },
+                                        "ownerCondition": "you"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyDamage": {
+                                "value": {
+                                    "operator": "add",
+                                    "value": { "pureValue": 1 }
                                 }
                             }
                         }
@@ -642,7 +980,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "others",
+                                                "contextCondition": "others",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -650,7 +988,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -697,7 +1036,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "others",
+                                                "contextCondition": "others",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -705,7 +1044,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -747,11 +1087,12 @@
                                                 "orPlayerConditions": [],
                                                 "orCardConditions": [
                                                     {
-                                                        "context": "any",
+                                                        "contextCondition": "any",
                                                         "zoneCondition": {
                                                             "value": { "pureValue": [ "youHand" ] },
                                                             "not": false
-                                                        }
+                                                        },
+                                                        "ownerCondition": "any"
                                                     }
                                                 ]
                                             },
@@ -771,11 +1112,12 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youHand" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -800,9 +1142,171 @@
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [ { "context": "this" } ]
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
                                     },
                                     "how": "all",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "ドクターボム",
+            "flavorText": "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーに4ダメージを与える。",
+            "isToken": true,
+            "type": "creature",
+            "power": 1,
+            "toughness": 1,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youCemetery",
+                        "when": { "timing": { "destroy": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "damage": {
+                                "value": { "pureValue": 4 },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [
+                                            {
+                                                "context": "any",
+                                                "type": "opponent"
+                                            }
+                                        ],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "typeCondition": {
+                                                    "value": [ "creature" ],
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "opponentField" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "random",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 7,
+            "name": "ドクター",
+            "flavorText": "このカードが場に出たとき、「ドクターボム」2枚をあなたの場に追加する。",
+            "isToken": false,
+            "type": "creature",
+            "power": 7,
+            "toughness": 7,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 2,
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "cardSetCondition": { "type": "this" },
+                                                "nameCondition": {
+                                                    "value": { "pureValue": "ドクターボム" },
+                                                    "compare": "equality",
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 8,
+            "name": "炎の王",
+            "flavorText": "このカードが場にあるとき、あなたのターン終了時に、ランダムな敵クリーチャー1体か敵プレイヤーに8ダメージを与える。",
+            "isToken": false,
+            "type": "creature",
+            "power": 8,
+            "toughness": 8,
+            "abilities": [ "cantAttack" ],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "endTurn": { "source": "you" } } }
+                    },
+                    "actions": [
+                        {
+                            "damage": {
+                                "value": { "pureValue": 8 },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [
+                                            {
+                                                "context": "any",
+                                                "type": "opponent"
+                                            }
+                                        ],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "typeCondition": {
+                                                    "value": [ "creature" ],
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "opponentField" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "random",
                                     "numPicks": 1
                                 }
                             }
@@ -841,11 +1345,12 @@
                                             "orPlayerConditions": [],
                                             "orCardConditions": [
                                                 {
-                                                    "context": "any",
+                                                    "contextCondition": "any",
                                                     "zoneCondition": {
                                                         "value": { "pureValue": [ "youField" ] },
                                                         "not": false
-                                                    }
+                                                    },
+                                                    "ownerCondition": "any"
                                                 }
                                             ]
                                         },
@@ -868,7 +1373,12 @@
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [ { "context": "this" } ]
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
                                     },
                                     "how": "all",
                                     "numPicks": 1
@@ -897,11 +1407,12 @@
                                             "orPlayerConditions": [],
                                             "orCardConditions": [
                                                 {
-                                                    "context": "others",
+                                                    "contextCondition": "others",
                                                     "zoneCondition": {
                                                         "value": { "pureValue": [ "youField" ] },
                                                         "not": false
-                                                    }
+                                                    },
+                                                    "ownerCondition": "any"
                                                 }
                                             ]
                                         },
@@ -922,11 +1433,12 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "others",
+                                                "contextCondition": "others",
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1053,7 +1565,7 @@
                                         ],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -1061,7 +1573,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField", "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1100,7 +1613,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -1108,7 +1621,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField", "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1150,7 +1664,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -1158,7 +1672,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1200,7 +1715,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -1208,7 +1723,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1248,7 +1764,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ヒット" },
@@ -1258,10 +1774,11 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "cardPool" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             },
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ヒール" },
@@ -1271,7 +1788,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "cardPool" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1309,11 +1827,12 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youCemetery", "opponentCemetery" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1338,13 +1857,14 @@
                                                     "orPlayerConditions": [],
                                                     "orCardConditions": [
                                                         {
-                                                            "context": "any",
+                                                            "contextCondition": "any",
                                                             "actionContext": {
                                                                 "actionContextCardsOfMoveCard": {
                                                                     "actionName": "move",
                                                                     "type": "moved"
                                                                 }
-                                                            }
+                                                            },
+                                                            "ownerCondition": "any"
                                                         }
                                                     ]
                                                 },
@@ -1361,13 +1881,14 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "actionContext": {
                                                     "actionContextCardsOfMoveCard": {
                                                         "actionName": "move",
                                                         "type": "moved"
                                                     }
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1407,11 +1928,12 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youCemetery", "opponentCemetery" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1449,7 +1971,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -1457,7 +1979,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youCemetery", "opponentCemetery" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1481,13 +2004,14 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "actionContext": {
                                                     "actionContextCardsOfMoveCard": {
                                                         "actionName": "move",
                                                         "type": "moved"
                                                     }
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1527,11 +2051,12 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1571,11 +2096,12 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1704,7 +2230,7 @@
                                         ],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -1712,7 +2238,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField", "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1730,7 +2257,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ゴブリンの二撃" },
@@ -1740,7 +2267,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "cardPool" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1784,7 +2312,7 @@
                                         ],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -1792,7 +2320,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField", "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1830,7 +2359,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "others",
+                                                "contextCondition": "others",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -1838,7 +2367,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -1854,7 +2384,10 @@
                                                     "damageBefore": {
                                                         "type": "any",
                                                         "source": "take",
-                                                        "cardCondition": { "context": "this" }
+                                                        "cardCondition": {
+                                                            "contextCondition": "this",
+                                                            "ownerCondition": "any"
+                                                        }
                                                     }
                                                 }
                                             },
@@ -1876,7 +2409,12 @@
                                                             "how": "all",
                                                             "numPicks": 1,
                                                             "orPlayerConditions": [],
-                                                            "orCardConditions": [ { "context": "this" } ]
+                                                            "orCardConditions": [
+                                                                {
+                                                                    "contextCondition": "this",
+                                                                    "ownerCondition": "any"
+                                                                }
+                                                            ]
                                                         },
                                                         "how": "all",
                                                         "numPicks": 1
@@ -1921,11 +2459,12 @@
                                                 "orPlayerConditions": [],
                                                 "orCardConditions": [
                                                     {
-                                                        "context": "any",
+                                                        "contextCondition": "any",
                                                         "zoneCondition": {
                                                             "value": { "pureValue": [ "youHand" ] },
                                                             "not": false
-                                                        }
+                                                        },
+                                                        "ownerCondition": "any"
                                                     }
                                                 ]
                                             },
@@ -1945,11 +2484,12 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youHand" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -2049,7 +2589,7 @@
                                                 "orPlayerConditions": [],
                                                 "orCardConditions": [
                                                     {
-                                                        "context": "any",
+                                                        "contextCondition": "any",
                                                         "typeCondition": {
                                                             "value": [ "creature" ],
                                                             "not": false
@@ -2057,7 +2597,8 @@
                                                         "zoneCondition": {
                                                             "value": { "pureValue": [ "youField" ] },
                                                             "not": false
-                                                        }
+                                                        },
+                                                        "ownerCondition": "any"
                                                     }
                                                 ]
                                             },
@@ -2073,7 +2614,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -2081,7 +2622,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -2125,7 +2667,7 @@
                                         ],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -2133,7 +2675,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -2165,7 +2708,7 @@
                                     "type": "any",
                                     "source": "take",
                                     "cardCondition": {
-                                        "context": "others",
+                                        "contextCondition": "others",
                                         "typeCondition": {
                                             "value": [ "creature" ],
                                             "not": false
@@ -2173,7 +2716,8 @@
                                         "zoneCondition": {
                                             "value": { "pureValue": [ "youField" ] },
                                             "not": false
-                                        }
+                                        },
+                                        "ownerCondition": "any"
                                     }
                                 }
                             }
@@ -2191,7 +2735,12 @@
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [ { "context": "eventSource" } ]
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "eventSource",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
                                     },
                                     "how": "all",
                                     "numPicks": 1
@@ -2205,7 +2754,12 @@
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [ { "context": "this" } ]
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
                                     },
                                     "how": "all",
                                     "numPicks": 1
@@ -2239,7 +2793,7 @@
                                         "type": "you"
                                     },
                                     "cardCondition": {
-                                        "context": "others",
+                                        "contextCondition": "others",
                                         "typeCondition": {
                                             "value": [ "creature" ],
                                             "not": false
@@ -2247,7 +2801,8 @@
                                         "zoneCondition": {
                                             "value": { "pureValue": [ "youField" ] },
                                             "not": false
-                                        }
+                                        },
+                                        "ownerCondition": "any"
                                     }
                                 }
                             }
@@ -2270,7 +2825,12 @@
                                                 "type": "any"
                                             }
                                         ],
-                                        "orCardConditions": [ { "context": "eventSource" } ]
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "eventSource",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
                                     },
                                     "how": "all",
                                     "numPicks": 1
@@ -2284,7 +2844,12 @@
                                         "how": "all",
                                         "numPicks": 1,
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [ { "context": "this" } ]
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
                                     },
                                     "how": "all",
                                     "numPicks": 1
@@ -2320,11 +2885,12 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youHand" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -2365,13 +2931,14 @@
                                                         "orPlayerConditions": [],
                                                         "orCardConditions": [
                                                             {
-                                                                "context": "any",
+                                                                "contextCondition": "any",
                                                                 "actionContext": {
                                                                     "actionContextCardsOfMoveCard": {
                                                                         "actionName": "moveCard",
                                                                         "type": "moved"
                                                                     }
-                                                                }
+                                                                },
+                                                                "ownerCondition": "any"
                                                             }
                                                         ]
                                                     },
@@ -2415,7 +2982,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ゴブリン" },
@@ -2425,7 +2992,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "cardPool" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -2468,11 +3036,12 @@
                                             "orPlayerConditions": [],
                                             "orCardConditions": [
                                                 {
-                                                    "context": "any",
+                                                    "contextCondition": "any",
                                                     "zoneCondition": {
                                                         "value": { "pureValue": [ "youCemetery" ] },
                                                         "not": false
-                                                    }
+                                                    },
+                                                    "ownerCondition": "any"
                                                 }
                                             ]
                                         },
@@ -2499,7 +3068,7 @@
                                         ],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -2507,7 +3076,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -2549,7 +3119,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -2557,7 +3127,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -2595,7 +3166,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "eventSource",
+                                                "contextCondition": "eventSource",
                                                 "typeCondition": {
                                                     "value": [ "creature" ],
                                                     "not": false
@@ -2603,7 +3174,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },
@@ -2649,10 +3221,10 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "context": "any",
+                                                "contextCondition": "any",
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ゴブリン" },
-                                                    "compare": "like",
+                                                    "compare": "contains",
                                                     "not": false
                                                 },
                                                 "typeCondition": {
@@ -2662,7 +3234,8 @@
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youField", "opponentField" ] },
                                                     "not": false
-                                                }
+                                                },
+                                                "ownerCondition": "any"
                                             }
                                         ]
                                     },

@@ -81,16 +81,32 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public static async ValueTask<bool> IsMatch(this CardCondition cardCondition, Card cardToMatch, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
-            return
-                (cardCondition.Context switch
+            bool ContextConditionIsMatch(CardCondition.ContextConditionValue value)
+            {
+                return value switch
                 {
-                    CardCondition.CardConditionContext.This => cardToMatch.Id == effectOwnerCard.Id,
-                    CardCondition.CardConditionContext.Others => cardToMatch.Id != effectOwnerCard.Id,
-                    CardCondition.CardConditionContext.EventSource => cardToMatch.Id == effectEventArgs.SourceCard.Id,
-                    CardCondition.CardConditionContext.DamageFrom => cardToMatch.Id == effectEventArgs.DamageContext.DamageSourceCard.Id,
-                    CardCondition.CardConditionContext.DamageTo => cardToMatch.Id == effectEventArgs.DamageContext.GuardCard.Id,
+                    CardCondition.ContextConditionValue.This => cardToMatch.Id == effectOwnerCard.Id,
+                    CardCondition.ContextConditionValue.Others => cardToMatch.Id != effectOwnerCard.Id,
+                    CardCondition.ContextConditionValue.EventSource => cardToMatch.Id == effectEventArgs.SourceCard.Id,
+                    CardCondition.ContextConditionValue.DamageFrom => cardToMatch.Id == effectEventArgs.DamageContext.DamageSourceCard.Id,
+                    CardCondition.ContextConditionValue.DamageTo => cardToMatch.Id == effectEventArgs.DamageContext.GuardCard.Id,
                     _ => true
-                })
+                };
+            }
+
+            bool OwnerConditionIsMatch(CardCondition.OwnerConditionValue value)
+            {
+                return value switch
+                {
+                    CardCondition.OwnerConditionValue.You => effectOwnerCard.OwnerId == cardToMatch.OwnerId,
+                    CardCondition.OwnerConditionValue.Opponent => effectOwnerCard.OwnerId != cardToMatch.OwnerId,
+                    _ => true
+                };
+            }
+
+            return
+                ContextConditionIsMatch(cardCondition.ContextCondition)
+                && OwnerConditionIsMatch(cardCondition.OwnerCondition)
                 && (cardCondition.CostCondition?.IsMatch(cardToMatch.Cost) ?? true)
                 && (cardCondition.PowerCondition?.IsMatch(cardToMatch.Power) ?? true)
                 && (cardCondition.ToughnessCondition?.IsMatch(cardToMatch.Toughness) ?? true)

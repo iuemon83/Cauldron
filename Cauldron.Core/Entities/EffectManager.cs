@@ -52,6 +52,7 @@ namespace Cauldron.Core.Entities
                 player.Field.AllCards
                     .Concat(player.Hands.AllCards)
                     .Concat(player.Cemetery.AllCards)
+                    .Concat(player.Deck.AllCards)
                     .ToArray();
 
             var newEffectEventArgs = effectEventArgs;

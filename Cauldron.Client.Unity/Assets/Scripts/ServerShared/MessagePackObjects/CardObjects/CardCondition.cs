@@ -6,7 +6,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class CardCondition
     {
-        public enum CardConditionContext
+        public enum ContextConditionValue
         {
             /// <summary>
             /// いずれか
@@ -57,10 +57,31 @@ namespace Cauldron.Shared.MessagePackObjects
             DamageTo,
         }
 
+        public enum OwnerConditionValue
+        {
+            /// <summary>
+            /// いずれか
+            /// </summary>
+            [DisplayText("いずれか")]
+            Any,
+
+            /// <summary>
+            /// あなた
+            /// </summary>
+            [DisplayText("あなた")]
+            You,
+
+            /// <summary>
+            /// 相手
+            /// </summary>
+            [DisplayText("相手")]
+            Opponent
+        }
+
         /// <summary>
         /// 自分自身かそれ以外か
         /// </summary>
-        public CardConditionContext Context { get; set; }
+        public ContextConditionValue ContextCondition { get; set; }
         public ActionContextCards ActionContext { get; set; }
         public NumCondition CostCondition { get; set; }
         public NumCondition PowerCondition { get; set; }
@@ -69,5 +90,6 @@ namespace Cauldron.Shared.MessagePackObjects
         public TextCondition NameCondition { get; set; }
         public CardTypeCondition TypeCondition { get; set; }
         public ZoneCondition ZoneCondition { get; set; }
+        public OwnerConditionValue OwnerCondition { get; set; }
     }
 }

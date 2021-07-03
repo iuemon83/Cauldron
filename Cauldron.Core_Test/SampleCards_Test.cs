@@ -30,6 +30,200 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task MagicBook()
+        {
+            var testCardDef = SampleCards.MagicBook;
+            testCardDef.Cost = 0;
+            var sorceryDef = SampleCards.Sword;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, sorceryDef });
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var beforeHandIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                var testcard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                var afterHandIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
+                var diffHandIdList = afterHandIdList.Except(beforeHandIdList).ToArray();
+
+                Assert.Single(diffHandIdList);
+
+                var (_, diffCard) = c.CardRepository.TryGetById(diffHandIdList[0]);
+                Assert.Equal(sorceryDef.Id, diffCard.CardDefId);
+            });
+        }
+
+        [Fact]
+        public async Task GoblinFollower()
+        {
+            var testCardDef = SampleCards.GoblinFollower;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            var goblinDef2 = SampleCards.QuickGoblin;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, goblinDef, goblinDef2 },
+                Enumerable.Repeat(testCardDef, 4)
+                    .Concat(Enumerable.Repeat(goblinDef, 20))
+                    .Concat(Enumerable.Repeat(goblinDef2, 16))
+                    );
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var beforeFieldIdList = c.Player1.Field.AllCards.Select(c => c.Id).ToArray();
+                var beforeDeckCount = c.Player1.Deck.Count;
+
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+
+                var afterFieldIdList = c.Player1.Field.AllCards.Select(c => c.Id).ToArray();
+                var diffFieldIdList = afterFieldIdList
+                    .Except(beforeFieldIdList)
+                    // 自分で出したカード以外
+                    .Where(id => id != goblin.Id)
+                    .ToArray();
+
+                var afterDeckCount = c.Player1.Deck.Count;
+
+                //TODO たまたま2枚とも手札に来てるとテストが失敗するぞ！！
+                Assert.True(diffFieldIdList.Length > 1);
+                Assert.Equal(beforeDeckCount - afterDeckCount, diffFieldIdList.Length);
+
+                foreach (var diffId in diffFieldIdList)
+                {
+                    var (_, diffCard) = c.CardRepository.TryGetById(diffId);
+                    Assert.Equal(testCardDef.Id, diffCard.CardDefId);
+                }
+            });
+        }
+
+        /// <summary>
+        /// ゴブリンと関係ないカードで発動しないテスト
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task GoblinFollower2()
+        {
+            var testCardDef = SampleCards.GoblinFollower;
+            testCardDef.Cost = 0;
+
+            var notGoblinDef = SampleCards.Goblin;
+            notGoblinDef.Cost = 0;
+            notGoblinDef.Name = "テスト";
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, notGoblinDef },
+                Enumerable.Repeat(testCardDef, 4)
+                    .Concat(Enumerable.Repeat(notGoblinDef, 36))
+                    );
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var beforeFieldIdList = c.Player1.Field.AllCards.Select(c => c.Id).ToArray();
+                var beforeDeckCount = c.Player1.Deck.Count;
+
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, notGoblinDef.Id);
+
+                var afterFieldIdList = c.Player1.Field.AllCards.Select(c => c.Id).ToArray();
+                var diffFieldIdList = afterFieldIdList
+                    .Except(beforeFieldIdList)
+                    // 自分で出したカード以外
+                    .Where(id => id != goblin.Id)
+                    .ToArray();
+
+                var afterDeckCount = c.Player1.Deck.Count;
+
+                Assert.Empty(diffFieldIdList);
+                Assert.Equal(0, beforeDeckCount - afterDeckCount);
+            });
+        }
+
+        /// <summary>
+        /// 名前にゴブリンが含まれるがクリーチャーでないカードで発動しないテスト
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task GoblinFollower3()
+        {
+            var testCardDef = SampleCards.GoblinFollower;
+            testCardDef.Cost = 0;
+
+            var notGoblinCreatureDef = SampleCards.GoblinCaptureJar;
+            notGoblinCreatureDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, notGoblinCreatureDef },
+                Enumerable.Repeat(testCardDef, 4)
+                    .Concat(Enumerable.Repeat(notGoblinCreatureDef, 36))
+                    );
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var beforeFieldIdList = c.Player1.Field.AllCards.Select(c => c.Id).ToArray();
+                var beforeDeckCount = c.Player1.Deck.Count;
+
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, notGoblinCreatureDef.Id);
+
+                var afterFieldIdList = c.Player1.Field.AllCards.Select(c => c.Id).ToArray();
+                var diffFieldIdList = afterFieldIdList
+                    .Except(beforeFieldIdList)
+                    // 自分で出したカード以外
+                    .Where(id => id != goblin.Id)
+                    .ToArray();
+
+                var afterDeckCount = c.Player1.Deck.Count;
+
+                Assert.Empty(diffFieldIdList);
+                Assert.Equal(beforeDeckCount, afterDeckCount);
+            });
+        }
+
+        [Fact]
+        public async Task GoblinsPet()
+        {
+            var testCardDef = SampleCards.GoblinsPet;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            var sorceryDef = SampleCards.Fire;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, goblinDef, sorceryDef },
+                Enumerable.Repeat(goblinDef, 10)
+                    .Concat(Enumerable.Repeat(sorceryDef, 10))
+                    );
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var op = c.GameMaster.GetOpponent(pid);
+
+                var beforeOpFieldIdList = op.Field.AllCards.Select(c => c.Id).ToArray();
+                var beforeOpHandsIdList = op.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                var afterOpFieldIdList = op.Field.AllCards.Select(c => c.Id).ToArray();
+                var diffOpFieldIdList = afterOpFieldIdList
+                    .Except(beforeOpFieldIdList)
+                    .ToArray();
+
+                var afterOpHandsIdList = op.Hands.AllCards.Select(c => c.Id).ToArray();
+                var diffOpHandsIdList = beforeOpHandsIdList
+                    .Except(afterOpHandsIdList)
+                    .ToArray();
+
+                Assert.Single(diffOpFieldIdList);
+                Assert.Single(diffOpHandsIdList);
+
+                Assert.Equal(diffOpFieldIdList[0], diffOpFieldIdList[0]);
+
+                var (_, diffCard) = c.CardRepository.TryGetById(diffOpFieldIdList[0]);
+                Assert.Equal(goblinDef.Id, diffCard.CardDefId);
+            });
+        }
+
+        [Fact]
         public async Task MechanicGoblin()
         {
             var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
@@ -346,6 +540,73 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task MagicDragon()
+        {
+            var testCardDef = SampleCards.MagicDragon;
+            testCardDef.Cost = 0;
+
+            var sorceryDef = SampleCards.Fire;
+
+            PlayerId[] choicePlayerIdList = default;
+            var c = await TestUtil.InitTest(new[] { testCardDef, sorceryDef },
+                options: TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(
+                        AskCardAction: (_, c, _) =>
+                        {
+                            return ValueTask.FromResult(new ChoiceAnswer(
+                                choicePlayerIdList,
+                                Array.Empty<CardId>(),
+                                Array.Empty<CardDefId>()
+                                ));
+                        })));
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var op = g.GetOpponent(pId);
+
+                choicePlayerIdList = new[] { op.Id };
+
+                var beforeHandsCount = c.Player1.Hands.Count;
+
+                var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var afterHandsCount = c.Player1.Hands.Count;
+
+                // 1枚ドローしている
+                Assert.Equal(1, afterHandsCount - beforeHandsCount);
+
+                var beforeOpHp = op.CurrentHp;
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, sorceryDef.Id);
+
+                var afterOpHp = op.CurrentHp;
+
+                // ダメージが+1している
+                Assert.Equal(2, beforeOpHp - afterOpHp);
+
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var op = g.GetOpponent(pId);
+
+                choicePlayerIdList = new[] { op.Id };
+
+                var beforeOpHp = op.CurrentHp;
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, sorceryDef.Id);
+
+                var afterOpHp = op.CurrentHp;
+
+                // 相手の魔法ではダメージが+1されない
+                Assert.Equal(1, beforeOpHp - afterOpHp);
+
+            });
+        }
+
+        [Fact]
         public async Task GiantGoblin()
         {
             var goblinDef = SampleCards.Goblin;
@@ -441,6 +702,80 @@ namespace Cauldron.Core_Test
                 Assert.Equal(testCard.BasePower + numHands, testCard.Power);
                 Assert.Equal(testCard.BaseToughness + numHands, testCard.Toughness);
             });
+        }
+
+        [Fact]
+        public async Task Doctor()
+        {
+            var testCardDef = SampleCards.Doctor;
+            testCardDef.Cost = 0;
+            var addcardDef = SampleCards.DoctorBomb;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, addcardDef });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 場には3体いる
+                Assert.Equal(3, c.Player1.Field.Count);
+                TestUtil.AssertCollection(
+                    c.Player1.Field.AllCards.Select(c => c.CardDefId).ToArray(),
+                    new[] { testCardDef.Id, addcardDef.Id, addcardDef.Id }
+                    );
+            });
+        }
+
+        [Fact]
+        public async Task DoctorBomb()
+        {
+            var testCardDef = SampleCards.DoctorBomb;
+            testCardDef.IsToken = false;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var op = g.GetOpponent(pId);
+
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var beforeOpHp = op.CurrentHp;
+
+                await g.DestroyCard(testCard);
+
+                var afterOpHp = op.CurrentHp;
+
+                Assert.Equal(4, beforeOpHp - afterOpHp);
+            });
+        }
+
+        [Fact]
+        public async Task Firelord()
+        {
+            var testCardDef = SampleCards.Firelord;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef });
+
+            // 先攻
+            Player op = default;
+            int beforeOpHp = default;
+
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                op = g.GetOpponent(pId);
+                beforeOpHp = op.CurrentHp;
+            });
+
+            var afterOpHp = op.CurrentHp;
+
+            Assert.Equal(8, beforeOpHp - afterOpHp);
         }
 
         [Fact]
@@ -1167,7 +1502,7 @@ namespace Cauldron.Core_Test
 
             var c = await TestUtil.InitTest(
                 new[] { goblinDef, testCardDef },
-                Enumerable.Repeat(goblinDef, TestUtil.TestRuleBook.MinNumDeckCards));
+                Enumerable.Repeat(goblinDef, TestUtil.TestRuleBook.MaxNumDeckCards));
 
             // 先攻
             await TestUtil.Turn(c.GameMaster, async (g, pId) =>

@@ -7,21 +7,28 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class TextCondition
     {
-        public enum ConditionCompare
+        public enum CompareValue
         {
+            /// <summary>
+            /// 指定の文字列と完全一致
+            /// </summary>
             [DisplayText("等しい")]
             Equality,
+
+            /// <summary>
+            /// 指定の文字列を含む
+            /// </summary>
             [DisplayText("含む")]
-            Like,
+            Contains,
         }
 
         public TextValue Value { get; }
-        public TextCondition.ConditionCompare Compare { get; }
+        public TextCondition.CompareValue Compare { get; }
         public bool Not { get; }
 
         public TextCondition(
             TextValue Value,
-            TextCondition.ConditionCompare Compare,
+            TextCondition.CompareValue Compare,
             bool not = false
             )
         {

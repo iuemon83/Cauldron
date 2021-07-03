@@ -13,7 +13,15 @@ namespace Cauldron.Core_Test
 {
     class TestUtil
     {
-        public static RuleBook TestRuleBook => new(10, 99, 0, 40, 40, 5, 10, 1, 10, 1, 1, 5, 0, 1);
+        public static RuleBook TestRuleBook => new(
+            InitialPlayerHp: 10, MaxPlayerHp: 99, MinPlayerHp: 0,
+            MaxNumDeckCards: 99, MinNumDeckCards: 1,
+            InitialNumHands: 5, MaxNumHands: 10,
+            InitialMp: 1, MaxLimitMp: 10, MinMp: 1, LimitMpToIncrease: 1,
+            MaxNumFieldCards: 5,
+            DefaultNumTurnsToCanAttack: 0,
+            DefaultNumAttacksLimitInTurn: 1
+            );
 
         public static GameMasterOptions GameMasterOptions(
             RuleBook ruleBook = null,

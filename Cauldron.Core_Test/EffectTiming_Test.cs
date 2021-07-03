@@ -300,7 +300,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(Play : new EffectTimingPlayEvent(EffectTimingPlayEvent.EventSource.Other)))),
+                            new(new(Play : new EffectTimingPlayEvent(EffectTimingPlayEvent.SourceValue.Other)))),
                         new[]{  TestUtil.TestEffectAction }
                     )
                 });
@@ -407,7 +407,7 @@ namespace Cauldron.Core_Test
                         new(ZonePrettyName.YouField,
                             new(new(DamageBefore : new (
                                 Source: EffectTimingDamageBeforeEvent.EventSource.DamageSource,
-                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.This })))),
+                                CardCondition : new CardCondition() { ContextCondition = CardCondition.ContextConditionValue.This })))),
                         new[]{
                             new EffectAction(
                                 ModifyPlayer: new(
@@ -477,7 +477,7 @@ namespace Cauldron.Core_Test
                         new(ZonePrettyName.YouField,
                             new(new(DamageBefore : new(
                                 Source: EffectTimingDamageBeforeEvent.EventSource.Take,
-                                CardCondition : new CardCondition() { Context = CardCondition.CardConditionContext.Others })))),
+                                CardCondition : new CardCondition() { ContextCondition = CardCondition.ContextConditionValue.Others })))),
                         new[]{ TestUtil.TestEffectAction}
                     )
                 });
@@ -538,7 +538,7 @@ namespace Cauldron.Core_Test
                                 Source: EffectTimingDamageBeforeEvent.EventSource.Take,
                                 CardCondition: new CardCondition()
                                 {
-                                    Context = CardCondition.CardConditionContext.This
+                                    ContextCondition = CardCondition.ContextConditionValue.This
                                 }
                             )))
                         ),

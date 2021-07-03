@@ -25,7 +25,7 @@ namespace Cauldron.Core_Test
                                     Source: EffectTimingDamageBeforeEvent.EventSource.DamageSource,
                                     CardCondition: new()
                                     {
-                                        Context = CardCondition.CardConditionContext.This,
+                                        ContextCondition = CardCondition.ContextConditionValue.This,
                                         ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
                                     }
                                     ))),

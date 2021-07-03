@@ -23,7 +23,7 @@ namespace Cauldron.Core_Test
                     orCardConditions: new[]{
                         new CardCondition()
                         {
-                            Context = CardCondition.CardConditionContext.Others,
+                            ContextCondition = CardCondition.ContextConditionValue.Others,
                             ZoneCondition = new(new(new[] { ZonePrettyName.YouField })),
                             TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
                         }
@@ -112,7 +112,7 @@ namespace Cauldron.Core_Test
                     orCardConditions: new[]{
                         new CardCondition()
                         {
-                            Context = CardCondition.CardConditionContext.Others,
+                            ContextCondition = CardCondition.ContextConditionValue.Others,
                             ZoneCondition = new(new(new[] { ZonePrettyName.YouField })),
                             TypeCondition = new CardTypeCondition(new[] { CardType.Creature }),
                         }
@@ -200,7 +200,7 @@ namespace Cauldron.Core_Test
                             ZoneCondition = new(new(new[] { ZonePrettyName.CardPool })),
                             NameCondition = new TextCondition(
                                 new TextValue(fairy.FullName),
-                                TextCondition.ConditionCompare.Equality
+                                TextCondition.CompareValue.Equality
                             )
                         }
                     }));
@@ -289,7 +289,7 @@ namespace Cauldron.Core_Test
                             ZoneCondition = new(new(new[] { ZonePrettyName.CardPool })),
                             NameCondition = new(
                                 new TextValue(fairy.FullName),
-                                TextCondition.ConditionCompare.Equality
+                                TextCondition.CompareValue.Equality
                             )
                         },
                     }),
@@ -798,7 +798,7 @@ namespace Cauldron.Core_Test
                     {
                         new CardCondition()
                         {
-                            Context = CardCondition.CardConditionContext.Others,
+                            ContextCondition = CardCondition.ContextConditionValue.Others,
                             ZoneCondition = new(new(new[] { ZonePrettyName.YouField })),
                             TypeCondition = new CardTypeCondition(new[] { CardType.Creature, })
                         }
@@ -891,7 +891,7 @@ namespace Cauldron.Core_Test
                     {
                         new CardCondition()
                         {
-                            Context = CardCondition.CardConditionContext.This,
+                            ContextCondition = CardCondition.ContextConditionValue.This,
                         }
                     }));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
@@ -953,7 +953,7 @@ namespace Cauldron.Core_Test
                     {
                         new CardCondition()
                         {
-                            Context = CardCondition.CardConditionContext.EventSource,
+                            ContextCondition = CardCondition.ContextConditionValue.EventSource,
                         }
                     }));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);

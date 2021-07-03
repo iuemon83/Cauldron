@@ -13,8 +13,8 @@ namespace Cauldron.Shared.MessagePackObjects
 
             var result = textCondition.Compare switch
             {
-                TextCondition.ConditionCompare.Equality => checkValue == value,
-                TextCondition.ConditionCompare.Like => checkValue.Contains(value),
+                TextCondition.CompareValue.Equality => checkValue == value,
+                TextCondition.CompareValue.Contains => checkValue.Contains(value),
                 _ => throw new InvalidOperationException($"不正な入力値です: {textCondition.Compare}")
             };
 

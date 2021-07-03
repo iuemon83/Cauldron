@@ -20,7 +20,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(Play: new(EffectTimingPlayEvent.EventSource.This))),
+                            new(new(Play: new(EffectTimingPlayEvent.SourceValue.This))),
                             If: new(
                                 new NumCondition(2, NumCondition.ConditionCompare.GreaterThan),
                                 new NumValue(
