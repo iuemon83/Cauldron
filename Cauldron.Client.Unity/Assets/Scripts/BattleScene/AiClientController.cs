@@ -10,7 +10,10 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
 
     async void OnDestroy()
     {
-        await this.client?.Destroy();
+        if (this.client != null)
+        {
+            await this.client.Destroy();
+        }
     }
 
     public async void StartClient(GameId gameId, IDeck deck)

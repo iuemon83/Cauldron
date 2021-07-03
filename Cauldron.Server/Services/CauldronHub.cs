@@ -82,12 +82,20 @@ namespace Cauldron.Server.Services
 
         private IGroup room;
         private PlayerDef self;
+        private GameId gameId;
         private IInMemoryStorage<PlayerDef> storage;
 
         public CauldronHub(IConfiguration configuration, ILogger<CauldronHub> logger)
         {
             this.configuration = configuration;
             this._logger = logger;
+        }
+
+        protected override async ValueTask OnDisconnected()
+        {
+            await (this as ICauldronHub).LeaveGame(this.gameId);
+
+            await CompletedTask;
         }
 
         private async ValueTask<ChoiceAnswer> AskCard(PlayerId playerId, ChoiceCandidates choiceCandidates, int numPicks)
@@ -185,17 +193,34 @@ namespace Cauldron.Server.Services
                     AskCardAction: this.AskCard
                 ));
 
-            var gameId = gameMasterRepository.Add(options);
+            this.gameId = gameMasterRepository.Add(options);
 
-            return Task.FromResult(new OpenNewGameReply(gameId));
+            return Task.FromResult(new OpenNewGameReply(this.gameId));
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<CloseGameReply> ICauldronHub.CloseGame(CloseGameRequest request)
+        async Task<bool> ICauldronHub.LeaveGame(GameId gameId)
         {
-            gameMasterRepository.Delete(request.GameId);
+            if (this.room == null)
+            {
+                return true;
+            }
 
-            return Task.FromResult(new CloseGameReply(true, ""));
+            var removed = await this.room.RemoveAsync(this.Context);
+            if (!removed)
+            {
+                return false;
+            }
+
+            var numPlayers = await this.room.GetMemberCountAsync();
+            if (numPlayers == 0)
+            {
+                gameMasterRepository.Delete(gameId);
+            }
+
+            this.room = null;
+
+            return true;
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
@@ -223,39 +248,34 @@ namespace Cauldron.Server.Services
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
             }
 
-            var numOfPlayers = this.room == null
-                ? 0
-                : await this.room.GetMemberCountAsync();
-            if (numOfPlayers == 2)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "room is full"));
-            }
-
             var (status, newPlayerId) = gameMaster.CreateNewPlayer(new PlayerId(this.ConnectionId), request.PlayerName, request.DeckCardIdList);
 
             switch (status)
             {
                 case GameMasterStatusCode.OK:
                     // グループに参加したり
+                    var success = false;
                     try
                     {
                         this.self = gameMaster.PlayerDefsById[newPlayerId];
-                        var success = false;
                         (success, room, storage) = await this.Group.TryAddAsync(request.GameId.ToString(), 2, true, this.self);
-                        if (success)
-                        {
-                            this.BroadcastExceptSelf(this.room).OnJoinGame();
-                        }
-                        else
-                        {
-                            //TODO 追加したプレイヤーを削除
-                            throw new RpcException(new Status(StatusCode.InvalidArgument, "room is full"));
-                        }
+
                     }
                     catch (Exception e)
                     {
                         this._logger.LogInformation(e.ToString());
                     }
+
+                    if (success)
+                    {
+                        this.BroadcastExceptSelf(this.room).OnJoinGame();
+                    }
+                    else
+                    {
+                        //TODO 追加したプレイヤーを削除
+                        throw new RpcException(new Status(StatusCode.InvalidArgument, "room is full"));
+                    }
+
                     return new EnterGameReply(newPlayerId);
 
                 case GameMasterStatusCode.InvalidDeck:

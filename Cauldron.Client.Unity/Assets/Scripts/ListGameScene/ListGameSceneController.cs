@@ -1,6 +1,8 @@
 using Assets.Scripts;
 using Assets.Scripts.ServerShared.MessagePackObjects;
 using Grpc.Core;
+using System;
+using UniRx;
 using UnityEngine;
 
 public class ListGameSceneController : MonoBehaviour
@@ -11,6 +13,10 @@ public class ListGameSceneController : MonoBehaviour
     private GameObject GameListNodePrefab;
     [SerializeField]
     private ListDeckDialogController SelectDeckDialog;
+    [SerializeField]
+    private Canvas canvas;
+    [SerializeField]
+    private ConfirmDialogController confirmDialogController;
 
     private Transform listContent;
 
@@ -45,7 +51,7 @@ public class ListGameSceneController : MonoBehaviour
         var controller = node.GetComponent<GameListNodeController>();
         controller.Set(gameOutline, () =>
         {
-            this.SelectDeckDialog.ShowDialog("Select you deck",
+            this.SelectDeckDialog.ShowDialog("Select your deck",
                 async deck =>
                 {
                     var holder = ConnectionHolder.Find();
@@ -58,17 +64,15 @@ public class ListGameSceneController : MonoBehaviour
 
     public void OnOpenNewGameButtonClick()
     {
-        Debug.Log("click open new game Button!");
-
-        this.SelectDeckDialog.ShowDialog("Select you deck",
+        this.SelectDeckDialog.ShowDialog("Select your deck",
             async deck =>
             {
                 var holder = ConnectionHolder.Find();
-                var gameId = await holder.Client.OpenNewGame();
+                await holder.Client.OpenNewGame();
 
                 try
                 {
-                    await holder.Client.EnterGame(gameId, deck);
+                    await holder.Client.EnterGame(deck);
                 }
                 catch (RpcException e)
                 {
@@ -76,7 +80,24 @@ public class ListGameSceneController : MonoBehaviour
                     return;
                 }
 
-                Utility.LoadAsyncScene(this, SceneNames.WatingRoomScene);
+                IDisposable disposable = default;
+                disposable = holder.Receiver.OnJoinGame.Subscribe(_ =>
+                {
+                    disposable?.Dispose();
+                    Utility.LoadAsyncScene(this, SceneNames.BattleScene);
+                });
+
+                var title = "ëŒêÌëäéËÇë“Ç¡ÇƒÇ¢Ç‹Ç∑...";
+                var message = "ëŒêÌëäéËÇë“Ç¡ÇƒÇ¢Ç‹Ç∑...";
+                var dialog = Instantiate(this.confirmDialogController);
+                dialog.Init(title, message, ConfirmDialogController.DialogType.OnlyCancel,
+                    onCancelAction: async () =>
+                    {
+                        // ÉLÉÉÉìÉZÉã
+                        disposable?.Dispose();
+                        await holder.Client.LeaveGame();
+                    });
+                dialog.transform.SetParent(this.canvas.transform, false);
             });
     }
 
@@ -94,25 +115,27 @@ public class ListGameSceneController : MonoBehaviour
 
     public void OnVsAiButtonClick()
     {
-        this.SelectDeckDialog.ShowDialog("Select you deck",
+        this.SelectDeckDialog.ShowDialog("Select your deck",
             myDeck =>
             {
                 this.SelectDeckDialog.ShowDialog("Select AI deck",
                     aiDeck =>
                     {
-                        this.battleAi(myDeck, aiDeck);
+                        this.BattleAi(myDeck, aiDeck);
                     });
             });
     }
 
-    private async void battleAi(IDeck myDeck, IDeck aiDeck)
+    private async void BattleAi(IDeck myDeck, IDeck aiDeck)
     {
+        // é©ï™ë§ÇÃê⁄ë±èàóùÇ±Ç±Ç©ÇÁ----
+
         var holder = ConnectionHolder.Find();
         var gameId = await holder.Client.OpenNewGame();
 
         try
         {
-            await holder.Client.EnterGame(gameId, myDeck);
+            await holder.Client.EnterGame(myDeck);
         }
         catch (RpcException e)
         {
@@ -120,8 +143,11 @@ public class ListGameSceneController : MonoBehaviour
             return;
         }
 
+        // é©ï™ë§ÇÃê⁄ë±èàóùÇ±Ç±Ç‹Ç≈----
+
         Utility.LoadAsyncScene(this, SceneNames.BattleScene, () =>
         {
+            // AIë§Çê⁄ë±Ç∑ÇÈ
             var aiClientController = FindObjectOfType<AiClientController>();
             aiClientController.StartClient(gameId, aiDeck);
         });

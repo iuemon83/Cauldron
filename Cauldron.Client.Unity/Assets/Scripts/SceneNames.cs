@@ -6,7 +6,6 @@
         ListGameScene,
         ListDeckScene,
         EditDeckScene,
-        WatingRoomScene,
         BattleScene
     }
 }

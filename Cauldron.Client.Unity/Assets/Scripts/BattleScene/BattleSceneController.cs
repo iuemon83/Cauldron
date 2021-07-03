@@ -430,11 +430,13 @@ public class BattleSceneController : MonoBehaviour
             ? "‚ ‚È‚½‚ÌŸ‚¿!"
             : "‚ ‚È‚½‚Ì•‰‚¯...";
         var dialog = Instantiate(this.confirmDialogController);
-        dialog.Init(title, message, ConfirmDialogController.DialogType.Message);
-        dialog.OnOkButtonClickAction = () =>
-        {
-            Utility.LoadAsyncScene(this, SceneNames.ListGameScene);
-        };
+        dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
+            onOkAction: async () =>
+            {
+                var holder = ConnectionHolder.Find();
+                await holder.Client.LeaveGame();
+                Utility.LoadAsyncScene(this, SceneNames.ListGameScene);
+            });
         dialog.transform.SetParent(this.canvas.transform, false);
     }
 

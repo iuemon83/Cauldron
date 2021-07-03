@@ -113,6 +113,16 @@ public class Client
         return await this.magiconionClient.GetCardPool();
     }
 
+    public ValueTask<PlayerId> EnterGame(IDeck deck)
+    {
+        if (this.GameId == default)
+        {
+            throw new InvalidOperationException("selected invalid game");
+        }
+
+        return this.EnterGame(this.GameId, deck);
+    }
+
     public async ValueTask<PlayerId> EnterGame(GameId gameId, IDeck deck)
     {
         this.GameId = gameId;
@@ -134,6 +144,16 @@ public class Client
         this.PlayerId = reply.PlayerId;
 
         return this.PlayerId;
+    }
+
+    public async ValueTask LeaveGame()
+    {
+        if (this.GameId == default)
+        {
+            return;
+        }
+
+        await this.magiconionClient.LeaveGame(this.GameId);
     }
 
     private IEnumerable<CardDefId> ToDeckIdList(IDeck deck, CardDef[] cardPool)

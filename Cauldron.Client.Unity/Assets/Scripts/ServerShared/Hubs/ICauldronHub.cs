@@ -15,11 +15,11 @@ namespace Cauldron.Shared.Services
 
         Task<OpenNewGameReply> OpenNewGame(OpenNewGameRequest request);
 
-        Task<CloseGameReply> CloseGame(CloseGameRequest request);
-
         Task<CardDef[]> GetCardPoolByGame(GameId gameId);
 
         Task<EnterGameReply> EnterGame(EnterGameRequest request);
+
+        Task<bool> LeaveGame(GameId gameId);
 
         Task ReadyGame(ReadyGameRequest request);
 

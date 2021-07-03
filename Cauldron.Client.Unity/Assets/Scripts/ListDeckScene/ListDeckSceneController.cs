@@ -73,12 +73,12 @@ public class ListDeckSceneController : MonoBehaviour
         var title = "デッキの削除";
         var message = $"「{this.selectedNode.Source.Name}」を削除してもよろしいですか？";
         var dialog = Instantiate(this.confirmDialogController);
-        dialog.Init(title, message, ConfirmDialogController.DialogType.Confirm);
-        dialog.OnOkButtonClickAction = () =>
-        {
-            new DeckRepository().Delete(this.selectedNode.Source.Id);
-            this.RefreshDeckList();
-        };
+        dialog.Init(title, message, ConfirmDialogController.DialogType.Confirm,
+            onOkAction: () =>
+            {
+                new DeckRepository().Delete(this.selectedNode.Source.Id);
+                this.RefreshDeckList();
+            });
         dialog.transform.SetParent(this.canvas.transform, false);
     }
 

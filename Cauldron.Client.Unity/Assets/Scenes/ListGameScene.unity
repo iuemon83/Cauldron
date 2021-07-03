@@ -2359,6 +2359,8 @@ MonoBehaviour:
   GameList: {fileID: 1025618933}
   GameListNodePrefab: {fileID: 6801688050871598779, guid: 6a52d21b60df40e40b04cf10cc29cf31, type: 3}
   SelectDeckDialog: {fileID: 169913118}
+  canvas: {fileID: 839613576}
+  confirmDialogController: {fileID: 206061174593263470, guid: 311bc35d10666ad47bfcbe81f0e33cd7, type: 3}
 --- !u!4 &2140493671
 Transform:
   m_ObjectHideFlags: 0

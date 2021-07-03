@@ -48,7 +48,7 @@ public class CardDetailController : MonoBehaviour
             this.FlavorText.text = this.cardDef.FlavorText;
             this.CostText.text = this.cardDef.Cost.ToString();
 
-            switch (this.card.Type)
+            switch (this.cardDef.Type)
             {
                 case CardType.Creature:
                     this.PowerText.text = this.cardDef.Power.ToString();
