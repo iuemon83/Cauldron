@@ -1,6 +1,7 @@
-﻿using Cauldron.Shared.MessagePackObjects;
+﻿using Cauldron.Shared;
+using Cauldron.Shared.MessagePackObjects;
 
 namespace Cauldron.Core.Entities.Effect
 {
-    public record MoveCardContext(Zone From, Zone To);
+    public record MoveCardContext(Zone From, Zone To, InsertCardPosition InsertCardPosition = null);
 }

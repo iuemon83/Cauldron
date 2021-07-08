@@ -3,6 +3,137 @@
     "cards": [
         {
             "cost": 1,
+            "name": "寄生虫",
+            "flavorText": "このカードがデッキから手札に移動したとき、このカードをあなたの場に出す。このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
+            "isToken": true,
+            "type": "creature",
+            "power": 1,
+            "toughness": 1,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youHand",
+                        "when": {
+                            "timing": {
+                                "moveCard": {
+                                    "source": "this",
+                                    "from": "youDeck",
+                                    "to": "youHand"
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "moveCard": {
+                                "cardsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                },
+                                "to": "youField"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "endTurn": { "source": "you" } } }
+                    },
+                    "actions": [
+                        {
+                            "damage": {
+                                "value": { "pureValue": 1 },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [
+                                            {
+                                                "context": "any",
+                                                "type": "you"
+                                            }
+                                        ],
+                                        "orCardConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "虫つかい",
+            "flavorText": "このカードをプレイしたとき、相手のデッキの1番上に「寄生虫」を1枚追加する。",
+            "isToken": false,
+            "type": "creature",
+            "power": 1,
+            "toughness": 1,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "cardSetCondition": { "type": "this" },
+                                                "nameCondition": {
+                                                    "value": { "pureValue": "寄生虫" },
+                                                    "compare": "equality",
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                },
+                                "zoneToAddCard": { "pureValue": [ "opponentDeck" ] },
+                                "insertCardPosition": {
+                                    "positionType": "top",
+                                    "positionIndex": 1
+                                },
+                                "numOfAddCards": 1
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
             "name": "からくりゴブリン",
             "flavorText": "トークン",
             "isToken": true,
@@ -53,8 +184,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
-                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -77,7 +206,9 @@
                                     },
                                     "how": "random",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1
                             }
                         }
                     ]
@@ -318,8 +449,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
-                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -344,7 +473,9 @@
                                     },
                                     "how": "all",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1
                             }
                         }
                     ]
@@ -369,8 +500,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youField" ] },
-                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -385,7 +514,9 @@
                                     },
                                     "how": "all",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 1
                             }
                         }
                     ]
@@ -410,8 +541,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youField" ] },
-                                "numOfAddCards": 2,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -426,7 +555,9 @@
                                     },
                                     "how": "all",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 2
                             }
                         }
                     ]
@@ -650,8 +781,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youField" ] },
-                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -679,7 +808,9 @@
                                     },
                                     "how": "random",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 1
                             }
                         }
                     ]
@@ -736,8 +867,6 @@
                                         "actions": [
                                             {
                                                 "addCard": {
-                                                    "zoneToAddCard": { "pureValue": [ "youField" ] },
-                                                    "numOfAddCards": 1,
                                                     "choice": {
                                                         "source": {
                                                             "how": "all",
@@ -752,7 +881,9 @@
                                                         },
                                                         "how": "all",
                                                         "numPicks": 1
-                                                    }
+                                                    },
+                                                    "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                                    "numOfAddCards": 1
                                                 }
                                             }
                                         ]
@@ -1229,8 +1360,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youField" ] },
-                                "numOfAddCards": 2,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -1255,7 +1384,9 @@
                                     },
                                     "how": "all",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 2
                             }
                         }
                     ]
@@ -1755,8 +1886,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
-                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -1795,7 +1924,9 @@
                                     },
                                     "how": "choose",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1
                             }
                         }
                     ]
@@ -1919,8 +2050,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
-                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -1939,7 +2068,9 @@
                                     },
                                     "how": "choose",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1
                             }
                         }
                     ]
@@ -2042,8 +2173,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
-                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -2062,7 +2191,9 @@
                                     },
                                     "how": "choose",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1
                             }
                         }
                     ]
@@ -2087,8 +2218,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
-                                "numOfAddCards": 2,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -2107,7 +2236,9 @@
                                     },
                                     "how": "choose",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 2
                             }
                         }
                     ]
@@ -2248,8 +2379,6 @@
                                 }
                             },
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
-                                "numOfAddCards": 1,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -2274,7 +2403,9 @@
                                     },
                                     "how": "all",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 1
                             }
                         }
                     ]
@@ -2973,8 +3104,6 @@
                     "actions": [
                         {
                             "addCard": {
-                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
-                                "numOfAddCards": 3,
                                 "choice": {
                                     "source": {
                                         "how": "all",
@@ -2999,7 +3128,9 @@
                                     },
                                     "how": "all",
                                     "numPicks": 1
-                                }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youHand" ] },
+                                "numOfAddCards": 3
                             }
                         }
                     ]

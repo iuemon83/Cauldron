@@ -41,5 +41,13 @@ namespace Cauldron.Core.Entities
         {
             this.cards = new(this.cards.OrderBy(_ => Guid.NewGuid()));
         }
+
+        public void Insert(int index, Card card)
+        {
+            var list = this.cards.ToList();
+            list.Insert(index, card);
+
+            this.cards = new(list);
+        }
     }
 }

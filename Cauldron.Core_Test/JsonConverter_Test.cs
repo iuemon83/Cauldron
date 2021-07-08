@@ -24,6 +24,8 @@ namespace Cauldron.Core_Test
         {
             var test = new CardSet("Sample", new[]
             {
+                SampleCards.Parasite,
+                SampleCards.Insector,
                 SampleCards.KarakuriGoblin,
                 SampleCards.Goblin,
                 SampleCards.QuickGoblin,

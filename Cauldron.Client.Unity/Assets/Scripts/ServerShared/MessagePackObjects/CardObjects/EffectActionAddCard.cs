@@ -6,7 +6,11 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectActionAddCard
     {
+        public Choice Choice { get; }
+
         public ZoneValue ZoneToAddCard { get; }
+
+        public InsertCardPosition InsertCardPosition { get; }
 
         /// <summary>
         /// 選択したカードを加える数
@@ -17,13 +21,13 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public int NumOfAddCards { get; }
 
-        public Choice Choice { get; }
-
-        public EffectActionAddCard(Choice choice, ZoneValue ZoneToAddCard, int NumOfAddCards = 1)
+        public EffectActionAddCard(Choice Choice, ZoneValue ZoneToAddCard,
+            InsertCardPosition InsertCardPosition = null, int NumOfAddCards = 1)
         {
+            this.Choice = Choice;
             this.ZoneToAddCard = ZoneToAddCard;
+            this.InsertCardPosition = InsertCardPosition;
             this.NumOfAddCards = NumOfAddCards;
-            this.Choice = choice;
         }
     }
 }

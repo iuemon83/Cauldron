@@ -1080,7 +1080,7 @@ namespace Cauldron.Core_Test
                                         Choice.ChoiceHow.Choose,
                                         1),
                                     ZonePrettyName.YouHand,
-                                    "move"
+                                    Name: "move"
                                     )),
                             new EffectAction(
                                 ModifyCard: new(
@@ -1164,7 +1164,7 @@ namespace Cauldron.Core_Test
                                         Choice.ChoiceHow.Random,
                                         1),
                                     ZonePrettyName.YouField,
-                                    "move"
+                                    Name: "move"
                                     )),
                             new EffectAction(
                                 ModifyCard: new(
@@ -1325,6 +1325,76 @@ namespace Cauldron.Core_Test
                         })
                 });
 
+        public static CardDef Parasite
+            => SampleCards.Creature(1, "寄生虫", "このカードがデッキから手札に移動したとき、このカードをあなたの場に出す。このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
+                1, 1, isToken: true,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouHand,
+                            new EffectWhen(new EffectTiming(
+                                MoveCard: new(EffectTimingMoveCardEvent.EventSource.This,
+                                    ZonePrettyName.YouDeck, ZonePrettyName.YouHand)))),
+                        new[]
+                        {
+                            new EffectAction(MoveCard: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition()
+                                            {
+                                                ContextCondition = CardCondition.ContextConditionValue.This
+                                            }
+                                        })),
+                                ZonePrettyName.YouField)),
+                        }),
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                EndTurn: new(EffectTimingEndTurnEvent.EventSource.You)))),
+                        new[]
+                        {
+                            new EffectAction(Damage: new(
+                                new NumValue(1),
+                                new Choice(
+                                    new ChoiceSource(
+                                        orPlayerConditions: new[]
+                                        {
+                                            new PlayerCondition(
+                                                Type: PlayerCondition.PlayerConditionType.You)
+                                        }))))
+                        }),
+                });
+
+        public static CardDef Insector
+            => SampleCards.Creature(1, "虫つかい", "このカードをプレイしたとき、相手のデッキの1番上に「寄生虫」を1枚追加する。",
+                1, 1,
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(AddCard: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition()
+                                            {
+                                                CardSetCondition = new(CardSetCondition.ConditionType.This),
+                                                NameCondition = new(
+                                                    new TextValue(Parasite.Name),
+                                                    TextCondition.CompareValue.Equality),
+                                                ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.CardPool }))
+                                            }
+                                        })),
+                                new ZoneValue(new[]{ ZonePrettyName.OpponentDeck }),
+                                InsertCardPosition: new(InsertCardPosition.PositionTypeValue.Top, 1))),
+                        }),
+                });
+
         public static CardDef EmergencyFood
             => SampleCards.Sorcery(1, "非常食", "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
                 effects: new[] {
@@ -1343,7 +1413,7 @@ namespace Cauldron.Core_Test
                                     Choice.ChoiceHow.Random,
                                     1),
                                 ZonePrettyName.YouCemetery,
-                                "moveCard"
+                                Name: "moveCard"
                                 )),
                             new EffectAction(ModifyPlayer: new(
                                 new Choice(new ChoiceSource(

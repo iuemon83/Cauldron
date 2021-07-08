@@ -36,7 +36,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             var newCards = newCardDefs
                 .SelectMany(cd => Enumerable.Repeat(cd, effectActionAddCard.NumOfAddCards))
-                .Select(cd => effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone))
+                .Select(cd => effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, effectActionAddCard.InsertCardPosition))
                 .ToArray();
 
             return (true, effectEventArgs);

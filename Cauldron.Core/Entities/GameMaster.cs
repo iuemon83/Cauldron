@@ -116,6 +116,23 @@ namespace Cauldron.Core.Entities
                 ;
         }
 
+        public static int CalcIndex(InsertCardPosition insertCardPosition, int min, int max)
+        {
+            if (insertCardPosition == null)
+            {
+                return max;
+            }
+
+            return insertCardPosition.PositionType switch
+            {
+                InsertCardPosition.PositionTypeValue.Top
+                    => Math.Max(0, Math.Min(insertCardPosition.PositionIndex - 1, max)),
+                InsertCardPosition.PositionTypeValue.Bottom
+                    => max - Math.Max(0, Math.Min(insertCardPosition.PositionIndex - 1, max)),
+                _ => RandomUtil.RandomPick(Enumerable.Range(min, max).ToArray()),
+            };
+        }
+
         public RuleBook RuleBook { get; }
 
         private readonly ILogger logger;
@@ -331,7 +348,11 @@ namespace Cauldron.Core.Entities
 
             this.logger.LogInformation($"破壊：{cardToDestroy}({player.Name})");
 
-            await this.MoveCard(cardToDestroy.Id, new(new(cardToDestroy.OwnerId, ZoneName.Field), new(cardToDestroy.OwnerId, ZoneName.Cemetery)));
+            var moveContext = new MoveCardContext(
+                new(cardToDestroy.OwnerId, ZoneName.Field),
+                new(cardToDestroy.OwnerId, ZoneName.Cemetery));
+
+            await this.MoveCard(cardToDestroy.Id, moveContext);
 
             await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDestroy, this, SourceCard: cardToDestroy));
         }
@@ -454,14 +475,17 @@ namespace Cauldron.Core.Entities
             return GameMasterStatusCode.OK;
         }
 
-        public async ValueTask<Card> GenerateNewCard(CardDefId cardDefId, Zone zone)
+        public async ValueTask<Card> GenerateNewCard(CardDefId cardDefId, Zone zone, InsertCardPosition insertCardPosition)
         {
             var card = this.cardRepository.CreateNew(cardDefId);
             card.OwnerId = zone.PlayerId;
 
-            await this.MoveCard(card.Id, new(
+            var moveContext = new MoveCardContext(
                 new Zone(zone.PlayerId, ZoneName.CardPool),
-                zone));
+                zone,
+                insertCardPosition);
+
+            await this.MoveCard(card.Id, moveContext);
 
             return card;
         }
@@ -519,7 +543,8 @@ namespace Cauldron.Core.Entities
                     break;
 
                 case ZoneName.Deck:
-                    //toPlayer.Deck.Add(card);
+                    var index = CalcIndex(moveCardContext.InsertCardPosition, 0, toPlayer.Deck.Count);
+                    toPlayer.Deck.Insert(index, card);
                     break;
 
                 case ZoneName.Field:

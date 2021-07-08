@@ -142,7 +142,7 @@ namespace Cauldron.Core_Test
 
         public static async ValueTask<Card> NewCardAndPlayFromHand(GameMaster testGameMaster, PlayerId playerId, CardDefId cardDefId)
         {
-            var newCard = await testGameMaster.GenerateNewCard(cardDefId, new Zone(playerId, ZoneName.Hand));
+            var newCard = await testGameMaster.GenerateNewCard(cardDefId, new Zone(playerId, ZoneName.Hand), null);
             //testGameMaster.AddHand(testGameMaster.ActivePlayer, newCard);
             await TestUtil.AssertGameAction(async () => await testGameMaster.PlayFromHand(playerId, newCard.Id));
 

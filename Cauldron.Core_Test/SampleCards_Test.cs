@@ -180,6 +180,39 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task Insector()
+        {
+            var testCardDef = SampleCards.Insector;
+            testCardDef.Cost = 0;
+
+            var tokenDef = SampleCards.Parasite;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, tokenDef });
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var op = g.GetOpponent(pid);
+
+                var beforeOpDeckIdList = op.Deck.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                var afterOpDeckIdList = op.Deck.AllCards.Select(c => c.Id).ToArray();
+                var diffOpDeckIdList = afterOpDeckIdList
+                    .Except(beforeOpDeckIdList)
+                    .ToArray();
+
+                Assert.Single(diffOpDeckIdList);
+
+                var (_, diffCard) = c.CardRepository.TryGetById(diffOpDeckIdList[0]);
+                Assert.Equal(tokenDef.Id, diffCard.CardDefId);
+
+                var deckTopCard = op.Deck.AllCards[0];
+                Assert.Equal(tokenDef.Id, deckTopCard.CardDefId);
+            });
+        }
+
+        [Fact]
         public async Task GoblinsPet()
         {
             var testCardDef = SampleCards.GoblinsPet;
