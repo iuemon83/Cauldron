@@ -16,8 +16,14 @@ namespace Cauldron.Shared.MessagePackObjects
 
             var opponentId = args.GameMaster.GetOpponent(ownerCard.OwnerId).Id;
 
-            var (fromSuccess, fromZone) = effectTimingMoveCardEvent.From.TryGetZone(ownerCard.OwnerId, opponentId);
-            var (toSuccess, toZone) = effectTimingMoveCardEvent.To.TryGetZone(ownerCard.OwnerId, opponentId);
+            var (fromSuccess, fromZone) = effectTimingMoveCardEvent.From.TryGetZone(
+                ownerCard.OwnerId,
+                opponentId,
+                args.SourceCard.OwnerId);
+            var (toSuccess, toZone) = effectTimingMoveCardEvent.To.TryGetZone(
+                ownerCard.OwnerId,
+                opponentId,
+                args.SourceCard.OwnerId);
 
             return matchSource
                 && fromSuccess

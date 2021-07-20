@@ -213,13 +213,130 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task MagicShieldGoblin()
+        {
+            var testCardDef = SampleCards.MagicShieldGoblin;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, });
+
+            var (p1Goblin, p1TestCard) = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                return (goblin, testCard);
+            });
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var (_, p) = g.playerRepository.TryGet(pid);
+                var op = g.GetOpponent(pid);
+
+                // 攻撃されると攻撃したカードを持ち主の手札に戻す
+                var p2Goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+
+                var beforpHandsIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.AssertGameAction(() => g.AttackToCreature(pid, p2Goblin.Id, p1TestCard.Id));
+
+                var afterHandsIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
+                var diffHandsIdList = afterHandsIdList
+                    .Except(beforpHandsIdList)
+                    .ToArray();
+
+                // 攻撃したカードが手札に戻っている
+                Assert.Empty(p.Field.AllCards);
+
+                Assert.Single(diffHandsIdList);
+                Assert.Equal(p2Goblin.Id, diffHandsIdList[0]);
+
+                // 攻撃したときは効果が発動しない
+                await g.DestroyCard(p1TestCard);
+                var p2TestCard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                var beforpOpFieldIdList = op.Field.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.AssertGameAction(() => g.AttackToCreature(pid, p2TestCard.Id, p1Goblin.Id));
+
+                var afterOpFieldIdList = op.Field.AllCards.Select(c => c.Id).ToArray();
+
+                // 効果が発動しないので相手フィールド上のカードに変更はない
+                TestUtil.AssertCollection(beforpOpFieldIdList, afterOpFieldIdList);
+            });
+        }
+
+        [Fact]
+        public async Task SuperMagicShieldGoblin()
+        {
+            var testCardDef = SampleCards.SuperMagicShieldGoblin;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, });
+
+            var (p1Goblin, p1TestCard) = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                return (goblin, testCard);
+            });
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var (_, p) = g.playerRepository.TryGet(pid);
+                var op = g.GetOpponent(pid);
+
+                // 攻撃されると攻撃したカードを持ち主の手札に戻す
+                var p2Goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+
+                var beforpDeckIdList = p.Deck.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.AssertGameAction(() => g.AttackToCreature(pid, p2Goblin.Id, p1TestCard.Id));
+
+                var afterDeckIdList = p.Deck.AllCards.Select(c => c.Id).ToArray();
+                var diffDeckIdList = afterDeckIdList
+                    .Except(beforpDeckIdList)
+                    .ToArray();
+
+                Assert.Empty(p.Field.AllCards);
+
+                // デッキに移動している
+                Assert.Single(diffDeckIdList);
+                Assert.Equal(p2Goblin.Id, diffDeckIdList[0]);
+
+                // デッキの一番上
+                Assert.Equal(p2Goblin.Id, afterDeckIdList[0]);
+
+                // 攻撃したときは効果が発動しない
+                await g.DestroyCard(p1TestCard);
+                var p2TestCard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                var beforpOpFieldIdList = op.Field.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.AssertGameAction(() => g.AttackToCreature(pid, p2TestCard.Id, p1Goblin.Id));
+
+                var afterOpFieldIdList = op.Field.AllCards.Select(c => c.Id).ToArray();
+
+                // 効果が発動しないので相手フィールド上のカードに変更はない
+                TestUtil.AssertCollection(beforpOpFieldIdList, afterOpFieldIdList);
+            });
+        }
+
+        [Fact]
         public async Task GoblinsPet()
         {
             var testCardDef = SampleCards.GoblinsPet;
             testCardDef.Cost = 0;
 
             var goblinDef = SampleCards.Goblin;
-            var sorceryDef = SampleCards.Fire;
+            var sorceryDef = SampleCards.SelectDamage;
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, goblinDef, sorceryDef },
@@ -578,7 +695,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.MagicDragon;
             testCardDef.Cost = 0;
 
-            var sorceryDef = SampleCards.Fire;
+            var sorceryDef = SampleCards.SelectDamage;
 
             PlayerId[] choicePlayerIdList = default;
             var c = await TestUtil.InitTest(new[] { testCardDef, sorceryDef },
@@ -1385,6 +1502,152 @@ namespace Cauldron.Core_Test
                 // 最大値が１増える。未使用のMPは増えない。
                 Assert.Equal(2, g.ActivePlayer.MaxMp);
                 Assert.Equal(0, g.ActivePlayer.CurrentMp);
+            });
+        }
+
+        [Fact]
+        public async Task BounceHand()
+        {
+            var testCardDef = SampleCards.BounceHand;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            CardId choiceCardId = default;
+            ValueTask<ChoiceAnswer> assertAskAction(PlayerId _, ChoiceCandidates c, int i)
+            {
+                return ValueTask.FromResult(new ChoiceAnswer(
+                    Array.Empty<PlayerId>(),
+                    new[] { choiceCardId },
+                    Array.Empty<CardDefId>()));
+            }
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: assertAskAction)
+                    ));
+
+            // 自分のカードを戻す
+            var goblin = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var (_, p) = g.playerRepository.TryGet(pid);
+
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+
+                choiceCardId = goblin.Id;
+
+                var beforeHandsIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                var afterHandsIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
+                var diffHandsIdList = afterHandsIdList
+                    .Except(beforeHandsIdList)
+                    .ToArray();
+
+                Assert.Empty(p.Field.AllCards);
+
+                Assert.Single(diffHandsIdList);
+                Assert.Equal(goblin.Id, diffHandsIdList[0]);
+
+                return await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+            });
+
+            // 相手のカードを戻す
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var op = g.GetOpponent(pid);
+
+                choiceCardId = goblin.Id;
+
+                var beforeHandsIdList = op.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                var afterHandsIdList = op.Hands.AllCards.Select(c => c.Id).ToArray();
+                var diffHandsIdList = afterHandsIdList
+                    .Except(beforeHandsIdList)
+                    .ToArray();
+
+                Assert.Empty(op.Field.AllCards);
+
+                Assert.Single(diffHandsIdList);
+                Assert.Equal(goblin.Id, diffHandsIdList[0]);
+            });
+        }
+
+        [Fact]
+        public async Task BounceDeck()
+        {
+            var testCardDef = SampleCards.BounceDeck;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            CardId choiceCardId = default;
+            ValueTask<ChoiceAnswer> assertAskAction(PlayerId _, ChoiceCandidates c, int i)
+            {
+                return ValueTask.FromResult(new ChoiceAnswer(
+                    Array.Empty<PlayerId>(),
+                    new[] { choiceCardId },
+                    Array.Empty<CardDefId>()));
+            }
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: assertAskAction)
+                    ));
+
+            // 自分のカードを戻す
+            var p1Goblin = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var (_, p) = g.playerRepository.TryGet(pid);
+
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+
+                choiceCardId = goblin.Id;
+
+                var beforeDeckIdList = p.Deck.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                var afterDeckIdList = p.Deck.AllCards.Select(c => c.Id).ToArray();
+                var diffDeckIdList = afterDeckIdList
+                    .Except(beforeDeckIdList)
+                    .ToArray();
+
+                Assert.Empty(p.Field.AllCards);
+
+                // デッキに移動している
+                Assert.Single(diffDeckIdList);
+                Assert.Equal(goblin.Id, diffDeckIdList[0]);
+
+                return await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+            });
+
+            // 相手のカードを戻す
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var op = g.GetOpponent(pid);
+
+                choiceCardId = p1Goblin.Id;
+
+                var beforeDeckIdList = op.Deck.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+
+                var afterDeckIdList = op.Deck.AllCards.Select(c => c.Id).ToArray();
+                var diffDeckIdList = afterDeckIdList
+                    .Except(beforeDeckIdList)
+                    .ToArray();
+
+                Assert.Empty(op.Field.AllCards);
+
+                // デッキに移動している
+                Assert.Single(diffDeckIdList);
+                Assert.Equal(p1Goblin.Id, diffDeckIdList[0]);
             });
         }
 

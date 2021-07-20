@@ -45,12 +45,18 @@ namespace Assets.Scripts
 
         public static (string ownerPlayerName, string cardName) GetCardName(GameContext gameContext, CardId cardId)
         {
+            // 非公開領域に移動した場合は取れない
             var card = gameContext.You.Hands
                 .Concat(gameContext.You.PublicPlayerInfo.Field)
                 .Concat(gameContext.You.PublicPlayerInfo.Cemetery)
                 .Concat(gameContext.Opponent.Field)
                 .Concat(gameContext.Opponent.Cemetery)
-                .First(c => c.Id == cardId);
+                .FirstOrDefault(c => c.Id == cardId);
+
+            if (card == default)
+            {
+                return ("", "");
+            }
 
             var ownerName = GetPlayerName(gameContext, card.OwnerId);
 

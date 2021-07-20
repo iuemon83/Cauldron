@@ -11,9 +11,13 @@ namespace Cauldron.Shared.MessagePackObjects
             var targets = choiceResult.CardList;
 
             var done = false;
+            var opponentId = args.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Id;
             foreach (var card in targets)
             {
-                var (success, toZone) = effectActionMoveCard.To.TryGetZone(effectOwnerCard.OwnerId, args.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Id);
+                var (success, toZone) = effectActionMoveCard.To.TryGetZone(
+                    effectOwnerCard.OwnerId,
+                    opponentId,
+                    card.OwnerId);
                 if (success)
                 {
                     var moveContext = new MoveCardContext(card.Zone, toZone, effectActionMoveCard.InsertCardPosition);

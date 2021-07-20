@@ -174,6 +174,8 @@ namespace Cauldron.Core.Entities
 
         public Player GetOpponent(PlayerId playerId) => this.playerRepository.Opponents(playerId)[0];
 
+        public (bool Exists, CardDef CardDef) TryGet(CardDefId id) => this.cardRepository.TryGetCardDefById(id);
+
         public (GameMasterStatusCode, CardId[]) ListPlayableCardId(PlayerId playerId)
         {
             var (exists, player) = this.playerRepository.TryGet(playerId);
@@ -433,14 +435,13 @@ namespace Cauldron.Core.Entities
                     {
                         this.EventListener?.OnMoveCard?.Invoke(p.Id,
                             this.CreateGameContext(p.Id),
-                            new MoveCardNotifyMessage()
-                            {
-                                CardId = drawCard.Id,
-                                ToZone = new Zone(
+                            new MoveCardNotifyMessage(
+                                drawCard.Id,
+                                new Zone(
                                     playerId,
                                     ZoneName.Cemetery
-                                )
-                            });
+                                ),
+                                0));
                     }
 
                     // event
@@ -456,14 +457,13 @@ namespace Cauldron.Core.Entities
                     {
                         this.EventListener?.OnMoveCard?.Invoke(p.Id,
                             this.CreateGameContext(p.Id),
-                            new MoveCardNotifyMessage()
-                            {
-                                CardId = drawCard.Id,
-                                ToZone = new Zone(
+                            new MoveCardNotifyMessage(
+                                drawCard.Id,
+                                new Zone(
                                     playerId,
                                     ZoneName.Hand
-                                )
-                            });
+                                ),
+                                0));
                     }
 
                     await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
@@ -576,6 +576,9 @@ namespace Cauldron.Core.Entities
             card.Zone = moveCardContext.To;
             card.OwnerId = toPlayer.Id;
 
+            this.logger
+                .LogInformation($"move card. card: {card.Name}, from: {moveCardContext.From.ZoneName}, to: {moveCardContext.To.ZoneName}");
+
             var isAdd = moveCardContext.From.ZoneName == ZoneName.CardPool;
 
             if (isAdd)
@@ -606,11 +609,11 @@ namespace Cauldron.Core.Entities
                 // カードの持ち主には無条件に通知する
                 this.EventListener?.OnMoveCard?.Invoke(card.OwnerId,
                     this.CreateGameContext(card.OwnerId),
-                    new MoveCardNotifyMessage()
-                    {
-                        CardId = card.Id,
-                        ToZone = moveCardContext.To
-                    });
+                    new MoveCardNotifyMessage(
+                        card.Id,
+                        moveCardContext.To,
+                        0
+                    ));
 
                 var isPublic = moveCardContext.From.IsPublic()
                     || moveCardContext.To.IsPublic();
@@ -619,11 +622,11 @@ namespace Cauldron.Core.Entities
                 // 移動元か移動後どちらかの領域が公開領域の場合のみ
                 this.EventListener?.OnMoveCard?.Invoke(this.GetOpponent(card.OwnerId).Id,
                     this.CreateGameContext(this.GetOpponent(card.OwnerId).Id),
-                    new MoveCardNotifyMessage()
-                    {
-                        CardId = isPublic ? card.Id : default,
-                        ToZone = moveCardContext.To
-                    });
+                    new MoveCardNotifyMessage(
+                        isPublic ? card.Id : default,
+                        moveCardContext.To,
+                        0
+                        ));
             }
 
             // カードの移動イベント
@@ -975,11 +978,12 @@ namespace Cauldron.Core.Entities
 
             attackCard.NumAttacksInTurn++;
 
+            // 反撃ダメージは戦闘イベントとして扱わない
             var damageContext2 = new DamageContext(
                 DamageSourceCard: guardCard,
                 GuardCard: attackCard,
                 Value: guardCard.Power,
-                IsBattle: true
+                IsBattle: false
             );
             await this.HitCreature(damageContext2);
 
@@ -1090,18 +1094,7 @@ namespace Cauldron.Core.Entities
                 _ => throw new Exception($"how={choice.How}")
             };
 
-            // card をcarddef に追加
-            var carddefListFromCardList = choiceResult.CardList
-                .Select(c => this.cardRepository.TryGetCardDefById(c.CardDefId))
-                .Where(x => x.Item1)
-                .Select(x => x.Item2);
-
-            var newCardDefList = choiceResult.CardDefList
-                .Concat(carddefListFromCardList)
-                .Distinct()
-                .ToArray();
-
-            return choiceResult with { CardDefList = newCardDefList };
+            return choiceResult;
         }
 
         public async ValueTask ModifyPlayer(ModifyPlayerContext modifyPlayerContext, Card effectOwnerCard, EffectEventArgs effectEventArgs)

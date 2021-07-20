@@ -24,7 +24,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 return (false, effectEventArgs);
             }
 
-            var (success, zone) = zonePrettyNames[0].TryGetZone(owner.Id, opponent.Id);
+            var (success, defaultZone) = zonePrettyNames[0].TryGetZone(owner.Id, opponent.Id, owner.Id);
             if (!success)
             {
                 return (false, effectEventArgs);
@@ -32,12 +32,22 @@ namespace Cauldron.Shared.MessagePackObjects
 
             var choiceResult = await effectEventArgs.GameMaster
                 .ChoiceCards(effectOwnerCard, effectActionAddCard.Choice, effectEventArgs);
-            var newCardDefs = choiceResult.CardDefList;
 
-            var newCards = newCardDefs
-                .SelectMany(cd => Enumerable.Repeat(cd, effectActionAddCard.NumOfAddCards))
-                .Select(cd => effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, effectActionAddCard.InsertCardPosition))
-                .ToArray();
+            var cardDefAndZones = choiceResult.CardList
+                .Select(c => (
+                    effectEventArgs.GameMaster.TryGet(c.CardDefId),
+                    zonePrettyNames[0].TryGetZone(owner.Id, opponent.Id, c.OwnerId)))
+                .Where(x => x.Item1.Exists && x.Item2.Success)
+                .Select(x => (x.Item1.CardDef, x.Item2.Zone))
+                .Concat(choiceResult.CardDefList.Select(cd => (CardDef: cd, Zone: defaultZone)));
+
+            foreach (var (cardDef, zone) in cardDefAndZones)
+            {
+                foreach (var cd in Enumerable.Repeat(cardDef, effectActionAddCard.NumOfAddCards))
+                {
+                    await effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, effectActionAddCard.InsertCardPosition);
+                }
+            }
 
             return (true, effectEventArgs);
         }

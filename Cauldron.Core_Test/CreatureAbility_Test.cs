@@ -151,7 +151,7 @@ namespace Cauldron.Core_Test
             stealthCardDef.Toughness = 10;
             stealthCardDef.Abilities.Add(CreatureAbility.Stealth);
 
-            var choiceCarddef = SampleCards.Fire;
+            var choiceCarddef = SampleCards.SelectDamage;
             choiceCarddef.Cost = 0;
 
             Card[] expectedAskCardLsit = Array.Empty<Card>();
@@ -204,7 +204,7 @@ namespace Cauldron.Core_Test
             stealthCardDef.Toughness = 10;
             stealthCardDef.Abilities.Add(CreatureAbility.Stealth);
 
-            var choiceCarddef = SampleCards.Fire;
+            var choiceCarddef = SampleCards.SelectDamage;
             choiceCarddef.Cost = 0;
 
             Card[] expectedAskCardLsit = default;
@@ -262,7 +262,7 @@ namespace Cauldron.Core_Test
             stealthCardDef.Toughness = 10;
             stealthCardDef.Abilities.Add(CreatureAbility.Stealth);
 
-            var randomChoiceCarddef = SampleCards.Lightning;
+            var randomChoiceCarddef = SampleCards.RandomDamage;
             randomChoiceCarddef.Cost = 0;
 
             var c = await TestUtil.InitTest(

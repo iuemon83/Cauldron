@@ -12,8 +12,8 @@ namespace Cauldron.Shared.MessagePackObjects
             var zones = await zoneCondition.Value.Calculate(effectOwnerCard, effectEventArgs);
             var opponentId = effectEventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Id;
             var isMatch = zones
-                .Select(z => z.TryGetZone(effectOwnerCard.OwnerId, opponentId))
-                .Any(z => z.Item1 && z.Item2 == checkValue);
+                .Select(z => z.TryGetZone(effectOwnerCard.OwnerId, opponentId, effectOwnerCard.OwnerId))
+                .Any(z => z.Success && z.Zone == checkValue);
 
             return isMatch ^ zoneCondition.Not;
         }

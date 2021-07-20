@@ -314,19 +314,14 @@ public class BattleSceneController : MonoBehaviour
             foreach (var handIndex in Enumerable.Range(0, Mathf.Min(youHands.Length, 10)))
             {
                 var handCard = youHands[handIndex];
-
-                var handCardObj = this.GetOrCreateHandCardObject(handCard.Id, handCard);
-                handCardObj.transform.SetParent(this.canvas.transform, false);
-                handCardObj.transform.position = this.youHandSpaces[handIndex].transform.position;
+                this.GetOrCreateHandCardObject(handCard.Id, handCard, handIndex);
             }
 
             var youFieldCards = publicInfo.Field;
             foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(youFieldCards.Length, 5)))
             {
                 var fieldCard = youFieldCards[fieldIndex];
-
                 var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard.Id, fieldCard);
-                fieldCardObj.transform.SetParent(this.canvas.transform, false);
                 fieldCardObj.transform.position = this.youFieldSpaces[fieldIndex].transform.position;
             }
 
@@ -349,7 +344,6 @@ public class BattleSceneController : MonoBehaviour
                 var fieldCard = opponentFieldCards[fieldIndex];
 
                 var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard.Id, fieldCard);
-                fieldCardObj.transform.SetParent(this.canvas.transform, false);
                 fieldCardObj.transform.position = this.opponentFieldSpaces[fieldIndex].transform.position;
             }
 
@@ -369,7 +363,7 @@ public class BattleSceneController : MonoBehaviour
         await Task.Delay(TimeSpan.FromSeconds(0.3));
     }
 
-    private HandCardController GetOrCreateHandCardObject(CardId cardId, Card card)
+    private HandCardController GetOrCreateHandCardObject(CardId cardId, Card card, int index)
     {
         if (!handCardObjectsByCardId.TryGetValue(cardId, out var controller))
         {
@@ -380,6 +374,9 @@ public class BattleSceneController : MonoBehaviour
         }
 
         controller.Init(card);
+
+        controller.transform.SetParent(this.canvas.transform, false);
+        controller.transform.position = this.youHandSpaces[index].transform.position;
 
         return controller;
     }
@@ -395,6 +392,8 @@ public class BattleSceneController : MonoBehaviour
         }
 
         cardController.Init(card);
+
+        cardController.transform.SetParent(this.canvas.transform, false);
 
         return cardController;
     }
@@ -490,7 +489,16 @@ public class BattleSceneController : MonoBehaviour
         Debug.Log($"ˆÚ“®: {cardName}({ownerName}) to {moveCardNotifyMessage.ToZone.ZoneName}({playerName})");
 
         Debug.Log($"OnMoveCard({moveCardNotifyMessage.ToZone.PlayerId}): {this.client.PlayerName}");
-        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
+
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            var cardId = moveCardNotifyMessage.CardId;
+
+            // ”ñŒöŠJ—Ìˆæ‚ÖˆÚ“®‚µ‚½ê‡‚Ígamecontext‚ÉŠÜ‚Ü‚ê‚È‚¢‚Ì‚Å‚±‚±‚Åíœ‚·‚é•K—v‚ª‚ ‚é
+            this.RemoveCardObjectByCardId(cardId);
+
+            await this.UpdateGameContext(gameContext);
+        });
     }
 
     void OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)

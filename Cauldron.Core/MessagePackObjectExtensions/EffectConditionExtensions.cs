@@ -23,7 +23,7 @@ namespace Cauldron.Shared.MessagePackObjects
         private static bool IsMatchedZone(this EffectCondition effectCondition, Card effectOwnerCard, EffectEventArgs eventArgs)
         {
             var opponentId = eventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Id;
-            var (success, zone) = effectCondition.ZonePrettyName.TryGetZone(effectOwnerCard.OwnerId, opponentId);
+            var (success, zone) = effectCondition.ZonePrettyName.TryGetZone(effectOwnerCard.OwnerId, opponentId, effectOwnerCard.OwnerId);
             return success && effectOwnerCard.Zone == zone;
         }
     }

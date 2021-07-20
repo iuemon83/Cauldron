@@ -81,22 +81,30 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public static async ValueTask<bool> IsMatch(this CardCondition cardCondition, Card cardToMatch, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
-            bool ContextConditionIsMatch(CardCondition.ContextConditionValue value)
+            bool ContextConditionIsMatch()
             {
-                return value switch
+                return cardCondition.ContextCondition switch
                 {
                     CardCondition.ContextConditionValue.This => cardToMatch.Id == effectOwnerCard.Id,
                     CardCondition.ContextConditionValue.Others => cardToMatch.Id != effectOwnerCard.Id,
                     CardCondition.ContextConditionValue.EventSource => cardToMatch.Id == effectEventArgs.SourceCard.Id,
-                    CardCondition.ContextConditionValue.DamageFrom => cardToMatch.Id == effectEventArgs.DamageContext.DamageSourceCard.Id,
-                    CardCondition.ContextConditionValue.DamageTo => cardToMatch.Id == effectEventArgs.DamageContext.GuardCard.Id,
+                    CardCondition.ContextConditionValue.DamageFrom =>
+                        cardToMatch.Id == effectEventArgs.DamageContext?.DamageSourceCard?.Id,
+                    CardCondition.ContextConditionValue.DamageTo =>
+                        cardToMatch.Id == effectEventArgs.DamageContext?.GuardCard?.Id,
+                    CardCondition.ContextConditionValue.Attack =>
+                        (effectEventArgs.DamageContext?.IsBattle ?? false)
+                            && cardToMatch.Id == effectEventArgs.DamageContext?.DamageSourceCard?.Id,
+                    CardCondition.ContextConditionValue.Guard =>
+                        (effectEventArgs.DamageContext?.IsBattle ?? false)
+                            && cardToMatch.Id == effectEventArgs.DamageContext?.GuardCard?.Id,
                     _ => true
                 };
             }
 
-            bool OwnerConditionIsMatch(CardCondition.OwnerConditionValue value)
+            bool OwnerConditionIsMatch()
             {
-                return value switch
+                return cardCondition.OwnerCondition switch
                 {
                     CardCondition.OwnerConditionValue.You => effectOwnerCard.OwnerId == cardToMatch.OwnerId,
                     CardCondition.OwnerConditionValue.Opponent => effectOwnerCard.OwnerId != cardToMatch.OwnerId,
@@ -105,8 +113,8 @@ namespace Cauldron.Shared.MessagePackObjects
             }
 
             return
-                ContextConditionIsMatch(cardCondition.ContextCondition)
-                && OwnerConditionIsMatch(cardCondition.OwnerCondition)
+                ContextConditionIsMatch()
+                && OwnerConditionIsMatch()
                 && (cardCondition.CostCondition?.IsMatch(cardToMatch.Cost) ?? true)
                 && (cardCondition.PowerCondition?.IsMatch(cardToMatch.Power) ?? true)
                 && (cardCondition.ToughnessCondition?.IsMatch(cardToMatch.Toughness) ?? true)

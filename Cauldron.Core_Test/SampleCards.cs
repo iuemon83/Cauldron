@@ -74,6 +74,71 @@ namespace Cauldron.Core_Test
             => SampleCards.Creature(2, "盾持ちゴブリン", "盾になる", 1, 2,
                 abilities: new[] { CreatureAbility.Cover });
 
+        public static CardDef MagicShieldGoblin
+            => SampleCards.Creature(2, "魔法の盾持ちゴブリン", "このカードが攻撃されたとき、攻撃したカードを相手の手札に移動する。",
+                1, 2, abilities: new[] { CreatureAbility.Cover },
+                effects: new[] {
+                    new CardEffect(
+                        new EffectCondition(
+                            ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                DamageAfter: new(
+                                    EffectTimingDamageBeforeEvent.DamageType.Battle,
+                                    EffectTimingDamageBeforeEvent.EventSource.Take,
+                                    CardCondition: new(){
+                                        ContextCondition = CardCondition.ContextConditionValue.This
+                                    })))),
+                        new[]
+                        {
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ContextCondition = CardCondition.ContextConditionValue.Attack
+                                                }
+                                            })),
+                                    ZonePrettyName.OpponentHand))
+                        })
+                });
+
+        public static CardDef SuperMagicShieldGoblin
+            => SampleCards.Creature(2, "強魔法の盾持ちゴブリン", "このカードが攻撃されたとき、攻撃したカードを相手のデッキの一番上に移動する。",
+                1, 2, abilities: new[] { CreatureAbility.Cover },
+                effects: new[] {
+                    new CardEffect(
+                        new EffectCondition(
+                            ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                DamageAfter: new(
+                                    EffectTimingDamageBeforeEvent.DamageType.Battle,
+                                    EffectTimingDamageBeforeEvent.EventSource.Take,
+                                    CardCondition: new(){
+                                        ContextCondition = CardCondition.ContextConditionValue.This
+                                    })))),
+                        new[]
+                        {
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ContextCondition = CardCondition.ContextConditionValue.Attack
+                                                }
+                                            })),
+                                    ZonePrettyName.OpponentDeck,
+                                    new InsertCardPosition(
+                                        InsertCardPosition.PositionTypeValue.Top,
+                                        1)))
+                        })
+                });
+
         public static CardDef DeadlyGoblin
             => SampleCards.Creature(3, "暗殺ゴブリン", "暗殺者", 1, 1,
                 abilities: new[] { CreatureAbility.Stealth, CreatureAbility.Deadly });
@@ -475,8 +540,8 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         SampleCards.Spell,
                         new[]{
-                            // 破壊時にコピーを場に出す効果を追加する
-                            new EffectAction(AddEffect: new(
+                            // 効果を付与したカードを破壊する
+                            new EffectAction(DestroyCard: new(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
@@ -491,41 +556,21 @@ namespace Cauldron.Core_Test
                                         }),
                                     Choice.ChoiceHow.Choose,
                                     1),
-                                new[]
-                                {
-                                    new CardEffect(
-                                        new EffectCondition(ZonePrettyName.YouCemetery,
-                                            new EffectWhen(new EffectTiming(
-                                                Destroy: new(EffectTimingDestroyEvent.EventSource.This)))),
-                                        new[]
-                                        {
-                                            new EffectAction(AddCard: new(
-                                                new Choice(
-                                                    new ChoiceSource(
-                                                        orCardConditions: new[]
-                                                        {
-                                                            new CardCondition()
-                                                            {
-                                                                ContextCondition = CardCondition.ContextConditionValue.This,
-                                                            }
-                                                        })),
-                                                new ZoneValue(new[]{ ZonePrettyName.YouField })
-                                                ))
-                                        })
-                                }, "addEffect")),
-                            // 効果を付与したカードを破壊する
-                            new EffectAction(DestroyCard: new(
+                                name: "delete"
+                                )),
+                            new EffectAction(AddCard: new(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
                                             new CardCondition()
                                             {
-                                                ActionContext = new(ActionContextCardsOfAddEffect: new(
-                                                    "addEffect",
-                                                    ActionContextCardsOfAddEffect.ValueType.TargetCards)),
+                                                ActionContext = new(ActionContextCardsOfDestroyCard: new(
+                                                    "delete",
+                                                    ActionContextCardsOfDestroyCard.ValueType.Destroyed))
                                             }
-                                        }))
+                                        })),
+                                new ZoneValue(new[]{ ZonePrettyName.OwnerField })
                                 )),
                         }
                     )
@@ -987,7 +1032,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-        public static CardDef Fire
+        public static CardDef SelectDamage
             => SampleCards.Sorcery(1, "ファイア", "プレイヤーか、場のクリーチャー1体を選択する。それに1ダメージを与える。",
                 effects: new[]
                 {
@@ -1026,7 +1071,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-        public static CardDef Lightning
+        public static CardDef RandomDamage
             => SampleCards.Sorcery(1, "稲妻", "ランダムな場のクリーチャー1体に2ダメージを与える。",
                 effects: new[]
                 {
@@ -1764,6 +1809,57 @@ namespace Cauldron.Core_Test
                             }
                         }
                     )
+                });
+
+        public static CardDef BounceHand
+            => SampleCards.Sorcery(2, "手札へ戻す", "場のカード1枚を選択する。選択したカードを持ち主の手札に移動する。",
+                effects: new[] {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(
+                                                        new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }))
+                                                }
+                                            }),
+                                        Choice.ChoiceHow.Choose,
+                                        1),
+                                    ZonePrettyName.OwnerHand))
+                        })
+                });
+
+        public static CardDef BounceDeck
+            => SampleCards.Sorcery(2, "デッキへ戻す", "場のカード1枚を選択する。選択したカードを持ち主のデッキのランダムな位置に移動する。",
+                effects: new[] {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ZoneCondition = new(new ZoneValue(
+                                                        new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }))
+                                                }
+                                            }),
+                                        Choice.ChoiceHow.Choose,
+                                        1),
+                                    ZonePrettyName.OwnerDeck,
+                                    new InsertCardPosition(InsertCardPosition.PositionTypeValue.Random)))
+                        })
                 });
 
         public static CardDef DoubleCopy

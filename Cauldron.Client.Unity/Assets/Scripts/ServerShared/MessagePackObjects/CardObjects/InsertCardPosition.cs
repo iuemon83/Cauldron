@@ -27,10 +27,11 @@ namespace Cauldron.Shared
 
         /// <summary>
         /// 1から始まるインデックス
+        /// 上から（下から）1枚目=1
         /// </summary>
         public int PositionIndex { get; }
 
-        public InsertCardPosition(PositionTypeValue PositionType, int PositionIndex)
+        public InsertCardPosition(PositionTypeValue PositionType, int PositionIndex = 1)
         {
             this.PositionType = PositionType;
             this.PositionIndex = PositionIndex;
