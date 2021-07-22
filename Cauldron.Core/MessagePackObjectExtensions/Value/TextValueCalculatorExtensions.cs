@@ -18,7 +18,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             static async ValueTask<string> CalculateName(TextValueCalculator textValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
                 var choiceResult = await effectEventArgs.GameMaster
-                    .ChoiceCards(effectOwnerCard, textValueCalculator.CardsChoice, effectEventArgs);
+                    .Choice(effectOwnerCard, textValueCalculator.CardsChoice, effectEventArgs);
 
                 var pickCards = choiceResult.CardList;
 

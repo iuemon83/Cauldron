@@ -8,7 +8,7 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionDamage effectActionDamage, Card effectOwnerCard, EffectEventArgs args)
         {
-            var choiceResult = await args.GameMaster.ChoiceCards(effectOwnerCard, effectActionDamage.Choice, args);
+            var choiceResult = await args.GameMaster.Choice(effectOwnerCard, effectActionDamage.Choice, args);
 
             var done = false;
 

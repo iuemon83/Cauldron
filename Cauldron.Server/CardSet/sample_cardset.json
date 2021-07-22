@@ -1283,7 +1283,7 @@
                     },
                     "actions": [
                         {
-                            "effectActionSetVariable": {
+                            "setVariable": {
                                 "name": "x",
                                 "numValue": {
                                     "numValueCalculator": {
@@ -2747,7 +2747,7 @@
                     },
                     "actions": [
                         {
-                            "effectActionSetVariable": {
+                            "setVariable": {
                                 "name": "x",
                                 "numValue": {
                                     "numValueCalculator": {
@@ -3478,6 +3478,130 @@
                                                 "ownerCondition": "any"
                                             }
                                         ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "戦いの像",
+            "flavorText": "あなたのターン開始時に、場にあるこのカードを墓地に移動する。場にあるこのカードが墓地に移動されたとき、「勝利への道」1枚をあなたの場に追加する。",
+            "isToken": false,
+            "type": "artifact",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "startTurn": { "source": "you" } } }
+                    },
+                    "actions": [
+                        {
+                            "destroyCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "none",
+                        "when": {
+                            "timing": {
+                                "moveCard": {
+                                    "source": "this",
+                                    "from": "youField",
+                                    "to": "youCemetery"
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "nameCondition": {
+                                                    "value": { "pureValue": "勝利への道" },
+                                                    "compare": "equality",
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": 1
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 1
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 0,
+            "name": "勝利への道",
+            "flavorText": "あなたのターン開始時に、このカードがあなたの場にあるとき、あなたはゲームに勝利する。",
+            "isToken": true,
+            "type": "artifact",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "startTurn": { "source": "you" } } }
+                    },
+                    "actions": [
+                        {
+                            "win": {
+                                "choicePlayers": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": 1,
+                                        "orPlayerConditions": [
+                                            {
+                                                "context": "any",
+                                                "type": "you"
+                                            }
+                                        ],
+                                        "orCardConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": 1

@@ -23,14 +23,14 @@ namespace Cauldron.Shared.MessagePackObjects.Value
 
             static async ValueTask<int> CalculateCount(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
-                var pickCards = await effectEventArgs.GameMaster.ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+                var pickCards = await effectEventArgs.GameMaster.Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
                 return pickCards.CardList.Length;
             }
 
             static async ValueTask<int> CalculateCardCost(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
                 var pickCards = await effectEventArgs.GameMaster
-                    .ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+                    .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
                 return pickCards.CardList.Sum(c => c.Cost);
             }
@@ -38,7 +38,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             static async ValueTask<int> CalculateCardBaseCost(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
                 var pickCards = await effectEventArgs.GameMaster
-                    .ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+                    .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
                 return pickCards.CardList.Sum(c => c.BaseCost);
             }
@@ -46,7 +46,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             static async ValueTask<int> CalculateCardPower(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
                 var pickCards = await effectEventArgs.GameMaster
-                    .ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+                    .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
                 return pickCards.CardList.Sum(c => c.Power);
             }
@@ -54,7 +54,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             static async ValueTask<int> CalculateCardBasePower(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
                 var pickCards = await effectEventArgs.GameMaster
-                    .ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+                    .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
                 return pickCards.CardList.Sum(c => c.BasePower);
             }
@@ -62,7 +62,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             static async ValueTask<int> CalculateCardToughness(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
                 var pickCards = await effectEventArgs.GameMaster
-                    .ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+                    .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
                 return pickCards.CardList.Sum(c => c.Toughness);
             }
@@ -70,7 +70,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             static async ValueTask<int> CalculateCardBaseToughness(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
                 var pickCards = await effectEventArgs.GameMaster
-                    .ChoiceCards(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+                    .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
                 return pickCards.CardList.Sum(c => c.BaseToughness);
             }

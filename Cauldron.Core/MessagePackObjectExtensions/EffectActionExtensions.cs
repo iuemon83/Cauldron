@@ -25,7 +25,8 @@ namespace Cauldron.Shared.MessagePackObjects
                 (c,e) => effectAction.DrawCard?.Execute(c,e),
                 (c,e) => effectAction.MoveCard?.Execute(c,e),
                 (c,e) => effectAction.AddEffect?.Execute(c,e),
-                (c,e) => effectAction.EffectActionSetVariable?.Execute(c,e),
+                (c,e) => effectAction.SetVariable?.Execute(c,e),
+                (c,e) => effectAction.Win?.Execute(c,e),
             };
 
             var result = effectEventArgs;

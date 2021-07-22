@@ -2082,7 +2082,7 @@ namespace Cauldron.Core_Test
                     await g.DestroyCard(goblin);
                 }
 
-                var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 return goblin3;
             });
@@ -2113,7 +2113,7 @@ namespace Cauldron.Core_Test
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
 
-                var testCard = TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // æ‚Éê‚É‚¢‚½ƒSƒuƒŠƒ“2‘Ì‚ªC³‚³‚ê‚é
                 Assert.True(goblinCard.PowerBuff == 0 && goblinCard.ToughnessBuff == 1);
@@ -2125,6 +2125,70 @@ namespace Cauldron.Core_Test
                 Assert.True(goblinCard.PowerBuff == 0 && goblinCard.ToughnessBuff == 1);
                 Assert.True(goblinCard2.PowerBuff == 0 && goblinCard2.ToughnessBuff == 1);
                 Assert.True(goblinCard3.PowerBuff == 0 && goblinCard3.ToughnessBuff == 1);
+            });
+        }
+
+        [Fact]
+        public async Task WarStatue()
+        {
+            var testCardDef = SampleCards.WarStatue;
+            testCardDef.Cost = 0;
+
+            var tokenCardDef = SampleCards.VictoryRoad;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, tokenCardDef });
+
+            // æU
+            var testCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                return await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+            });
+
+            // ŒãU
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+            });
+
+            Assert.Contains(testCard, c.Player1.Field.AllCards);
+
+            // æU
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+                Assert.Single(c.Player1.Field.AllCards);
+                Assert.Equal(tokenCardDef.Id, c.Player1.Field.AllCards[0].CardDefId);
+            });
+        }
+
+        [Fact]
+        public async Task VictoryRoad()
+        {
+            var testCardDef = SampleCards.VictoryRoad;
+            testCardDef.Cost = 0;
+            testCardDef.IsToken = false;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef });
+
+            // æU
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.False(g.GameOver);
+            });
+
+            // ŒãU
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+                Assert.False(g.GameOver);
+            });
+
+            Assert.False(c.GameMaster.GameOver);
+
+            // æU
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+                Assert.True(g.GameOver);
+                Assert.Equal(pId, g.GetWinner().Id);
             });
         }
     }

@@ -1038,7 +1038,7 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public async ValueTask<ChoiceResult> ChoiceCards(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
+        public async ValueTask<ChoiceResult> Choice(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
         {
             var choiceCandidates = await choice.Source
                 .ChoiceCandidates(effectOwnerCard, eventArgs, this.playerRepository, this.cardRepository, choice.How, choice.NumPicks);
@@ -1088,9 +1088,9 @@ namespace Cauldron.Core.Entities
 
             var choiceResult = choice.How switch
             {
-                Choice.ChoiceHow.All => All(),
-                Choice.ChoiceHow.Choose => await Choose(),
-                Choice.ChoiceHow.Random => Random(),
+                Shared.MessagePackObjects.Choice.ChoiceHow.All => All(),
+                Shared.MessagePackObjects.Choice.ChoiceHow.Choose => await Choose(),
+                Shared.MessagePackObjects.Choice.ChoiceHow.Random => Random(),
                 _ => throw new Exception($"how={choice.How}")
             };
 
@@ -1195,6 +1195,23 @@ namespace Cauldron.Core.Entities
 
             value = default;
             return false;
+        }
+
+        public (bool, GameMasterStatusCode) Win(PlayerId playerId)
+        {
+            var (exists, _) = this.playerRepository.TryGet(playerId);
+            if (!exists)
+            {
+                return (false, GameMasterStatusCode.PlayerNotExists);
+            }
+
+            // 対戦相手のHPをゼロにする
+            foreach (var p in this.playerRepository.Opponents(playerId))
+            {
+                p.Damage(p.MaxHp);
+            }
+
+            return (true, GameMasterStatusCode.OK);
         }
     }
 }

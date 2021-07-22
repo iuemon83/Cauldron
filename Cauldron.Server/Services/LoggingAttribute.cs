@@ -17,9 +17,22 @@ namespace Cauldron.Server.Services
 
         public override async ValueTask Invoke(StreamingHubContext context, Func<StreamingHubContext, ValueTask> next)
         {
-            _logger.LogInformation($"Begin: {context.Path}");
-            await next(context);
-            _logger.LogInformation($"End: {context.Path}");
+            try
+            {
+                _logger.LogInformation($"Begin: {context.Path}");
+                await next(context);
+                _logger.LogInformation($"End: {context.Path}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "");
+
+                throw;
+            }
+            finally
+            {
+                /* on finally */
+            }
         }
     }
 }

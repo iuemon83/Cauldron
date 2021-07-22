@@ -83,6 +83,8 @@ namespace Cauldron.Core_Test
                 SampleCards.Gather,
                 SampleCards.GoblinStatue,
                 SampleCards.HolyStatue,
+                SampleCards.WarStatue,
+                SampleCards.VictoryRoad,
                 SampleCards.GoblinCaptureJar,
             });
 

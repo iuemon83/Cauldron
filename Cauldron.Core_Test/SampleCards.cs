@@ -766,7 +766,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         SampleCards.Spell,
                         new[]{
-                            new EffectAction(EffectActionSetVariable: new(
+                            new EffectAction(SetVariable: new(
                                 "x",
                                 new NumValue(NumValueCalculator: new(
                                     NumValueCalculator.ValueType.Count,
@@ -1700,7 +1700,7 @@ namespace Cauldron.Core_Test
                     new[]
                     {
                         // 手札の枚数をとっとく
-                        new EffectAction(EffectActionSetVariable: new(
+                        new EffectAction(SetVariable: new(
                             "x",
                             new NumValue(NumValueCalculator: new(
                                 NumValueCalculator.ValueType.Count,
@@ -2220,5 +2220,86 @@ namespace Cauldron.Core_Test
                         }
                     })
             });
+
+        public static CardDef WarStatue
+            => SampleCards.Artifact(1, "戦いの像",
+                "あなたのターン開始時に、場にあるこのカードを墓地に移動する。場にあるこのカードが墓地に移動されたとき、「勝利への道」1枚をあなたの場に追加する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                StartTurn: new(EffectTimingStartTurnEvent.EventSource.You)))),
+                        new[]
+                        {
+                            new EffectAction(
+                                DestroyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    ContextCondition = CardCondition.ContextConditionValue.This
+                                                }
+                                            }))))
+                        }),
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.None,
+                            new EffectWhen(new EffectTiming(
+                                MoveCard: new(
+                                    EffectTimingMoveCardEvent.EventSource.This,
+                                    ZonePrettyName.YouField,
+                                    ZonePrettyName.YouCemetery)))),
+                        new[]
+                        {
+                            new EffectAction(
+                                AddCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition()
+                                                {
+                                                    NameCondition = new(
+                                                        new TextValue(VictoryRoad.Name),
+                                                        TextCondition.CompareValue.Equality),
+                                                    ZoneCondition = new(
+                                                        new ZoneValue(new[]
+                                                        {
+                                                            ZonePrettyName.CardPool
+                                                        }))
+                                                }
+                                            })),
+                                    new ZoneValue(new[]
+                                    {
+                                        ZonePrettyName.YouField
+                                    })))
+                        })
+                });
+
+        public static CardDef VictoryRoad
+            => SampleCards.Artifact(0, "勝利への道",
+                "あなたのターン開始時に、このカードがあなたの場にあるとき、あなたはゲームに勝利する。",
+                isToken: true,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                StartTurn: new(EffectTimingStartTurnEvent.EventSource.You)))),
+                        new[]
+                        {
+                            new EffectAction(
+                                Win: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orPlayerConditions: new[]
+                                            {
+                                                new PlayerCondition(
+                                                    Type: PlayerCondition.PlayerConditionType.You)
+                                            }))))
+                        }),
+                });
     }
 }

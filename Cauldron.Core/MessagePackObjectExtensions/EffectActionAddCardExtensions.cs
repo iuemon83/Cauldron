@@ -31,7 +31,7 @@ namespace Cauldron.Shared.MessagePackObjects
             }
 
             var choiceResult = await effectEventArgs.GameMaster
-                .ChoiceCards(effectOwnerCard, effectActionAddCard.Choice, effectEventArgs);
+                .Choice(effectOwnerCard, effectActionAddCard.Choice, effectEventArgs);
 
             var cardDefAndZones = choiceResult.CardList
                 .Select(c => (

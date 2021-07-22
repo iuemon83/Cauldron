@@ -10,7 +10,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
         public static async ValueTask<IEnumerable<Zone>> Calculate(this ZoneValueCalculator zoneValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             var choiceResult = await effectEventArgs.GameMaster
-                .ChoiceCards(effectOwnerCard, zoneValueCalculator.CardsChoice, effectEventArgs);
+                .Choice(effectOwnerCard, zoneValueCalculator.CardsChoice, effectEventArgs);
 
             return choiceResult.CardList.Select(c => c.Zone);
         }

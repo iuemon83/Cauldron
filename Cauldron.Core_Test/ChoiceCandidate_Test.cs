@@ -87,7 +87,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
-            var actual2 = await testGameMaster.ChoiceCards(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
+            var actual2 = await testGameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
             TestUtil.AssertCollection(
                 Array.Empty<PlayerId>(),
                 actual.PlayerIdList);
@@ -179,7 +179,7 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.ChoiceCards(testCard, testChoice, eventargs);
+            var actual2 = await testGameMaster.Choice(testCard, testChoice, eventargs);
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -268,7 +268,7 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 new[] { fairy }
             );
-            var actual2 = await testGameMaster.ChoiceCards(testCard, testChoice, null);
+            var actual2 = await testGameMaster.Choice(testCard, testChoice, null);
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -358,7 +358,7 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 new[] { fairy, fairy }
             );
-            var actual2 = await testGameMaster.ChoiceCards(testCard, testChoice, null);
+            var actual2 = await testGameMaster.Choice(testCard, testChoice, null);
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -440,7 +440,7 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.ChoiceCards(testCard, testChoice, null);
+            var actual2 = await testGameMaster.Choice(testCard, testChoice, null);
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -519,7 +519,7 @@ namespace Cauldron.Core_Test
                      Array.Empty<Card>(),
                      Array.Empty<CardDef>()
                  );
-                var actual2 = await testGameMaster.ChoiceCards(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
+                var actual2 = await testGameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
                 TestUtil.AssertChoiceResult(expected2, actual2);
 
                 return (goblinCard, testCard);
@@ -545,7 +545,7 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.ChoiceCards(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
+            var actual2 = await testGameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -615,7 +615,7 @@ namespace Cauldron.Core_Test
                 TestUtil.AssertChoiceResult(expected, actual);
 
                 // 抽出結果の検証
-                var actual2 = await testGameMaster.ChoiceCards(testCard, testChoice, eventargs);
+                var actual2 = await testGameMaster.Choice(testCard, testChoice, eventargs);
                 TestUtil.AssertChoiceResult(expected, actual2, 1);
             });
         }
@@ -693,7 +693,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
-            var actual2 = await testGameMaster.ChoiceCards(testCard, testChoice, eventargs);
+            var actual2 = await testGameMaster.Choice(testCard, testChoice, eventargs);
             TestUtil.AssertChoiceResult(expected, actual2, 1);
         }
 
@@ -782,7 +782,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
-            await testGameMaster.ChoiceCards(testcard, testChoice, eventargs);
+            await testGameMaster.Choice(testcard, testChoice, eventargs);
             Assert.True(isCalledAskAction);
         }
 
@@ -875,7 +875,7 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
-            await testGameMaster.ChoiceCards(testcard, testChoice, eventargs);
+            await testGameMaster.Choice(testcard, testChoice, eventargs);
             Assert.True(isCalledAskAction);
         }
 
@@ -937,7 +937,7 @@ namespace Cauldron.Core_Test
                 new[] { cards.testCard },
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.ChoiceCards(cards.testCard, testChoice, null);
+            var actual2 = await testGameMaster.Choice(cards.testCard, testChoice, null);
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -999,7 +999,7 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard },
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.ChoiceCards(testCard, testChoice,
+            var actual2 = await testGameMaster.Choice(testCard, testChoice,
                 new EffectEventArgs(GameEvent.OnBattle, testGameMaster, SourceCard: goblinCard));
             TestUtil.AssertChoiceResult(expected2, actual2);
         }

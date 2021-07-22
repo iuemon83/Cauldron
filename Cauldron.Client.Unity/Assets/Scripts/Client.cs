@@ -125,6 +125,7 @@ public class Client
 
     public async ValueTask<PlayerId> EnterGame(GameId gameId, IDeck deck)
     {
+        this.currentContext = null;
         this.GameId = gameId;
 
         this.LogInfo($"GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
