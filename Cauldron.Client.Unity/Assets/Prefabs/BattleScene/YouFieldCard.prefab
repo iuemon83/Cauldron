@@ -829,11 +829,11 @@ MonoBehaviour:
   CardImage: {fileID: 6594950955493126215}
   PickCandidateIcon: {fileID: 1407595984274296996}
   PickedIcon: {fileID: 420274844395343737}
-  SelectedIcon: {fileID: 5992059085072369381}
-  AttackTargetIcon: {fileID: 5465254510468715879}
-  DamageText: {fileID: 6349404106736419811}
   abilityView: {fileID: 8997592310195811681}
   abilityIconImage: {fileID: 4550660358406964372}
+  selectedIcon: {fileID: 5992059085072369381}
+  attackTargetIcon: {fileID: 5465254510468715879}
+  damageText: {fileID: 6349404106736419811}
 --- !u!1 &5465254510468715879
 GameObject:
   m_ObjectHideFlags: 0

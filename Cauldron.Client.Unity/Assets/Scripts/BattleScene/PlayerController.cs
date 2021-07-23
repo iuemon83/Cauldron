@@ -1,4 +1,5 @@
 using Cauldron.Shared.MessagePackObjects;
+using DG.Tweening;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -21,6 +22,8 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     private TextMeshProUGUI handText;
     [SerializeField]
     private TextMeshProUGUI damageText;
+    [SerializeField]
+    private TextMeshProUGUI healText;
     [SerializeField]
     private GameObject attackTargetIcon;
     [SerializeField]
@@ -121,8 +124,24 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     {
         this.damageText.text = value.ToString();
         this.damageText.gameObject.SetActive(true);
-        await Task.Delay(500);
+        await this.damageText.gameObject.transform
+            .DOMove(new Vector3(0, -20, 0), 0.5f)
+            .SetRelative(true)
+            .ToAwaiter();
         this.damageText.gameObject.SetActive(false);
+        this.damageText.gameObject.transform.localPosition = Vector3.zero;
+    }
+
+    public async Task HealEffect(int value)
+    {
+        this.healText.text = value.ToString();
+        this.healText.gameObject.SetActive(true);
+        await this.healText.gameObject.transform
+            .DOMove(new Vector3(0, 20, 0), 0.5f)
+            .SetRelative(true)
+            .ToAwaiter();
+        this.healText.gameObject.SetActive(false);
+        this.healText.gameObject.transform.localPosition = Vector3.zero;
     }
 
     public virtual void ResetAllIcon()

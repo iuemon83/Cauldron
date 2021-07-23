@@ -56,7 +56,7 @@ public class ChoiceDialog_ListNodeController : MonoBehaviour, IPointerEnterHandl
         var (zoneSuccess, zoneIcon) = ZoneIconCache.TryGet(ZoneName.CardPool);
         if (zoneSuccess)
         {
-            this.controllerIconImage.sprite = zoneIcon;
+            this.zoneIconImage.sprite = zoneIcon;
         }
     }
 

@@ -67,6 +67,8 @@ public class BattleSceneController : MonoBehaviour
 
     private readonly List<IDisposable> disposableList = new List<IDisposable>();
 
+    private GameContext currentGameContext;
+
     private async void Start()
     {
         Instance = this;
@@ -355,6 +357,8 @@ public class BattleSceneController : MonoBehaviour
             }
         }
 
+        this.currentGameContext = gameContext;
+
         if (gameContext.GameOver)
         {
             this.ShowEndGameDialog(gameContext.WinnerPlayerId);
@@ -503,19 +507,54 @@ public class BattleSceneController : MonoBehaviour
 
     void OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)
     {
-
         var (ownerName, cardName) = Utility.GetCardName(gameContext, modifyCardNotifyMessage.CardId);
 
         Debug.Log($"ПCРо: {cardName}({ownerName})");
         this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
     }
 
-    void OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage)
+    void OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage notify)
     {
-        var playerName = Utility.GetPlayerName(gameContext, modifyPlayerNotifyMessage.PlayerId);
+        var playerName = Utility.GetPlayerName(gameContext, notify.PlayerId);
 
         Debug.Log($"ПCРо: {playerName}");
-        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
+
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            static async Task HealOrDamageEffect(PlayerController playerController, int oldHp, int newHp)
+            {
+                if (playerController == null) return;
+
+                var diffHp = newHp - oldHp;
+
+                if (diffHp != 0)
+                {
+                    if (diffHp > 0)
+                    {
+                        await playerController.HealEffect(diffHp);
+                    }
+                    else
+                    {
+                        await playerController.DamageEffect(diffHp);
+                    }
+                }
+            }
+
+            if (this.youPlayerController.PlayerId == notify.PlayerId)
+            {
+                await HealOrDamageEffect(this.youPlayerController,
+                    this.currentGameContext.You.PublicPlayerInfo.CurrentHp,
+                    gameContext.You.PublicPlayerInfo.CurrentHp);
+            }
+            else if (this.opponentPlayerController.PlayerId == notify.PlayerId)
+            {
+                await HealOrDamageEffect(this.opponentPlayerController,
+                    this.currentGameContext.Opponent.CurrentHp,
+                    gameContext.Opponent.CurrentHp);
+            }
+
+            await this.UpdateGameContext(gameContext);
+        });
     }
 
     void OnDamage(GameContext gameContext, DamageNotifyMessage notify)

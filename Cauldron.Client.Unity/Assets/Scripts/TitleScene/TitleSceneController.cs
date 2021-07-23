@@ -1,10 +1,8 @@
 using Assets.Scripts;
 using System;
-using System.Collections;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class TitleSceneController : MonoBehaviour
@@ -48,23 +46,7 @@ public class TitleSceneController : MonoBehaviour
         LocalData.ServerAddress = this.ipOrHostNameText.text;
         LocalData.PlayerName = this.playerNameText.text;
 
-        StartCoroutine(LoadYourAsyncScene());
-    }
-
-    private IEnumerator LoadYourAsyncScene()
-    {
-        // The Application loads the Scene in the background as the current Scene runs.
-        // This is particularly good for creating loading screens.
-        // You could also load the Scene by using sceneBuildIndex. In this case Scene2 has
-        // a sceneBuildIndex of 1 as shown in Build Settings.
-
-        var asyncLoad = SceneManager.LoadSceneAsync(SceneNames.ListGameScene.ToString());
-
-        // Wait until the asynchronous scene fully loads
-        while (!asyncLoad.isDone)
-        {
-            yield return null;
-        }
+        Utility.LoadAsyncScene(this, SceneNames.ListGameScene);
     }
 
     private async Task<bool> DoValidation()

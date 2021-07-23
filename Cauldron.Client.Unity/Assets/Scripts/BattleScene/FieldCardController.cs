@@ -1,4 +1,4 @@
-using System;
+using DG.Tweening;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -7,13 +7,13 @@ using UnityEngine.EventSystems;
 public class FieldCardController : CardController, IPointerClickHandler, IPointerEnterHandler
 {
     [SerializeField]
-    private GameObject SelectedIcon;
+    private GameObject selectedIcon;
     [SerializeField]
-    private GameObject AttackTargetIcon;
+    private GameObject attackTargetIcon;
     [SerializeField]
-    private TextMeshProUGUI DamageText;
+    private TextMeshProUGUI damageText;
 
-    public bool IsAttackTarget => this.AttackTargetIcon.activeSelf;
+    public bool IsAttackTarget => this.attackTargetIcon.activeSelf;
 
     /// <summary>
     /// フィールドカードのクリックイベント
@@ -47,20 +47,23 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
 
     public void VisibleAttackTargetIcon(bool value)
     {
-        this.AttackTargetIcon.SetActive(value);
+        this.attackTargetIcon.SetActive(value);
     }
 
     public void VisibleAttackIcon(bool value)
     {
-        this.SelectedIcon.SetActive(value);
+        this.selectedIcon.SetActive(value);
     }
 
     public async Task DamageEffect(int value)
     {
-        this.DamageText.text = value.ToString();
-        this.DamageText.gameObject.SetActive(true);
-        await Task.Delay(TimeSpan.FromSeconds(0.3));
-        this.DamageText.gameObject.SetActive(false);
+        this.damageText.text = value.ToString();
+        this.damageText.gameObject.SetActive(true);
+        await this.damageText.gameObject.transform
+            .DOMove(new Vector3(0, -20, 0), 0.5f)
+            .SetRelative(true)
+            .ToAwaiter();
+        this.damageText.gameObject.SetActive(false);
     }
 
     public override void ResetAllIcon()
