@@ -5,20 +5,20 @@ namespace Cauldron.Web.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CardMetaDataController : ControllerBase
+    public class SampleCardSetController : ControllerBase
     {
-        private readonly ILogger<CardMetaDataController> _logger;
+        private readonly ILogger<SampleCardSetController> _logger;
 
-        public CardMetaDataController(ILogger<CardMetaDataController> logger)
+        public SampleCardSetController(ILogger<SampleCardSetController> logger)
         {
             _logger = logger;
         }
 
-        public CardMetaData Get()
+        public string Get()
         {
             this._logger.LogInformation(nameof(this.Get));
 
-            return new CardMetaData();
+            return System.IO.File.ReadAllText(@"Resources/sample_cardset.json");
         }
     }
 }

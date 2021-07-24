@@ -9,3 +9,10 @@
 ブラウザからオリジナルカードの作成ができます。
 
 ![cauldron-tool](https://user-images.githubusercontent.com/12682383/120923636-98144e00-c70a-11eb-8f35-7a02b66a550b.png)
+
+
+# Cauldron.Web.Server
+cd Cauldron.Web.Server
+dotnet publish -c Release -o out
+docker build . -t cauldronweb_server
+docker run --rm -p 5000:80 --name cauldronweb_server cauldronweb_server
