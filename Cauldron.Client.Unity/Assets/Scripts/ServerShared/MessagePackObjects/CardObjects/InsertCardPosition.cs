@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using MessagePack;
 
 namespace Cauldron.Shared
 {
@@ -10,16 +11,19 @@ namespace Cauldron.Shared
             /// <summary>
             /// 前からのインデックス
             /// </summary>
+            [DisplayText("前から")]
             Top,
 
             /// <summary>
             /// 後ろからのインデックス
             /// </summary>
+            [DisplayText("後ろから")]
             Bottom,
 
             /// <summary>
             /// ランダムな位置
             /// </summary>
+            [DisplayText("ランダム")]
             Random
         }
 

@@ -2222,8 +2222,8 @@ namespace Cauldron.Core_Test
             });
 
         public static CardDef WarStatue
-            => SampleCards.Artifact(1, "戦いの像",
-                "あなたのターン開始時に、場にあるこのカードを墓地に移動する。場にあるこのカードが墓地に移動されたとき、「勝利への道」1枚をあなたの場に追加する。",
+            => SampleCards.Artifact(1, "勝利への道",
+                "あなたのターン開始時に、場にあるこのカードを墓地に移動する。場にあるこのカードが墓地に移動されたとき、「勝利の像」1枚をあなたの場に追加する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -2279,7 +2279,7 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef VictoryRoad
-            => SampleCards.Artifact(0, "勝利への道",
+            => SampleCards.Artifact(10, "勝利の像",
                 "あなたのターン開始時に、このカードがあなたの場にあるとき、あなたはゲームに勝利する。",
                 isToken: true,
                 effects: new[]

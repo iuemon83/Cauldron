@@ -64,6 +64,8 @@ namespace Cauldron.Web.Server
         public MetaDataElm[] TextValueCalculatorValueTypes { get; } = Convert<TextValueCalculator.ValueType>();
         public MetaDataElm[] ZoneNames { get; } = Convert<ZonePrettyName>();
         public MetaDataElm[] CardConditionContexts { get; } = Convert<CardCondition.ContextConditionValue>();
+        public MetaDataElm[] OwnerConditionValues { get; } = Convert<CardCondition.OwnerConditionValue>();
+        public MetaDataElm[] PositionTypeValues { get; } = Convert<InsertCardPosition.PositionTypeValue>();
         public MetaDataElm[] PlayerConditionContexts { get; } = Convert<PlayerCondition.PlayerConditionContext>();
         public MetaDataElm[] PlayerConditionTypes { get; } = Convert<PlayerCondition.PlayerConditionType>();
         public MetaDataElm[] CardSetConditionTypes { get; } = Convert<CardSetCondition.ConditionType>();
