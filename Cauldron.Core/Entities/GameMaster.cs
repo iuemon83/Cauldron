@@ -385,10 +385,7 @@ namespace Cauldron.Core.Entities
             // カードの持ち主には無条件に通知する
             this.EventListener?.OnModifyCard?.Invoke(card.OwnerId,
                 this.CreateGameContext(card.OwnerId),
-                new ModifyCardNotifyMessage()
-                {
-                    CardId = card.Id,
-                });
+                new ModifyCardNotifyMessage(card.Id));
 
             if (card.Type == CardType.Creature && card.Toughness <= 0)
             {
@@ -421,7 +418,7 @@ namespace Cauldron.Core.Entities
                         this.EventListener?.OnDamage?.Invoke(p.Id,
                             this.CreateGameContext(p.Id),
                             new DamageNotifyMessage(
-                                DamageNotifyMessage.ReasonCode.DrawDeath,
+                                DamageNotifyMessage.ReasonValue.DrawDeath,
                                 1,
                                 GuardPlayerId: playerId));
                     }
@@ -586,11 +583,9 @@ namespace Cauldron.Core.Entities
                 // カードの持ち主には無条件に通知する
                 this.EventListener?.OnAddCard?.Invoke(card.OwnerId,
                     this.CreateGameContext(card.OwnerId),
-                    new AddCardNotifyMessage()
-                    {
-                        CardId = card.Id,
-                        ToZone = moveCardContext.To
-                    });
+                    new AddCardNotifyMessage(
+                        card.Id,
+                        moveCardContext.To));
 
                 var isPublic = moveCardContext.To.IsPublic();
 
@@ -598,11 +593,9 @@ namespace Cauldron.Core.Entities
                 // 移動後の領域が公開領域の場合のみ
                 this.EventListener?.OnAddCard?.Invoke(this.GetOpponent(card.OwnerId).Id,
                     this.CreateGameContext(this.GetOpponent(card.OwnerId).Id),
-                    new AddCardNotifyMessage()
-                    {
-                        CardId = isPublic ? card.Id : default,
-                        ToZone = moveCardContext.To
-                    });
+                    new AddCardNotifyMessage(
+                        isPublic ? card.Id : default,
+                        moveCardContext.To));
             }
             else
             {
@@ -641,14 +634,13 @@ namespace Cauldron.Core.Entities
                 throw new InvalidOperationException($"player not exists. id={playerId}");
             }
 
-            return new GameContext()
-            {
-                GameOver = this.GameOver,
-                WinnerPlayerId = this.GetWinner()?.Id ?? default,
-                You = player.PrivatePlayerInfo,
-                Opponent = this.GetOpponent(playerId).PublicPlayerInfo,
-                RuleBook = this.RuleBook
-            };
+            return new GameContext(
+                this.GetWinner()?.Id ?? default,
+                this.GetOpponent(playerId).PublicPlayerInfo,
+                player.PrivatePlayerInfo,
+                this.RuleBook,
+                this.GameOver
+                );
         }
 
         public async ValueTask<GameMasterStatusCode> Discard(PlayerId playerId, IEnumerable<CardId> handCardId)
@@ -918,7 +910,7 @@ namespace Cauldron.Core.Entities
                 this.EventListener?.OnDamage?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
                     new DamageNotifyMessage(
-                        DamageNotifyMessage.ReasonCode.Attack,
+                        DamageNotifyMessage.ReasonValue.Attack,
                         newEventArgs.DamageContext.Value,
                         SourceCardId: newEventArgs.DamageContext.DamageSourceCard.Id,
                         GuardPlayerId: newEventArgs.DamageContext.GuardPlayer.Id
@@ -1017,7 +1009,7 @@ namespace Cauldron.Core.Entities
                 this.EventListener?.OnDamage?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
                     new DamageNotifyMessage(
-                        DamageNotifyMessage.ReasonCode.Attack,
+                        DamageNotifyMessage.ReasonValue.Attack,
                         newDamageContext.Value,
                         SourceCardId: newDamageContext.DamageSourceCard.Id,
                         GuardCardId: newDamageContext.GuardCard.Id
@@ -1088,9 +1080,9 @@ namespace Cauldron.Core.Entities
 
             var choiceResult = choice.How switch
             {
-                Shared.MessagePackObjects.Choice.ChoiceHow.All => All(),
-                Shared.MessagePackObjects.Choice.ChoiceHow.Choose => await Choose(),
-                Shared.MessagePackObjects.Choice.ChoiceHow.Random => Random(),
+                Shared.MessagePackObjects.Choice.HowValue.All => All(),
+                Shared.MessagePackObjects.Choice.HowValue.Choose => await Choose(),
+                Shared.MessagePackObjects.Choice.HowValue.Random => Random(),
                 _ => throw new Exception($"how={choice.How}")
             };
 
@@ -1111,10 +1103,7 @@ namespace Cauldron.Core.Entities
             {
                 this.EventListener?.OnModifyPlayer?.Invoke(p.Id,
                     this.CreateGameContext(p.Id),
-                    new ModifyPlayerNotifyMessage()
-                    {
-                        PlayerId = modifyPlayerContext.PlayerId
-                    });
+                    new ModifyPlayerNotifyMessage(modifyPlayerContext.PlayerId));
             }
         }
 

@@ -6,7 +6,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTimingDestroyEvent
     {
-        public enum EventSource
+        public enum SourceValue
         {
             [DisplayText("このカード")]
             This,
@@ -14,9 +14,9 @@ namespace Cauldron.Shared.MessagePackObjects
             Other
         }
 
-        public EffectTimingDestroyEvent.EventSource Source { get; }
+        public EffectTimingDestroyEvent.SourceValue Source { get; }
 
-        public EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource Source)
+        public EffectTimingDestroyEvent(EffectTimingDestroyEvent.SourceValue Source)
         {
             this.Source = Source;
         }

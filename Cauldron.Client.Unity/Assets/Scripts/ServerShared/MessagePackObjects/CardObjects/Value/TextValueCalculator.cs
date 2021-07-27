@@ -6,17 +6,17 @@ namespace Cauldron.Shared.MessagePackObjects.Value
     [MessagePackObject(true)]
     public class TextValueCalculator
     {
-        public enum ValueType
+        public enum TypeValue
         {
             [DisplayText("カード名")]
             CardName,
         }
 
-        public TextValueCalculator.ValueType Type { get; set; }
-        public Choice CardsChoice { get; set; }
+        public TypeValue Type { get; }
+        public Choice CardsChoice { get; }
 
         public TextValueCalculator(
-            TextValueCalculator.ValueType Type,
+            TypeValue Type,
             Choice CardsChoice
             )
         {

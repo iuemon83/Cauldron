@@ -8,18 +8,18 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class ActionContextCardsOfDestroyCard
     {
-        public enum ValueType
+        public enum TypeValue
         {
             Destroyed
         }
 
-        public string ActionName { get; set; }
+        public string ActionName { get; }
 
-        public ActionContextCardsOfDestroyCard.ValueType Type { get; set; }
+        public TypeValue Type { get; }
 
         public ActionContextCardsOfDestroyCard(
             string ActionName,
-            ActionContextCardsOfDestroyCard.ValueType Type
+            TypeValue Type
             )
         {
             this.ActionName = ActionName;

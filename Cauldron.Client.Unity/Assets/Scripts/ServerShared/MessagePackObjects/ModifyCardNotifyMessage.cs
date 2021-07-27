@@ -5,6 +5,11 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class ModifyCardNotifyMessage
     {
-        public CardId CardId { get; set; }
+        public CardId CardId { get; }
+
+        public ModifyCardNotifyMessage(CardId CardId)
+        {
+            this.CardId = CardId;
+        }
     }
 }

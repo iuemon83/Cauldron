@@ -24,9 +24,9 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             CardBaseToughness,
         }
 
-        public NumValueCalculator.ValueType Type { get; set; }
+        public NumValueCalculator.ValueType Type { get; }
 
-        public Choice CardsChoice { get; set; }
+        public Choice CardsChoice { get; }
 
         public NumValueCalculator(
             NumValueCalculator.ValueType Type,

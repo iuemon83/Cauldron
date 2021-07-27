@@ -42,15 +42,15 @@ namespace Assets.Scripts
         void ICauldronHubReceiver.OnMoveCard(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage)
             => this.onMoveCard.OnNext((gameContext, moveCardNotifyMessage));
 
-        public IObservable<GameContext> OnReady => onReady;
-        private readonly Subject<GameContext> onReady = new Subject<GameContext>();
-        void ICauldronHubReceiver.OnReady(GameContext gameContext)
-            => this.onReady.OnNext(gameContext);
+        public IObservable<Unit> OnReady => onReady;
+        private readonly Subject<Unit> onReady = new Subject<Unit>();
+        void ICauldronHubReceiver.OnReady()
+            => this.onReady.OnNext(Unit.Default);
 
-        public IObservable<GameContext> OnStartGame => onStartGame;
-        private readonly Subject<GameContext> onStartGame = new Subject<GameContext>();
-        void ICauldronHubReceiver.OnStartGame(GameContext gameContext)
-            => this.onStartGame.OnNext(gameContext);
+        public IObservable<Unit> OnStartGame => onStartGame;
+        private readonly Subject<Unit> onStartGame = new Subject<Unit>();
+        void ICauldronHubReceiver.OnStartGame()
+            => this.onStartGame.OnNext(Unit.Default);
 
         public IObservable<(GameContext gameContext, PlayerId playerId)> OnStartTurn => onStartTurn;
         private readonly Subject<(GameContext gameContext, PlayerId playerId)> onStartTurn

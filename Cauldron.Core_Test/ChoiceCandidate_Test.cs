@@ -21,14 +21,13 @@ namespace Cauldron.Core_Test
             var testChoice = new Choice(
                 new ChoiceSource(
                     orCardConditions: new[]{
-                        new CardCondition()
-                        {
-                            ContextCondition = CardCondition.ContextConditionValue.Others,
-                            ZoneCondition = new(new(new[] { ZonePrettyName.YouField })),
-                            TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
-                        }
+                        new CardCondition(
+                            ContextCondition: CardCondition.ContextConditionValue.Others,
+                            ZoneCondition: new(new(new[] { ZonePrettyName.YouField })),
+                            TypeCondition: new CardTypeCondition(new[] { CardType.Creature })
+                        )
                     }),
-                Choice.ChoiceHow.Random,
+                Choice.HowValue.Random,
                 1);
 
             var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 2, 2, 1,
@@ -38,12 +37,10 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyCard = new EffectActionModifyCard(
+                            new EffectAction(
+                                ModifyCard: new EffectActionModifyCard(
                                     testChoice
-                                )
-                            }
+                                ))
                         }
                     )
                 }
@@ -110,12 +107,11 @@ namespace Cauldron.Core_Test
             var testChoice = new Choice(
                 new ChoiceSource(
                     orCardConditions: new[]{
-                        new CardCondition()
-                        {
-                            ContextCondition = CardCondition.ContextConditionValue.Others,
-                            ZoneCondition = new(new(new[] { ZonePrettyName.YouField })),
-                            TypeCondition = new CardTypeCondition(new[] { CardType.Creature }),
-                        }
+                        new CardCondition(
+                            ContextCondition: CardCondition.ContextConditionValue.Others,
+                            ZoneCondition: new(new(new[] { ZonePrettyName.YouField })),
+                            TypeCondition: new CardTypeCondition(new[] { CardType.Creature })
+                        )
                     }));
 
             var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 3, 3, 1,
@@ -125,12 +121,10 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyCard = new EffectActionModifyCard(
+                            new EffectAction(
+                                ModifyCard: new EffectActionModifyCard(
                                     testChoice
-                                )
-                            }
+                                ))
                         }
                     )
                 }
@@ -195,14 +189,12 @@ namespace Cauldron.Core_Test
                 new ChoiceSource(
                     orCardConditions: new[]
                     {
-                        new CardCondition()
-                        {
-                            ZoneCondition = new(new(new[] { ZonePrettyName.CardPool })),
-                            NameCondition = new TextCondition(
+                        new CardCondition(
+                            ZoneCondition: new(new(new[] { ZonePrettyName.CardPool })),
+                            NameCondition: new TextCondition(
                                 new TextValue(fairy.FullName),
                                 TextCondition.CompareValue.Equality
-                            )
-                        }
+                            ))
                     }));
 
             var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 1, 1, 1,
@@ -211,17 +203,15 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)))
+                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.SourceValue.This)))
                         ),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                AddCard = new(
+                            new EffectAction(
+                                AddCard: new(
                                     testChoice,
                                     new ZoneValue(new[]{ ZonePrettyName.OpponentField })
-                                )
-                            }
+                                ))
                         }
                     )
                 }
@@ -284,14 +274,12 @@ namespace Cauldron.Core_Test
                 new ChoiceSource(
                     orCardConditions: new[]
                     {
-                        new CardCondition()
-                        {
-                            ZoneCondition = new(new(new[] { ZonePrettyName.CardPool })),
-                            NameCondition = new(
+                        new CardCondition(
+                            ZoneCondition: new(new(new[] { ZonePrettyName.CardPool })),
+                            NameCondition: new(
                                 new TextValue(fairy.FullName),
                                 TextCondition.CompareValue.Equality
-                            )
-                        },
+                            ))
                     }),
                 numPicks: 2);
 
@@ -301,17 +289,15 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)))
+                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.SourceValue.This)))
                         ),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                AddCard = new(
+                            new EffectAction(
+                                AddCard: new(
                                     testChoice,
                                     new ZoneValue(new[]{ ZonePrettyName.OpponentField })
-                                )
-                            }
+                                ))
                         }
                     )
                 }
@@ -372,10 +358,9 @@ namespace Cauldron.Core_Test
                 new ChoiceSource(
                     orPlayerConditions: new[]
                     {
-                        new PlayerCondition()
-                        {
-                            Type = PlayerCondition.PlayerConditionType.Opponent,
-                        }
+                        new PlayerCondition(
+                            Type: PlayerCondition.TypeValue.Opponent
+                        )
                     }));
             var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 1, 1, 1,
                 effects: new[]
@@ -383,17 +368,15 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.EventSource.This)))
+                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.SourceValue.This)))
                         ),
                         new []
                         {
-                            new EffectAction()
-                            {
-                                Damage = new EffectActionDamage(
+                            new EffectAction(
+                                Damage: new EffectActionDamage(
                                     new NumValue(1),
                                     testChoice
-                                )
-                            }
+                                ))
                         }
                     )
                 }
@@ -454,10 +437,9 @@ namespace Cauldron.Core_Test
                 new ChoiceSource(
                     orPlayerConditions: new[]
                     {
-                        new PlayerCondition()
-                        {
-                            Type = PlayerCondition.PlayerConditionType.Active
-                        }
+                        new PlayerCondition(
+                            Type: PlayerCondition.TypeValue.Active
+                        )
                     }));
             var testCardDef = SampleCards.Artifact(0, "test", "test", false,
                 new[]
@@ -466,16 +448,14 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.EventSource.Both)))
+                            new(new(StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.SourceValue.Both)))
                         ),
                         new []{
-                            new EffectAction()
-                            {
-                                Damage = new EffectActionDamage(
+                            new EffectAction(
+                                Damage: new EffectActionDamage(
                                     new NumValue(1),
                                     testChoice
-                                )
-                            }
+                                ))
                         }
                     )
                 }
@@ -559,13 +539,12 @@ namespace Cauldron.Core_Test
                 new ChoiceSource(
                     orCardConditions: new[]
                     {
-                        new CardCondition()
-                        {
-                            ZoneCondition = new(new(new[] { ZonePrettyName.OpponentField })),
-                            TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
-                        },
+                        new CardCondition(
+                            ZoneCondition: new(new(new[] { ZonePrettyName.OpponentField })),
+                            TypeCondition: new CardTypeCondition(new[] { CardType.Creature })
+                        )
                     }),
-                Choice.ChoiceHow.Random,
+                Choice.HowValue.Random,
                 1);
             var testCardDef = SampleCards.Artifact(0, "test", "test", false);
 
@@ -630,20 +609,18 @@ namespace Cauldron.Core_Test
                 new ChoiceSource(
                     orPlayerConditions: new[]
                     {
-                        new PlayerCondition()
-                        {
-                            Type = PlayerCondition.PlayerConditionType.Opponent,
-                        },
+                        new PlayerCondition(
+                            Type: PlayerCondition.TypeValue.Opponent
+                        )
                     },
                     orCardConditions: new[]
                     {
-                        new CardCondition()
-                        {
-                            TypeCondition = new CardTypeCondition(new[] { CardType.Creature }),
-                            ZoneCondition = new(new(new[] { ZonePrettyName.OpponentField })),
-                        }
+                        new CardCondition(
+                            TypeCondition: new CardTypeCondition(new[] { CardType.Creature }),
+                            ZoneCondition: new(new(new[] { ZonePrettyName.OpponentField }))
+                        )
                     }),
-                Choice.ChoiceHow.Random,
+                Choice.HowValue.Random,
                 1);
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
@@ -707,13 +684,12 @@ namespace Cauldron.Core_Test
                 new ChoiceSource(
                     orCardConditions: new[]
                     {
-                        new CardCondition()
-                        {
-                            ZoneCondition = new(new(new[] { ZonePrettyName.OpponentField })),
-                            TypeCondition = new CardTypeCondition(new[] { CardType.Creature })
-                        }
+                        new CardCondition(
+                            ZoneCondition: new(new(new[] { ZonePrettyName.OpponentField })),
+                            TypeCondition: new CardTypeCondition(new[] { CardType.Creature })
+                        )
                     }),
-                Choice.ChoiceHow.Choose,
+                Choice.HowValue.Choose,
                 1);
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
@@ -796,14 +772,13 @@ namespace Cauldron.Core_Test
                 new ChoiceSource(
                     orCardConditions: new[]
                     {
-                        new CardCondition()
-                        {
-                            ContextCondition = CardCondition.ContextConditionValue.Others,
-                            ZoneCondition = new(new(new[] { ZonePrettyName.YouField })),
-                            TypeCondition = new CardTypeCondition(new[] { CardType.Creature, })
-                        }
+                        new CardCondition(
+                            ContextCondition: CardCondition.ContextConditionValue.Others,
+                            ZoneCondition: new(new(new[] { ZonePrettyName.YouField })),
+                            TypeCondition: new CardTypeCondition(new[] { CardType.Creature, })
+                        )
                     }),
-                Choice.ChoiceHow.Choose,
+                Choice.HowValue.Choose,
                 1);
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
@@ -889,10 +864,9 @@ namespace Cauldron.Core_Test
                 new ChoiceSource(
                     orCardConditions: new[]
                     {
-                        new CardCondition()
-                        {
-                            ContextCondition = CardCondition.ContextConditionValue.This,
-                        }
+                        new CardCondition(
+                            ContextCondition: CardCondition.ContextConditionValue.This
+                        )
                     }));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
@@ -951,10 +925,9 @@ namespace Cauldron.Core_Test
                 new ChoiceSource(
                     orCardConditions: new[]
                     {
-                        new CardCondition()
-                        {
-                            ContextCondition = CardCondition.ContextConditionValue.EventSource,
-                        }
+                        new CardCondition(
+                            ContextCondition: CardCondition.ContextConditionValue.EventSource
+                        )
                     }));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 

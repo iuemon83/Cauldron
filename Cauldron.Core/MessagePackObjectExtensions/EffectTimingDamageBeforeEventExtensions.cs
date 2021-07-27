@@ -12,7 +12,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 return false;
             }
 
-            if (effectTimingDamageBeforeEvent.Type == EffectTimingDamageBeforeEvent.DamageType.Battle
+            if (effectTimingDamageBeforeEvent.Type == EffectTimingDamageBeforeEvent.TypeValue.Battle
                 && !eventArgs.DamageContext.IsBattle)
             {
                 return false;
@@ -28,10 +28,10 @@ namespace Cauldron.Shared.MessagePackObjects
             {
                 return effectTimingDamageBeforeEvent.Source switch
                 {
-                    EffectTimingDamageBeforeEvent.EventSource.Any => eventArgs.DamageContext.GuardPlayer != null
+                    EffectTimingDamageBeforeEvent.SourceValue.Any => eventArgs.DamageContext.GuardPlayer != null
                         && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer)
                             ?? false),
-                    EffectTimingDamageBeforeEvent.EventSource.Take => eventArgs.DamageContext.GuardPlayer != null
+                    EffectTimingDamageBeforeEvent.SourceValue.Take => eventArgs.DamageContext.GuardPlayer != null
                         && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer)
                             ?? false),
                     _ => false
@@ -66,9 +66,9 @@ namespace Cauldron.Shared.MessagePackObjects
 
                 return effectTimingDamageBeforeEvent.Source switch
                 {
-                    EffectTimingDamageBeforeEvent.EventSource.Any => await IsMatchDamageSource() || await IsMatchTake(),
-                    EffectTimingDamageBeforeEvent.EventSource.DamageSource => await IsMatchDamageSource(),
-                    EffectTimingDamageBeforeEvent.EventSource.Take => await IsMatchTake(),
+                    EffectTimingDamageBeforeEvent.SourceValue.Any => await IsMatchDamageSource() || await IsMatchTake(),
+                    EffectTimingDamageBeforeEvent.SourceValue.DamageSource => await IsMatchDamageSource(),
+                    EffectTimingDamageBeforeEvent.SourceValue.Take => await IsMatchTake(),
                     _ => false
                 };
             }

@@ -9,9 +9,9 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectActionAddEffect
     {
-        public Choice CardsChoice { get; set; }
-        public IEnumerable<CardEffect> EffectToAdd { get; set; }
-        public string Name { get; set; } = null;
+        public Choice CardsChoice { get; }
+        public IEnumerable<CardEffect> EffectToAdd { get; }
+        public string Name { get; } = null;
 
         public EffectActionAddEffect(Choice CardsChoice, IEnumerable<CardEffect> EffectToAdd, string Name = null)
         {

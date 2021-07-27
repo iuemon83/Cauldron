@@ -8,9 +8,9 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             return effectTimingModifyPlayerEvent.Source switch
             {
-                EffectTimingModifyPlayerEvent.EventSource.All => true,
-                EffectTimingModifyPlayerEvent.EventSource.Owner => modifyPlayerId == ownerCard.OwnerId,
-                EffectTimingModifyPlayerEvent.EventSource.Other => modifyPlayerId != ownerCard.OwnerId,
+                EffectTimingModifyPlayerEvent.SourceValue.All => true,
+                EffectTimingModifyPlayerEvent.SourceValue.Owner => modifyPlayerId == ownerCard.OwnerId,
+                EffectTimingModifyPlayerEvent.SourceValue.Other => modifyPlayerId != ownerCard.OwnerId,
                 _ => throw new InvalidOperationException($"{nameof(effectTimingModifyPlayerEvent.Source)}={effectTimingModifyPlayerEvent.Source}"),
             };
         }

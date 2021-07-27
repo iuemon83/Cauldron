@@ -9,7 +9,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTimingMoveCardEvent
     {
-        public enum EventSource
+        public enum SourceValue
         {
             [DisplayText("このカード")]
             This,
@@ -17,12 +17,12 @@ namespace Cauldron.Shared.MessagePackObjects
             Other
         }
 
-        public EffectTimingMoveCardEvent.EventSource Source { get; }
+        public EffectTimingMoveCardEvent.SourceValue Source { get; }
         public ZonePrettyName From { get; }
         public ZonePrettyName To { get; }
 
         public EffectTimingMoveCardEvent(
-            EffectTimingMoveCardEvent.EventSource Source,
+            EffectTimingMoveCardEvent.SourceValue Source,
             ZonePrettyName From,
             ZonePrettyName To
             )

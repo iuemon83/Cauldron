@@ -6,7 +6,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTimingModifyPlayerEvent
     {
-        public enum EventSource
+        public enum SourceValue
         {
             [DisplayText("あなた")]
             Owner,
@@ -16,14 +16,14 @@ namespace Cauldron.Shared.MessagePackObjects
             All
         }
 
-        public EffectTimingModifyPlayerEvent.EventSource Source { get; }
+        public EffectTimingModifyPlayerEvent.SourceValue Source { get; }
         public bool ModifyMaxHp { get; }
         public bool ModifyHp { get; }
         public bool ModifyMaxMp { get; }
         public bool ModifyMp { get; }
 
         public EffectTimingModifyPlayerEvent(
-            EffectTimingModifyPlayerEvent.EventSource Source,
+            EffectTimingModifyPlayerEvent.SourceValue Source,
             bool ModifyMaxHp,
             bool ModifyHp,
             bool ModifyMaxMp,

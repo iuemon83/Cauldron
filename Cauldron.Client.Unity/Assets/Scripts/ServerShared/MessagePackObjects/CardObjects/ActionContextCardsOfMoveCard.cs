@@ -8,17 +8,17 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class ActionContextCardsOfMoveCard
     {
-        public enum ValueType
+        public enum TypeValue
         {
             Moved
         }
 
-        public string ActionName { get; set; }
-        public ActionContextCardsOfMoveCard.ValueType Type { get; set; }
+        public string ActionName { get; }
+        public TypeValue Type { get; }
 
         public ActionContextCardsOfMoveCard(
             string ActionName,
-            ActionContextCardsOfMoveCard.ValueType Type
+            TypeValue Type
             )
         {
             this.ActionName = ActionName;

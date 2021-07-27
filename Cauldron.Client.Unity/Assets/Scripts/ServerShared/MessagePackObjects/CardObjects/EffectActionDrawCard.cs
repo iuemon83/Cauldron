@@ -6,8 +6,8 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectActionDrawCard
     {
-        public NumValue NumCards { get; set; }
-        public PlayerCondition PlayerCondition { get; set; }
+        public NumValue NumCards { get; }
+        public PlayerCondition PlayerCondition { get; }
 
         public EffectActionDrawCard(NumValue NumCards, PlayerCondition PlayerCondition)
         {

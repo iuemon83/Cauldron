@@ -6,8 +6,8 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class ZoneCondition
     {
-        public ZoneValue Value { get; set; }
-        public bool Not { get; set; }
+        public ZoneValue Value { get; }
+        public bool Not { get; }
 
         public ZoneCondition(ZoneValue value, bool not = false)
         {

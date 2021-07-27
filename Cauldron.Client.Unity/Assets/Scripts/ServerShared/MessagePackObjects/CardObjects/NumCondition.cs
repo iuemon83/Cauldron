@@ -6,7 +6,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class NumCondition
     {
-        public enum ConditionCompare
+        public enum CompareValue
         {
             [DisplayText("等しい")]
             Equality,
@@ -17,12 +17,12 @@ namespace Cauldron.Shared.MessagePackObjects
         }
 
         public int Value { get; }
-        public NumCondition.ConditionCompare Compare { get; }
+        public NumCondition.CompareValue Compare { get; }
         public bool Not { get; }
 
         public NumCondition(
             int Value,
-            NumCondition.ConditionCompare Compare,
+            NumCondition.CompareValue Compare,
             bool not = false
             )
         {

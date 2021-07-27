@@ -5,13 +5,13 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTiming
     {
-        public EffectTimingStartTurnEvent StartTurn { get; set; }
-        public EffectTimingEndTurnEvent EndTurn { get; set; }
-        public EffectTimingPlayEvent Play { get; set; }
-        public EffectTimingDestroyEvent Destroy { get; set; }
-        public EffectTimingDamageBeforeEvent DamageBefore { get; set; }
-        public EffectTimingDamageAfterEvent DamageAfter { get; set; }
-        public EffectTimingMoveCardEvent MoveCard { get; set; }
+        public EffectTimingStartTurnEvent StartTurn { get; }
+        public EffectTimingEndTurnEvent EndTurn { get; }
+        public EffectTimingPlayEvent Play { get; }
+        public EffectTimingDestroyEvent Destroy { get; }
+        public EffectTimingDamageBeforeEvent DamageBefore { get; }
+        public EffectTimingDamageAfterEvent DamageAfter { get; }
+        public EffectTimingMoveCardEvent MoveCard { get; }
 
         public EffectTiming(
             EffectTimingStartTurnEvent StartTurn = null,

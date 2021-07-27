@@ -5,16 +5,16 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectAction
     {
-        public EffectActionDamage Damage { get; set; } = null;
-        public EffectActionAddCard AddCard { get; set; } = null;
-        public EffectActionModifyCard ModifyCard { get; set; } = null;
-        public EffectActionDestroyCard DestroyCard { get; set; } = null;
-        public EffectActionModifyDamage ModifyDamage { get; set; } = null;
-        public EffectActionModifyPlayer ModifyPlayer { get; set; } = null;
-        public EffectActionDrawCard DrawCard { get; set; } = null;
-        public EffectActionMoveCard MoveCard { get; set; } = null;
-        public EffectActionAddEffect AddEffect { get; set; } = null;
-        public EffectActionSetVariable SetVariable { get; set; } = null;
+        public EffectActionDamage Damage { get; } = null;
+        public EffectActionAddCard AddCard { get; } = null;
+        public EffectActionModifyCard ModifyCard { get; } = null;
+        public EffectActionDestroyCard DestroyCard { get; } = null;
+        public EffectActionModifyDamage ModifyDamage { get; } = null;
+        public EffectActionModifyPlayer ModifyPlayer { get; } = null;
+        public EffectActionDrawCard DrawCard { get; } = null;
+        public EffectActionMoveCard MoveCard { get; } = null;
+        public EffectActionAddEffect AddEffect { get; } = null;
+        public EffectActionSetVariable SetVariable { get; } = null;
         public EffectActionWin Win { get; } = null;
 
         public EffectAction(

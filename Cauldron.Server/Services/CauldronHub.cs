@@ -105,12 +105,10 @@ namespace Cauldron.Server.Services
             try
             {
                 this._logger.LogInformation($"called {nameof(AskCard)}: questionId={currentQuestionId}, choiceCandidates={choiceCandidates}");
-                this.BroadcastTo(this.room, playerId.Value).OnAsk(new AskMessage
-                {
-                    QuestionId = currentQuestionId,
-                    ChoiceCandidates = choiceCandidates,
-                    NumPicks = numPicks
-                });
+                this.BroadcastTo(this.room, playerId.Value).OnAsk(new AskMessage(
+                    currentQuestionId,
+                    choiceCandidates,
+                    numPicks));
             }
             catch (Exception e)
             {
@@ -291,7 +289,7 @@ namespace Cauldron.Server.Services
         {
             var numOfReadies = numOfReadiesByGameId.AddOrUpdate(request.GameId, 1, (_, num) => num + 1);
 
-            this.BroadcastToSelf(this.room).OnReady(new GameContext());
+            this.BroadcastToSelf(this.room).OnReady();
 
             var numOfPlayers = await this.room.GetMemberCountAsync();
 
@@ -308,7 +306,7 @@ namespace Cauldron.Server.Services
             this._logger.LogInformation("二人揃った");
 
             // ふたりとも準備完了なら開始
-            this.Broadcast(this.room).OnStartGame(new GameContext());
+            this.Broadcast(this.room).OnStartGame();
 
             // 先行プレイヤー
             var firstPlayerId = this.storage.AllValues.OrderBy(_ => Guid.NewGuid()).First().Id;

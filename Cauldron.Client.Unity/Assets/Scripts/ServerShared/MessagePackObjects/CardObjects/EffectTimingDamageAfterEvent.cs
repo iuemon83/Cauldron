@@ -6,8 +6,8 @@ namespace Cauldron.Shared.MessagePackObjects
     public class EffectTimingDamageAfterEvent : EffectTimingDamageBeforeEvent
     {
         public EffectTimingDamageAfterEvent(
-            EffectTimingDamageBeforeEvent.DamageType Type = DamageType.Any,
-            EffectTimingDamageBeforeEvent.EventSource Source = EventSource.Any,
+            EffectTimingDamageBeforeEvent.TypeValue Type = TypeValue.Any,
+            EffectTimingDamageBeforeEvent.SourceValue Source = SourceValue.Any,
             PlayerCondition PlayerCondition = null,
             CardCondition CardCondition = null
             )

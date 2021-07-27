@@ -8,7 +8,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class ChoiceSource
     {
-        public enum ChoiceHow
+        public enum HowValue
         {
             /// <summary>
             /// ランダム選択
@@ -23,7 +23,7 @@ namespace Cauldron.Shared.MessagePackObjects
         /// <summary>
         /// 抽出方法
         /// </summary>
-        public ChoiceHow How { get; }
+        public HowValue How { get; }
 
         /// <summary>
         /// 抽出する数
@@ -40,7 +40,7 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public CardCondition[] OrCardConditions { get; }
 
-        public ChoiceSource(ChoiceHow how = ChoiceHow.All, int numPicks = 1, PlayerCondition[] orPlayerConditions = null, CardCondition[] orCardConditions = null)
+        public ChoiceSource(HowValue how = HowValue.All, int numPicks = 1, PlayerCondition[] orPlayerConditions = null, CardCondition[] orCardConditions = null)
         {
             this.How = how;
             this.NumPicks = numPicks;

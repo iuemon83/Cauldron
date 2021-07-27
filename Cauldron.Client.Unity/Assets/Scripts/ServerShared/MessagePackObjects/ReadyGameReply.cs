@@ -5,7 +5,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class ReadyGameReply
     {
-        public enum TypeCode
+        public enum CodeValue
         {
             Ready,
             StartGame,
@@ -18,13 +18,32 @@ namespace Cauldron.Shared.MessagePackObjects
             Damage,
         }
 
-        public ReadyGameReply.TypeCode Code { get; set; }
+        public CodeValue Code { get; }
 
-        public GameContext GameContext { get; set; }
-        public MoveCardNotifyMessage MoveCardNotify { get; set; }
-        public AddCardNotifyMessage AddCardNotify { get; set; }
-        public ModifyCardNotifyMessage ModifyCardNotify { get; set; }
-        public ModifyPlayerNotifyMessage ModifyPlayerNotify { get; set; }
-        public DamageNotifyMessage DamageNotify { get; set; }
+        public GameContext GameContext { get; }
+        public MoveCardNotifyMessage MoveCardNotify { get; }
+        public AddCardNotifyMessage AddCardNotify { get; }
+        public ModifyCardNotifyMessage ModifyCardNotify { get; }
+        public ModifyPlayerNotifyMessage ModifyPlayerNotify { get; }
+        public DamageNotifyMessage DamageNotify { get; }
+
+        public ReadyGameReply(
+            CodeValue Code,
+            GameContext GameContext,
+            MoveCardNotifyMessage MoveCardNotify,
+            AddCardNotifyMessage AddCardNotify,
+            ModifyCardNotifyMessage ModifyCardNotify,
+            ModifyPlayerNotifyMessage ModifyPlayerNotify,
+            DamageNotifyMessage DamageNotify
+            )
+        {
+            this.Code = Code;
+            this.GameContext = GameContext;
+            this.MoveCardNotify = MoveCardNotify;
+            this.AddCardNotify = AddCardNotify;
+            this.ModifyCardNotify = ModifyCardNotify;
+            this.ModifyPlayerNotify = ModifyPlayerNotify;
+            this.DamageNotify = DamageNotify;
+        }
     }
 }

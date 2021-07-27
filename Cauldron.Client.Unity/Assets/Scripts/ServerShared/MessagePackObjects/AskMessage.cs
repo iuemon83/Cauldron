@@ -6,8 +6,19 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class AskMessage
     {
-        public Guid QuestionId { get; set; }
-        public ChoiceCandidates ChoiceCandidates { get; set; }
-        public int NumPicks { get; set; }
+        public Guid QuestionId { get; }
+        public ChoiceCandidates ChoiceCandidates { get; }
+        public int NumPicks { get; }
+
+        public AskMessage(
+            Guid QuestionId,
+            ChoiceCandidates ChoiceCandidates,
+            int NumPicks
+            )
+        {
+            this.QuestionId = QuestionId;
+            this.ChoiceCandidates = ChoiceCandidates;
+            this.NumPicks = NumPicks;
+        }
     }
 }

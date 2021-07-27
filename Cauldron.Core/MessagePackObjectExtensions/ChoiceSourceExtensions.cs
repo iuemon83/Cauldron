@@ -8,7 +8,7 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class ChoiceSourceExtensions
     {
-        public static async ValueTask<ChoiceCandidates> ChoiceCandidates(this ChoiceSource choiceSource, Card effectOwnerCard, EffectEventArgs effectEventArgs, PlayerRepository playerRepository, CardRepository cardRepository, Choice.ChoiceHow choiceHow, int numDuplicates)
+        public static async ValueTask<ChoiceCandidates> ChoiceCandidates(this ChoiceSource choiceSource, Card effectOwnerCard, EffectEventArgs effectEventArgs, PlayerRepository playerRepository, CardRepository cardRepository, Choice.HowValue choiceHow, int numDuplicates)
         {
             var playerList = choiceSource
                 .ListMatchedPlayers(effectOwnerCard, effectEventArgs, playerRepository)
@@ -17,7 +17,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             var cardList = await choiceSource.ListMatchedCards(effectOwnerCard, effectEventArgs, cardRepository);
 
-            if (choiceHow == Choice.ChoiceHow.Choose)
+            if (choiceHow == Choice.HowValue.Choose)
             {
                 cardList = cardList.Where(c =>
                 {

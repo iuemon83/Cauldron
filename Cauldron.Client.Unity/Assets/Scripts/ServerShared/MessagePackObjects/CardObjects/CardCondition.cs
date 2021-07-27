@@ -81,15 +81,40 @@ namespace Cauldron.Shared.MessagePackObjects
         /// <summary>
         /// 自分自身かそれ以外か
         /// </summary>
-        public ContextConditionValue ContextCondition { get; set; }
-        public ActionContextCards ActionContext { get; set; }
-        public NumCondition CostCondition { get; set; }
-        public NumCondition PowerCondition { get; set; }
-        public NumCondition ToughnessCondition { get; set; }
-        public CardSetCondition CardSetCondition { get; set; }
-        public TextCondition NameCondition { get; set; }
-        public CardTypeCondition TypeCondition { get; set; }
-        public ZoneCondition ZoneCondition { get; set; }
-        public OwnerConditionValue OwnerCondition { get; set; }
+        public ContextConditionValue ContextCondition { get; }
+        public ActionContextCards ActionContext { get; }
+        public NumCondition CostCondition { get; }
+        public NumCondition PowerCondition { get; }
+        public NumCondition ToughnessCondition { get; }
+        public CardSetCondition CardSetCondition { get; }
+        public TextCondition NameCondition { get; }
+        public CardTypeCondition TypeCondition { get; }
+        public ZoneCondition ZoneCondition { get; }
+        public OwnerConditionValue OwnerCondition { get; }
+
+        public CardCondition(
+            ContextConditionValue ContextCondition = ContextConditionValue.Any,
+            ActionContextCards ActionContext = default,
+            NumCondition CostCondition = default,
+            NumCondition PowerCondition = default,
+            NumCondition ToughnessCondition = default,
+            CardSetCondition CardSetCondition = default,
+            TextCondition NameCondition = default,
+            CardTypeCondition TypeCondition = default,
+            ZoneCondition ZoneCondition = default,
+            OwnerConditionValue OwnerCondition = OwnerConditionValue.Any
+            )
+        {
+            this.ContextCondition = ContextCondition;
+            this.ActionContext = ActionContext;
+            this.CostCondition = CostCondition;
+            this.PowerCondition = PowerCondition;
+            this.ToughnessCondition = ToughnessCondition;
+            this.CardSetCondition = CardSetCondition;
+            this.NameCondition = NameCondition;
+            this.TypeCondition = TypeCondition;
+            this.ZoneCondition = ZoneCondition;
+            this.OwnerCondition = OwnerCondition;
+        }
     }
 }

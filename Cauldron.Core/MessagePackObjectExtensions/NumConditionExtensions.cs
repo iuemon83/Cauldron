@@ -8,9 +8,9 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             var result = numCondition.Compare switch
             {
-                NumCondition.ConditionCompare.Equality => checkValue == numCondition.Value,
-                NumCondition.ConditionCompare.LessThan => checkValue <= numCondition.Value,
-                NumCondition.ConditionCompare.GreaterThan => checkValue >= numCondition.Value,
+                NumCondition.CompareValue.Equality => checkValue == numCondition.Value,
+                NumCondition.CompareValue.LessThan => checkValue <= numCondition.Value,
+                NumCondition.CompareValue.GreaterThan => checkValue >= numCondition.Value,
                 _ => throw new InvalidOperationException($"{nameof(numCondition.Compare)}: {numCondition.Compare}")
             };
 

@@ -6,7 +6,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTimingEndTurnEvent
     {
-        public enum EventSource
+        public enum SourceValue
         {
             [DisplayText("あなた")]
             You,
@@ -16,9 +16,9 @@ namespace Cauldron.Shared.MessagePackObjects
             Both
         }
 
-        public EffectTimingEndTurnEvent.EventSource Source { get; }
+        public EffectTimingEndTurnEvent.SourceValue Source { get; }
 
-        public EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.EventSource Source)
+        public EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.SourceValue Source)
         {
             this.Source = Source;
         }

@@ -6,7 +6,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
     [MessagePackObject(true)]
     public class NumValueModifier
     {
-        public enum ValueModifierOperator
+        public enum OperatorValue
         {
             [DisplayText("＋")]
             Add,
@@ -20,11 +20,11 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             Replace,
         }
 
-        public NumValueModifier.ValueModifierOperator Operator { get; set; }
-        public NumValue Value { get; set; }
+        public OperatorValue Operator { get; }
+        public NumValue Value { get; }
 
         public NumValueModifier(
-            NumValueModifier.ValueModifierOperator Operator,
+            OperatorValue Operator,
             NumValue Value
             )
         {

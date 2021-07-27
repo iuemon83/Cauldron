@@ -5,9 +5,9 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class ActionContextCards
     {
-        public ActionContextCardsOfAddEffect ActionContextCardsOfAddEffect { get; set; }
-        public ActionContextCardsOfDestroyCard ActionContextCardsOfDestroyCard { get; set; }
-        public ActionContextCardsOfMoveCard ActionContextCardsOfMoveCard { get; set; }
+        public ActionContextCardsOfAddEffect ActionContextCardsOfAddEffect { get; }
+        public ActionContextCardsOfDestroyCard ActionContextCardsOfDestroyCard { get; }
+        public ActionContextCardsOfMoveCard ActionContextCardsOfMoveCard { get; }
 
         public ActionContextCards(
             ActionContextCardsOfAddEffect ActionContextCardsOfAddEffect = null,

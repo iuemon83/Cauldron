@@ -9,8 +9,8 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             var matchSource = effectTimingMoveCardEvent.Source switch
             {
-                EffectTimingMoveCardEvent.EventSource.This => ownerCard.Id == args.SourceCard.Id,
-                EffectTimingMoveCardEvent.EventSource.Other => ownerCard.Id != args.SourceCard.Id,
+                EffectTimingMoveCardEvent.SourceValue.This => ownerCard.Id == args.SourceCard.Id,
+                EffectTimingMoveCardEvent.SourceValue.Other => ownerCard.Id != args.SourceCard.Id,
                 _ => throw new InvalidOperationException()
             };
 

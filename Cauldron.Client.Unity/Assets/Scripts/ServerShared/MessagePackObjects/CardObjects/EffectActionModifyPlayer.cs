@@ -5,8 +5,8 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectActionModifyPlayer
     {
-        public Choice Choice { get; set; }
-        public PlayerModifier PlayerModifier { get; set; }
+        public Choice Choice { get; }
+        public PlayerModifier PlayerModifier { get; }
 
         public EffectActionModifyPlayer(Choice Choice, PlayerModifier PlayerModifier)
         {

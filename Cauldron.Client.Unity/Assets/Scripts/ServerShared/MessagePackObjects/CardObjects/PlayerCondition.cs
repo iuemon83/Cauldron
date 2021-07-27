@@ -6,7 +6,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class PlayerCondition
     {
-        public enum PlayerConditionContext
+        public enum ContextValue
         {
             [DisplayText("いずれか")]
             Any,
@@ -14,7 +14,7 @@ namespace Cauldron.Shared.MessagePackObjects
             EventSource
         }
 
-        public enum PlayerConditionType
+        public enum TypeValue
         {
             [DisplayText("いずれか")]
             Any,
@@ -28,12 +28,12 @@ namespace Cauldron.Shared.MessagePackObjects
             NonActive,
         }
 
-        public PlayerCondition.PlayerConditionContext Context { get; set; }
-        public PlayerCondition.PlayerConditionType Type { get; set; }
+        public PlayerCondition.ContextValue Context { get; }
+        public PlayerCondition.TypeValue Type { get; }
 
         public PlayerCondition(
-            PlayerCondition.PlayerConditionContext Context = PlayerConditionContext.Any,
-            PlayerCondition.PlayerConditionType Type = PlayerConditionType.Any)
+            PlayerCondition.ContextValue Context = ContextValue.Any,
+            PlayerCondition.TypeValue Type = TypeValue.Any)
         {
             this.Context = Context;
             this.Type = Type;

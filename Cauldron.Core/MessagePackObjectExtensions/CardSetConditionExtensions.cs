@@ -22,8 +22,8 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             return cardTypeCondition.Type switch
             {
-                CardSetCondition.ConditionType.This => owner.CardSetName == checkValue,
-                CardSetCondition.ConditionType.Other => owner.CardSetName != checkValue
+                CardSetCondition.TypeValue.This => owner.CardSetName == checkValue,
+                CardSetCondition.TypeValue.Other => owner.CardSetName != checkValue
                     && cardTypeCondition.ValueCondition != null
                     && await cardTypeCondition.ValueCondition.IsMatch(owner, effectEventArgs, checkValue),
                 _ => throw new System.NotImplementedException()

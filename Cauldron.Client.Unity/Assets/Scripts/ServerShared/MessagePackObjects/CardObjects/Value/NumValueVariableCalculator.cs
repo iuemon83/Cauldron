@@ -5,7 +5,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
     [MessagePackObject(true)]
     public class NumValueVariableCalculator
     {
-        public string Name { get; set; }
+        public string Name { get; }
 
         public NumValueVariableCalculator(string Name)
         {

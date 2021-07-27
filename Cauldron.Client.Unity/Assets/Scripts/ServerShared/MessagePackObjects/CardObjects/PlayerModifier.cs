@@ -6,10 +6,10 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class PlayerModifier
     {
-        public NumValueModifier MaxHp { get; set; } = null;
-        public NumValueModifier Hp { get; set; } = null;
-        public NumValueModifier MaxMp { get; set; } = null;
-        public NumValueModifier Mp { get; set; } = null;
+        public NumValueModifier MaxHp { get; }
+        public NumValueModifier Hp { get; }
+        public NumValueModifier MaxMp { get; }
+        public NumValueModifier Mp { get; }
 
         public PlayerModifier(
             NumValueModifier MaxHp = null,

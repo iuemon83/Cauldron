@@ -5,7 +5,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class DamageNotifyMessage
     {
-        public enum ReasonCode
+        public enum ReasonValue
         {
             /// <summary>
             /// クリーチャーによる攻撃
@@ -21,14 +21,19 @@ namespace Cauldron.Shared.MessagePackObjects
             DrawDeath,
         }
 
-        public DamageNotifyMessage.ReasonCode Reason { get; set; }
+        public DamageNotifyMessage.ReasonValue Reason { get; }
 
-        public CardId SourceCardId { get; set; }
-        public PlayerId GuardPlayerId { get; set; }
-        public CardId GuardCardId { get; set; }
-        public int Damage { get; set; }
+        public CardId SourceCardId { get; }
+        public PlayerId GuardPlayerId { get; }
+        public CardId GuardCardId { get; }
+        public int Damage { get; }
 
-        public DamageNotifyMessage(ReasonCode Reason, int Damage, CardId SourceCardId = default, PlayerId GuardPlayerId = default, CardId GuardCardId = default)
+        public DamageNotifyMessage(
+            ReasonValue Reason,
+            int Damage,
+            CardId SourceCardId = default,
+            PlayerId GuardPlayerId = default,
+            CardId GuardCardId = default)
         {
             this.Reason = Reason;
             this.SourceCardId = SourceCardId;

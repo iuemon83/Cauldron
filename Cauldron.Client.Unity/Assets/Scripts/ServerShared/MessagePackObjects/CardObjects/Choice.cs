@@ -6,7 +6,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class Choice
     {
-        public enum ChoiceHow
+        public enum HowValue
         {
             /// <summary>
             /// ランダム選択
@@ -33,14 +33,14 @@ namespace Cauldron.Shared.MessagePackObjects
         /// <summary>
         /// 候補からの選択方法
         /// </summary>
-        public ChoiceHow How { get; }
+        public HowValue How { get; }
 
         /// <summary>
         /// 選択する数
         /// </summary>
         public int NumPicks { get; }
 
-        public Choice(ChoiceSource source, ChoiceHow how = ChoiceHow.All, int numPicks = 1)
+        public Choice(ChoiceSource source, HowValue how = HowValue.All, int numPicks = 1)
         {
             this.Source = source;
             this.How = how;

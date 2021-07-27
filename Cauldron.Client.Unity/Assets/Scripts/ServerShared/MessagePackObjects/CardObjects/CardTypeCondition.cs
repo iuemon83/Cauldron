@@ -6,13 +6,13 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class CardTypeCondition
     {
-        public IReadOnlyList<CardType> Value { get; set; }
-        public bool Not { get; set; }
+        public IReadOnlyList<CardType> Value { get; }
+        public bool Not { get; }
 
-        public CardTypeCondition(IReadOnlyList<CardType> value, bool not = false)
+        public CardTypeCondition(IReadOnlyList<CardType> Value, bool Not = false)
         {
-            this.Value = value;
-            this.Not = not;
+            this.Value = Value;
+            this.Not = Not;
         }
     }
 }

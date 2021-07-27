@@ -85,8 +85,6 @@ public class BattleSceneController : MonoBehaviour
             holder.Receiver.OnModifyCard.Subscribe((a) => this.OnModifyCard(a.gameContext, a.modifyCardNotifyMessage)),
             holder.Receiver.OnModifyPlayer.Subscribe((a) => this.OnModifyPlayer(a.gameContext, a.modifyPlayerNotifyMessage)),
             holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.moveCardNotifyMessage)),
-            holder.Receiver.OnReady.Subscribe((a) => this.OnReady(a)),
-            holder.Receiver.OnStartGame.Subscribe((a) => this.OnStartGame(a)),
             holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.playerId)),
         });
 
@@ -443,19 +441,6 @@ public class BattleSceneController : MonoBehaviour
         dialog.transform.SetParent(this.canvas.transform, false);
     }
 
-    void OnReady(GameContext gameContext)
-    {
-        Debug.Log("OnReady");
-
-        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
-    }
-
-    void OnStartGame(GameContext gameContext)
-    {
-        Debug.Log("ゲーム開始: " + this.client.PlayerName);
-        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
-    }
-
     void OnStartTurn(GameContext gameContext, PlayerId playerId)
     {
         // 自分のターン
@@ -561,15 +546,15 @@ public class BattleSceneController : MonoBehaviour
     {
         switch (notify.Reason)
         {
-            case DamageNotifyMessage.ReasonCode.DrawDeath:
+            case DamageNotifyMessage.ReasonValue.DrawDeath:
                 {
                     var guardPlayerName = Utility.GetPlayerName(gameContext, notify.GuardPlayerId);
                     Debug.Log($"ダメージ: [{notify.Reason}] {guardPlayerName} {notify.Damage}");
                     break;
                 }
 
-            case DamageNotifyMessage.ReasonCode.Attack:
-            case DamageNotifyMessage.ReasonCode.Effect:
+            case DamageNotifyMessage.ReasonValue.Attack:
+            case DamageNotifyMessage.ReasonValue.Effect:
                 {
                     var (ownerPlayerName, cardName) = Utility.GetCardName(gameContext, notify.SourceCardId);
                     if (notify.GuardCardId == default)

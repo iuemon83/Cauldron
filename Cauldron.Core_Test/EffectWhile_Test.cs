@@ -22,14 +22,12 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
-                                    Source: EffectTimingDamageBeforeEvent.EventSource.DamageSource,
-                                    CardCondition: new()
-                                    {
-                                        ContextCondition = CardCondition.ContextConditionValue.This,
-                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                    }
-                                    ))),
-                            While: new(new(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You)), 0, 0)
+                                    Source: EffectTimingDamageBeforeEvent.SourceValue.DamageSource,
+                                    CardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This,
+                                        ZoneCondition: new(new(new[]{ ZonePrettyName.YouField }))
+                                    )))),
+                            While: new(new(EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You)), 0, 0)
                         ),
                         new[]{
                             new EffectAction(
@@ -38,10 +36,10 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                                new PlayerCondition(Type: PlayerCondition.TypeValue.You)
                                             })),
                                     new PlayerModifier(Hp: new NumValueModifier(
-                                        NumValueModifier.ValueModifierOperator.Add,
+                                        NumValueModifier.OperatorValue.Add,
                                         new NumValue(1)
                                         ))))
                         }
@@ -91,8 +89,8 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(StartTurn: new(EffectTimingStartTurnEvent.EventSource.You))),
-                            While: new(new(StartTurn: new(EffectTimingStartTurnEvent.EventSource.You)), 0, 1)
+                            new(new(StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You))),
+                            While: new(new(StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You)), 0, 1)
                         ),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -144,8 +142,8 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You))),
-                            While: new(new(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You)), 1, 1)
+                            new(new(EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You))),
+                            While: new(new(EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You)), 1, 1)
                         ),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -198,8 +196,8 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(StartTurn: new(EffectTimingStartTurnEvent.EventSource.You))),
-                            While: new(new(StartTurn: new(EffectTimingStartTurnEvent.EventSource.You)), 2, 1)
+                            new(new(StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You))),
+                            While: new(new(StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You)), 2, 1)
                         ),
                         new[]{ TestUtil.TestEffectAction }
                     )

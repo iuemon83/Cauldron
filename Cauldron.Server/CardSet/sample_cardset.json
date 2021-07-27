@@ -3490,8 +3490,8 @@
         },
         {
             "cost": 1,
-            "name": "戦いの像",
-            "flavorText": "あなたのターン開始時に、場にあるこのカードを墓地に移動する。場にあるこのカードが墓地に移動されたとき、「勝利への道」1枚をあなたの場に追加する。",
+            "name": "勝利への道",
+            "flavorText": "あなたのターン開始時に、場にあるこのカードを墓地に移動する。場にあるこのカードが墓地に移動されたとき、「勝利の像」1枚をあなたの場に追加する。",
             "isToken": false,
             "type": "artifact",
             "power": 0,
@@ -3550,7 +3550,7 @@
                                             {
                                                 "contextCondition": "any",
                                                 "nameCondition": {
-                                                    "value": { "pureValue": "勝利への道" },
+                                                    "value": { "pureValue": "勝利の像" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
@@ -3574,8 +3574,8 @@
             ]
         },
         {
-            "cost": 0,
-            "name": "勝利への道",
+            "cost": 10,
+            "name": "勝利の像",
             "flavorText": "あなたのターン開始時に、このカードがあなたの場にあるとき、あなたはゲームに勝利する。",
             "isToken": true,
             "type": "artifact",

@@ -6,9 +6,9 @@ namespace Cauldron.Shared.MessagePackObjects.Value
     public class NumValue
     {
         public int? PureValue { get; }
-        public NumValueCalculator NumValueCalculator { get; set; }
-        public NumValueVariableCalculator NumValueVariableCalculator { get; set; }
-        public NumValueModifier NumValueModifier { get; set; }
+        public NumValueCalculator NumValueCalculator { get; }
+        public NumValueVariableCalculator NumValueVariableCalculator { get; }
+        public NumValueModifier NumValueModifier { get; }
 
         public NumValue(
             int? PureValue = null,

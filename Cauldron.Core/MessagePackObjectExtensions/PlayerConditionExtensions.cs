@@ -18,15 +18,15 @@ namespace Cauldron.Shared.MessagePackObjects
             return
                 playerCondition.Context switch
                 {
-                    PlayerCondition.PlayerConditionContext.EventSource => playerToMatch.Id == eventArgs.SourcePlayer.Id,
+                    PlayerCondition.ContextValue.EventSource => playerToMatch.Id == eventArgs.SourcePlayer.Id,
                     _ => true
                 }
                 && playerCondition.Type switch
                 {
-                    PlayerCondition.PlayerConditionType.You => playerToMatch.Id == effectOwnerCard.OwnerId,
-                    PlayerCondition.PlayerConditionType.Opponent => playerToMatch.Id != effectOwnerCard.OwnerId,
-                    PlayerCondition.PlayerConditionType.Active => playerToMatch.Id == eventArgs.GameMaster.ActivePlayer.Id,
-                    PlayerCondition.PlayerConditionType.NonActive => playerToMatch.Id != eventArgs.GameMaster.ActivePlayer.Id,
+                    PlayerCondition.TypeValue.You => playerToMatch.Id == effectOwnerCard.OwnerId,
+                    PlayerCondition.TypeValue.Opponent => playerToMatch.Id != effectOwnerCard.OwnerId,
+                    PlayerCondition.TypeValue.Active => playerToMatch.Id == eventArgs.GameMaster.ActivePlayer.Id,
+                    PlayerCondition.TypeValue.NonActive => playerToMatch.Id != eventArgs.GameMaster.ActivePlayer.Id,
                     _ => true
                 };
         }

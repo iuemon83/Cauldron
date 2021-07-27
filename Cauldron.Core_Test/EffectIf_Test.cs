@@ -22,16 +22,15 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new(new(Play: new(EffectTimingPlayEvent.SourceValue.This))),
                             If: new(
-                                new NumCondition(2, NumCondition.ConditionCompare.GreaterThan),
+                                new NumCondition(2, NumCondition.CompareValue.GreaterThan),
                                 new NumValue(
                                     NumValueCalculator: new(NumValueCalculator.ValueType.Count,
                                         new Choice(
                                             new ChoiceSource(
                                                 orCardConditions: new[]{
-                                                    new CardCondition()
-                                                    {
-                                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                                    }
+                                                    new CardCondition(
+                                                        ZoneCondition: new(new(new[]{ ZonePrettyName.YouField }))
+                                                    )
                                                 }))
                                         )
                                 ))

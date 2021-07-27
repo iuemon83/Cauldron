@@ -37,37 +37,37 @@ namespace Cauldron.Web.Server
         public MetaDataElm[] CardTypes { get; } = Convert<CardType>();
         public MetaDataElm[] CardAbilities { get; } = Convert<CreatureAbility>();
         public MetaDataElm[] EffectTimingDamageAfterDamageTypes { get; }
-            = Convert<EffectTimingDamageAfterEvent.DamageType>();
+            = Convert<EffectTimingDamageAfterEvent.TypeValue>();
         public MetaDataElm[] EffectTimingDamageAfterEventSources { get; }
-            = Convert<EffectTimingDamageAfterEvent.EventSource>();
+            = Convert<EffectTimingDamageAfterEvent.SourceValue>();
         public MetaDataElm[] EffectTimingDamageBeforeDamageTypes { get; }
-            = Convert<EffectTimingDamageBeforeEvent.DamageType>();
+            = Convert<EffectTimingDamageBeforeEvent.TypeValue>();
         public MetaDataElm[] EffectTimingDamageBeforeEventSources { get; }
-            = Convert<EffectTimingDamageBeforeEvent.EventSource>();
+            = Convert<EffectTimingDamageBeforeEvent.SourceValue>();
         public MetaDataElm[] EffectTimingDestroyEventSources { get; }
-            = Convert<EffectTimingDestroyEvent.EventSource>();
+            = Convert<EffectTimingDestroyEvent.SourceValue>();
         public MetaDataElm[] EffectTimingEndTurnEventSources { get; }
-            = Convert<EffectTimingEndTurnEvent.EventSource>();
+            = Convert<EffectTimingEndTurnEvent.SourceValue>();
         public MetaDataElm[] EffectTimingModifyPlayerEventSources { get; }
-            = Convert<EffectTimingModifyPlayerEvent.EventSource>();
+            = Convert<EffectTimingModifyPlayerEvent.SourceValue>();
         public MetaDataElm[] EffectTimingMoveCardEventSources { get; }
-            = Convert<EffectTimingMoveCardEvent.EventSource>();
+            = Convert<EffectTimingMoveCardEvent.SourceValue>();
         public MetaDataElm[] EffectTimingPlayEventSources { get; }
             = Convert<EffectTimingPlayEvent.SourceValue>();
         public MetaDataElm[] EffectTimingStartTurnEventSources { get; }
-            = Convert<EffectTimingStartTurnEvent.EventSource>();
-        public MetaDataElm[] ChoiceHowList { get; } = Convert<Choice.ChoiceHow>();
-        public MetaDataElm[] NumConditionCompares { get; } = Convert<NumCondition.ConditionCompare>();
+            = Convert<EffectTimingStartTurnEvent.SourceValue>();
+        public MetaDataElm[] ChoiceHowList { get; } = Convert<Choice.HowValue>();
+        public MetaDataElm[] NumConditionCompares { get; } = Convert<NumCondition.CompareValue>();
         public MetaDataElm[] NumValueCalculatorValueTypes { get; } = Convert<NumValueCalculator.ValueType>();
-        public MetaDataElm[] NumValueModifierOperators { get; } = Convert<NumValueModifier.ValueModifierOperator>();
+        public MetaDataElm[] NumValueModifierOperators { get; } = Convert<NumValueModifier.OperatorValue>();
         public MetaDataElm[] TextConditionCompares { get; } = Convert<TextCondition.CompareValue>();
-        public MetaDataElm[] TextValueCalculatorValueTypes { get; } = Convert<TextValueCalculator.ValueType>();
+        public MetaDataElm[] TextValueCalculatorValueTypes { get; } = Convert<TextValueCalculator.TypeValue>();
         public MetaDataElm[] ZoneNames { get; } = Convert<ZonePrettyName>();
         public MetaDataElm[] CardConditionContexts { get; } = Convert<CardCondition.ContextConditionValue>();
         public MetaDataElm[] OwnerConditionValues { get; } = Convert<CardCondition.OwnerConditionValue>();
         public MetaDataElm[] PositionTypeValues { get; } = Convert<InsertCardPosition.PositionTypeValue>();
-        public MetaDataElm[] PlayerConditionContexts { get; } = Convert<PlayerCondition.PlayerConditionContext>();
-        public MetaDataElm[] PlayerConditionTypes { get; } = Convert<PlayerCondition.PlayerConditionType>();
-        public MetaDataElm[] CardSetConditionTypes { get; } = Convert<CardSetCondition.ConditionType>();
+        public MetaDataElm[] PlayerConditionContexts { get; } = Convert<PlayerCondition.ContextValue>();
+        public MetaDataElm[] PlayerConditionTypes { get; } = Convert<PlayerCondition.TypeValue>();
+        public MetaDataElm[] CardSetConditionTypes { get; } = Convert<CardSetCondition.TypeValue>();
     }
 }

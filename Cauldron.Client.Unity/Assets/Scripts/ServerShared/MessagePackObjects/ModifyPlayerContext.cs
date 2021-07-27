@@ -5,8 +5,8 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class ModifyPlayerContext
     {
-        public PlayerId PlayerId { get; set; }
-        public PlayerModifier PlayerModifier { get; set; }
+        public PlayerId PlayerId { get; }
+        public PlayerModifier PlayerModifier { get; }
 
         public ModifyPlayerContext(PlayerId playerId, PlayerModifier playerModifier)
         {

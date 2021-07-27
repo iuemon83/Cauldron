@@ -5,13 +5,29 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class GameContext
     {
-        public bool GameOver { get; set; } = false;
-        public PlayerId WinnerPlayerId { get; set; }
+        public PlayerId WinnerPlayerId { get; }
 
-        public PublicPlayerInfo Opponent { get; set; }
+        public PublicPlayerInfo Opponent { get; }
 
-        public PrivatePlayerInfo You { get; set; }
+        public PrivatePlayerInfo You { get; }
 
-        public RuleBook RuleBook { get; set; }
+        public RuleBook RuleBook { get; }
+
+        public bool GameOver { get; }
+
+        public GameContext(
+            PlayerId WinnerPlayerId,
+            PublicPlayerInfo Opponent,
+            PrivatePlayerInfo You,
+             RuleBook RuleBook,
+            bool GameOver = false
+            )
+        {
+            this.WinnerPlayerId = WinnerPlayerId;
+            this.Opponent = Opponent;
+            this.You = You;
+            this.RuleBook = RuleBook;
+            this.GameOver = GameOver;
+        }
     }
 }

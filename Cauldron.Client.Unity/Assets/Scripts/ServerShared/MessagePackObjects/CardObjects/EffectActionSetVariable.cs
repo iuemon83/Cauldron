@@ -6,8 +6,8 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectActionSetVariable
     {
-        public string Name { get; set; }
-        public NumValue NumValue { get; set; }
+        public string Name { get; }
+        public NumValue NumValue { get; }
 
         public EffectActionSetVariable(string Name, NumValue NumValue)
         {

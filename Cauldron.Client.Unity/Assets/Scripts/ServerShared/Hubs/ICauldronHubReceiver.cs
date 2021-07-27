@@ -5,8 +5,8 @@ namespace Cauldron.Shared.Services
     public interface ICauldronHubReceiver
     {
         void OnJoinGame();
-        void OnReady(GameContext gameContext);
-        void OnStartGame(GameContext gameContext);
+        void OnReady();
+        void OnStartGame();
         void OnStartTurn(GameContext gameContext, PlayerId playerId);
         void OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage);
         void OnMoveCard(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage);

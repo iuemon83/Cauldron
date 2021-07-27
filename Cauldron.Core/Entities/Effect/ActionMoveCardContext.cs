@@ -6,10 +6,10 @@ namespace Cauldron.Core.Entities.Effect
 {
     public record ActionMoveCardContext(IReadOnlyList<Card> MovedCards)
     {
-        public IEnumerable<Card> GetCards(ActionContextCardsOfMoveCard.ValueType type)
+        public IEnumerable<Card> GetCards(ActionContextCardsOfMoveCard.TypeValue type)
             => type switch
             {
-                ActionContextCardsOfMoveCard.ValueType.Moved => this.MovedCards,
+                ActionContextCardsOfMoveCard.TypeValue.Moved => this.MovedCards,
                 _ => Array.Empty<Card>()
             };
 

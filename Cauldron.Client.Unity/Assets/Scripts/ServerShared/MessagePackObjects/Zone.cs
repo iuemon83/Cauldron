@@ -8,9 +8,9 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class Zone : IEquatable<Zone>
     {
-        public PlayerId PlayerId { get; set; }
+        public PlayerId PlayerId { get; }
 
-        public ZoneName ZoneName { get; set; }
+        public ZoneName ZoneName { get; }
 
         public Zone(PlayerId playerId, ZoneName zoneName)
         {

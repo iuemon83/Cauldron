@@ -83,11 +83,11 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageAfter: new(
-                                    EffectTimingDamageBeforeEvent.DamageType.Battle,
-                                    EffectTimingDamageBeforeEvent.EventSource.Take,
-                                    CardCondition: new(){
-                                        ContextCondition = CardCondition.ContextConditionValue.This
-                                    })))),
+                                    EffectTimingDamageBeforeEvent.TypeValue.Battle,
+                                    EffectTimingDamageBeforeEvent.SourceValue.Take,
+                                    CardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This
+                                    ))))),
                         new[]
                         {
                             new EffectAction(
@@ -96,10 +96,9 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ContextCondition = CardCondition.ContextConditionValue.Attack
-                                                }
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.Attack
+                                                )
                                             })),
                                     ZonePrettyName.OpponentHand))
                         })
@@ -114,11 +113,11 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageAfter: new(
-                                    EffectTimingDamageBeforeEvent.DamageType.Battle,
-                                    EffectTimingDamageBeforeEvent.EventSource.Take,
-                                    CardCondition: new(){
-                                        ContextCondition = CardCondition.ContextConditionValue.This
-                                    })))),
+                                    EffectTimingDamageBeforeEvent.TypeValue.Battle,
+                                    EffectTimingDamageBeforeEvent.SourceValue.Take,
+                                    CardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This
+                                    ))))),
                         new[]
                         {
                             new EffectAction(
@@ -127,10 +126,9 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ContextCondition = CardCondition.ContextConditionValue.Attack
-                                                }
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.Attack
+                                                )
                                             })),
                                     ZonePrettyName.OpponentDeck,
                                     new InsertCardPosition(
@@ -151,30 +149,28 @@ namespace Cauldron.Core_Test
                 new CardEffect(
                     new EffectCondition(
                         ZonePrettyName.YouCemetery,
-                        new(new(Destroy: new (EffectTimingDestroyEvent.EventSource.This)))
+                        new(new(Destroy: new (EffectTimingDestroyEvent.SourceValue.This)))
                     ),
                     new[]
                     {
-                        new EffectAction()
-                        {
-                            AddCard = new(
+                        new EffectAction(
+                            AddCard: new(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
-                                                CardSetCondition = new(CardSetCondition.ConditionType.This),
-                                                NameCondition = new(
+                                            new CardCondition(
+                                                ZoneCondition: new(new(new[]{ ZonePrettyName.CardPool })),
+                                                CardSetCondition: new(CardSetCondition.TypeValue.This),
+                                                NameCondition: new(
                                                     new TextValue(KarakuriGoblin.Name),
                                                     TextCondition.CompareValue.Equality
                                                 )
-                                            },
+                                            ),
                                         })),
                                 new ZoneValue(new[]{ ZonePrettyName.YouHand })
                             )
-                        }
+                        )
                     }
                 )
             });
@@ -196,15 +192,14 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]{
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{
                                                         ZonePrettyName.CardPool
                                                     })),
-                                                    TypeCondition = new(new[]{ CardType.Sorcery })
-                                                }
+                                                    TypeCondition: new(new[]{ CardType.Sorcery })
+                                                )
                                             }),
-                                        how: Choice.ChoiceHow.Random,
+                                        how: Choice.HowValue.Random,
                                         1),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand })))
                         })
@@ -221,13 +216,13 @@ namespace Cauldron.Core_Test
                             new EffectWhen(new EffectTiming(
                                 Play: new(
                                     EffectTimingPlayEvent.SourceValue.Other,
-                                    new CardCondition() {
-                                        NameCondition = new(
+                                    new CardCondition(
+                                        NameCondition: new(
                                             new TextValue("ゴブリン"),
                                             TextCondition.CompareValue.Contains),
-                                        ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.YouField })),
-                                        TypeCondition = new(new[]{ CardType.Creature })
-                                    })))),
+                                        ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.YouField })),
+                                        TypeCondition: new(new[]{ CardType.Creature })
+                                    ))))),
                         new[]{
                             new EffectAction(
                                 MoveCard: new(
@@ -235,10 +230,9 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ContextCondition = CardCondition.ContextConditionValue.This
-                                                }
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.This
+                                                )
                                             })),
                                     ZonePrettyName.YouField))
                         })
@@ -258,16 +252,15 @@ namespace Cauldron.Core_Test
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]{
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]
                                                     {
                                                         ZonePrettyName.OpponentHand
                                                     })),
-                                                    TypeCondition = new(new[]{ CardType.Creature }),
-                                                }
+                                                    TypeCondition: new(new[]{ CardType.Creature })
+                                                )
                                             }),
-                                        how: Choice.ChoiceHow.Random,
+                                        how: Choice.HowValue.Random,
                                         1),
                                     ZonePrettyName.OpponentField))
                         })
@@ -284,22 +277,21 @@ namespace Cauldron.Core_Test
                             new EffectWhen(new EffectTiming(
                                 Play: new(EffectTimingPlayEvent.SourceValue.This))),
                             If: new(
-                                new NumCondition(4, NumCondition.ConditionCompare.GreaterThan),
+                                new NumCondition(4, NumCondition.CompareValue.GreaterThan),
                                 new NumValue(NumValueCalculator: new(
                                     NumValueCalculator.ValueType.Count,
                                     new Choice(
                                         new ChoiceSource(orCardConditions: new[]{
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new ZoneValue(new[]
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
                                                 {
                                                     ZonePrettyName.OpponentField
                                                 })),
-                                                TypeCondition = new(new[]
+                                                TypeCondition: new(new[]
                                                 {
                                                     CardType.Creature
                                                 })
-                                            }
+                                            )
                                         })))))),
                         new[]{
                             new EffectAction(
@@ -307,16 +299,15 @@ namespace Cauldron.Core_Test
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]{
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]
                                                     {
                                                         ZonePrettyName.OpponentField
                                                     })),
-                                                    TypeCondition = new(new[]{ CardType.Creature }),
-                                                }
+                                                    TypeCondition: new(new[]{ CardType.Creature })
+                                                )
                                             }),
-                                        how: Choice.ChoiceHow.Random,
+                                        how: Choice.HowValue.Random,
                                         1),
                                     ZonePrettyName.YouField))
                         })
@@ -337,10 +328,9 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ContextCondition = CardCondition.ContextConditionValue.This
-                                                }
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.This
+                                                )
                                             })),
                                     new ZoneValue(new[]{ZonePrettyName.YouField })
                                     ))
@@ -362,10 +352,9 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ContextCondition = CardCondition.ContextConditionValue.This,
-                                                }
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.This
+                                                )
                                             })),
                                     new ZoneValue(new[]{ZonePrettyName.YouField }),
                                     NumOfAddCards: 2
@@ -384,20 +373,20 @@ namespace Cauldron.Core_Test
                         {
                             new EffectAction(
                                 DrawCard: new(new NumValue(2),
-                                    new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You))
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You))
                             )
                         }
                     ),
                     // このカードが手札から捨てられたなら、1枚引く
                     new CardEffect(
                         new(ZonePrettyName.YouCemetery,
-                            new(new(MoveCard: new(EffectTimingMoveCardEvent.EventSource.This,
+                            new(new(MoveCard: new(EffectTimingMoveCardEvent.SourceValue.This,
                                 ZonePrettyName.YouHand, ZonePrettyName.YouCemetery)))),
                         new[]
                         {
                             new EffectAction(
                                 DrawCard: new(new NumValue(1),
-                                    new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You))
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You))
                             )
                         }
                     )
@@ -413,23 +402,21 @@ namespace Cauldron.Core_Test
                                 Play: new(EffectTimingPlayEvent.SourceValue.This)))),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                DestroyCard = new(
+                            new EffectAction(
+                                DestroyCard: new(
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    TypeCondition = new(new[]{CardType.Creature}),
-                                                    ZoneCondition = new(new ZoneValue(new[]{ZonePrettyName.OpponentField}))
-                                                }
+                                                new CardCondition(
+                                                    TypeCondition: new(new[]{CardType.Creature}),
+                                                    ZoneCondition: new(new ZoneValue(new[]{ZonePrettyName.OpponentField}))
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Random,
+                                        Choice.HowValue.Random,
                                         1)
                                     )
-                            }
+                            )
                         }
                     )
                 });
@@ -450,11 +437,11 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                                new PlayerCondition(Type: PlayerCondition.TypeValue.You)
                                             })),
                                     new PlayerModifier(
                                         Hp: new NumValueModifier(
-                                            NumValueModifier.ValueModifierOperator.Add,
+                                            NumValueModifier.OperatorValue.Add,
                                             new NumValue(2)))
                                 )
                                 )
@@ -472,32 +459,29 @@ namespace Cauldron.Core_Test
                                 Play: new(EffectTimingPlayEvent.SourceValue.This)))),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                Damage = new EffectActionDamage(
+                            new EffectAction(
+                                Damage: new EffectActionDamage(
                                     new NumValue(2),
                                     new Choice(
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition()
-                                                {
-                                                    Type = PlayerCondition.PlayerConditionType.Opponent
-                                                },
+                                                new PlayerCondition(
+                                                    Type: PlayerCondition.TypeValue.Opponent
+                                                ),
                                             },
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ContextCondition = CardCondition.ContextConditionValue.Others,
-                                                    TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
-                                                }
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.Others,
+                                                    TypeCondition: new CardTypeCondition(new[]{ CardType.Creature }),
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.OpponentField }))
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Choose,
+                                        Choice.HowValue.Choose,
                                         1)
                                 )
-                            }
+                            )
                         }
                     )
                 });
@@ -509,23 +493,22 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouCemetery,
                             new EffectWhen(new EffectTiming(
-                                Destroy: new(EffectTimingDestroyEvent.EventSource.This)))),
+                                Destroy: new(EffectTimingDestroyEvent.SourceValue.This)))),
                         new[]
                         {
                             new EffectAction(AddCard: new(
                                 new Choice(new ChoiceSource(
                                     orCardConditions: new[]
                                     {
-                                        new CardCondition()
-                                        {
-                                            ZoneCondition = new ZoneCondition(new ZoneValue(
+                                        new CardCondition(
+                                            ZoneCondition: new ZoneCondition(new ZoneValue(
                                                 new[]{ ZonePrettyName.CardPool })),
-                                            CostCondition = new NumCondition(2,
-                                                NumCondition.ConditionCompare.Equality),
-                                            TypeCondition = new(new[]{ CardType.Creature }),
-                                        }
+                                            CostCondition: new NumCondition(2,
+                                                NumCondition.CompareValue.Equality),
+                                            TypeCondition: new(new[]{ CardType.Creature })
+                                        )
                                     }),
-                                    how: Choice.ChoiceHow.Random,
+                                    how: Choice.HowValue.Random,
                                     numPicks: 1),
                                 new ZoneValue(new[]{ ZonePrettyName.YouField })
                                 ))
@@ -546,15 +529,14 @@ namespace Cauldron.Core_Test
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ContextCondition = CardCondition.ContextConditionValue.Others,
-                                                ZoneCondition = new(new(new[]{
+                                            new CardCondition(
+                                                ContextCondition: CardCondition.ContextConditionValue.Others,
+                                                ZoneCondition: new(new(new[]{
                                                     ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
-                                                TypeCondition = new(new[]{ CardType.Creature })
-                                            }
+                                                TypeCondition: new(new[]{ CardType.Creature })
+                                            )
                                         }),
-                                    Choice.ChoiceHow.Choose,
+                                    Choice.HowValue.Choose,
                                     1),
                                 name: "delete"
                                 )),
@@ -563,12 +545,11 @@ namespace Cauldron.Core_Test
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ActionContext = new(ActionContextCardsOfDestroyCard: new(
+                                            new CardCondition(
+                                                ActionContext: new(ActionContextCardsOfDestroyCard: new(
                                                     "delete",
-                                                    ActionContextCardsOfDestroyCard.ValueType.Destroyed))
-                                            }
+                                                    ActionContextCardsOfDestroyCard.TypeValue.Destroyed))
+                                            )
                                         })),
                                 new ZoneValue(new[]{ ZonePrettyName.OwnerField })
                                 )),
@@ -587,33 +568,29 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
-                                    Source: EffectTimingDamageBeforeEvent.EventSource.Take,
-                                    CardCondition: new CardCondition()
-                                    {
-                                        ContextCondition = CardCondition.ContextConditionValue.This
-                                    }))
+                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
+                                    CardCondition: new CardCondition(
+                                        ContextCondition: CardCondition.ContextConditionValue.This
+                                    )))
                             )
                         ),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyDamage = new EffectActionModifyDamage(
+                            new EffectAction(
+                                ModifyDamage: new EffectActionModifyDamage(
                                     new NumValueModifier(
-                                        NumValueModifier.ValueModifierOperator.Sub,
+                                        NumValueModifier.OperatorValue.Sub,
                                         new NumValue(2)
                                     ),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ContextCondition = CardCondition.ContextConditionValue.EventSource,
-                                                }
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.EventSource
+                                                )
                                             }))
-                                )
-                            }
+                                ))
                         }
                     ),
                     // 自分の他のクリーチャーが戦闘で与えるダメージを1増加する
@@ -622,36 +599,33 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageBefore: new(
-                                    Type: EffectTimingDamageBeforeEvent.DamageType.Battle,
-                                    Source: EffectTimingDamageBeforeEvent.EventSource.DamageSource,
-                                    CardCondition: new CardCondition()
-                                    {
-                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                        TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                        ContextCondition = CardCondition.ContextConditionValue.Others,
-                                    }))
+                                    Type: EffectTimingDamageBeforeEvent.TypeValue.Battle,
+                                    Source: EffectTimingDamageBeforeEvent.SourceValue.DamageSource,
+                                    CardCondition: new CardCondition(
+                                        ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
+                                        TypeCondition: new CardTypeCondition(new[]{ CardType.Creature }),
+                                        ContextCondition: CardCondition.ContextConditionValue.Others
+                                    )))
                             )
                         ),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyDamage = new EffectActionModifyDamage(
+                            new EffectAction(
+                                ModifyDamage: new EffectActionModifyDamage(
                                     new NumValueModifier(
-                                        NumValueModifier.ValueModifierOperator.Add,
+                                        NumValueModifier.OperatorValue.Add,
                                         new NumValue(1)
                                     ),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ContextCondition = CardCondition.ContextConditionValue.EventSource,
-                                                }
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.EventSource
+                                                )
                                             }))
                                 )
-                            }
+                            )
                         }
                     )
                 });
@@ -668,23 +642,22 @@ namespace Cauldron.Core_Test
                             new EffectAction(
                                 DrawCard: new(
                                     new NumValue(1),
-                                    new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)))
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)))
                         }),
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageBefore: new(
-                                    Type: EffectTimingDamageBeforeEvent.DamageType.NonBattle,
-                                    CardCondition: new()
-                                    {
-                                        TypeCondition = new(new[]{ CardType.Sorcery }),
-                                        OwnerCondition = CardCondition.OwnerConditionValue.You,
-                                    })))),
+                                    Type: EffectTimingDamageBeforeEvent.TypeValue.NonBattle,
+                                    CardCondition: new(
+                                        TypeCondition: new(new[]{ CardType.Sorcery }),
+                                        OwnerCondition: CardCondition.OwnerConditionValue.You
+                                    ))))),
                         new[]{
                             new EffectAction(
                                 ModifyDamage: new(
                                     new NumValueModifier(
-                                        NumValueModifier.ValueModifierOperator.Add,
+                                        NumValueModifier.OperatorValue.Add,
                                         new NumValue(1)),
                                     default))
                         }),
@@ -699,23 +672,20 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                Damage = new EffectActionDamage(
+                            new EffectAction(
+                                Damage: new EffectActionDamage(
                                     new NumValue(3),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                                    TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                                    ContextCondition = CardCondition.ContextConditionValue.Others,
-                                                }
+                                                new CardCondition(
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
+                                                    TypeCondition: new CardTypeCondition(new[]{ CardType.Creature }),
+                                                    ContextCondition: CardCondition.ContextConditionValue.Others
+                                                )
                                             }))
-                                )
-                            }
+                                ))
                         }
                     )
                 });
@@ -731,29 +701,26 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new(new(
                                 Play: new (EffectTimingPlayEvent.SourceValue.This),
-                                StartTurn: new (EffectTimingStartTurnEvent.EventSource.You)
+                                StartTurn: new (EffectTimingStartTurnEvent.SourceValue.You)
                                 ))),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyCard = new (
+                            new EffectAction(
+                                ModifyCard: new (
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                                    TypeCondition = new (new[]{ CardType.Creature }),
-                                                    ContextCondition = CardCondition.ContextConditionValue.Others,
-                                                }
+                                                new CardCondition(
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
+                                                    TypeCondition: new (new[]{ CardType.Creature }),
+                                                    ContextCondition: CardCondition.ContextConditionValue.Others
+                                                )
                                             })),
                                     Power: new NumValueModifier(
-                                        NumValueModifier.ValueModifierOperator.Add,
+                                        NumValueModifier.OperatorValue.Add,
                                         new NumValue(1))
-                                )
-                            }
+                                ))
                         }
                     )
                 });
@@ -774,10 +741,9 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
-                                                }
+                                                new CardCondition(
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.YouHand }))
+                                                )
                                             }))
                                     )))),
                             new EffectAction(MoveCard: new(
@@ -785,10 +751,9 @@ namespace Cauldron.Core_Test
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
-                                            }
+                                            new CardCondition(
+                                                ZoneCondition: new(new(new[]{ ZonePrettyName.YouHand }))
+                                            )
                                         })),
                                 ZonePrettyName.YouCemetery)),
                             new EffectAction(ModifyCard: new(
@@ -796,16 +761,15 @@ namespace Cauldron.Core_Test
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ContextCondition = CardCondition.ContextConditionValue.This
-                                            }
+                                            new CardCondition(
+                                                ContextCondition: CardCondition.ContextConditionValue.This
+                                            )
                                         })),
                                 Power: new NumValueModifier(
-                                    NumValueModifier.ValueModifierOperator.Add,
+                                    NumValueModifier.OperatorValue.Add,
                                     new NumValue(NumValueVariableCalculator: new("x"))),
                                 Toughness: new NumValueModifier(
-                                    NumValueModifier.ValueModifierOperator.Add,
+                                    NumValueModifier.OperatorValue.Add,
                                     new NumValue(NumValueVariableCalculator: new("x")))
                                 ))
                         })
@@ -820,7 +784,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouCemetery,
                             new EffectWhen(new EffectTiming(
-                                Destroy: new(EffectTimingDestroyEvent.EventSource.This)))),
+                                Destroy: new(EffectTimingDestroyEvent.SourceValue.This)))),
                         new[]{
                             new EffectAction(
                                 Damage: new(
@@ -829,18 +793,17 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition(Type: PlayerCondition.PlayerConditionType.Opponent)
+                                                new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
                                             },
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(
+                                                new CardCondition(
+                                                    ZoneCondition: new(
                                                         new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
-                                                    TypeCondition = new(new[]{ CardType.Creature }),
-                                                }
+                                                    TypeCondition: new(new[]{ CardType.Creature })
+                                                )
                                             }),
-                                        how: Choice.ChoiceHow.Random,
+                                        how: Choice.HowValue.Random,
                                         numPicks: 1)))
                         })
                 });
@@ -859,14 +822,13 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
-                                                    CardSetCondition = new(CardSetCondition.ConditionType.This),
-                                                    NameCondition = new(
+                                                new CardCondition(
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.CardPool })),
+                                                    CardSetCondition: new(CardSetCondition.TypeValue.This),
+                                                    NameCondition: new(
                                                         new TextValue(DoctorBomb.Name),
                                                         TextCondition.CompareValue.Equality)
-                                                }
+                                                )
                                             })),
                                     new ZoneValue(new[]{ ZonePrettyName.YouField }),
                                     NumOfAddCards: 2
@@ -882,7 +844,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                EndTurn: new(EffectTimingEndTurnEvent.EventSource.You)))),
+                                EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You)))),
                         new[]
                         {
                             new EffectAction(
@@ -892,18 +854,17 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition(Type: PlayerCondition.PlayerConditionType.Opponent)
+                                                new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
                                             },
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(
+                                                new CardCondition(
+                                                    ZoneCondition: new(
                                                         new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
-                                                    TypeCondition = new(new[]{ CardType.Creature }),
-                                                }
+                                                    TypeCondition: new(new[]{ CardType.Creature })
+                                                )
                                             }),
-                                        how: Choice.ChoiceHow.Random,
+                                        how: Choice.HowValue.Random,
                                         numPicks: 1)))
                         })
                 });
@@ -917,17 +878,16 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming()),
-                            If: new(new NumCondition(4, NumCondition.ConditionCompare.GreaterThan),
+                            If: new(new NumCondition(4, NumCondition.CompareValue.GreaterThan),
                                     new NumValue(NumValueCalculator: new(
                                         NumValueCalculator.ValueType.Count,
                                         new Choice(
                                             new ChoiceSource(
                                                 orCardConditions: new[]
                                                 {
-                                                    new CardCondition()
-                                                    {
-                                                        ZoneCondition = new(new ZoneValue(new[]{ZonePrettyName.YouField})),
-                                                    }
+                                                    new CardCondition(
+                                                        ZoneCondition: new(new ZoneValue(new[]{ZonePrettyName.YouField}))
+                                                    )
                                                 }))
                                             )
                                         ))),
@@ -937,13 +897,12 @@ namespace Cauldron.Core_Test
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ContextCondition = CardCondition.ContextConditionValue.This
-                                            }
+                                            new CardCondition(
+                                                ContextCondition: CardCondition.ContextConditionValue.This
+                                            )
                                         })),
                                 Cost: new NumValueModifier(
-                                    NumValueModifier.ValueModifierOperator.Replace,
+                                    NumValueModifier.OperatorValue.Replace,
                                     new NumValue(0))
                                 ))
                         }),
@@ -952,18 +911,17 @@ namespace Cauldron.Core_Test
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(Play: new(
                                 EffectTimingPlayEvent.SourceValue.This))),
-                            If: new(new NumCondition(4, NumCondition.ConditionCompare.GreaterThan),
+                            If: new(new NumCondition(4, NumCondition.CompareValue.GreaterThan),
                                     new NumValue(NumValueCalculator: new(
                                         NumValueCalculator.ValueType.Count,
                                         new Choice(
                                             new ChoiceSource(
                                                 orCardConditions: new[]
                                                 {
-                                                    new CardCondition()
-                                                    {
-                                                        ContextCondition = CardCondition.ContextConditionValue.Others,
-                                                        ZoneCondition = new(new ZoneValue(new[]{ZonePrettyName.YouField})),
-                                                    }
+                                                    new CardCondition(
+                                                        ContextCondition: CardCondition.ContextConditionValue.Others,
+                                                        ZoneCondition: new(new ZoneValue(new[]{ZonePrettyName.YouField}))
+                                                    )
                                                 })))))),
                         new[]{
                             new EffectAction(DestroyCard:new(
@@ -971,11 +929,10 @@ namespace Cauldron.Core_Test
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ContextCondition = CardCondition.ContextConditionValue.Others,
-                                                ZoneCondition = new(new(new[]{ZonePrettyName.YouField}))
-                                            }
+                                            new CardCondition(
+                                                ContextCondition: CardCondition.ContextConditionValue.Others,
+                                                ZoneCondition: new(new(new[]{ZonePrettyName.YouField}))
+                                            )
                                         }))))
                         })
                 });
@@ -990,44 +947,42 @@ namespace Cauldron.Core_Test
                             ),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyPlayer = new(
+                            new EffectAction(
+                                ModifyPlayer: new(
                                     new Choice(new ChoiceSource(
                                         orPlayerConditions: new[]
                                         {
-                                            new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                            new PlayerCondition(Type: PlayerCondition.TypeValue.You)
                                         })),
                                     new PlayerModifier(
                                         MaxMp: new NumValueModifier(
-                                            NumValueModifier.ValueModifierOperator.Add,
+                                            NumValueModifier.OperatorValue.Add,
                                             new NumValue(1))
                                         ))
-                            }
+                            )
                         }
                     ),
                     // ターン終了時あなたの最大MPを1減少する。
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.None,
-                            new EffectWhen(new EffectTiming(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You))),
-                            While: new(new(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You)), 0, 1)
+                            new EffectWhen(new EffectTiming(EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You))),
+                            While: new(new(EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You)), 0, 1)
                             ),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyPlayer = new(
+                            new EffectAction(
+                                ModifyPlayer: new(
                                     new Choice(new ChoiceSource(
                                         orPlayerConditions: new[]
                                         {
-                                            new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                            new PlayerCondition(Type: PlayerCondition.TypeValue.You)
                                         })),
                                     new PlayerModifier(
                                         MaxMp: new NumValueModifier(
-                                            NumValueModifier.ValueModifierOperator.Sub,
+                                            NumValueModifier.OperatorValue.Sub,
                                             new NumValue(1))
                                         ))
-                            }
+                            )
                         }
                     )
                 });
@@ -1040,33 +995,30 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                Damage = new(
+                            new EffectAction(
+                                Damage: new(
                                     new NumValue(1),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]{
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{
                                                         ZonePrettyName.YouField,
                                                         ZonePrettyName.OpponentField
                                                     })),
-                                                    TypeCondition = new(new[]{ CardType.Creature })
-                                                },
+                                                    TypeCondition: new(new[]{ CardType.Creature })
+                                                )
                                             },
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition()
-                                                {
-                                                    Type = PlayerCondition.PlayerConditionType.Any
-                                                }
+                                                new PlayerCondition(
+                                                    Type: PlayerCondition.TypeValue.Any
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Choose,
-                                        1)),
-                            }
+                                        Choice.HowValue.Choose,
+                                        1))
+                            )
                         }
                     )
                 });
@@ -1079,26 +1031,24 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                Damage = new(
+                            new EffectAction(
+                                Damage: new(
                                     new NumValue(2),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]{
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{
                                                         ZonePrettyName.YouField,
                                                         ZonePrettyName.OpponentField
                                                     })),
-                                                    TypeCondition = new(new[]{ CardType.Creature })
-                                                },
+                                                    TypeCondition: new(new[]{ CardType.Creature })
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Random,
-                                        1)),
-                            }
+                                        Choice.HowValue.Random,
+                                        1))
+                            )
                         }
                     )
                 });
@@ -1116,13 +1066,12 @@ namespace Cauldron.Core_Test
                                     new Choice(
                                         new ChoiceSource(orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new ZoneValue(
-                                                    new[]{ ZonePrettyName.YouCemetery, ZonePrettyName.OpponentCemetery })),
-                                            }
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(
+                                                    new[]{ ZonePrettyName.YouCemetery, ZonePrettyName.OpponentCemetery }))
+                                            )
                                         }),
-                                        Choice.ChoiceHow.Choose,
+                                        Choice.HowValue.Choose,
                                         1),
                                     ZonePrettyName.YouHand,
                                     Name: "move"
@@ -1132,28 +1081,26 @@ namespace Cauldron.Core_Test
                                     new Choice(
                                         new ChoiceSource(orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ActionContext = new(
+                                            new CardCondition(
+                                                ActionContext: new(
                                                     ActionContextCardsOfMoveCard: new(
                                                         "move",
-                                                        ActionContextCardsOfMoveCard.ValueType.Moved))
-                                            }
+                                                        ActionContextCardsOfMoveCard.TypeValue.Moved))
+                                            )
                                         })),
                                     Toughness: new(
-                                        NumValueModifier.ValueModifierOperator.Replace,
+                                        NumValueModifier.OperatorValue.Replace,
                                         new NumValue(NumValueCalculator: new(
                                             NumValueCalculator.ValueType.CardBaseToughness,
                                             new Choice(
                                                 new ChoiceSource(orCardConditions: new[]
                                                 {
-                                                    new CardCondition()
-                                                    {
-                                                        ActionContext = new(
+                                                    new CardCondition(
+                                                        ActionContext: new(
                                                             ActionContextCardsOfMoveCard: new(
                                                                 "move",
-                                                                ActionContextCardsOfMoveCard.ValueType.Moved))
-                                                    }
+                                                                ActionContextCardsOfMoveCard.TypeValue.Moved))
+                                                    )
                                                 })))))))
                         }
                     )
@@ -1172,13 +1119,12 @@ namespace Cauldron.Core_Test
                                     new Choice(
                                         new ChoiceSource(orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new ZoneValue(
-                                                    new[]{ ZonePrettyName.YouCemetery, ZonePrettyName.OpponentCemetery })),
-                                            }
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(
+                                                    new[]{ ZonePrettyName.YouCemetery, ZonePrettyName.OpponentCemetery }))
+                                            )
                                         }),
-                                        Choice.ChoiceHow.Choose,
+                                        Choice.HowValue.Choose,
                                         1),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand })
                                     )),
@@ -1199,14 +1145,13 @@ namespace Cauldron.Core_Test
                                     new Choice(
                                         new ChoiceSource(orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new ZoneValue(
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(
                                                     new[]{ZonePrettyName.YouCemetery, ZonePrettyName.OpponentCemetery })),
-                                                TypeCondition = new(new[]{ CardType.Creature }),
-                                            }
+                                                TypeCondition: new(new[]{ CardType.Creature })
+                                            )
                                         }),
-                                        Choice.ChoiceHow.Random,
+                                        Choice.HowValue.Random,
                                         1),
                                     ZonePrettyName.YouField,
                                     Name: "move"
@@ -1216,16 +1161,15 @@ namespace Cauldron.Core_Test
                                     new Choice(
                                         new ChoiceSource(orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ActionContext = new(
+                                            new CardCondition(
+                                                ActionContext: new(
                                                     ActionContextCardsOfMoveCard: new(
                                                         "move",
-                                                        ActionContextCardsOfMoveCard.ValueType.Moved))
-                                            }
+                                                        ActionContextCardsOfMoveCard.TypeValue.Moved))
+                                            )
                                         })),
                                     Toughness: new(
-                                        NumValueModifier.ValueModifierOperator.Replace,
+                                        NumValueModifier.OperatorValue.Replace,
                                         new NumValue(1))))
                         }
                     )
@@ -1239,26 +1183,24 @@ namespace Cauldron.Core_Test
                     SampleCards.Spell,
                     new[]
                     {
-                        new EffectAction()
-                        {
-                            ModifyCard = new EffectActionModifyCard(
+                        new EffectAction(
+                            ModifyCard: new EffectActionModifyCard(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                                TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
-                                            },
+                                            new CardCondition(
+                                                ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
+                                                TypeCondition: new CardTypeCondition(new[]{ CardType.Creature })
+                                            )
                                         }),
-                                    Choice.ChoiceHow.Choose,
+                                    Choice.HowValue.Choose,
                                     1),
                                 Power: new NumValueModifier(
-                                    NumValueModifier.ValueModifierOperator.Add,
+                                    NumValueModifier.OperatorValue.Add,
                                     new NumValue(1))
                             )
-                        }
+                        )
                     }
                 )
             });
@@ -1271,26 +1213,24 @@ namespace Cauldron.Core_Test
                     SampleCards.Spell,
                     new[]
                     {
-                        new EffectAction()
-                        {
-                            ModifyCard = new EffectActionModifyCard(
+                        new EffectAction(
+                            ModifyCard: new EffectActionModifyCard(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                                TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
-                                            },
+                                            new CardCondition(
+                                                ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
+                                                TypeCondition: new CardTypeCondition(new[]{ CardType.Creature })
+                                            )
                                         }),
-                                    Choice.ChoiceHow.Choose,
+                                    Choice.HowValue.Choose,
                                     1),
                                 Toughness: new NumValueModifier(
-                                    NumValueModifier.ValueModifierOperator.Add,
+                                    NumValueModifier.OperatorValue.Add,
                                     new NumValue(1))
                             )
-                        }
+                        )
                     }
                 )
             });
@@ -1308,7 +1248,7 @@ namespace Cauldron.Core_Test
                                 new Choice(new ChoiceSource(
                                     orPlayerConditions: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.PlayerConditionType.Opponent)
+                                        new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
                                     }))))
                         })
                 });
@@ -1325,10 +1265,10 @@ namespace Cauldron.Core_Test
                                 new Choice(new ChoiceSource(
                                     orPlayerConditions: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
                                     })),
                                 new PlayerModifier(Hp: new NumValueModifier(
-                                    NumValueModifier.ValueModifierOperator.Add,
+                                    NumValueModifier.OperatorValue.Add,
                                     new NumValue(1)))))
                         })
                 });
@@ -1345,24 +1285,22 @@ namespace Cauldron.Core_Test
                                 new Choice(new ChoiceSource(
                                     orCardConditions: new[]
                                     {
-                                        new CardCondition()
-                                        {
-                                            ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
-                                            CardSetCondition = new(CardSetCondition.ConditionType.This),
-                                            NameCondition = new TextCondition(
+                                        new CardCondition(
+                                            ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                            CardSetCondition: new(CardSetCondition.TypeValue.This),
+                                            NameCondition: new TextCondition(
                                                 new TextValue(Hit.Name),
                                                 TextCondition.CompareValue.Equality)
-                                        },
-                                        new CardCondition()
-                                        {
-                                            ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
-                                            CardSetCondition = new(CardSetCondition.ConditionType.This),
-                                            NameCondition = new TextCondition(
+                                        ),
+                                        new CardCondition(
+                                            ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                            CardSetCondition: new(CardSetCondition.TypeValue.This),
+                                            NameCondition: new TextCondition(
                                                 new TextValue(Heal.Name),
                                                 TextCondition.CompareValue.Equality)
-                                        },
+                                        ),
                                     }),
-                                    how: Choice.ChoiceHow.Choose,
+                                    how: Choice.HowValue.Choose,
                                     numPicks: 1
                                     ),
                                 new ZoneValue(new[]{ ZonePrettyName.YouHand })
@@ -1378,7 +1316,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(
-                                MoveCard: new(EffectTimingMoveCardEvent.EventSource.This,
+                                MoveCard: new(EffectTimingMoveCardEvent.SourceValue.This,
                                     ZonePrettyName.YouDeck, ZonePrettyName.YouHand)))),
                         new[]
                         {
@@ -1387,17 +1325,16 @@ namespace Cauldron.Core_Test
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ContextCondition = CardCondition.ContextConditionValue.This
-                                            }
+                                            new CardCondition(
+                                                ContextCondition: CardCondition.ContextConditionValue.This
+                                            )
                                         })),
                                 ZonePrettyName.YouField)),
                         }),
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                EndTurn: new(EffectTimingEndTurnEvent.EventSource.You)))),
+                                EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You)))),
                         new[]
                         {
                             new EffectAction(Damage: new(
@@ -1407,7 +1344,7 @@ namespace Cauldron.Core_Test
                                         orPlayerConditions: new[]
                                         {
                                             new PlayerCondition(
-                                                Type: PlayerCondition.PlayerConditionType.You)
+                                                Type: PlayerCondition.TypeValue.You)
                                         }))))
                         }),
                 });
@@ -1426,14 +1363,13 @@ namespace Cauldron.Core_Test
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                CardSetCondition = new(CardSetCondition.ConditionType.This),
-                                                NameCondition = new(
+                                            new CardCondition(
+                                                CardSetCondition: new(CardSetCondition.TypeValue.This),
+                                                NameCondition: new(
                                                     new TextValue(Parasite.Name),
                                                     TextCondition.CompareValue.Equality),
-                                                ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.CardPool }))
-                                            }
+                                                ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.CardPool }))
+                                            )
                                         })),
                                 new ZoneValue(new[]{ ZonePrettyName.OpponentDeck }),
                                 InsertCardPosition: new(InsertCardPosition.PositionTypeValue.Top, 1))),
@@ -1450,12 +1386,11 @@ namespace Cauldron.Core_Test
                                 new Choice(new ChoiceSource(
                                     orCardConditions: new[]
                                     {
-                                        new CardCondition()
-                                        {
-                                            ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
-                                        }
+                                        new CardCondition(
+                                            ZoneCondition: new(new(new[]{ ZonePrettyName.YouHand }))
+                                        )
                                     }),
-                                    Choice.ChoiceHow.Random,
+                                    Choice.HowValue.Random,
                                     1),
                                 ZonePrettyName.YouCemetery,
                                 Name: "moveCard"
@@ -1464,23 +1399,22 @@ namespace Cauldron.Core_Test
                                 new Choice(new ChoiceSource(
                                     orPlayerConditions: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
                                     })),
                                 new PlayerModifier(
                                     Hp: new(
-                                        NumValueModifier.ValueModifierOperator.Add,
+                                        NumValueModifier.OperatorValue.Add,
                                         new NumValue(NumValueCalculator: new(
                                             NumValueCalculator.ValueType.CardCost,
                                             new Choice(new ChoiceSource(
                                                 orCardConditions: new[]
                                                 {
-                                                    new CardCondition()
-                                                    {
-                                                        ActionContext = new(ActionContextCardsOfMoveCard: new(
+                                                    new CardCondition(
+                                                        ActionContext: new(ActionContextCardsOfMoveCard: new(
                                                             "moveCard",
-                                                            ActionContextCardsOfMoveCard.ValueType.Moved
+                                                            ActionContextCardsOfMoveCard.TypeValue.Moved
                                                             ))
-                                                    }
+                                                    )
                                                 }))))))))
                         })
                 });
@@ -1492,26 +1426,24 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                AddCard = new(
+                            new EffectAction(
+                                AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.CardPool })),
-                                                    CardSetCondition = new(CardSetCondition.ConditionType.This),
-                                                    NameCondition = new(
+                                                new CardCondition(
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.CardPool })),
+                                                    CardSetCondition: new(CardSetCondition.TypeValue.This),
+                                                    NameCondition: new(
                                                         new TextValue(Goblin.Name),
                                                         TextCondition.CompareValue.Equality
                                                     )
-                                                },
+                                                )
                                             })),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                     NumOfAddCards: 3)
-                            }
+                            )
                         })
                 });
 
@@ -1523,23 +1455,21 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                AddCard = new(
+                            new EffectAction(
+                                AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
-                                                }
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.OpponentField }))
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Choose,
+                                        Choice.HowValue.Choose,
                                         1),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand })
                                     )
-                            }
+                            )
                         }
                     )
                 });
@@ -1552,48 +1482,44 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                Damage = new(
+                            new EffectAction(
+                                Damage: new(
                                     new NumValue(1),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
-                                                    TypeCondition = new(new[]{ CardType.Creature })
-                                                },
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
+                                                    TypeCondition: new(new[]{ CardType.Creature })
+                                                )
                                             },
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition()
-                                                {
-                                                    Type = PlayerCondition.PlayerConditionType.Opponent
-                                                }
+                                                new PlayerCondition(
+                                                    Type: PlayerCondition.TypeValue.Opponent
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Choose,
+                                        Choice.HowValue.Choose,
                                         1)),
-                                AddCard = new(
+                                AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
-                                                    CardSetCondition = new(CardSetCondition.ConditionType.This),
-                                                    NameCondition = new(
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                                    CardSetCondition: new(CardSetCondition.TypeValue.This),
+                                                    NameCondition: new(
                                                         new TextValue(SecondAttack.Name),
                                                         TextCondition.CompareValue.Equality)
-                                                }
+                                                )
                                             }),
-                                        Choice.ChoiceHow.All,
+                                        Choice.HowValue.All,
                                         1),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand })
                                     )
-                            }
+                            )
                         }
                     )
                 });
@@ -1606,30 +1532,27 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                Damage = new(
+                            new EffectAction(
+                                Damage: new(
                                     new NumValue(2),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
-                                                    TypeCondition = new(new[]{ CardType.Creature })
-                                                },
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField })),
+                                                    TypeCondition: new(new[]{ CardType.Creature })
+                                                )
                                             },
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition()
-                                                {
-                                                    Type = PlayerCondition.PlayerConditionType.Opponent
-                                                }
+                                                new PlayerCondition(
+                                                    Type: PlayerCondition.TypeValue.Opponent
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Choose,
+                                        Choice.HowValue.Choose,
                                         1))
-                            }
+                            )
                         }
                     )
                 });
@@ -1647,24 +1570,23 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new (new(new[]{ ZonePrettyName.YouField })),
-                                                    TypeCondition = new(new[]{ CardType.Creature }),
-                                                    ContextCondition = CardCondition.ContextConditionValue.Others,
-                                                }
+                                                new CardCondition(
+                                                    ZoneCondition: new (new(new[]{ ZonePrettyName.YouField })),
+                                                    TypeCondition: new(new[]{ CardType.Creature }),
+                                                    ContextCondition: CardCondition.ContextConditionValue.Others
+                                                )
                                             })),
                                     new[]
                                     {
                                         new CardEffect(
                                             new EffectCondition(ZonePrettyName.YouField,
                                                 new EffectWhen(new EffectTiming(DamageBefore: new(
-                                                    Source: EffectTimingDamageBeforeEvent.EventSource.Take,
-                                                    CardCondition: new(){
-                                                        ContextCondition = CardCondition.ContextConditionValue.This,
-                                                    }))),
+                                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
+                                                    CardCondition: new(
+                                                        ContextCondition: CardCondition.ContextConditionValue.This
+                                                    )))),
                                                 While: new(new EffectTiming(EndTurn: new(
-                                                    EffectTimingEndTurnEvent.EventSource.You)),
+                                                    EffectTimingEndTurnEvent.SourceValue.You)),
                                                     0, 0)
                                                 ),
                                             new[]
@@ -1672,16 +1594,15 @@ namespace Cauldron.Core_Test
                                                 new EffectAction(
                                                     ModifyDamage: new(
                                                         new NumValueModifier(
-                                                            NumValueModifier.ValueModifierOperator.Replace,
+                                                            NumValueModifier.OperatorValue.Replace,
                                                             new NumValue(0)),
                                                         new Choice(
                                                             new ChoiceSource(
                                                                 orCardConditions: new[]
                                                                 {
-                                                                    new CardCondition()
-                                                                    {
-                                                                        ContextCondition = CardCondition.ContextConditionValue.This,
-                                                                    }
+                                                                    new CardCondition(
+                                                                        ContextCondition: CardCondition.ContextConditionValue.This
+                                                                    )
                                                                 }))
                                                     )
                                                 )
@@ -1708,10 +1629,9 @@ namespace Cauldron.Core_Test
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
-                                            }
+                                            new CardCondition(
+                                                ZoneCondition: new(new(new[]{ ZonePrettyName.YouHand }))
+                                            )
                                         })))))),
                         // 手札をすべて捨てる
                         new EffectAction(
@@ -1720,10 +1640,9 @@ namespace Cauldron.Core_Test
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new(new[]{ ZonePrettyName.YouHand }))
-                                            }
+                                            new CardCondition(
+                                                ZoneCondition: new(new(new[]{ ZonePrettyName.YouHand }))
+                                            )
                                         })),
                                 ZonePrettyName.YouCemetery)
                             ),
@@ -1732,7 +1651,7 @@ namespace Cauldron.Core_Test
                         new EffectAction(
                             DrawCard: new(
                                 new NumValue(NumValueVariableCalculator: new("x")),
-                                new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                new PlayerCondition(Type: PlayerCondition.TypeValue.You)
                                 )),
                     }
                 ),
@@ -1747,9 +1666,8 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                Damage = new EffectActionDamage(
+                            new EffectAction(
+                                Damage: new EffectActionDamage(
                                     new NumValue(
                                         NumValueCalculator: new(
                                             NumValueCalculator.ValueType.Count,
@@ -1757,27 +1675,25 @@ namespace Cauldron.Core_Test
                                                 new ChoiceSource(
                                                     orCardConditions: new[]
                                                     {
-                                                        new CardCondition()
-                                                        {
-                                                            TypeCondition = new(new[]{CardType.Creature}),
-                                                            ZoneCondition = new(
+                                                        new CardCondition(
+                                                            TypeCondition: new(new[]{CardType.Creature}),
+                                                            ZoneCondition: new(
                                                                 new ZoneValue(new[]{ZonePrettyName.YouField}))
-                                                        }
+                                                        )
                                                     })))),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition= new(new(new[]{ ZonePrettyName.OpponentField })),
-                                                    TypeCondition = new CardTypeCondition(new []{CardType.Creature, }),
-                                                }
+                                                new CardCondition(
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.OpponentField })),
+                                                    TypeCondition: new CardTypeCondition(new []{CardType.Creature, })
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Choose,
+                                        Choice.HowValue.Choose,
                                         1)
                                 )
-                            }
+                            )
                         }
                     )
                 });
@@ -1790,23 +1706,22 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyPlayer = new(
+                            new EffectAction(
+                                ModifyPlayer: new(
                                     new Choice(new ChoiceSource(
                                         orPlayerConditions: new[]
                                         {
-                                            new PlayerCondition(Type: PlayerCondition.PlayerConditionType.You)
+                                            new PlayerCondition(Type: PlayerCondition.TypeValue.You)
                                         })),
                                     new PlayerModifier(
                                         MaxMp: new NumValueModifier(
-                                            NumValueModifier.ValueModifierOperator.Add,
+                                            NumValueModifier.OperatorValue.Add,
                                             new NumValue(1)),
                                         Mp: new NumValueModifier(
-                                            NumValueModifier.ValueModifierOperator.Sub,
+                                            NumValueModifier.OperatorValue.Sub,
                                             new NumValue(1))
                                         ))
-                            }
+                            )
                         }
                     )
                 });
@@ -1824,13 +1739,12 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(
                                                         new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }))
-                                                }
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Choose,
+                                        Choice.HowValue.Choose,
                                         1),
                                     ZonePrettyName.OwnerHand))
                         })
@@ -1849,13 +1763,12 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(
                                                         new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }))
-                                                }
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Choose,
+                                        Choice.HowValue.Choose,
                                         1),
                                     ZonePrettyName.OwnerDeck,
                                     new InsertCardPosition(InsertCardPosition.PositionTypeValue.Random)))
@@ -1870,23 +1783,21 @@ namespace Cauldron.Core_Test
                         SampleCards.Spell,
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                AddCard = new(
+                            new EffectAction(
+                                AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
-                                                }
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.OpponentField }))
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Choose
+                                        Choice.HowValue.Choose
                                         ),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand }),
                                     NumOfAddCards: 2)
-                            }
+                            )
                         }
                     )
                 });
@@ -1899,25 +1810,23 @@ namespace Cauldron.Core_Test
                     SampleCards.Spell,
                     new[]
                     {
-                        new EffectAction()
-                        {
-                            Damage = new EffectActionDamage(
+                        new EffectAction(
+                            Damage: new EffectActionDamage(
                                 new NumValue(1),
                                 new Choice(
                                     new ChoiceSource(
                                         orPlayerConditions: new[]
                                         {
-                                            new PlayerCondition(Type: PlayerCondition.PlayerConditionType.Opponent)
+                                            new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
                                         },
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
-                                                TypeCondition = new CardTypeCondition(new[]{ CardType.Creature })
-                                            },
+                                            new CardCondition(
+                                                ZoneCondition: new(new(new[]{ ZonePrettyName.OpponentField })),
+                                                TypeCondition: new CardTypeCondition(new[]{ CardType.Creature })
+                                            )
                                         })))
-                        }
+                        )
                     }
                 )
             });
@@ -1936,12 +1845,11 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ZoneCondition = new(new ZoneValue(new[]{ ZonePrettyName.YouDeck })),
-                                                }
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.YouDeck }))
+                                                )
                                             }),
-                                        Choice.ChoiceHow.Random,
+                                        Choice.HowValue.Random,
                                         numPicks: 1),
                                     ZonePrettyName.YouHand,
                                     Name: "search_card")
@@ -1952,17 +1860,16 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ActionContext = new(ActionContextCardsOfMoveCard: new(
+                                                new CardCondition(
+                                                    ActionContext: new(ActionContextCardsOfMoveCard: new(
                                                         "search_card",
-                                                        ActionContextCardsOfMoveCard.ValueType.Moved
+                                                        ActionContextCardsOfMoveCard.TypeValue.Moved
                                                         ))
-                                                }
+                                                )
                                             }
                                         )),
                                     Cost: new(
-                                        NumValueModifier.ValueModifierOperator.Div,
+                                        NumValueModifier.OperatorValue.Div,
                                         new NumValue(2)
                                         ))
                             )
@@ -1980,27 +1887,25 @@ namespace Cauldron.Core_Test
                                 Play: new(EffectTimingPlayEvent.SourceValue.This)))),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyCard = new(
+                            new EffectAction(
+                                ModifyCard: new(
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    NameCondition = new(new TextValue("ゴブリン"),
+                                                new CardCondition(
+                                                    NameCondition: new(new TextValue("ゴブリン"),
                                                         TextCondition.CompareValue.Contains),
-                                                    TypeCondition = new(new[]{ CardType.Creature }),
-                                                    ZoneCondition = new(new(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }))
-                                                }
+                                                    TypeCondition: new(new[]{ CardType.Creature }),
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }))
+                                                )
                                             })),
-                                    Power: new(NumValueModifier.ValueModifierOperator.Replace,
+                                    Power: new(NumValueModifier.OperatorValue.Replace,
                                         new NumValue(1)),
                                     Ability: new(CreatureAbilityModifier.OperatorValue.Add,
                                         CreatureAbility.Sealed)
                                     )
-                            }
+                            )
                         }
                     )
                 });
@@ -2014,46 +1919,41 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
-                                    Source: EffectTimingDamageBeforeEvent.EventSource.Take,
-                                    CardCondition: new CardCondition()
-                                    {
-                                        TypeCondition = new(new[]{ CardType.Creature }),
-                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                        ContextCondition = CardCondition.ContextConditionValue.Others
-                                    })))),
+                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
+                                    CardCondition: new CardCondition(
+                                        TypeCondition: new(new[]{ CardType.Creature }),
+                                        ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
+                                        ContextCondition: CardCondition.ContextConditionValue.Others
+                                    ))))),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyDamage = new EffectActionModifyDamage(
+                            new EffectAction(
+                                ModifyDamage: new EffectActionModifyDamage(
                                     new NumValueModifier(
-                                        NumValueModifier.ValueModifierOperator.Sub,
+                                        NumValueModifier.OperatorValue.Sub,
                                         new NumValue(1)
                                     ),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ContextCondition = CardCondition.ContextConditionValue.EventSource,
-                                                }
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.EventSource
+                                                )
                                             }))
                                 )
-                            },
-                            new EffectAction()
-                            {
-                                DestroyCard = new EffectActionDestroyCard(
+                            ),
+                            new EffectAction(
+                                DestroyCard: new EffectActionDestroyCard(
                                     new Choice(new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ContextCondition = CardCondition.ContextConditionValue.This
-                                            }
+                                            new CardCondition(
+                                                ContextCondition: CardCondition.ContextConditionValue.This
+                                            )
                                         }))
                                 )
-                            }
+                            )
                         }
                     )
                 });
@@ -2067,58 +1967,51 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
-                                    Source: EffectTimingDamageBeforeEvent.EventSource.Take,
-                                    PlayerCondition: new PlayerCondition()
-                                    {
-                                        Type = PlayerCondition.PlayerConditionType.You,
-                                    },
-                                    CardCondition: new CardCondition()
-                                    {
-                                        TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                        ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                        ContextCondition = CardCondition.ContextConditionValue.Others
-                                    }))
+                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
+                                    PlayerCondition: new PlayerCondition(
+                                        Type: PlayerCondition.TypeValue.You
+                                    ),
+                                    CardCondition: new CardCondition(
+                                        TypeCondition: new CardTypeCondition(new[]{ CardType.Creature }),
+                                        ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
+                                        ContextCondition: CardCondition.ContextConditionValue.Others
+                                    )))
                             )
                         ),
                         new[]
                         {
-                            new EffectAction()
-                            {
-                                ModifyDamage = new EffectActionModifyDamage(
+                            new EffectAction(
+                                ModifyDamage: new EffectActionModifyDamage(
                                     new NumValueModifier(
-                                        NumValueModifier.ValueModifierOperator.Sub,
+                                        NumValueModifier.OperatorValue.Sub,
                                         new NumValue(1)
                                     ),
                                     new Choice(new ChoiceSource(
                                         orPlayerConditions: new[]
                                         {
-                                            new PlayerCondition()
-                                            {
-                                                Context = PlayerCondition.PlayerConditionContext.EventSource,
-                                            },
+                                            new PlayerCondition(
+                                                Context: PlayerCondition.ContextValue.EventSource
+                                            )
                                         },
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ContextCondition = CardCondition.ContextConditionValue.EventSource,
-                                            }
+                                            new CardCondition(
+                                                ContextCondition: CardCondition.ContextConditionValue.EventSource
+                                            )
                                         }))
                                 )
-                            },
-                            new EffectAction()
-                            {
-                                DestroyCard = new EffectActionDestroyCard(
+                            ),
+                            new EffectAction(
+                                DestroyCard: new EffectActionDestroyCard(
                                     new Choice(new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ContextCondition = CardCondition.ContextConditionValue.This
-                                            }
+                                            new CardCondition(
+                                                ContextCondition: CardCondition.ContextConditionValue.This
+                                            )
                                         }))
                                 )
-                            }
+                            )
                         }
                     )
                 });
@@ -2129,18 +2022,17 @@ namespace Cauldron.Core_Test
                 {
                     new CardEffect(
                         new(ZonePrettyName.YouField,
-                            new(new(EndTurn: new(EffectTimingEndTurnEvent.EventSource.You))),
+                            new(new(EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You))),
                             If: new(
-                                new NumCondition(30, NumCondition.ConditionCompare.GreaterThan),
+                                new NumCondition(30, NumCondition.CompareValue.GreaterThan),
                                 new NumValue(NumValueCalculator: new(
                                     NumValueCalculator.ValueType.Count,
                                     new Choice(new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new(new[]{ ZonePrettyName.YouCemetery }))
-                                            }
+                                            new CardCondition(
+                                                ZoneCondition: new(new(new[]{ ZonePrettyName.YouCemetery }))
+                                            )
                                         })))))),
                         new[]{
                             new EffectAction(Damage: new(
@@ -2148,15 +2040,14 @@ namespace Cauldron.Core_Test
                                 new Choice(new ChoiceSource(
                                     orPlayerConditions: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.PlayerConditionType.Opponent)
+                                        new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
                                     },
                                     orCardConditions: new[]
                                     {
-                                        new CardCondition()
-                                        {
-                                            ZoneCondition = new(new(new[]{ ZonePrettyName.OpponentField })),
-                                            TypeCondition = new(new[]{ CardType.Creature })
-                                        }
+                                        new CardCondition(
+                                            ZoneCondition: new(new(new[]{ ZonePrettyName.OpponentField })),
+                                            TypeCondition: new(new[]{ CardType.Creature })
+                                        )
                                     }))))
                         }
                     )
@@ -2171,22 +2062,21 @@ namespace Cauldron.Core_Test
                     SampleCards.Spell,
                     new[]
                     {
-                        new EffectAction(){
-                            ModifyCard = new EffectActionModifyCard(
+                        new EffectAction(
+                            ModifyCard: new EffectActionModifyCard(
                                 new Choice(new ChoiceSource(
                                     orCardConditions: new[]
                                     {
-                                        new CardCondition()
-                                        {
-                                            ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                            TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                        }
+                                        new CardCondition(
+                                            ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
+                                            TypeCondition: new CardTypeCondition(new[]{ CardType.Creature })
+                                        )
                                     })),
                                 Toughness: new NumValueModifier(
-                                    NumValueModifier.ValueModifierOperator.Add,
+                                    NumValueModifier.OperatorValue.Add,
                                     new NumValue(1))
                             )
-                        }
+                        )
                     }),
 
                 // 自分クリーチャーのプレイ時+0/+1
@@ -2194,30 +2084,29 @@ namespace Cauldron.Core_Test
                     new(
                         ZonePrettyName.YouField,
                         new(new(MoveCard: new(
-                            EffectTimingMoveCardEvent.EventSource.Other,
+                            EffectTimingMoveCardEvent.SourceValue.Other,
                             ZonePrettyName.YouHand,
                             ZonePrettyName.YouField)))
                     ),
                     new[]
                     {
-                        new EffectAction(){
-                            ModifyCard = new EffectActionModifyCard(
+                        new EffectAction(
+                            ModifyCard: new EffectActionModifyCard(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
-                                            new CardCondition()
-                                            {
-                                                ZoneCondition = new(new(new[]{ ZonePrettyName.YouField })),
-                                                TypeCondition = new CardTypeCondition(new[]{ CardType.Creature }),
-                                                ContextCondition = CardCondition.ContextConditionValue.EventSource,
-                                            }
+                                            new CardCondition(
+                                                ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
+                                                TypeCondition: new CardTypeCondition(new[]{ CardType.Creature }),
+                                                ContextCondition: CardCondition.ContextConditionValue.EventSource
+                                            )
                                         })),
                                 Toughness: new NumValueModifier(
-                                    NumValueModifier.ValueModifierOperator.Add,
+                                    NumValueModifier.OperatorValue.Add,
                                     new NumValue(1))
                             )
-                        }
+                        )
                     })
             });
 
@@ -2229,7 +2118,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                StartTurn: new(EffectTimingStartTurnEvent.EventSource.You)))),
+                                StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You)))),
                         new[]
                         {
                             new EffectAction(
@@ -2238,17 +2127,16 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    ContextCondition = CardCondition.ContextConditionValue.This
-                                                }
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.This
+                                                )
                                             }))))
                         }),
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.None,
                             new EffectWhen(new EffectTiming(
                                 MoveCard: new(
-                                    EffectTimingMoveCardEvent.EventSource.This,
+                                    EffectTimingMoveCardEvent.SourceValue.This,
                                     ZonePrettyName.YouField,
                                     ZonePrettyName.YouCemetery)))),
                         new[]
@@ -2259,17 +2147,16 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
-                                                new CardCondition()
-                                                {
-                                                    NameCondition = new(
+                                                new CardCondition(
+                                                    NameCondition: new(
                                                         new TextValue(VictoryRoad.Name),
                                                         TextCondition.CompareValue.Equality),
-                                                    ZoneCondition = new(
+                                                    ZoneCondition: new(
                                                         new ZoneValue(new[]
                                                         {
                                                             ZonePrettyName.CardPool
                                                         }))
-                                                }
+                                                )
                                             })),
                                     new ZoneValue(new[]
                                     {
@@ -2287,7 +2174,7 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                StartTurn: new(EffectTimingStartTurnEvent.EventSource.You)))),
+                                StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You)))),
                         new[]
                         {
                             new EffectAction(
@@ -2297,7 +2184,7 @@ namespace Cauldron.Core_Test
                                             orPlayerConditions: new[]
                                             {
                                                 new PlayerCondition(
-                                                    Type: PlayerCondition.PlayerConditionType.You)
+                                                    Type: PlayerCondition.TypeValue.You)
                                             }))))
                         }),
                 });

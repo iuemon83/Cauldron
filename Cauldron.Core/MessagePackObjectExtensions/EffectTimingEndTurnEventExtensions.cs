@@ -8,9 +8,9 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             return effectTimingEndTurnEvent.Source switch
             {
-                EffectTimingEndTurnEvent.EventSource.Both => true,
-                EffectTimingEndTurnEvent.EventSource.You => turnPlayerId == ownerCard.OwnerId,
-                EffectTimingEndTurnEvent.EventSource.Opponent => turnPlayerId != ownerCard.OwnerId,
+                EffectTimingEndTurnEvent.SourceValue.Both => true,
+                EffectTimingEndTurnEvent.SourceValue.You => turnPlayerId == ownerCard.OwnerId,
+                EffectTimingEndTurnEvent.SourceValue.Opponent => turnPlayerId != ownerCard.OwnerId,
                 _ => throw new InvalidOperationException($"{nameof(effectTimingEndTurnEvent.Source)}={effectTimingEndTurnEvent.Source}"),
             };
         }

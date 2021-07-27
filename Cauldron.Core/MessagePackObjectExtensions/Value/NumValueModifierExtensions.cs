@@ -12,11 +12,11 @@ namespace Cauldron.Shared.MessagePackObjects.Value
 
             return numValueModifier.Operator switch
             {
-                NumValueModifier.ValueModifierOperator.Add => value + baseValue,
-                NumValueModifier.ValueModifierOperator.Sub => value - baseValue,
-                NumValueModifier.ValueModifierOperator.Multi => value * baseValue,
-                NumValueModifier.ValueModifierOperator.Div => value / baseValue,
-                NumValueModifier.ValueModifierOperator.Replace => baseValue,
+                NumValueModifier.OperatorValue.Add => value + baseValue,
+                NumValueModifier.OperatorValue.Sub => value - baseValue,
+                NumValueModifier.OperatorValue.Multi => value * baseValue,
+                NumValueModifier.OperatorValue.Div => value / baseValue,
+                NumValueModifier.OperatorValue.Replace => baseValue,
                 _ => throw new InvalidOperationException()
             };
         }

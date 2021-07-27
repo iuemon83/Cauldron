@@ -6,7 +6,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTimingDamageBeforeEvent
     {
-        public enum DamageType
+        public enum TypeValue
         {
             /// <summary>
             /// いずれか
@@ -27,7 +27,7 @@ namespace Cauldron.Shared.MessagePackObjects
             NonBattle,
         }
 
-        public enum EventSource
+        public enum SourceValue
         {
             /// <summary>
             /// いずれか
@@ -48,14 +48,14 @@ namespace Cauldron.Shared.MessagePackObjects
             Take,
         }
 
-        public EffectTimingDamageBeforeEvent.DamageType Type { get; }
-        public EffectTimingDamageBeforeEvent.EventSource Source { get; }
+        public EffectTimingDamageBeforeEvent.TypeValue Type { get; }
+        public EffectTimingDamageBeforeEvent.SourceValue Source { get; }
         public PlayerCondition PlayerCondition { get; }
         public CardCondition CardCondition { get; }
 
         public EffectTimingDamageBeforeEvent(
-            EffectTimingDamageBeforeEvent.DamageType Type = DamageType.Any,
-            EffectTimingDamageBeforeEvent.EventSource Source = EventSource.Any,
+            EffectTimingDamageBeforeEvent.TypeValue Type = TypeValue.Any,
+            EffectTimingDamageBeforeEvent.SourceValue Source = SourceValue.Any,
             PlayerCondition PlayerCondition = null,
             CardCondition CardCondition = null
             )

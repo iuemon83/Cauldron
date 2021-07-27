@@ -8,8 +8,8 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             return effectTimingDestroyEvent.Source switch
             {
-                EffectTimingDestroyEvent.EventSource.This => ownerCard.Id == source.Id,
-                EffectTimingDestroyEvent.EventSource.Other => ownerCard.Id != source.Id,
+                EffectTimingDestroyEvent.SourceValue.This => ownerCard.Id == source.Id,
+                EffectTimingDestroyEvent.SourceValue.Other => ownerCard.Id != source.Id,
                 _ => throw new InvalidOperationException()
             };
         }

@@ -8,8 +8,8 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectActionDestroyCard
     {
-        public Choice Choice { get; set; }
-        public string Name { get; set; } = null;
+        public Choice Choice { get; }
+        public string Name { get; }
 
         public EffectActionDestroyCard(Choice choice, string name = null)
         {

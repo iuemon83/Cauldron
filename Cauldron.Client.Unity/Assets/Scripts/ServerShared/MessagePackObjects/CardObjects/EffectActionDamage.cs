@@ -6,8 +6,8 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectActionDamage
     {
-        public NumValue Value { get; set; }
-        public Choice Choice { get; set; }
+        public NumValue Value { get; }
+        public Choice Choice { get; }
 
         public EffectActionDamage(NumValue value, Choice choice)
         {

@@ -42,11 +42,11 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
         Debug.Log($"result: {result}");
     }
 
-    void ICauldronHubReceiver.OnReady(GameContext gameContext)
+    void ICauldronHubReceiver.OnReady()
     {
     }
 
-    void ICauldronHubReceiver.OnStartGame(GameContext gameContext)
+    void ICauldronHubReceiver.OnStartGame()
     {
     }
 

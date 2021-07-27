@@ -6,9 +6,9 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class ChoiceAnswer
     {
-        public PlayerId[] PlayerIdList { get; } = Array.Empty<PlayerId>();
-        public CardId[] CardIdList { get; } = Array.Empty<CardId>();
-        public CardDefId[] CardDefIdList { get; } = Array.Empty<CardDefId>();
+        public PlayerId[] PlayerIdList { get; }
+        public CardId[] CardIdList { get; }
+        public CardDefId[] CardDefIdList { get; }
 
         public int Count() => (this.PlayerIdList?.Length ?? 0)
             + (this.CardIdList?.Length ?? 0)

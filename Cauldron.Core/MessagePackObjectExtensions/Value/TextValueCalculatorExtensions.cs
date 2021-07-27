@@ -11,7 +11,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
         {
             return textValueCalculator.Type switch
             {
-                TextValueCalculator.ValueType.CardName => await CalculateName(textValueCalculator, effectOwnerCard, effectEventArgs),
+                TextValueCalculator.TypeValue.CardName => await CalculateName(textValueCalculator, effectOwnerCard, effectEventArgs),
                 _ => throw new InvalidOperationException($"{nameof(textValueCalculator.Type)}: {textValueCalculator.Type}")
             };
 
