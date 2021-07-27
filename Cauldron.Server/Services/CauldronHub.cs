@@ -332,6 +332,8 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(request.GameId, request.PlayerId);
             if (playableStatus != GameMasterStatusCode.OK)
             {
+                this._logger.LogWarning($"result={playableStatus}");
+
                 return new StartTurnReply(
                     playableStatus == GameMasterStatusCode.OK,
                     playableStatus.ToString(),
@@ -346,6 +348,11 @@ namespace Cauldron.Server.Services
             }
             var statusCode = await gameMaster.StartTurn();
 
+            if (statusCode != GameMasterStatusCode.OK)
+            {
+                this._logger.LogWarning($"result={statusCode}");
+            }
+
             return new StartTurnReply(
                 statusCode == GameMasterStatusCode.OK,
                 statusCode.ToString(),
@@ -359,6 +366,8 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(request.GameId, request.PlayerId);
             if (playableStatus != GameMasterStatusCode.OK)
             {
+                this._logger.LogWarning($"result={playableStatus}");
+
                 return new EndTurnReply(
                     playableStatus == GameMasterStatusCode.OK,
                     playableStatus.ToString(),
@@ -373,6 +382,11 @@ namespace Cauldron.Server.Services
             }
             var statusCode = await gameMaster.EndTurn();
 
+            if (statusCode != GameMasterStatusCode.OK)
+            {
+                this._logger.LogWarning($"result={statusCode}");
+            }
+
             return new EndTurnReply(
                 statusCode == GameMasterStatusCode.OK,
                 statusCode.ToString(),
@@ -386,6 +400,8 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(request.GameId, request.PlayerId);
             if (playableStatus != GameMasterStatusCode.OK)
             {
+                this._logger.LogWarning($"result={playableStatus}");
+
                 return new PlayFromHandReply(
                     playableStatus == GameMasterStatusCode.OK,
                     playableStatus.ToString(),
@@ -400,6 +416,11 @@ namespace Cauldron.Server.Services
             }
             var statusCode = await gameMaster.PlayFromHand(request.PlayerId, request.HandCardId);
 
+            if (statusCode != GameMasterStatusCode.OK)
+            {
+                this._logger.LogWarning($"result={statusCode}");
+            }
+
             return new PlayFromHandReply(
                 statusCode == GameMasterStatusCode.OK,
                 statusCode.ToString(),
@@ -413,6 +434,8 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(request.GameId, request.PlayerId);
             if (playableStatus != GameMasterStatusCode.OK)
             {
+                this._logger.LogWarning($"result={playableStatus}");
+
                 return new AttackToCreatureReply(
                     playableStatus == GameMasterStatusCode.OK,
                     playableStatus.ToString(),
@@ -427,6 +450,11 @@ namespace Cauldron.Server.Services
             }
             var statusCode = await gameMaster.AttackToCreature(request.PlayerId, request.AttackCardId, request.GuardCardId);
 
+            if (statusCode != GameMasterStatusCode.OK)
+            {
+                this._logger.LogWarning($"result={statusCode}");
+            }
+
             return new AttackToCreatureReply(
                 statusCode == GameMasterStatusCode.OK,
                 statusCode.ToString(),
@@ -440,6 +468,8 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(request.GameId, request.PlayerId);
             if (playableStatus != GameMasterStatusCode.OK)
             {
+                this._logger.LogWarning($"result={playableStatus}");
+
                 return new AttackToPlayerReply(
                     playableStatus == GameMasterStatusCode.OK,
                     playableStatus.ToString(),
@@ -454,6 +484,11 @@ namespace Cauldron.Server.Services
             }
             var statusCode = await gameMaster.AttackToPlayer(request.PlayerId, request.AttackCardId, request.GuardPlayerId);
 
+            if (statusCode != GameMasterStatusCode.OK)
+            {
+                this._logger.LogWarning($"result={statusCode}");
+            }
+
             return new AttackToPlayerReply(
                 statusCode == GameMasterStatusCode.OK,
                 statusCode.ToString(),
@@ -467,6 +502,7 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(gameId, this.self.Id);
             if (playableStatus != GameMasterStatusCode.OK)
             {
+                this._logger.LogWarning($"result={playableStatus}");
                 return Task.FromResult((playableStatus, default(CardId[])));
             }
 
@@ -487,6 +523,7 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(gameId, this.self.Id);
             if (playableStatus != GameMasterStatusCode.OK)
             {
+                this._logger.LogWarning($"result={playableStatus}");
                 return Task.FromResult((playableStatus, default((PlayerId[], CardId[]))));
             }
 
