@@ -200,7 +200,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         how: Choice.HowValue.Random,
-                                        1),
+                                        new NumValue(1)),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand })))
                         })
                 });
@@ -261,7 +261,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         how: Choice.HowValue.Random,
-                                        1),
+                                        new NumValue(1)),
                                     ZonePrettyName.OpponentField))
                         })
                 });
@@ -308,7 +308,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         how: Choice.HowValue.Random,
-                                        1),
+                                        new NumValue(1)),
                                     ZonePrettyName.YouField))
                         })
                 });
@@ -414,7 +414,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Random,
-                                        1)
+                                        new NumValue(1))
                                     )
                             )
                         }
@@ -479,7 +479,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
-                                        1)
+                                        new NumValue(1))
                                 )
                             )
                         }
@@ -509,7 +509,7 @@ namespace Cauldron.Core_Test
                                         )
                                     }),
                                     how: Choice.HowValue.Random,
-                                    numPicks: 1),
+                                    numPicks: new NumValue(1)),
                                 new ZoneValue(new[]{ ZonePrettyName.YouField })
                                 ))
                         }
@@ -537,7 +537,7 @@ namespace Cauldron.Core_Test
                                             )
                                         }),
                                     Choice.HowValue.Choose,
-                                    1),
+                                    new NumValue(1)),
                                 name: "delete"
                                 )),
                             new EffectAction(AddCard: new(
@@ -725,6 +725,46 @@ namespace Cauldron.Core_Test
                     )
                 });
 
+        public static CardDef RiderGoblin
+            => SampleCards.Creature(6, "騎兵ゴブリン", "あなたが魔法カードをプレイしたとき、あなたの場に「騎兵ゴブリン」1枚を追加する。",
+                3, 5,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                Play: new(EffectTimingPlayEvent.SourceValue.Other,
+                                    CardCondition: new(
+                                        OwnerCondition: CardCondition.OwnerConditionValue.You,
+                                        TypeCondition: new CardTypeCondition(
+                                            new[]{ CardType.Sorcery })
+                                        ))))),
+                        new[]
+                        {
+                            new EffectAction(
+                                AddCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                                    NameCondition: new TextCondition(
+                                                        new TextValue(WarGoblin.Name),
+                                                        TextCondition.CompareValue.Equality))
+                                            }
+                                    )),
+                                    new ZoneValue(
+                                        new []{ ZonePrettyName.YouField })
+                                    ))
+                        }
+                    )
+                });
+
+        public static CardDef WarGoblin
+            => SampleCards.Creature(5, "戦闘ゴブリン", "", 3, 5, isToken: true);
+
         public static CardDef TyrantGoblin
             => SampleCards.Creature(6, "暴君ゴブリン", "このカードが場に出たとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。", 6, 6,
                 effects: new[]
@@ -804,7 +844,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         how: Choice.HowValue.Random,
-                                        numPicks: 1)))
+                                        numPicks: new NumValue(1))))
                         })
                 });
 
@@ -865,76 +905,73 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         how: Choice.HowValue.Random,
-                                        numPicks: 1)))
+                                        numPicks: new NumValue(1))))
                         })
                 });
 
-        public static CardDef KingGoblin
-            => SampleCards.Creature(10, "ゴブリンの王", "偉大な存在", 8, 8,
+        //TODO 未実装
+        //public static CardDef KingGoblin
+        //    => SampleCards.Creature(10, "ゴブリンの王", "偉大な存在", 8, 8,
+        //        effects: new[]
+        //        {
+        //            // 場に4枚以上いるならコストがゼロになる
+        //            // 場に4枚以上いるなら、プレイ時に場のカードを全て破壊する
+        //        });
+
+        public static CardDef Death
+            => SampleCards.Creature(10, "死",
+                "このカードをプレイしたとき、このカードを除く全てのクリーチャーを破壊する。その後、X枚のランダムな自分の手札を墓地へ移動する。X=この効果で破壊したクリーチャーの数",
+                12, 12,
                 effects: new[]
                 {
-                    //TODO 未実装
-                    // 場に4枚以上いるならコストがゼロになる
-                    new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouHand,
-                            new EffectWhen(new EffectTiming()),
-                            If: new(new NumCondition(4, NumCondition.CompareValue.GreaterThan),
-                                    new NumValue(NumValueCalculator: new(
-                                        NumValueCalculator.ValueType.Count,
-                                        new Choice(
-                                            new ChoiceSource(
-                                                orCardConditions: new[]
-                                                {
-                                                    new CardCondition(
-                                                        ZoneCondition: new(new ZoneValue(new[]{ZonePrettyName.YouField}))
-                                                    )
-                                                }))
-                                            )
-                                        ))),
-                        new[]{
-                            new EffectAction(ModifyCard:new(
-                                new Choice(
-                                    new ChoiceSource(
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition(
-                                                ContextCondition: CardCondition.ContextConditionValue.This
-                                            )
-                                        })),
-                                Cost: new NumValueModifier(
-                                    NumValueModifier.OperatorValue.Replace,
-                                    new NumValue(0))
-                                ))
-                        }),
-                    // 場に4枚以上いるなら、プレイ時に場のカードを全て破壊する
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
-                            new EffectWhen(new EffectTiming(Play: new(
-                                EffectTimingPlayEvent.SourceValue.This))),
-                            If: new(new NumCondition(4, NumCondition.CompareValue.GreaterThan),
-                                    new NumValue(NumValueCalculator: new(
-                                        NumValueCalculator.ValueType.Count,
-                                        new Choice(
-                                            new ChoiceSource(
-                                                orCardConditions: new[]
-                                                {
-                                                    new CardCondition(
-                                                        ContextCondition: CardCondition.ContextConditionValue.Others,
-                                                        ZoneCondition: new(new ZoneValue(new[]{ZonePrettyName.YouField}))
-                                                    )
-                                                })))))),
+                            new EffectWhen(new EffectTiming(
+                                Play: new(EffectTimingPlayEvent.SourceValue.This)))),
                         new[]{
-                            new EffectAction(DestroyCard:new(
-                                new Choice(
-                                    new ChoiceSource(
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition(
-                                                ContextCondition: CardCondition.ContextConditionValue.Others,
-                                                ZoneCondition: new(new(new[]{ZonePrettyName.YouField}))
-                                            )
-                                        }))))
-                        })
+                            new EffectAction(
+                                DestroyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.Others,
+                                                    TypeCondition: new CardTypeCondition(
+                                                        new[]{ CardType.Creature }),
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]
+                                                        {
+                                                            ZonePrettyName.OpponentField,
+                                                            ZonePrettyName.YouField
+                                                        })))
+                                            })),
+                                    name: "destroy"),
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]{ ZonePrettyName.YouHand })))
+                                            }),
+                                        Choice.HowValue.Random,
+                                        new NumValue(
+                                            NumValueCalculator: new(
+                                                NumValueCalculator.ValueType.Count,
+                                                new Choice(
+                                                    new ChoiceSource(
+                                                        orCardConditions: new[]{
+                                                            new CardCondition(
+                                                                ActionContext: new(
+                                                                    ActionContextCardsOfDestroyCard: new(
+                                                                        "destroy",
+                                                                        ActionContextCardsOfDestroyCard.TypeValue.Destroyed)
+                                                                ))
+                                                        }))))),
+                                    ZonePrettyName.YouCemetery))
+                        }),
                 });
 
         public static CardDef TempRamp
@@ -1017,7 +1054,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
-                                        1))
+                                        new NumValue(1)))
                             )
                         }
                     )
@@ -1047,7 +1084,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Random,
-                                        1))
+                                        new NumValue(1)))
                             )
                         }
                     )
@@ -1072,7 +1109,7 @@ namespace Cauldron.Core_Test
                                             )
                                         }),
                                         Choice.HowValue.Choose,
-                                        1),
+                                        new NumValue(1)),
                                     ZonePrettyName.YouHand,
                                     Name: "move"
                                     )),
@@ -1125,7 +1162,7 @@ namespace Cauldron.Core_Test
                                             )
                                         }),
                                         Choice.HowValue.Choose,
-                                        1),
+                                        new NumValue(1)),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand })
                                     )),
                         }
@@ -1152,7 +1189,7 @@ namespace Cauldron.Core_Test
                                             )
                                         }),
                                         Choice.HowValue.Random,
-                                        1),
+                                        new NumValue(1)),
                                     ZonePrettyName.YouField,
                                     Name: "move"
                                     )),
@@ -1195,7 +1232,7 @@ namespace Cauldron.Core_Test
                                             )
                                         }),
                                     Choice.HowValue.Choose,
-                                    1),
+                                    new NumValue(1)),
                                 Power: new NumValueModifier(
                                     NumValueModifier.OperatorValue.Add,
                                     new NumValue(1))
@@ -1225,7 +1262,7 @@ namespace Cauldron.Core_Test
                                             )
                                         }),
                                     Choice.HowValue.Choose,
-                                    1),
+                                    new NumValue(1)),
                                 Toughness: new NumValueModifier(
                                     NumValueModifier.OperatorValue.Add,
                                     new NumValue(1))
@@ -1301,7 +1338,7 @@ namespace Cauldron.Core_Test
                                         ),
                                     }),
                                     how: Choice.HowValue.Choose,
-                                    numPicks: 1
+                                    numPicks: new NumValue(1)
                                     ),
                                 new ZoneValue(new[]{ ZonePrettyName.YouHand })
                                 ))
@@ -1391,7 +1428,7 @@ namespace Cauldron.Core_Test
                                         )
                                     }),
                                     Choice.HowValue.Random,
-                                    1),
+                                    new NumValue(1)),
                                 ZonePrettyName.YouCemetery,
                                 Name: "moveCard"
                                 )),
@@ -1466,7 +1503,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
-                                        1),
+                                        new NumValue(1)),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand })
                                     )
                             )
@@ -1501,7 +1538,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
-                                        1)),
+                                        new NumValue(1))),
                                 AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
@@ -1516,7 +1553,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.All,
-                                        1),
+                                        new NumValue(1)),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand })
                                     )
                             )
@@ -1551,7 +1588,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
-                                        1))
+                                        new NumValue(1)))
                             )
                         }
                     )
@@ -1691,7 +1728,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
-                                        1)
+                                        new NumValue(1))
                                 )
                             )
                         }
@@ -1745,7 +1782,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
-                                        1),
+                                        new NumValue(1)),
                                     ZonePrettyName.OwnerHand))
                         })
                 });
@@ -1769,7 +1806,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
-                                        1),
+                                        new NumValue(1)),
                                     ZonePrettyName.OwnerDeck,
                                     new InsertCardPosition(InsertCardPosition.PositionTypeValue.Random)))
                         })
@@ -1850,7 +1887,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         Choice.HowValue.Random,
-                                        numPicks: 1),
+                                        numPicks: new NumValue(1)),
                                     ZonePrettyName.YouHand,
                                     Name: "search_card")
                             ),
@@ -2110,7 +2147,7 @@ namespace Cauldron.Core_Test
                     })
             });
 
-        public static CardDef WarStatue
+        public static CardDef VictoryRoad
             => SampleCards.Artifact(1, "勝利への道",
                 "あなたのターン開始時に、場にあるこのカードを墓地に移動する。場にあるこのカードが墓地に移動されたとき、「勝利の像」1枚をあなたの場に追加する。",
                 effects: new[]
@@ -2149,7 +2186,7 @@ namespace Cauldron.Core_Test
                                             {
                                                 new CardCondition(
                                                     NameCondition: new(
-                                                        new TextValue(VictoryRoad.Name),
+                                                        new TextValue(VictoryStatue.Name),
                                                         TextCondition.CompareValue.Equality),
                                                     ZoneCondition: new(
                                                         new ZoneValue(new[]
@@ -2165,7 +2202,7 @@ namespace Cauldron.Core_Test
                         })
                 });
 
-        public static CardDef VictoryRoad
+        public static CardDef VictoryStatue
             => SampleCards.Artifact(10, "勝利の像",
                 "あなたのターン開始時に、このカードがあなたの場にあるとき、あなたはゲームに勝利する。",
                 isToken: true,

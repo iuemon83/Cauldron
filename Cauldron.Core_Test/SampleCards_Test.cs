@@ -835,7 +835,7 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task GoblinTyrant()
+        public async Task TyrantGoblin()
         {
             var testCardDef = SampleCards.TyrantGoblin;
             testCardDef.Cost = 0;
@@ -851,6 +851,43 @@ namespace Cauldron.Core_Test
 
                 Assert.Equal(testCard.BasePower + numHands, testCard.Power);
                 Assert.Equal(testCard.BaseToughness + numHands, testCard.Toughness);
+            });
+        }
+
+        [Fact]
+        public async Task RiderGoblin()
+        {
+            var testCardDef = SampleCards.RiderGoblin;
+            testCardDef.Cost = 0;
+            var tokenDef = SampleCards.WarGoblin;
+            var sorceryDef = SampleCards.RandomDamage;
+            sorceryDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, tokenDef, sorceryDef });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var (_, p) = g.playerRepository.TryGet(pId);
+
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Single(p.Field.AllCards);
+
+                var beforeFieldCardIdList = p.Field.AllCards.Select(c => c.Id).ToArray();
+
+                // 魔法カードをプレイする
+                await TestUtil.NewCardAndPlayFromHand(g, pId, sorceryDef.Id);
+
+                var afterFieldCardIdList = p.Field.AllCards.Select(c => c.Id).ToArray();
+                var diffFieldCardIdList = afterFieldCardIdList.Except(beforeFieldCardIdList).ToArray();
+
+                // 自分の場に1枚追加される
+                Assert.Single(diffFieldCardIdList);
+
+                // 追加されたカードはトークン
+                var diffCard = p.Field.AllCards.First(c => c.Id == diffFieldCardIdList[0]);
+                Assert.Equal(tokenDef.Id, diffCard.CardDefId);
             });
         }
 
@@ -926,6 +963,50 @@ namespace Cauldron.Core_Test
             var afterOpHp = op.CurrentHp;
 
             Assert.Equal(8, beforeOpHp - afterOpHp);
+        }
+
+        [Fact]
+        public async Task Death()
+        {
+            var testCardDef = SampleCards.Death;
+            testCardDef.Cost = 0;
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var (_, p) = g.playerRepository.TryGet(pId);
+                var op = g.GetOpponent(pId);
+
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+
+                var beforeHandIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                // お互いの場のカードが1枚ずつ
+                Assert.Single(op.Field.AllCards);
+                Assert.Single(p.Field.AllCards);
+
+                var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var afterHandIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
+                var diffHandIdList = beforeHandIdList.Except(afterHandIdList).ToArray();
+
+                // このカード以外のすべてのクリーチャーが破壊される
+                Assert.Empty(op.Field.AllCards);
+                Assert.Single(p.Field.AllCards);
+
+                // 破壊した枚数だけ手札を捨てる
+                Assert.Equal(2, diffHandIdList.Length);
+            });
         }
 
         [Fact]
@@ -2131,10 +2212,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task WarStatue()
         {
-            var testCardDef = SampleCards.WarStatue;
+            var testCardDef = SampleCards.VictoryRoad;
             testCardDef.Cost = 0;
 
-            var tokenCardDef = SampleCards.VictoryRoad;
+            var tokenCardDef = SampleCards.VictoryStatue;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, tokenCardDef });
 
@@ -2162,7 +2243,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task VictoryRoad()
         {
-            var testCardDef = SampleCards.VictoryRoad;
+            var testCardDef = SampleCards.VictoryStatue;
             testCardDef.Cost = 0;
             testCardDef.IsToken = false;
 

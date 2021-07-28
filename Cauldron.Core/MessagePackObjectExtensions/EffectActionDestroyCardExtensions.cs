@@ -1,4 +1,6 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -9,21 +11,23 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             var choiceResult = await args.GameMaster.Choice(effectOwnerCard, effectActionDestroyCard.Choice, args);
 
-            var done = false;
+            var deletedCardList = new List<Card>();
             foreach (var card in choiceResult.CardList)
             {
-                await args.GameMaster.DestroyCard(card);
-
-                done = true;
+                var deleted = await args.GameMaster.DestroyCard(card);
+                if (deleted)
+                {
+                    deletedCardList.Add(card);
+                }
             }
 
             if (!string.IsNullOrEmpty(effectActionDestroyCard.Name))
             {
-                var context = new ActionContext(ActionDestroyCardContext: new(choiceResult.CardList));
+                var context = new ActionContext(ActionDestroyCardContext: new(deletedCardList));
                 args.GameMaster.SetActionContext(effectOwnerCard.Id, effectActionDestroyCard.Name, context);
             }
 
-            return (done, args);
+            return (deletedCardList.Any(), args);
         }
     }
 }

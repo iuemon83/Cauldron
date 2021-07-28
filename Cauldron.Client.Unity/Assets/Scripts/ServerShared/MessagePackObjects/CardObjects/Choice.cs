@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -38,13 +39,13 @@ namespace Cauldron.Shared.MessagePackObjects
         /// <summary>
         /// 選択する数
         /// </summary>
-        public int NumPicks { get; }
+        public NumValue NumPicks { get; }
 
-        public Choice(ChoiceSource source, HowValue how = HowValue.All, int numPicks = 1)
+        public Choice(ChoiceSource source, HowValue how = HowValue.All, NumValue numPicks = null)
         {
             this.Source = source;
             this.How = how;
-            this.NumPicks = numPicks;
+            this.NumPicks = numPicks ?? new NumValue(1);
         }
     }
 }

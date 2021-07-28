@@ -340,12 +340,18 @@ namespace Cauldron.Core.Entities
         /// 指定したカードを破壊します。
         /// </summary>
         /// <param name="cardToDestroy"></param>
-        public async ValueTask DestroyCard(Card cardToDestroy)
+        public async ValueTask<bool> DestroyCard(Card cardToDestroy)
         {
             var (exists, player) = this.playerRepository.TryGet(cardToDestroy.OwnerId);
             if (!exists)
             {
                 throw new InvalidOperationException($"player not exists. id={cardToDestroy.OwnerId}");
+            }
+
+            if (cardToDestroy.Zone.ZoneName != ZoneName.Field)
+            {
+                this.logger.LogWarning($"destroy card should be in the field. zone={cardToDestroy.Zone.ZoneName}");
+                return false;
             }
 
             this.logger.LogInformation($"破壊：{cardToDestroy}({player.Name})");
@@ -357,6 +363,8 @@ namespace Cauldron.Core.Entities
             await this.MoveCard(cardToDestroy.Id, moveContext);
 
             await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDestroy, this, SourceCard: cardToDestroy));
+
+            return true;
         }
 
         public async ValueTask ModifyCard(Card card, EffectActionModifyCard effectActionModifyCard, Card effectOwnerCard, EffectEventArgs effectEventArgs)
@@ -1032,8 +1040,11 @@ namespace Cauldron.Core.Entities
 
         public async ValueTask<ChoiceResult> Choice(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
         {
+            var numPicks = await choice.NumPicks.Calculate(effectOwnerCard, eventArgs);
+
             var choiceCandidates = await choice.Source
-                .ChoiceCandidates(effectOwnerCard, eventArgs, this.playerRepository, this.cardRepository, choice.How, choice.NumPicks);
+                .ChoiceCandidates(effectOwnerCard, eventArgs, this.playerRepository,
+                this.cardRepository, choice.How, numPicks);
 
             ChoiceResult All() => new(
                 choiceCandidates.PlayerIdList,
@@ -1042,13 +1053,13 @@ namespace Cauldron.Core.Entities
                 );
 
             async ValueTask<ChoiceResult> Choose()
-                => await this.AskCard(effectOwnerCard.OwnerId, choiceCandidates, choice.NumPicks);
+                => await this.AskCard(effectOwnerCard.OwnerId, choiceCandidates, numPicks);
 
             ChoiceResult Random()
             {
                 var totalCount = choiceCandidates.PlayerIdList.Length + choiceCandidates.CardList.Length + choiceCandidates.CardDefList.Length;
                 var totalIndexList = Enumerable.Range(0, totalCount).ToArray();
-                var pickedIndexList = RandomUtil.RandomPick(totalIndexList, choice.NumPicks);
+                var pickedIndexList = RandomUtil.RandomPick(totalIndexList, numPicks);
 
                 var randomPickedPlayerList = new List<PlayerId>();
                 var randomPickedCardList = new List<Card>();

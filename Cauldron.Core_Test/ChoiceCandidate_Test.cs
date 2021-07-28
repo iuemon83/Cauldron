@@ -28,7 +28,7 @@ namespace Cauldron.Core_Test
                         )
                     }),
                 Choice.HowValue.Random,
-                1);
+                new NumValue(1));
 
             var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 2, 2, 1,
                 effects: new[]
@@ -74,13 +74,15 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
             );
+            var numPicks = await testChoice.NumPicks.Calculate(
+                testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard,
                 new EffectEventArgs(GameEvent.OnBattle, testGameMaster),
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
@@ -159,12 +161,13 @@ namespace Cauldron.Core_Test
                 Array.Empty<CardDef>()
             );
             var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
+            var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, eventargs,
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
@@ -244,12 +247,13 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 new[] { fairy }
             );
+            var numPicks = await testChoice.NumPicks.Calculate(testCard, null);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, null,
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
@@ -281,7 +285,7 @@ namespace Cauldron.Core_Test
                                 TextCondition.CompareValue.Equality
                             ))
                     }),
-                numPicks: 2);
+                numPicks: new NumValue(2));
 
             var testCardDef = SampleCards.Creature(0, "テストクリーチャー", "テストクリーチャー", 1, 1, 1,
                 effects: new[]
@@ -330,12 +334,13 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 new[] { fairy, fairy }
             );
+            var numPicks = await testChoice.NumPicks.Calculate(testCard, null);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, null,
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
@@ -409,12 +414,13 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
             );
+            var numPicks = await testChoice.NumPicks.Calculate(testCard, null);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, null,
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
@@ -485,12 +491,14 @@ namespace Cauldron.Core_Test
                      Array.Empty<Card>(),
                      Array.Empty<CardDef>()
                  );
+                var numPicks = await testChoice.NumPicks.Calculate(
+                    testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
                 var actual = await testChoice.Source.ChoiceCandidates(
                     testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster),
                     testGameMaster.playerRepository,
                     testCardFactory,
                     testChoice.How,
-                    testChoice.NumPicks);
+                    numPicks);
                 TestUtil.AssertChoiceResult(expected, actual);
 
                 // 抽出結果の検証
@@ -511,12 +519,14 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
             );
+            var numPicks = await testChoice.NumPicks.Calculate(
+                testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster),
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
@@ -545,7 +555,7 @@ namespace Cauldron.Core_Test
                         )
                     }),
                 Choice.HowValue.Random,
-                1);
+                new NumValue(1));
             var testCardDef = SampleCards.Artifact(0, "test", "test", false);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
@@ -585,12 +595,13 @@ namespace Cauldron.Core_Test
                  );
 
                 var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
+                var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
                 var actual = await testChoice.Source.ChoiceCandidates(
                     testCard, eventargs,
                     testGameMaster.playerRepository,
                     testCardFactory,
                     testChoice.How,
-                    testChoice.NumPicks);
+                    numPicks);
                 TestUtil.AssertChoiceResult(expected, actual);
 
                 // 抽出結果の検証
@@ -621,7 +632,7 @@ namespace Cauldron.Core_Test
                         )
                     }),
                 Choice.HowValue.Random,
-                1);
+                new NumValue(1));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
@@ -661,12 +672,13 @@ namespace Cauldron.Core_Test
                 Array.Empty<CardDef>()
             );
             var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
+            var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, eventargs,
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
@@ -690,7 +702,7 @@ namespace Cauldron.Core_Test
                         )
                     }),
                 Choice.HowValue.Choose,
-                1);
+                new NumValue(1));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
@@ -733,7 +745,7 @@ namespace Cauldron.Core_Test
 
             // 後攻
             // 効果クリーチャーを出す
-            var (goblinCard3, testcard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard3, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
             {
                 var goblinCard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -749,16 +761,17 @@ namespace Cauldron.Core_Test
                 Array.Empty<CardDef>()
             );
             var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
+            var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
-                testcard, eventargs,
+                testCard, eventargs,
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
-            await testGameMaster.Choice(testcard, testChoice, eventargs);
+            await testGameMaster.Choice(testCard, testChoice, eventargs);
             Assert.True(isCalledAskAction);
         }
 
@@ -779,7 +792,7 @@ namespace Cauldron.Core_Test
                         )
                     }),
                 Choice.HowValue.Choose,
-                1);
+                new NumValue(1));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
             var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
@@ -841,12 +854,13 @@ namespace Cauldron.Core_Test
                 Array.Empty<CardDef>()
             );
             var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
+            var numPicks = await testChoice.NumPicks.Calculate(testcard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testcard, eventargs,
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
@@ -897,12 +911,13 @@ namespace Cauldron.Core_Test
                 new[] { cards.testCard },
                 Array.Empty<CardDef>()
             );
+            var numPicks = await testChoice.NumPicks.Calculate(cards.testCard, null);
             var actual = await testChoice.Source.ChoiceCandidates(
                 cards.testCard, null,
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
@@ -958,12 +973,14 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard },
                 Array.Empty<CardDef>()
             );
+            var numPicks = await testChoice.NumPicks.Calculate(
+                testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster, SourceCard: goblinCard));
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster, SourceCard: goblinCard),
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
-                testChoice.NumPicks);
+                numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト

@@ -8,7 +8,9 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class ChoiceSourceExtensions
     {
-        public static async ValueTask<ChoiceCandidates> ChoiceCandidates(this ChoiceSource choiceSource, Card effectOwnerCard, EffectEventArgs effectEventArgs, PlayerRepository playerRepository, CardRepository cardRepository, Choice.HowValue choiceHow, int numDuplicates)
+        public static async ValueTask<ChoiceCandidates> ChoiceCandidates(this ChoiceSource choiceSource,
+            Card effectOwnerCard, EffectEventArgs effectEventArgs, PlayerRepository playerRepository,
+            CardRepository cardRepository, Choice.HowValue choiceHow, int numDuplicates)
         {
             var playerList = choiceSource
                 .ListMatchedPlayers(effectOwnerCard, effectEventArgs, playerRepository)
@@ -28,7 +30,8 @@ namespace Cauldron.Shared.MessagePackObjects
                 });
             }
 
-            var cardDefList = await choiceSource.ListMatchedCardDefs(effectOwnerCard, effectEventArgs, cardRepository, numDuplicates);
+            var cardDefList = await choiceSource.ListMatchedCardDefs(
+                effectOwnerCard, effectEventArgs, cardRepository, numDuplicates);
 
             return new ChoiceCandidates(
                 playerList,
@@ -53,7 +56,8 @@ namespace Cauldron.Shared.MessagePackObjects
             return matchedList.Values;
         }
 
-        public static async ValueTask<IEnumerable<Card>> ListMatchedCards(this ChoiceSource choiceSource, Card effectOwnerCard, EffectEventArgs eventArgs, CardRepository cardRepository)
+        public static async ValueTask<IEnumerable<Card>> ListMatchedCards(this ChoiceSource choiceSource,
+            Card effectOwnerCard, EffectEventArgs eventArgs, CardRepository cardRepository)
         {
             var mathedCards = new Dictionary<CardId, Card>();
             foreach (var cond in choiceSource.OrCardConditions)
@@ -69,7 +73,8 @@ namespace Cauldron.Shared.MessagePackObjects
             return mathedCards.Values;
         }
 
-        public static async ValueTask<IEnumerable<CardDef>> ListMatchedCardDefs(this ChoiceSource choiceSource, Card effectOwnerCard, EffectEventArgs eventArgs, CardRepository cardRepository, int numDuplicates)
+        public static async ValueTask<IEnumerable<CardDef>> ListMatchedCardDefs(this ChoiceSource choiceSource,
+            Card effectOwnerCard, EffectEventArgs eventArgs, CardRepository cardRepository, int numDuplicates)
         {
             var mathedCards = new Dictionary<CardDefId, CardDef>();
             foreach (var cond in choiceSource.OrCardConditions)
