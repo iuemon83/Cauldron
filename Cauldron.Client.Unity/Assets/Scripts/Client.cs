@@ -209,9 +209,15 @@ public class Client
 
     public async ValueTask<(PlayerId[], CardId[])> ListAttackTargets(CardId cardId)
     {
-        var apiResult = await this.magiconionClient.ListAttackTargets(this.GameId, cardId);
+        var (status, (pList, cList)) = await this.magiconionClient.ListAttackTargets(this.GameId, cardId);
 
-        return apiResult.Item2;
+        if (status != GameMasterStatusCode.OK)
+        {
+            this.LogError(status.ToString());
+            return (Array.Empty<PlayerId>(), Array.Empty<CardId>());
+        }
+
+        return (pList, cList);
     }
 
     public async ValueTask AttackToOpponentPlayer(CardId attackCardId)
