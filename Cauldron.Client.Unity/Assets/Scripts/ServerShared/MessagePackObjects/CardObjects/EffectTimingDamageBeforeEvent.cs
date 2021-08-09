@@ -36,15 +36,15 @@ namespace Cauldron.Shared.MessagePackObjects
             Any,
 
             /// <summary>
-            /// ダメージを与える
+            /// ダメージを与える側
             /// </summary>
-            [DisplayText("ダメージを与える")]
+            [DisplayText("ダメージを与える側")]
             DamageSource,
 
             /// <summary>
-            /// ダメージを受ける
+            /// ダメージを受ける側
             /// </summary>
-            [DisplayText("ダメージを受ける")]
+            [DisplayText("ダメージを受ける側")]
             Take,
         }
 

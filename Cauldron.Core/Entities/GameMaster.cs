@@ -886,15 +886,29 @@ namespace Cauldron.Core.Entities
                 attackCard.Abilities.Remove(CreatureAbility.Stealth);
             }
 
+            // 戦闘前のイベント
+            var newArgs = await this.effectManager.DoEffect(
+                new EffectEventArgs(GameEvent.OnAttackBefore, this, SourceCard: attackCard,
+                    BattleContext: new(attackCard, null, damagePlayer)));
+
+            // 攻撃カードが場から離れていたら戦闘しない
+            if (newArgs.BattleContext.AttackCard.Zone.ZoneName != ZoneName.Field)
+            {
+                return GameMasterStatusCode.OK;
+            }
+
             var damageContext = new DamageContext(
-                DamageSourceCard: attackCard,
-                GuardPlayer: damagePlayer,
-                Value: attackCard.Power,
+                DamageSourceCard: newArgs.BattleContext.AttackCard,
+                GuardPlayer: newArgs.BattleContext.GuardPlayer,
+                Value: newArgs.BattleContext.AttackCard.Power,
                 IsBattle: true
             );
             await this.HitPlayer(damageContext);
 
             attackCard.NumAttacksInTurn++;
+
+            // 戦闘後のイベント
+            await this.effectManager.DoEffect(newArgs with { GameEvent = GameEvent.OnAttack });
 
             return GameMasterStatusCode.OK;
         }
@@ -967,25 +981,39 @@ namespace Cauldron.Core.Entities
                 attackCard.Abilities.Remove(CreatureAbility.Stealth);
             }
 
-            // お互いにダメージを受ける
-            var damageContext = new DamageContext(
-                DamageSourceCard: attackCard,
-                GuardCard: guardCard,
-                Value: attackCard.Power,
-                IsBattle: true
-            );
-            await this.HitCreature(damageContext);
+            // 戦闘前のイベント
+            var newArgs = await this.effectManager.DoEffect(
+                new EffectEventArgs(GameEvent.OnAttackBefore, this, SourceCard: attackCard,
+                    BattleContext: new(attackCard, guardCard, null)));
+
+            // どちらかが場から離れていたらダメージ計算しない
+            if (newArgs.BattleContext.AttackCard.Zone.ZoneName == ZoneName.Field
+                && newArgs.BattleContext.GuardCard.Zone.ZoneName == ZoneName.Field)
+            {
+
+                // お互いにダメージを受ける
+                var damageContext = new DamageContext(
+                    DamageSourceCard: newArgs.BattleContext.AttackCard,
+                    GuardCard: newArgs.BattleContext.GuardCard,
+                    Value: newArgs.BattleContext.AttackCard.Power,
+                    IsBattle: true
+                );
+                await this.HitCreature(damageContext);
+
+                // 反撃ダメージは戦闘イベントとして扱わない
+                var damageContext2 = new DamageContext(
+                    DamageSourceCard: newArgs.BattleContext.GuardCard,
+                    GuardCard: newArgs.BattleContext.AttackCard,
+                    Value: newArgs.BattleContext.GuardCard.Power,
+                    IsBattle: false
+                );
+                await this.HitCreature(damageContext2);
+            }
 
             attackCard.NumAttacksInTurn++;
 
-            // 反撃ダメージは戦闘イベントとして扱わない
-            var damageContext2 = new DamageContext(
-                DamageSourceCard: guardCard,
-                GuardCard: attackCard,
-                Value: guardCard.Power,
-                IsBattle: false
-            );
-            await this.HitCreature(damageContext2);
+            // 戦闘後のイベント
+            await this.effectManager.DoEffect(newArgs with { GameEvent = GameEvent.OnAttack });
 
             return GameMasterStatusCode.OK;
         }

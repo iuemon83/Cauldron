@@ -23,7 +23,8 @@ namespace Cauldron.Shared.MessagePackObjects
             return (done, newArgs);
         }
 
-        public static async ValueTask<(bool, EffectEventArgs)> DoIfMatched(this CardEffect cardEffect, Card effectOwnerCard, EffectEventArgs args)
+        public static async ValueTask<(bool, EffectEventArgs)> DoIfMatched(this CardEffect cardEffect,
+            Card effectOwnerCard, EffectEventArgs args)
         {
             if (!await cardEffect.Condition.IsMatch(effectOwnerCard, args)) return (false, args);
 

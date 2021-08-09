@@ -88,6 +88,17 @@ namespace Cauldron.Core_Test
                 SampleCards.VictoryRoad,
                 SampleCards.VictoryStatue,
                 SampleCards.GoblinCaptureJar,
+                SampleCards.TwinGoblin,
+                SampleCards.SlowGoblin,
+                SampleCards.DoubleStrikeGoblin,
+                SampleCards.Faceless,
+                SampleCards.Prophet,
+                SampleCards.Psycho,
+                SampleCards.Nightmare,
+                SampleCards.Disaster,
+                SampleCards.Gnoll,
+                SampleCards.Sealed,
+                SampleCards.Virus,
             });
 
             var actual = JsonConverter.Serialize(test);

@@ -20,6 +20,10 @@ namespace Cauldron.Shared.MessagePackObjects
                     ?? ValueTask.FromResult(false)),
                 GameEvent.OnDamage => await (effectTiming.DamageAfter?.IsMatch(effectOwnerCard, eventArgs)
                     ?? ValueTask.FromResult(false)),
+                GameEvent.OnAttackBefore => await (effectTiming.AttackBefore?.IsMatch(effectOwnerCard, eventArgs)
+                    ?? ValueTask.FromResult(false)),
+                GameEvent.OnAttack => await (effectTiming.AttackAfter?.IsMatch(effectOwnerCard, eventArgs)
+                    ?? ValueTask.FromResult(false)),
                 GameEvent.OnMoveCard => effectTiming.MoveCard?.IsMatch(effectOwnerCard, eventArgs) ?? false,
                 _ => false,
             };
@@ -27,7 +31,15 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public static GameEvent ToGameEvent(this EffectTiming effectTiming)
         {
-            if (effectTiming.DamageAfter != null)
+            if (effectTiming.AttackAfter != null)
+            {
+                return GameEvent.OnAttack;
+            }
+            else if (effectTiming.AttackBefore != null)
+            {
+                return GameEvent.OnAttackBefore;
+            }
+            else if (effectTiming.DamageAfter != null)
             {
                 return GameEvent.OnDamage;
             }

@@ -5,22 +5,23 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectTimingDamageBeforeEventExtensions
     {
-        public static async ValueTask<bool> IsMatch(this EffectTimingDamageBeforeEvent effectTimingDamageBeforeEvent, Card effectOwnerCard, EffectEventArgs eventArgs)
+        public static async ValueTask<bool> IsMatch(this EffectTimingDamageBeforeEvent _this,
+            Card effectOwnerCard, EffectEventArgs eventArgs)
         {
             if (eventArgs.DamageContext == null)
             {
                 return false;
             }
 
-            if (effectTimingDamageBeforeEvent.Type == EffectTimingDamageBeforeEvent.TypeValue.Battle
+            if (_this.Type == EffectTimingDamageBeforeEvent.TypeValue.Battle
                 && !eventArgs.DamageContext.IsBattle)
             {
                 return false;
             }
 
-            var playerMatch = PlayerIsMatch(effectTimingDamageBeforeEvent, effectOwnerCard, eventArgs);
+            var playerMatch = PlayerIsMatch(_this, effectOwnerCard, eventArgs);
 
-            var cardMatch = await CardIsMatch(effectTimingDamageBeforeEvent, effectOwnerCard, eventArgs);
+            var cardMatch = await CardIsMatch(_this, effectOwnerCard, eventArgs);
 
             return playerMatch || cardMatch;
 

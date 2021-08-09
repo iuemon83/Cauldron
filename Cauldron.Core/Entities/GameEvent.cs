@@ -23,14 +23,14 @@
         OnDamage,
 
         /// <summary>
-        /// 戦闘前
+        /// 攻撃前
         /// </summary>
-        OnBattleBefore,
+        OnAttackBefore,
 
         /// <summary>
-        /// 戦闘後
+        /// 攻撃後
         /// </summary>
-        OnBattle,
+        OnAttack,
 
         /// <summary>
         /// カードのドロー時

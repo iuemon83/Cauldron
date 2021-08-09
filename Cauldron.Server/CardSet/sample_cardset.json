@@ -1030,21 +1030,6 @@
                                 "value": {
                                     "operator": "sub",
                                     "value": { "pureValue": 2 }
-                                },
-                                "choice": {
-                                    "source": {
-                                        "how": "all",
-                                        "numPicks": { "pureValue": 1 },
-                                        "orPlayerConditions": [],
-                                        "orCardConditions": [
-                                            {
-                                                "contextCondition": "eventSource",
-                                                "ownerCondition": "any"
-                                            }
-                                        ]
-                                    },
-                                    "how": "all",
-                                    "numPicks": { "pureValue": 1 }
                                 }
                             }
                         }
@@ -1080,21 +1065,6 @@
                                 "value": {
                                     "operator": "add",
                                     "value": { "pureValue": 1 }
-                                },
-                                "choice": {
-                                    "source": {
-                                        "how": "all",
-                                        "numPicks": { "pureValue": 1 },
-                                        "orPlayerConditions": [],
-                                        "orCardConditions": [
-                                            {
-                                                "contextCondition": "eventSource",
-                                                "ownerCondition": "any"
-                                            }
-                                        ]
-                                    },
-                                    "how": "all",
-                                    "numPicks": { "pureValue": 1 }
                                 }
                             }
                         }
@@ -2737,21 +2707,6 @@
                                                     "value": {
                                                         "operator": "replace",
                                                         "value": { "pureValue": 0 }
-                                                    },
-                                                    "choice": {
-                                                        "source": {
-                                                            "how": "all",
-                                                            "numPicks": { "pureValue": 1 },
-                                                            "orPlayerConditions": [],
-                                                            "orCardConditions": [
-                                                                {
-                                                                    "contextCondition": "this",
-                                                                    "ownerCondition": "any"
-                                                                }
-                                                            ]
-                                                        },
-                                                        "how": "all",
-                                                        "numPicks": { "pureValue": 1 }
                                                     }
                                                 }
                                             }
@@ -3063,21 +3018,6 @@
                                 "value": {
                                     "operator": "sub",
                                     "value": { "pureValue": 1 }
-                                },
-                                "choice": {
-                                    "source": {
-                                        "how": "all",
-                                        "numPicks": { "pureValue": 1 },
-                                        "orPlayerConditions": [],
-                                        "orCardConditions": [
-                                            {
-                                                "contextCondition": "eventSource",
-                                                "ownerCondition": "any"
-                                            }
-                                        ]
-                                    },
-                                    "how": "all",
-                                    "numPicks": { "pureValue": 1 }
                                 }
                             }
                         },
@@ -3148,26 +3088,6 @@
                                 "value": {
                                     "operator": "sub",
                                     "value": { "pureValue": 1 }
-                                },
-                                "choice": {
-                                    "source": {
-                                        "how": "all",
-                                        "numPicks": { "pureValue": 1 },
-                                        "orPlayerConditions": [
-                                            {
-                                                "context": "eventSource",
-                                                "type": "any"
-                                            }
-                                        ],
-                                        "orCardConditions": [
-                                            {
-                                                "contextCondition": "eventSource",
-                                                "ownerCondition": "any"
-                                            }
-                                        ]
-                                    },
-                                    "how": "all",
-                                    "numPicks": { "pureValue": 1 }
                                 }
                             }
                         },
@@ -3693,6 +3613,555 @@
                                                     "value": { "pureValue": [ "youField", "opponentField" ] },
                                                     "not": false
                                                 },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 2,
+            "name": "双子のゴブリン",
+            "flavorText": "",
+            "isToken": false,
+            "type": "creature",
+            "power": 1,
+            "toughness": 1,
+            "abilities": [],
+            "effects": [],
+            "numAttacksLimitInTurn": 2
+        },
+        {
+            "cost": 4,
+            "name": "遅いゴブリン",
+            "flavorText": "",
+            "isToken": false,
+            "type": "creature",
+            "power": 7,
+            "toughness": 4,
+            "abilities": [],
+            "effects": [],
+            "numTurnsToCanAttack": 2
+        },
+        {
+            "cost": 3,
+            "name": "二刀流のゴブリン",
+            "flavorText": "このカードの戦闘時、戦闘開始前に相手クリーチャーに、Xのダメージを与える。X=このカードの攻撃力",
+            "isToken": false,
+            "type": "creature",
+            "power": 2,
+            "toughness": 1,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": {
+                            "timing": {
+                                "attackBefore": {
+                                    "attackCardCondition": {
+                                        "contextCondition": "this",
+                                        "ownerCondition": "any"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "damage": {
+                                "value": {
+                                    "numValueCalculator": {
+                                        "type": "cardPower",
+                                        "cardsChoice": {
+                                            "source": {
+                                                "how": "all",
+                                                "numPicks": { "pureValue": 1 },
+                                                "orPlayerConditions": [],
+                                                "orCardConditions": [
+                                                    {
+                                                        "contextCondition": "this",
+                                                        "ownerCondition": "any"
+                                                    }
+                                                ]
+                                            },
+                                            "how": "all",
+                                            "numPicks": { "pureValue": 1 }
+                                        }
+                                    }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "guard",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": {
+                            "timing": {
+                                "attackBefore": {
+                                    "guardCardCondition": {
+                                        "contextCondition": "this",
+                                        "ownerCondition": "any"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "damage": {
+                                "value": {
+                                    "numValueCalculator": {
+                                        "type": "cardPower",
+                                        "cardsChoice": {
+                                            "source": {
+                                                "how": "all",
+                                                "numPicks": { "pureValue": 1 },
+                                                "orPlayerConditions": [],
+                                                "orCardConditions": [
+                                                    {
+                                                        "contextCondition": "this",
+                                                        "ownerCondition": "any"
+                                                    }
+                                                ]
+                                            },
+                                            "how": "all",
+                                            "numPicks": { "pureValue": 1 }
+                                        }
+                                    }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "attack",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 4,
+            "name": "顔なし",
+            "flavorText": "あなたの次のターン開始時、あなたのMPは2減少する。",
+            "isToken": false,
+            "type": "creature",
+            "power": 7,
+            "toughness": 7,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "none",
+                        "when": { "timing": { "startTurn": { "source": "you" } } },
+                        "while": {
+                            "timing": { "startTurn": { "source": "you" } },
+                            "skip": 0,
+                            "take": 1
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyPlayer": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [
+                                            {
+                                                "context": "any",
+                                                "type": "you"
+                                            }
+                                        ],
+                                        "orCardConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "playerModifier": {
+                                    "mp": {
+                                        "operator": "sub",
+                                        "value": { "pureValue": 2 }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 5,
+            "name": "預言者",
+            "flavorText": "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を7にする",
+            "isToken": false,
+            "type": "creature",
+            "power": 0,
+            "toughness": 7,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "startTurn": { "source": "you" } } }
+                    },
+                    "actions": [
+                        {
+                            "modifyCard": {
+                                "power": {
+                                    "operator": "replace",
+                                    "value": { "pureValue": 7 }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 5,
+            "name": "サイコ",
+            "flavorText": "このクリーチャーがダメージを受けるとき、1度だけそのダメージを0にする。",
+            "isToken": false,
+            "type": "creature",
+            "power": 3,
+            "toughness": 4,
+            "abilities": [ "cover" ],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": {
+                            "timing": {
+                                "damageBefore": {
+                                    "type": "any",
+                                    "source": "take",
+                                    "cardCondition": {
+                                        "contextCondition": "this",
+                                        "ownerCondition": "any"
+                                    }
+                                }
+                            }
+                        },
+                        "while": {
+                            "timing": {
+                                "damageBefore": {
+                                    "type": "any",
+                                    "source": "take",
+                                    "cardCondition": {
+                                        "contextCondition": "this",
+                                        "ownerCondition": "any"
+                                    }
+                                }
+                            },
+                            "skip": 0,
+                            "take": 1
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyDamage": {
+                                "value": {
+                                    "operator": "replace",
+                                    "value": { "pureValue": 0 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 6,
+            "name": "悪夢",
+            "flavorText": "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を2倍にする",
+            "isToken": false,
+            "type": "creature",
+            "power": 2,
+            "toughness": 8,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "startTurn": { "source": "you" } } }
+                    },
+                    "actions": [
+                        {
+                            "modifyCard": {
+                                "power": {
+                                    "operator": "multi",
+                                    "value": { "pureValue": 2 }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 7,
+            "name": "災い",
+            "flavorText": "このクリーチャーがダメージを受けるたび、「ノール」1体をあなたの場に追加する。",
+            "isToken": false,
+            "type": "creature",
+            "power": 6,
+            "toughness": 6,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": {
+                            "timing": {
+                                "damageAfter": {
+                                    "type": "any",
+                                    "source": "take",
+                                    "cardCondition": {
+                                        "contextCondition": "this",
+                                        "ownerCondition": "any"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "cardSetCondition": { "type": "this" },
+                                                "nameCondition": {
+                                                    "value": { "pureValue": "ノール" },
+                                                    "compare": "equality",
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 1
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 7,
+            "name": "ノール",
+            "flavorText": "",
+            "isToken": true,
+            "type": "creature",
+            "power": 7,
+            "toughness": 7,
+            "abilities": [ "cover" ],
+            "effects": []
+        },
+        {
+            "cost": 0,
+            "name": "封印",
+            "flavorText": "選択したクリーチャー1体を「封印」状態にする",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "modifyCard": {
+                                "ability": {
+                                    "operator": "add",
+                                    "value": "sealed"
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "typeCondition": {
+                                                    "value": [ "creature" ],
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youField", "opponentField" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "choose",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 5,
+            "name": "ウイルス",
+            "flavorText": "相手の場と相手の手札にあるパワー4以上のクリーチャーをすべて墓地に移動する。3回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "destroyCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "powerCondition": {
+                                                    "value": 4,
+                                                    "compare": "greaterThan",
+                                                    "not": false
+                                                },
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "opponentField", "opponentHand" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ]
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "none",
+                        "when": {
+                            "timing": {
+                                "moveCard": {
+                                    "source": "other",
+                                    "from": "opponentDeck",
+                                    "to": "opponentHand"
+                                }
+                            }
+                        },
+                        "while": {
+                            "timing": { "endTurn": { "source": "opponent" } },
+                            "skip": 0,
+                            "take": 3
+                        }
+                    },
+                    "actions": [
+                        {
+                            "destroyCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "eventSource",
                                                 "ownerCondition": "any"
                                             }
                                         ]

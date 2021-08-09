@@ -12,9 +12,5 @@ namespace Cauldron.Core.Entities.Effect
                 ActionContextCardsOfDestroyCard.TypeValue.Destroyed => this.DestroyedCards,
                 _ => Array.Empty<Card>()
             };
-
-        public int GetNum() => 0;
-
-        public string GetText() => "";
     }
 }

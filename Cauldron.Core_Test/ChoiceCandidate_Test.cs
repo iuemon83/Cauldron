@@ -75,10 +75,10 @@ namespace Cauldron.Core_Test
                 Array.Empty<CardDef>()
             );
             var numPicks = await testChoice.NumPicks.Calculate(
-                testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
+                testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard,
-                new EffectEventArgs(GameEvent.OnBattle, testGameMaster),
+                new EffectEventArgs(GameEvent.OnAttack, testGameMaster),
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
@@ -86,7 +86,8 @@ namespace Cauldron.Core_Test
             TestUtil.AssertChoiceResult(expected, actual);
 
             // íäèoåãâ ÇÃåüèÿ
-            var actual2 = await testGameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
+            var actual2 = await testGameMaster.Choice(testCard, testChoice,
+                new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
             TestUtil.AssertCollection(
                 Array.Empty<PlayerId>(),
                 actual.PlayerIdList);
@@ -160,7 +161,7 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
             );
-            var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
+            var eventargs = new EffectEventArgs(GameEvent.OnAttack, testGameMaster);
             var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, eventargs,
@@ -492,9 +493,9 @@ namespace Cauldron.Core_Test
                      Array.Empty<CardDef>()
                  );
                 var numPicks = await testChoice.NumPicks.Calculate(
-                    testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
+                    testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
                 var actual = await testChoice.Source.ChoiceCandidates(
-                    testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster),
+                    testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster),
                     testGameMaster.playerRepository,
                     testCardFactory,
                     testChoice.How,
@@ -507,7 +508,7 @@ namespace Cauldron.Core_Test
                      Array.Empty<Card>(),
                      Array.Empty<CardDef>()
                  );
-                var actual2 = await testGameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
+                var actual2 = await testGameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
                 TestUtil.AssertChoiceResult(expected2, actual2);
 
                 return (goblinCard, testCard);
@@ -520,9 +521,9 @@ namespace Cauldron.Core_Test
                 Array.Empty<CardDef>()
             );
             var numPicks = await testChoice.NumPicks.Calculate(
-                testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
+                testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
             var actual = await testChoice.Source.ChoiceCandidates(
-                testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster),
+                testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster),
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
@@ -535,7 +536,7 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnBattle, testGameMaster));
+            var actual2 = await testGameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -594,7 +595,7 @@ namespace Cauldron.Core_Test
                      Array.Empty<CardDef>()
                  );
 
-                var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
+                var eventargs = new EffectEventArgs(GameEvent.OnAttack, testGameMaster);
                 var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
                 var actual = await testChoice.Source.ChoiceCandidates(
                     testCard, eventargs,
@@ -671,7 +672,7 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
             );
-            var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
+            var eventargs = new EffectEventArgs(GameEvent.OnAttack, testGameMaster);
             var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, eventargs,
@@ -760,7 +761,7 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
             );
-            var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
+            var eventargs = new EffectEventArgs(GameEvent.OnAttack, testGameMaster);
             var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, eventargs,
@@ -853,7 +854,7 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard3, goblinCard4 },
                 Array.Empty<CardDef>()
             );
-            var eventargs = new EffectEventArgs(GameEvent.OnBattle, testGameMaster);
+            var eventargs = new EffectEventArgs(GameEvent.OnAttack, testGameMaster);
             var numPicks = await testChoice.NumPicks.Calculate(testcard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testcard, eventargs,
@@ -974,9 +975,9 @@ namespace Cauldron.Core_Test
                 Array.Empty<CardDef>()
             );
             var numPicks = await testChoice.NumPicks.Calculate(
-                testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster, SourceCard: goblinCard));
+                testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster, SourceCard: goblinCard));
             var actual = await testChoice.Source.ChoiceCandidates(
-                testCard, new EffectEventArgs(GameEvent.OnBattle, testGameMaster, SourceCard: goblinCard),
+                testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster, SourceCard: goblinCard),
                 testGameMaster.playerRepository,
                 testCardFactory,
                 testChoice.How,
@@ -990,7 +991,7 @@ namespace Cauldron.Core_Test
                 Array.Empty<CardDef>()
             );
             var actual2 = await testGameMaster.Choice(testCard, testChoice,
-                new EffectEventArgs(GameEvent.OnBattle, testGameMaster, SourceCard: goblinCard));
+                new EffectEventArgs(GameEvent.OnAttack, testGameMaster, SourceCard: goblinCard));
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
     }

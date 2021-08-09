@@ -74,6 +74,76 @@ namespace Cauldron.Core_Test
             => SampleCards.Creature(2, "盾持ちゴブリン", "盾になる", 1, 2,
                 abilities: new[] { CreatureAbility.Cover });
 
+        public static CardDef TwinGoblin
+            => SampleCards.Creature(2, "双子のゴブリン", "", 1, 1,
+                numAttacksInTurn: 2);
+
+        public static CardDef SlowGoblin
+            => SampleCards.Creature(4, "遅いゴブリン", "", 7, 4,
+                numTurnsToCanAttack: 2);
+
+        public static CardDef DoubleStrikeGoblin
+            => SampleCards.Creature(3, "二刀流のゴブリン",
+                "このカードの戦闘時、戦闘開始前に相手クリーチャーに、Xのダメージを与える。X=このカードの攻撃力",
+                2, 1,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                AttackBefore: new(
+                                    AttackCardCondition: new(
+                                        CardCondition.ContextConditionValue.This))))),
+                        new[]{
+                            new EffectAction(
+                                Damage: new(
+                                    new NumValue(
+                                        NumValueCalculator: new(
+                                            NumValueCalculator.ValueType.CardPower,
+                                            new Choice(
+                                                new ChoiceSource(
+                                                    orCardConditions: new[]
+                                                    {
+                                                        new CardCondition(
+                                                            CardCondition.ContextConditionValue.This)
+                                                    })))),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.Guard)
+                                            }))))
+                        }),
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                AttackBefore: new(
+                                    GuardCardCondition: new(
+                                        CardCondition.ContextConditionValue.This))))),
+                        new[]{
+                            new EffectAction(
+                                Damage: new(
+                                    new NumValue(
+                                        NumValueCalculator: new(
+                                            NumValueCalculator.ValueType.CardPower,
+                                            new Choice(
+                                                new ChoiceSource(
+                                                    orCardConditions: new[]
+                                                    {
+                                                        new CardCondition(
+                                                            CardCondition.ContextConditionValue.This)
+                                                    })))),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.Attack)
+                                            }))))
+                        })
+                });
+
         public static CardDef MagicShieldGoblin
             => SampleCards.Creature(2, "魔法の盾持ちゴブリン", "このカードが攻撃されたとき、攻撃したカードを相手の手札に移動する。",
                 1, 2, abilities: new[] { CreatureAbility.Cover },
@@ -558,7 +628,8 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef BraveGoblin
-            => SampleCards.Creature(4, "ゴブリンの勇者", "自分が受けるダメージを2軽減する。自分の場の他のクリーチャーカードが戦闘で与えるダメージを1増加する。",
+            => SampleCards.Creature(4, "ゴブリンの勇者",
+                "自分が受けるダメージを2軽減する。自分の場の他のクリーチャーカードが戦闘で与えるダメージを1増加する。",
                 2, 2,
                 effects: new[]
                 {
@@ -581,15 +652,7 @@ namespace Cauldron.Core_Test
                                     new NumValueModifier(
                                         NumValueModifier.OperatorValue.Sub,
                                         new NumValue(2)
-                                    ),
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition(
-                                                    ContextCondition: CardCondition.ContextConditionValue.EventSource
-                                                )
-                                            }))
+                                    )
                                 ))
                         }
                     ),
@@ -615,19 +678,70 @@ namespace Cauldron.Core_Test
                                     new NumValueModifier(
                                         NumValueModifier.OperatorValue.Add,
                                         new NumValue(1)
-                                    ),
+                                    )
+                                )
+                            )
+                        }
+                    )
+                });
+
+        public static CardDef Faceless
+            => SampleCards.Creature(4, "顔なし",
+                "あなたの次のターン開始時、あなたのMPは2減少する。",
+                7, 7,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.None,
+                            new EffectWhen(new EffectTiming(
+                                StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You))),
+                            While: new(new(
+                                StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You)),
+                                0, 1)
+                            ),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyPlayer: new(
+                                    new Choice(new ChoiceSource(
+                                        orPlayerConditions: new[]
+                                        {
+                                            new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                        })),
+                                    new PlayerModifier(
+                                        Mp: new NumValueModifier(
+                                            NumValueModifier.OperatorValue.Sub,
+                                            new NumValue(2))
+                                        ))
+                            )
+                        }
+                    )
+                });
+
+        public static CardDef Prophet
+            => SampleCards.Creature(5, "預言者",
+                "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を7にする",
+                0, 7,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You)))),
+                        new[]{
+                            new EffectAction(
+                                ModifyCard: new(
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    ContextCondition: CardCondition.ContextConditionValue.EventSource
-                                                )
-                                            }))
-                                )
-                            )
-                        }
-                    )
+                                                    ContextCondition: CardCondition.ContextConditionValue.This)
+                                            })),
+                                    Power: new(
+                                        NumValueModifier.OperatorValue.Replace,
+                                        new NumValue(7))))
+                        }),
                 });
 
         public static CardDef MagicDragon
@@ -658,8 +772,8 @@ namespace Cauldron.Core_Test
                                 ModifyDamage: new(
                                     new NumValueModifier(
                                         NumValueModifier.OperatorValue.Add,
-                                        new NumValue(1)),
-                                    default))
+                                        new NumValue(1))
+                                    ))
                         }),
                 });
 
@@ -723,6 +837,64 @@ namespace Cauldron.Core_Test
                                 ))
                         }
                     )
+                });
+
+        public static CardDef Psycho
+            => SampleCards.Creature(5, "サイコ",
+                "このクリーチャーがダメージを受けるとき、1度だけそのダメージを0にする。",
+                3, 4,
+                abilities: new[] { CreatureAbility.Cover },
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                DamageBefore: new(
+                                    Source: EffectTimingDamageAfterEvent.SourceValue.Take,
+                                    CardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This)
+                                    ))),
+                            While: new(new EffectTiming(
+                                DamageBefore: new(
+                                    Source: EffectTimingDamageAfterEvent.SourceValue.Take,
+                                    CardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This)
+                                    )),
+                                0, 1)),
+                        new[]{
+                            new EffectAction(
+                                ModifyDamage: new(
+                                    new NumValueModifier(
+                                        NumValueModifier.OperatorValue.Replace,
+                                        new NumValue(0)))
+                                )
+                        })
+                });
+
+        public static CardDef Nightmare
+            => SampleCards.Creature(6, "悪夢",
+                "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を2倍にする",
+                2, 8,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You)))),
+                        new[]{
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ContextCondition: CardCondition.ContextConditionValue.This)
+                                            })),
+                                    Power: new(
+                                        NumValueModifier.OperatorValue.Multi,
+                                        new NumValue(2))))
+                        }),
                 });
 
         public static CardDef RiderGoblin
@@ -875,6 +1047,44 @@ namespace Cauldron.Core_Test
                                     ))
                         })
                 });
+
+        public static CardDef Disaster
+            => SampleCards.Creature(7, "災い",
+                "このクリーチャーがダメージを受けるたび、「ノール」1体をあなたの場に追加する。", 6, 6,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                DamageAfter: new(
+                                    Source: EffectTimingDamageAfterEvent.SourceValue.Take,
+                                    CardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This)
+                                    )))),
+                        new[]{
+                            new EffectAction(
+                                AddCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.CardPool })),
+                                                    CardSetCondition: new(CardSetCondition.TypeValue.This),
+                                                    NameCondition: new(
+                                                        new TextValue(Gnoll.Name),
+                                                        TextCondition.CompareValue.Equality)
+                                                )
+                                            })),
+                                    new ZoneValue(new[]{ ZonePrettyName.YouField }),
+                                    NumOfAddCards: 1
+                                    ))
+                        })
+                });
+
+        public static CardDef Gnoll
+            => SampleCards.Creature(7, "ノール", "", 7, 7, isToken: true,
+                abilities: new[] { CreatureAbility.Cover });
 
         public static CardDef Firelord
             => SampleCards.Creature(8, "炎の王", "このカードが場にあるとき、あなたのターン終了時に、ランダムな敵クリーチャー1体か敵プレイヤーに8ダメージを与える。",
@@ -1345,6 +1555,39 @@ namespace Cauldron.Core_Test
                         })
                 });
 
+        public static CardDef Sealed
+            => SampleCards.Sorcery(0, "封印", "選択したクリーチャー1体を「封印」状態にする",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{
+                                                        ZonePrettyName.YouField,
+                                                        ZonePrettyName.OpponentField,
+                                                    })),
+                                                    TypeCondition: new(
+                                                        new[]{ CardType.Creature })
+                                                ),
+                                            }),
+                                        how: Choice.HowValue.Choose,
+                                        numPicks: new NumValue(1)
+                                        ),
+                                    Ability: new(
+                                        CreatureAbilityModifier.OperatorValue.Add,
+                                        CreatureAbility.Sealed)
+                                    ))
+                        })
+                });
+
         public static CardDef Parasite
             => SampleCards.Creature(1, "寄生虫", "このカードがデッキから手札に移動したとき、このカードをあなたの場に出す。このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
                 1, 1, isToken: true,
@@ -1632,15 +1875,7 @@ namespace Cauldron.Core_Test
                                                     ModifyDamage: new(
                                                         new NumValueModifier(
                                                             NumValueModifier.OperatorValue.Replace,
-                                                            new NumValue(0)),
-                                                        new Choice(
-                                                            new ChoiceSource(
-                                                                orCardConditions: new[]
-                                                                {
-                                                                    new CardCondition(
-                                                                        ContextCondition: CardCondition.ContextConditionValue.This
-                                                                    )
-                                                                }))
+                                                            new NumValue(0))
                                                     )
                                                 )
                                             })
@@ -1947,6 +2182,59 @@ namespace Cauldron.Core_Test
                     )
                 });
 
+        public static CardDef Virus
+            => SampleCards.Sorcery(5, "ウイルス",
+                "相手の場と相手の手札にあるパワー4以上のクリーチャーをすべて墓地に移動する。3回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                DestroyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    PowerCondition: new NumCondition(
+                                                        4, NumCondition.CompareValue.GreaterThan),
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]{
+                                                            ZonePrettyName.OpponentField,
+                                                            ZonePrettyName.OpponentHand
+                                                            })))
+                                            })))
+                            )
+                        }
+                    ),
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.None,
+                            new EffectWhen(new EffectTiming(
+                                MoveCard: new(
+                                    EffectTimingMoveCardEvent.SourceValue.Other,
+                                    ZonePrettyName.OpponentDeck,
+                                    ZonePrettyName.OpponentHand))),
+                            While: new(new EffectTiming(
+                                EndTurn: new(EffectTimingEndTurnEvent.SourceValue.Opponent)),
+                                0, 3)),
+                        new[]
+                        {
+                            new EffectAction(
+                                DestroyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.EventSource)
+                                            })))
+                            )
+                        }
+                    )
+                });
+
         public static CardDef OldShield
             => SampleCards.Artifact(1, "ぼろの盾", "あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
                 effects: new[]
@@ -1969,15 +2257,7 @@ namespace Cauldron.Core_Test
                                     new NumValueModifier(
                                         NumValueModifier.OperatorValue.Sub,
                                         new NumValue(1)
-                                    ),
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition(
-                                                    ContextCondition: CardCondition.ContextConditionValue.EventSource
-                                                )
-                                            }))
+                                    )
                                 )
                             ),
                             new EffectAction(
@@ -2022,20 +2302,7 @@ namespace Cauldron.Core_Test
                                     new NumValueModifier(
                                         NumValueModifier.OperatorValue.Sub,
                                         new NumValue(1)
-                                    ),
-                                    new Choice(new ChoiceSource(
-                                        orPlayerConditions: new[]
-                                        {
-                                            new PlayerCondition(
-                                                Context: PlayerCondition.ContextValue.EventSource
-                                            )
-                                        },
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition(
-                                                ContextCondition: CardCondition.ContextConditionValue.EventSource
-                                            )
-                                        }))
+                                    )
                                 )
                             ),
                             new EffectAction(
