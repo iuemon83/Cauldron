@@ -168,6 +168,11 @@ namespace Cauldron.Server.Services
                         this.BroadcastTo(this.room, playerId.Value).OnAddCard(gameContext, message);
                         this._logger.LogInformation($"OnAddCard: {playerId}");
                     },
+                    OnBattle: (playerId, gameContext, message) =>
+                    {
+                        this.BroadcastTo(this.room, playerId.Value).OnBattle(gameContext, message);
+                        this._logger.LogInformation($"OnBattle: {playerId}");
+                    },
                     OnDamage: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnDamage(gameContext, message);

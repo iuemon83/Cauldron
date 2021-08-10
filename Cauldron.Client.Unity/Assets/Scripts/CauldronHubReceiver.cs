@@ -7,40 +7,46 @@ namespace Assets.Scripts
 {
     public class CauldronHubReceiver : ICauldronHubReceiver
     {
-        public IObservable<(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)> OnAddCard => onAddCard;
-        private readonly Subject<(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)> onAddCard
-            = new Subject<(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)>();
-        void ICauldronHubReceiver.OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)
-            => this.onAddCard.OnNext((gameContext, addCardNotifyMessage));
+        public IObservable<(GameContext gameContext, AddCardNotifyMessage message)> OnAddCard => onAddCard;
+        private readonly Subject<(GameContext gameContext, AddCardNotifyMessage message)> onAddCard
+            = new Subject<(GameContext gameContext, AddCardNotifyMessage message)>();
+        void ICauldronHubReceiver.OnAddCard(GameContext gameContext, AddCardNotifyMessage message)
+            => this.onAddCard.OnNext((gameContext, message));
 
         public IObservable<AskMessage> OnAsk => onAsk;
         private readonly Subject<AskMessage> onAsk = new Subject<AskMessage>();
         void ICauldronHubReceiver.OnAsk(AskMessage onAskMessage)
             => this.onAsk.OnNext(onAskMessage);
 
-        public IObservable<(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)> OnDamage => onDamage;
-        private readonly Subject<(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)> onDamage
-            = new Subject<(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)>();
-        void ICauldronHubReceiver.OnDamage(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)
-            => this.onDamage.OnNext((gameContext, damageNotifyMessage));
+        public IObservable<(GameContext gameContext, DamageNotifyMessage message)> OnDamage => onDamage;
+        private readonly Subject<(GameContext gameContext, DamageNotifyMessage message)> onDamage
+            = new Subject<(GameContext gameContext, DamageNotifyMessage message)>();
+        void ICauldronHubReceiver.OnDamage(GameContext gameContext, DamageNotifyMessage message)
+            => this.onDamage.OnNext((gameContext, message));
 
-        public IObservable<(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)> OnModifyCard => onModifyCard;
-        private readonly Subject<(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)> onModifyCard
-            = new Subject<(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)>();
-        void ICauldronHubReceiver.OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)
-            => this.onModifyCard.OnNext((gameContext, modifyCardNotifyMessage));
+        public IObservable<(GameContext gameContext, BattleNotifyMessage message)> OnBattle => onBattle;
+        private readonly Subject<(GameContext gameContext, BattleNotifyMessage message)> onBattle
+            = new Subject<(GameContext gameContext, BattleNotifyMessage message)>();
+        void ICauldronHubReceiver.OnBattle(GameContext gameContext, BattleNotifyMessage message)
+            => this.onBattle.OnNext((gameContext, message));
 
-        public IObservable<(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage)> OnModifyPlayer => onModifyPlayer;
-        private readonly Subject<(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage)> onModifyPlayer
-            = new Subject<(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage)>();
-        void ICauldronHubReceiver.OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage)
-            => this.onModifyPlayer.OnNext((gameContext, modifyPlayerNotifyMessage));
+        public IObservable<(GameContext gameContext, ModifyCardNotifyMessage message)> OnModifyCard => onModifyCard;
+        private readonly Subject<(GameContext gameContext, ModifyCardNotifyMessage message)> onModifyCard
+            = new Subject<(GameContext gameContext, ModifyCardNotifyMessage message)>();
+        void ICauldronHubReceiver.OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage message)
+            => this.onModifyCard.OnNext((gameContext, message));
 
-        public IObservable<(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage)> OnMoveCard => onMoveCard;
-        private readonly Subject<(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage)> onMoveCard
-            = new Subject<(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage)>();
-        void ICauldronHubReceiver.OnMoveCard(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage)
-            => this.onMoveCard.OnNext((gameContext, moveCardNotifyMessage));
+        public IObservable<(GameContext gameContext, ModifyPlayerNotifyMessage message)> OnModifyPlayer => onModifyPlayer;
+        private readonly Subject<(GameContext gameContext, ModifyPlayerNotifyMessage message)> onModifyPlayer
+            = new Subject<(GameContext gameContext, ModifyPlayerNotifyMessage message)>();
+        void ICauldronHubReceiver.OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage message)
+            => this.onModifyPlayer.OnNext((gameContext, message));
+
+        public IObservable<(GameContext gameContext, MoveCardNotifyMessage message)> OnMoveCard => onMoveCard;
+        private readonly Subject<(GameContext gameContext, MoveCardNotifyMessage message)> onMoveCard
+            = new Subject<(GameContext gameContext, MoveCardNotifyMessage message)>();
+        void ICauldronHubReceiver.OnMoveCard(GameContext gameContext, MoveCardNotifyMessage message)
+            => this.onMoveCard.OnNext((gameContext, message));
 
         public IObservable<Unit> OnReady => onReady;
         private readonly Subject<Unit> onReady = new Subject<Unit>();

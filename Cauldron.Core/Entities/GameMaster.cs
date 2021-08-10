@@ -541,10 +541,12 @@ namespace Cauldron.Core.Entities
                     throw new InvalidOperationException();
             }
 
+            var toIndex = -1;
             switch (moveCardContext.To.ZoneName)
             {
                 case ZoneName.Cemetery:
                     toPlayer.Cemetery.Add(card);
+                    toIndex = toPlayer.Cemetery.Count - 1;
                     break;
 
                 case ZoneName.Deck:
@@ -561,6 +563,7 @@ namespace Cauldron.Core.Entities
                     }
 
                     toPlayer.Field.Add(card);
+                    toIndex = toPlayer.Field.Count - 1;
                     break;
 
                 case ZoneName.Hand:
@@ -572,6 +575,7 @@ namespace Cauldron.Core.Entities
                     }
 
                     toPlayer.Hands.Add(card);
+                    toIndex = toPlayer.Hands.Count - 1;
                     break;
 
                 default:
@@ -613,8 +617,8 @@ namespace Cauldron.Core.Entities
                     new MoveCardNotifyMessage(
                         card.Id,
                         moveCardContext.To,
-                        0
-                    ));
+                        toIndex
+                        ));
 
                 var isPublic = moveCardContext.From.IsPublic()
                     || moveCardContext.To.IsPublic();
@@ -626,7 +630,7 @@ namespace Cauldron.Core.Entities
                     new MoveCardNotifyMessage(
                         isPublic ? card.Id : default,
                         moveCardContext.To,
-                        0
+                        isPublic ? toIndex : -1
                         ));
             }
 
@@ -880,6 +884,14 @@ namespace Cauldron.Core.Entities
                 return GameMasterStatusCode.CantAttack;
             }
 
+            // 各プレイヤーに通知
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnBattle?.Invoke(p.Id,
+                    this.CreateGameContext(p.Id),
+                    new BattleNotifyMessage(attackCard.Id, GuardPlayerId: damagePlayer.Id));
+            }
+
             // 攻撃するとステルスを失う
             if (EnableAbility(attackCard, CreatureAbility.Stealth))
             {
@@ -973,6 +985,14 @@ namespace Cauldron.Core.Entities
             if (!CanAttack(attackCard, guardCard, this.CreateGameContext(playerId)))
             {
                 return GameMasterStatusCode.CantAttack;
+            }
+
+            // 各プレイヤーに通知
+            foreach (var player in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnBattle?.Invoke(player.Id,
+                    this.CreateGameContext(player.Id),
+                    new BattleNotifyMessage(attackCard.Id, GuardCardId: guardCard.Id));
             }
 
             // 攻撃するとステルスを失う

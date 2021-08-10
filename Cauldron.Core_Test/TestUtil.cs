@@ -42,10 +42,11 @@ namespace Cauldron.Core_Test
             Action<PlayerId, GameContext, ModifyCardNotifyMessage> OnModifyCard = null,
             Action<PlayerId, GameContext, ModifyPlayerNotifyMessage> OnModifyPlayer = null,
             Action<PlayerId, GameContext, DamageNotifyMessage> OnDamage = null,
+            Action<PlayerId, GameContext, BattleNotifyMessage> OnBattle = null,
             Func<PlayerId, ChoiceCandidates, int, ValueTask<ChoiceAnswer>> AskCardAction = null
             ) => new(
                 OnStartTurn, OnAddCard, OnMoveCard, OnModifyCard, OnModifyPlayer,
-                OnDamage, AskCardAction
+                OnBattle, OnDamage, AskCardAction
                 );
 
         public static EffectAction TestEffectAction => new(
