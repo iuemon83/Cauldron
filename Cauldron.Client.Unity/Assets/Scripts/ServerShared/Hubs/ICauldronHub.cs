@@ -27,6 +27,8 @@ namespace Cauldron.Shared.Services
 
         Task<EndTurnReply> EndTurn(EndTurnRequest request);
 
+        Task<GameMasterStatusCode> Surrender(GameId gameId);
+
         Task<PlayFromHandReply> PlayFromHand(PlayFromHandRequest request);
 
         Task<AttackToCreatureReply> AttackToCreature(AttackToCreatureRequest request);

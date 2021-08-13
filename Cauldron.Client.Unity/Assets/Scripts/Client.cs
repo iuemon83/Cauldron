@@ -234,6 +234,11 @@ public class Client
         });
     }
 
+    public async ValueTask<GameMasterStatusCode> Surrender()
+    {
+        return await this.magiconionClient.Surrender(this.GameId);
+    }
+
     public async ValueTask<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceAnswer choiceAnswer)
     {
         this.LogInfo($"answer: questionId={questionId}");

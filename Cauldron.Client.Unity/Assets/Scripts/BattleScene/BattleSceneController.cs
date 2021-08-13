@@ -89,6 +89,7 @@ public class BattleSceneController : MonoBehaviour
             holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.message)),
             holder.Receiver.OnExcludeCard.Subscribe((a) => this.OnExcludeCard(a.gameContext, a.message)),
             holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.playerId)),
+            holder.Receiver.OnEndGame.Subscribe(this.OnEndGame),
         });
 
         this.client = ConnectionHolder.Find().Client;
@@ -226,6 +227,16 @@ public class BattleSceneController : MonoBehaviour
 
         this.ResetAllMarks();
         await this.client.EndTurn();
+    }
+
+    /// <summary>
+    /// 降参ボタンのクイックイベント
+    /// </summary>
+    public void OnSurrenderButtonClick()
+    {
+        Debug.Log("click surrender Button!");
+
+        this.ShowConfirmSurrenderDialog();
     }
 
     /// <summary>
@@ -452,9 +463,21 @@ public class BattleSceneController : MonoBehaviour
         dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
             onOkAction: async () =>
             {
-                var holder = ConnectionHolder.Find();
-                await holder.Client.LeaveGame();
+                await this.client.LeaveGame();
                 Utility.LoadAsyncScene(this, SceneNames.ListGameScene);
+            });
+        dialog.transform.SetParent(this.canvas.transform, false);
+    }
+
+    public void ShowConfirmSurrenderDialog()
+    {
+        var title = "降参";
+        var message = "降参しますか？";
+        var dialog = Instantiate(this.confirmDialogController);
+        dialog.Init(title, message, ConfirmDialogController.DialogType.Confirm,
+            onOkAction: async () =>
+            {
+                await this.client.Surrender();
             });
         dialog.transform.SetParent(this.canvas.transform, false);
     }
@@ -478,6 +501,18 @@ public class BattleSceneController : MonoBehaviour
                 this.youPlayerController.SetActiveTurn(false);
                 this.opponentPlayerController.SetActiveTurn(true);
             }
+        });
+    }
+
+    void OnEndGame(GameContext gameContext)
+    {
+        Debug.Log($"OnEndGame({this.client.PlayerName})");
+
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            Debug.Log($"ゲーム終了: {this.client.PlayerName}");
+
+            await this.UpdateGameContext(gameContext);
         });
     }
 

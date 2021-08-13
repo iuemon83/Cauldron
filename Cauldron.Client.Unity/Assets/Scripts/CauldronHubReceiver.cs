@@ -74,5 +74,10 @@ namespace Assets.Scripts
         private readonly Subject<Unit> onJoinGame = new Subject<Unit>();
         void ICauldronHubReceiver.OnJoinGame()
             => this.onJoinGame.OnNext(Unit.Default);
+
+        public IObservable<GameContext> OnEndGame => onEndGame;
+        private readonly Subject<GameContext> onEndGame = new Subject<GameContext>();
+        void ICauldronHubReceiver.OnEndGame(GameContext gameContext)
+            => this.onEndGame.OnNext(gameContext);
     }
 }

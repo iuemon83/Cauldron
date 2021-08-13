@@ -198,6 +198,11 @@ namespace Cauldron.Server.Services
                         this.BroadcastTo(this.room, playerId.Value).OnMoveCard(gameContext, message);
                         this._logger.LogInformation($"OnMoveCard: {playerId}");
                     },
+                    OnEndGame: (playerId, gameContext) =>
+                    {
+                        this.BroadcastTo(this.room, playerId.Value).OnEndGame(gameContext);
+                        this._logger.LogInformation($"OnEndGame:");
+                    },
                     AskCardAction: this.AskCard
                 ));
 
@@ -546,6 +551,18 @@ namespace Cauldron.Server.Services
             var attackTargetsResult = gameMaster.ListAttackTargets(cardId);
 
             return Task.FromResult(attackTargetsResult);
+        }
+
+        [FromTypeFilter(typeof(LoggingAttribute))]
+        Task<GameMasterStatusCode> ICauldronHub.Surrender(GameId gameId)
+        {
+            var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);
+            if (!found)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
+            }
+
+            return Task.FromResult(gameMaster.Surrender(this.self.Id));
         }
     }
 }

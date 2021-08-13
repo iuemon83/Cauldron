@@ -243,6 +243,13 @@ namespace Cauldron.Core.Entities
             this.effectManager = new EffectManager(logger);
         }
 
+        public GameMasterStatusCode Surrender(PlayerId playerId)
+        {
+            var (_, status) = this.Win(this.GetOpponent(playerId).Id);
+
+            return status;
+        }
+
         public (GameMasterStatusCode, PlayerId) CreateNewPlayer(PlayerId newId, string name, IEnumerable<CardDefId> deckCardDefIdList)
         {
             var isValidDeck = this.IsValidDeck(deckCardDefIdList);
@@ -1342,6 +1349,11 @@ namespace Cauldron.Core.Entities
             foreach (var p in this.playerRepository.Opponents(playerId))
             {
                 p.Damage(p.MaxHp);
+            }
+
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnEndGame?.Invoke(p.Id, this.CreateGameContext(p.Id));
             }
 
             return (true, GameMasterStatusCode.OK);
