@@ -7,72 +7,80 @@ namespace Cauldron.Shared.MessagePackObjects.Value
 {
     public static class NumValueCalculatorExtensions
     {
-        public static async ValueTask<int> Calculate(this NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
+        public static async ValueTask<int> Calculate(this NumValueCalculator _this,
+            Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
-            return numValueCalculator.Type switch
+            return _this.Type switch
             {
-                NumValueCalculator.ValueType.Count => await CalculateCount(numValueCalculator, effectOwnerCard, effectEventArgs),
-                NumValueCalculator.ValueType.CardCost => await CalculateCardCost(numValueCalculator, effectOwnerCard, effectEventArgs),
-                NumValueCalculator.ValueType.CardBaseCost => await CalculateCardBaseCost(numValueCalculator, effectOwnerCard, effectEventArgs),
-                NumValueCalculator.ValueType.CardPower => await CalculateCardPower(numValueCalculator, effectOwnerCard, effectEventArgs),
-                NumValueCalculator.ValueType.CardBasePower => await CalculateCardBasePower(numValueCalculator, effectOwnerCard, effectEventArgs),
-                NumValueCalculator.ValueType.CardToughness => await CalculateCardToughness(numValueCalculator, effectOwnerCard, effectEventArgs),
-                NumValueCalculator.ValueType.CardBaseToughness => await CalculateCardBaseToughness(numValueCalculator, effectOwnerCard, effectEventArgs),
-                _ => throw new InvalidOperationException($"{nameof(numValueCalculator.Type)}: {numValueCalculator.Type}")
+                NumValueCalculator.ValueType.Count => await CalculateCount(_this, effectOwnerCard, effectEventArgs),
+                NumValueCalculator.ValueType.CardCost => await CalculateCardCost(_this, effectOwnerCard, effectEventArgs),
+                NumValueCalculator.ValueType.CardBaseCost => await CalculateCardBaseCost(_this, effectOwnerCard, effectEventArgs),
+                NumValueCalculator.ValueType.CardPower => await CalculateCardPower(_this, effectOwnerCard, effectEventArgs),
+                NumValueCalculator.ValueType.CardBasePower => await CalculateCardBasePower(_this, effectOwnerCard, effectEventArgs),
+                NumValueCalculator.ValueType.CardToughness => await CalculateCardToughness(_this, effectOwnerCard, effectEventArgs),
+                NumValueCalculator.ValueType.CardBaseToughness => await CalculateCardBaseToughness(_this, effectOwnerCard, effectEventArgs),
+                _ => throw new InvalidOperationException($"{nameof(_this.Type)}: {_this.Type}")
             };
 
             static async ValueTask<int> CalculateCount(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
-                var pickCards = await effectEventArgs.GameMaster.Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
-                return pickCards.CardList.Length;
+                var picked = await effectEventArgs.GameMaster
+                    .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+                return picked.PlayerIdList.Length + picked.CardList.Length + picked.CardDefList.Length;
             }
 
             static async ValueTask<int> CalculateCardCost(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
-                var pickCards = await effectEventArgs.GameMaster
+                var picked = await effectEventArgs.GameMaster
                     .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
-                return pickCards.CardList.Sum(c => c.Cost);
+                return picked.CardList.Sum(c => c.Cost)
+                    + picked.CardDefList.Sum(c => c.Cost);
             }
 
             static async ValueTask<int> CalculateCardBaseCost(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
-                var pickCards = await effectEventArgs.GameMaster
+                var picked = await effectEventArgs.GameMaster
                     .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
-                return pickCards.CardList.Sum(c => c.BaseCost);
+                return picked.CardList.Sum(c => c.BaseCost)
+                    + picked.CardDefList.Sum(c => c.Cost);
             }
 
             static async ValueTask<int> CalculateCardPower(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
-                var pickCards = await effectEventArgs.GameMaster
+                var picked = await effectEventArgs.GameMaster
                     .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
-                return pickCards.CardList.Sum(c => c.Power);
+                return picked.CardList.Sum(c => c.Power)
+                    + picked.CardDefList.Sum(c => c.Power);
             }
 
             static async ValueTask<int> CalculateCardBasePower(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
-                var pickCards = await effectEventArgs.GameMaster
+                var picked = await effectEventArgs.GameMaster
                     .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
-                return pickCards.CardList.Sum(c => c.BasePower);
+                return picked.CardList.Sum(c => c.BasePower)
+                    + picked.CardDefList.Sum(c => c.Power);
             }
 
             static async ValueTask<int> CalculateCardToughness(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
-                var pickCards = await effectEventArgs.GameMaster
+                var picked = await effectEventArgs.GameMaster
                     .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
-                return pickCards.CardList.Sum(c => c.Toughness);
+                return picked.CardList.Sum(c => c.Toughness)
+                    + picked.CardDefList.Sum(c => c.Toughness);
             }
 
             static async ValueTask<int> CalculateCardBaseToughness(NumValueCalculator numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
-                var pickCards = await effectEventArgs.GameMaster
+                var picked = await effectEventArgs.GameMaster
                     .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
 
-                return pickCards.CardList.Sum(c => c.BaseToughness);
+                return picked.CardList.Sum(c => c.BaseToughness)
+                    + picked.CardDefList.Sum(c => c.Toughness);
             }
         }
     }

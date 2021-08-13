@@ -9,6 +9,7 @@ namespace Cauldron.Shared.Services
         void OnStartGame();
         void OnStartTurn(GameContext gameContext, PlayerId playerId);
         void OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage);
+        void OnExcludeCard(GameContext gameContext, ExcludeCardNotifyMessage message);
         void OnMoveCard(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage);
         void OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage);
         void OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage);

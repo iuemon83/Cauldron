@@ -1,5 +1,6 @@
 ﻿using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
+using System;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -41,13 +42,22 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public CardCondition[] OrCardConditions { get; }
 
+        /// <summary>
+        /// 候補となるゲーム外カードのOR条件の一覧。
+        /// </summary>
+        public CardDefCondition[] OrCardDefConditions { get; }
+
         public ChoiceSource(HowValue how = HowValue.All, NumValue numPicks = null,
-            PlayerCondition[] orPlayerConditions = null, CardCondition[] orCardConditions = null)
+            PlayerCondition[] orPlayerConditions = null,
+            CardCondition[] orCardConditions = null,
+            CardDefCondition[] OrCardDefConditions = null
+            )
         {
             this.How = how;
             this.NumPicks = numPicks ?? new NumValue(1);
-            this.OrPlayerConditions = orPlayerConditions ?? new PlayerCondition[0];
-            this.OrCardConditions = orCardConditions ?? new CardCondition[0];
+            this.OrPlayerConditions = orPlayerConditions ?? Array.Empty<PlayerCondition>();
+            this.OrCardConditions = orCardConditions ?? Array.Empty<CardCondition>();
+            this.OrCardDefConditions = OrCardDefConditions ?? Array.Empty<CardDefCondition>();
         }
     }
 }

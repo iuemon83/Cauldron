@@ -54,6 +54,10 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     {
     }
 
+    void ICauldronHubReceiver.OnExcludeCard(GameContext gameContext, ExcludeCardNotifyMessage message)
+    {
+    }
+
     void ICauldronHubReceiver.OnMoveCard(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage)
     {
     }

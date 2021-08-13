@@ -18,6 +18,7 @@ namespace Cauldron.Shared.MessagePackObjects
             {
                 (c,e) => effectAction.Damage?.Execute(c,e),
                 (c,e) => effectAction.AddCard?.Execute(c,e),
+                (c,e) => effectAction.ExcludeCard?.Execute(c,e),
                 (c,e) => effectAction.ModifyCard?.Execute(c,e),
                 (c,e) => effectAction.DestroyCard?.Execute(c,e),
                 (c,e) => effectAction.ModifyDamage?.Execute(c,e),

@@ -227,10 +227,10 @@ namespace Cauldron.Core_Test
                             AddCard: new(
                                 new Choice(
                                     new ChoiceSource(
-                                        orCardConditions: new[]
+                                        OrCardDefConditions: new[]
                                         {
-                                            new CardCondition(
-                                                ZoneCondition: new(new(new[]{ ZonePrettyName.CardPool })),
+                                            new CardDefCondition(
+                                                OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool }),
                                                 CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                 NameCondition: new(
                                                     new TextValue(KarakuriGoblin.Name),
@@ -260,12 +260,12 @@ namespace Cauldron.Core_Test
                                 AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
-                                            orCardConditions: new[]
+                                            OrCardDefConditions: new[]
                                             {
-                                                new CardCondition(
-                                                    ZoneCondition: new(new ZoneValue(new[]{
-                                                        ZonePrettyName.CardPool
-                                                    })),
+                                                new CardDefCondition(
+                                                    OutZoneCondition: new(new[]{
+                                                        OutZonePrettyName.CardPool
+                                                    }),
                                                     TypeCondition: new(new[]{ CardType.Sorcery })
                                                 )
                                             }),
@@ -568,11 +568,11 @@ namespace Cauldron.Core_Test
                         {
                             new EffectAction(AddCard: new(
                                 new Choice(new ChoiceSource(
-                                    orCardConditions: new[]
+                                    OrCardDefConditions: new[]
                                     {
-                                        new CardCondition(
-                                            ZoneCondition: new ZoneCondition(new ZoneValue(
-                                                new[]{ ZonePrettyName.CardPool })),
+                                        new CardDefCondition(
+                                            OutZoneCondition: new OutZoneCondition(
+                                                new[]{ OutZonePrettyName.CardPool }),
                                             CostCondition: new NumCondition(2,
                                                 NumCondition.CompareValue.Equality),
                                             TypeCondition: new(new[]{ CardType.Creature })
@@ -917,11 +917,11 @@ namespace Cauldron.Core_Test
                                 AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
-                                            orCardConditions: new[]
+                                            OrCardDefConditions: new[]
                                             {
-                                                new CardCondition(
-                                                    ZoneCondition: new(
-                                                        new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                                new CardDefCondition(
+                                                    OutZoneCondition: new(
+                                                        new[]{ OutZonePrettyName.CardPool }),
                                                     NameCondition: new TextCondition(
                                                         new TextValue(WarGoblin.Name),
                                                         TextCondition.CompareValue.Equality))
@@ -1032,10 +1032,10 @@ namespace Cauldron.Core_Test
                                 AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
-                                            orCardConditions: new[]
+                                            OrCardDefConditions: new[]
                                             {
-                                                new CardCondition(
-                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.CardPool })),
+                                                new CardDefCondition(
+                                                    OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool }),
                                                     CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                     NameCondition: new(
                                                         new TextValue(DoctorBomb.Name),
@@ -1066,10 +1066,10 @@ namespace Cauldron.Core_Test
                                 AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
-                                            orCardConditions: new[]
+                                            OrCardDefConditions: new[]
                                             {
-                                                new CardCondition(
-                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.CardPool })),
+                                                new CardDefCondition(
+                                                    OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool }),
                                                     CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                     NameCondition: new(
                                                         new TextValue(Gnoll.Name),
@@ -1530,17 +1530,17 @@ namespace Cauldron.Core_Test
                         {
                             new EffectAction(AddCard: new(
                                 new Choice(new ChoiceSource(
-                                    orCardConditions: new[]
+                                    OrCardDefConditions: new[]
                                     {
-                                        new CardCondition(
-                                            ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                        new CardDefCondition(
+                                            OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool }),
                                             CardSetCondition: new(CardSetCondition.TypeValue.This),
                                             NameCondition: new TextCondition(
                                                 new TextValue(Hit.Name),
                                                 TextCondition.CompareValue.Equality)
                                         ),
-                                        new CardCondition(
-                                            ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                        new CardDefCondition(
+                                            OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool }),
                                             CardSetCondition: new(CardSetCondition.TypeValue.This),
                                             NameCondition: new TextCondition(
                                                 new TextValue(Heal.Name),
@@ -1586,6 +1586,187 @@ namespace Cauldron.Core_Test
                                         CreatureAbility.Sealed)
                                     ))
                         })
+                });
+
+        public static CardDef Exclude
+            => SampleCards.Sorcery(1, "除外", "場にあるカード一つを選択する。それを「除外」する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                ExcludeCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{
+                                                        ZonePrettyName.YouField,
+                                                        ZonePrettyName.OpponentField,
+                                                    }))
+                                                ),
+                                            }),
+                                        how: Choice.HowValue.Choose,
+                                        numPicks: new NumValue(1)
+                                        )))
+                        })
+                });
+
+        public static CardDef DDObserver
+            => SampleCards.Creature(1, "異次元の観測者",
+                "このカードが場にあるとき、場のほかのカードが除外されるたびに、このカードを+1/+0する。",
+                1, 1,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                ExcludeCard: new(new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.Others)
+                                })))),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(CardCondition.ContextConditionValue.This)
+                                            })),
+                                    Power: new(
+                                        NumValueModifier.OperatorValue.Add,
+                                        new NumValue(1))))
+                        }),
+                });
+
+        public static CardDef DDVisitor
+            => SampleCards.Creature(1, "異次元からの来訪者",
+                "このカードが場に出たとき、このカードを+X/+0 する。X=すでに除外されている自分のカードの数",
+                1, 1,
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(CardCondition.ContextConditionValue.This)
+                                            })),
+                                    Power: new(
+                                        NumValueModifier.OperatorValue.Add,
+                                        new NumValue(
+                                            NumValueCalculator: new(
+                                                NumValueCalculator.ValueType.Count,
+                                                new Choice(
+                                                    new ChoiceSource(
+                                                        OrCardDefConditions: new[]
+                                                        {
+                                                            new CardDefCondition(
+                                                                OutZoneCondition: new(new[]
+                                                                {
+                                                                    OutZonePrettyName.YouExcluded
+                                                                }))
+                                                        })))))
+                                    ))
+                        }),
+                });
+
+        public static CardDef ReturnFromDD
+            => SampleCards.Sorcery(1, "異次元からの脱出",
+                "自分の除外済みカードからランダムで一つを選択する。そのカードを場に追加する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                AddCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            OrCardDefConditions: new[]
+                                            {
+                                                new CardDefCondition(
+                                                    OutZoneCondition: new(new[]
+                                                    {
+                                                        OutZonePrettyName.YouExcluded
+                                                    }))
+                                            }),
+                                        Choice.HowValue.Random,
+                                        new NumValue(1)),
+                                    new ZoneValue(new[]
+                                    {
+                                        ZonePrettyName.YouField
+                                    })))
+                        }),
+                });
+
+        public static CardDef DDTransaction
+            => SampleCards.Sorcery(1, "異次元との取引",
+                "自分の手札をランダムに1枚除外する。その後、場のカードX枚をランダムに破壊する。X=除外したカードのコスト",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                ExcludeCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]
+                                                        {
+                                                            ZonePrettyName.YouHand
+                                                        })))
+                                            }),
+                                        Choice.HowValue.Random,
+                                        new NumValue(1)),
+                                    "exclude")),
+                            new EffectAction(
+                                DestroyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.Others,
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]
+                                                        {
+                                                            ZonePrettyName.YouField,
+                                                            ZonePrettyName.OpponentField
+                                                        })))
+                                            }),
+                                        Choice.HowValue.Random,
+                                        new NumValue(
+                                            NumValueCalculator: new(
+                                                NumValueCalculator.ValueType.CardCost,
+                                                new Choice(
+                                                    new ChoiceSource(
+                                                        orCardConditions: new[]
+                                                        {
+                                                            new CardCondition(
+                                                                ActionContext: new(
+                                                                    ActionContextCardsOfExcludeCard: new(
+                                                                        "exclude",
+                                                                        ActionContextCardsOfExcludeCard.TypeValue.Excluded)))
+                                                        })))))
+                                    ))
+                        }),
                 });
 
         public static CardDef Parasite
@@ -1641,14 +1822,14 @@ namespace Cauldron.Core_Test
                             new EffectAction(AddCard: new(
                                 new Choice(
                                     new ChoiceSource(
-                                        orCardConditions: new[]
+                                        OrCardDefConditions: new[]
                                         {
-                                            new CardCondition(
+                                            new CardDefCondition(
                                                 CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                 NameCondition: new(
                                                     new TextValue(Parasite.Name),
                                                     TextCondition.CompareValue.Equality),
-                                                ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.CardPool }))
+                                                OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool })
                                             )
                                         })),
                                 new ZoneValue(new[]{ ZonePrettyName.OpponentDeck }),
@@ -1710,10 +1891,10 @@ namespace Cauldron.Core_Test
                                 AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
-                                            orCardConditions: new[]
+                                            OrCardDefConditions: new[]
                                             {
-                                                new CardCondition(
-                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.CardPool })),
+                                                new CardDefCondition(
+                                                    OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool }),
                                                     CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                     NameCondition: new(
                                                         new TextValue(Goblin.Name),
@@ -1785,10 +1966,10 @@ namespace Cauldron.Core_Test
                                 AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
-                                            orCardConditions: new[]
+                                            OrCardDefConditions: new[]
                                             {
-                                                new CardCondition(
-                                                    ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.CardPool })),
+                                                new CardDefCondition(
+                                                    OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool }),
                                                     CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                     NameCondition: new(
                                                         new TextValue(SecondAttack.Name),
@@ -2449,17 +2630,17 @@ namespace Cauldron.Core_Test
                                 AddCard: new(
                                     new Choice(
                                         new ChoiceSource(
-                                            orCardConditions: new[]
+                                            OrCardDefConditions: new[]
                                             {
-                                                new CardCondition(
+                                                new CardDefCondition(
                                                     NameCondition: new(
                                                         new TextValue(VictoryStatue.Name),
                                                         TextCondition.CompareValue.Equality),
-                                                    ZoneCondition: new(
-                                                        new ZoneValue(new[]
+                                                    OutZoneCondition: new(
+                                                        new[]
                                                         {
-                                                            ZonePrettyName.CardPool
-                                                        }))
+                                                            OutZonePrettyName.CardPool
+                                                        })
                                                 )
                                             })),
                                     new ZoneValue(new[]

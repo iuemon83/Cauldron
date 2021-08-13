@@ -13,13 +13,6 @@ namespace Cauldron.Shared.MessagePackObjects
             var done = false;
             foreach (var card in targets)
             {
-                //var buffPower = await (effectActionModifyCard.Power?.Modify(effectOwnerCard, effectEventArgs, card.Power)
-                //    ?? ValueTask.FromResult(card.Power));
-                //var buffToughness = await (effectActionModifyCard.Toughness?.Modify(effectOwnerCard, effectEventArgs, card.Toughness)
-                //    ?? ValueTask.FromResult(card.Toughness));
-
-                //await effectEventArgs.GameMaster.Buff(card, buffPower - card.Power, buffToughness - card.Toughness);
-
                 await effectEventArgs.GameMaster.ModifyCard(card, effectActionModifyCard, effectOwnerCard, effectEventArgs);
 
                 done = true;

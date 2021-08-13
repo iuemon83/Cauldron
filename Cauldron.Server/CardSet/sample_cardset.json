@@ -37,7 +37,8 @@
                                                 "contextCondition": "this",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -66,7 +67,8 @@
                                                 "type": "you"
                                             }
                                         ],
-                                        "orCardConditions": []
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -100,20 +102,19 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "寄生虫" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -189,18 +190,17 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "typeCondition": {
                                                     "value": [ "sorcery" ],
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -266,7 +266,8 @@
                                                 "contextCondition": "this",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -314,7 +315,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "random",
                                     "numPicks": { "pureValue": 1 }
@@ -376,7 +378,8 @@
                                                 "contextCondition": "attack",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -427,7 +430,8 @@
                                                 "contextCondition": "attack",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -495,7 +499,8 @@
                                                     },
                                                     "ownerCondition": "any"
                                                 }
-                                            ]
+                                            ],
+                                            "orCardDefConditions": []
                                         },
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 }
@@ -525,7 +530,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "random",
                                     "numPicks": { "pureValue": 1 }
@@ -560,20 +566,19 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "からくりゴブリン" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -616,7 +621,8 @@
                                                 "contextCondition": "this",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -657,7 +663,8 @@
                                                 "contextCondition": "this",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -760,7 +767,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "random",
                                     "numPicks": { "pureValue": 1 }
@@ -799,7 +807,8 @@
                                                 "type": "you"
                                             }
                                         ],
-                                        "orCardConditions": []
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -858,7 +867,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -892,9 +902,9 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "costCondition": {
                                                     "value": 2,
                                                     "compare": "equality",
@@ -904,11 +914,10 @@
                                                     "value": [ "creature" ],
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -959,7 +968,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -985,7 +995,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -1169,7 +1180,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -1225,7 +1237,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -1273,19 +1286,18 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "nameCondition": {
                                                     "value": { "pureValue": "戦闘ゴブリン" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -1347,7 +1359,8 @@
                                                         },
                                                         "ownerCondition": "any"
                                                     }
-                                                ]
+                                                ],
+                                                "orCardDefConditions": []
                                             },
                                             "how": "all",
                                             "numPicks": { "pureValue": 1 }
@@ -1372,7 +1385,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -1400,7 +1414,8 @@
                                                 "contextCondition": "this",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -1453,7 +1468,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "random",
                                     "numPicks": { "pureValue": 1 }
@@ -1487,20 +1503,19 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ドクターボム" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -1557,7 +1572,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "random",
                                     "numPicks": { "pureValue": 1 }
@@ -1604,7 +1620,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -1626,7 +1643,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "random",
                                     "numPicks": {
@@ -1648,7 +1666,8 @@
                                                             },
                                                             "ownerCondition": "any"
                                                         }
-                                                    ]
+                                                    ],
+                                                    "orCardDefConditions": []
                                                 },
                                                 "how": "all",
                                                 "numPicks": { "pureValue": 1 }
@@ -1691,7 +1710,8 @@
                                                 "type": "you"
                                             }
                                         ],
-                                        "orCardConditions": []
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -1729,7 +1749,8 @@
                                                 "type": "you"
                                             }
                                         ],
-                                        "orCardConditions": []
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -1788,7 +1809,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -1836,7 +1858,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "random",
                                     "numPicks": { "pureValue": 1 }
@@ -1879,7 +1902,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -1927,7 +1951,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -1979,7 +2004,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -2030,7 +2056,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -2064,34 +2091,31 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ヒット" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             },
                                             {
-                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ヒール" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -2138,7 +2162,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -2170,7 +2195,8 @@
                                                             },
                                                             "ownerCondition": "any"
                                                         }
-                                                    ]
+                                                    ],
+                                                    "orCardDefConditions": []
                                                 },
                                                 "how": "all",
                                                 "numPicks": { "pureValue": 1 }
@@ -2194,7 +2220,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -2237,7 +2264,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -2286,7 +2314,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "random",
                                     "numPicks": { "pureValue": 1 }
@@ -2317,7 +2346,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -2360,7 +2390,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -2405,7 +2436,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -2447,7 +2479,8 @@
                                                 "type": "opponent"
                                             }
                                         ],
-                                        "orCardConditions": []
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -2486,7 +2519,8 @@
                                                 "type": "you"
                                             }
                                         ],
-                                        "orCardConditions": []
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -2545,7 +2579,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -2557,20 +2592,19 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ゴブリンの二撃" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -2627,7 +2661,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -2674,7 +2709,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -2755,7 +2791,8 @@
                                                         },
                                                         "ownerCondition": "any"
                                                     }
-                                                ]
+                                                ],
+                                                "orCardDefConditions": []
                                             },
                                             "how": "all",
                                             "numPicks": { "pureValue": 1 }
@@ -2780,7 +2817,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -2829,7 +2867,8 @@
                                                 "type": "you"
                                             }
                                         ],
-                                        "orCardConditions": []
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -2889,7 +2928,8 @@
                                                         },
                                                         "ownerCondition": "any"
                                                     }
-                                                ]
+                                                ],
+                                                "orCardDefConditions": []
                                             },
                                             "how": "all",
                                             "numPicks": { "pureValue": 1 }
@@ -2914,7 +2954,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -2967,7 +3008,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3033,7 +3075,8 @@
                                                 "contextCondition": "this",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3103,7 +3146,8 @@
                                                 "contextCondition": "this",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3146,7 +3190,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "random",
                                     "numPicks": { "pureValue": 1 }
@@ -3167,7 +3212,8 @@
                                                 "type": "you"
                                             }
                                         ],
-                                        "orCardConditions": []
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3194,7 +3240,8 @@
                                                                 },
                                                                 "ownerCondition": "any"
                                                             }
-                                                        ]
+                                                        ],
+                                                        "orCardDefConditions": []
                                                     },
                                                     "how": "all",
                                                     "numPicks": { "pureValue": 1 }
@@ -3232,20 +3279,19 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ゴブリン" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -3297,7 +3343,8 @@
                                                     },
                                                     "ownerCondition": "any"
                                                 }
-                                            ]
+                                            ],
+                                            "orCardDefConditions": []
                                         },
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 }
@@ -3333,7 +3380,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3384,7 +3432,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3431,7 +3480,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3470,7 +3520,8 @@
                                                 "contextCondition": "this",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3500,19 +3551,18 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "nameCondition": {
                                                     "value": { "pureValue": "勝利の像" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -3555,7 +3605,8 @@
                                                 "type": "you"
                                             }
                                         ],
-                                        "orCardConditions": []
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3615,7 +3666,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3690,7 +3742,8 @@
                                                         "contextCondition": "this",
                                                         "ownerCondition": "any"
                                                     }
-                                                ]
+                                                ],
+                                                "orCardDefConditions": []
                                             },
                                             "how": "all",
                                             "numPicks": { "pureValue": 1 }
@@ -3707,7 +3760,8 @@
                                                 "contextCondition": "guard",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3746,7 +3800,8 @@
                                                         "contextCondition": "this",
                                                         "ownerCondition": "any"
                                                     }
-                                                ]
+                                                ],
+                                                "orCardDefConditions": []
                                             },
                                             "how": "all",
                                             "numPicks": { "pureValue": 1 }
@@ -3763,7 +3818,8 @@
                                                 "contextCondition": "attack",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3807,7 +3863,8 @@
                                                 "type": "you"
                                             }
                                         ],
-                                        "orCardConditions": []
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3856,7 +3913,8 @@
                                                 "contextCondition": "this",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3952,7 +4010,8 @@
                                                 "contextCondition": "this",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -3997,20 +4056,19 @@
                                         "how": "all",
                                         "numPicks": { "pureValue": 1 },
                                         "orPlayerConditions": [],
-                                        "orCardConditions": [
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
                                             {
-                                                "contextCondition": "any",
                                                 "cardSetCondition": { "type": "this" },
                                                 "nameCondition": {
                                                     "value": { "pureValue": "ノール" },
                                                     "compare": "equality",
                                                     "not": false
                                                 },
-                                                "zoneCondition": {
-                                                    "value": { "pureValue": [ "cardPool" ] },
+                                                "outZoneCondition": {
+                                                    "value": [ "cardPool" ],
                                                     "not": false
-                                                },
-                                                "ownerCondition": "any"
+                                                }
                                             }
                                         ]
                                     },
@@ -4076,7 +4134,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
@@ -4124,7 +4183,8 @@
                                                 },
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
@@ -4164,11 +4224,392 @@
                                                 "contextCondition": "eventSource",
                                                 "ownerCondition": "any"
                                             }
-                                        ]
+                                        ],
+                                        "orCardDefConditions": []
                                     },
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
                                 }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 3,
+            "name": "探索",
+            "flavorText": "あなたのデッキからランダムなカード1枚を、あなたの手札に加える。そのカードのコストを半分にする。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "moveCard": {
+                                "cardsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youDeck" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "random",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "to": "youHand",
+                                "name": "search_card"
+                            }
+                        },
+                        {
+                            "modifyCard": {
+                                "cost": {
+                                    "operator": "div",
+                                    "value": { "pureValue": 2 }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "actionContext": {
+                                                    "actionContextCardsOfMoveCard": {
+                                                        "actionName": "search_card",
+                                                        "type": "moved"
+                                                    }
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "除外",
+            "flavorText": "場にあるカード一つを選択する。それを「除外」する。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "excludeCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youField", "opponentField" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "choose",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "異次元の観測者",
+            "flavorText": "このカードが場にあるとき、場のほかのカードが除外されるたびに、このカードを\u002B1/\u002B0する。",
+            "isToken": false,
+            "type": "creature",
+            "power": 1,
+            "toughness": 1,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": {
+                            "timing": {
+                                "excludeCard": {
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "others",
+                                            "ownerCondition": "any"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyCard": {
+                                "power": {
+                                    "operator": "add",
+                                    "value": { "pureValue": 1 }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "異次元との取引",
+            "flavorText": "自分の手札をランダムに1枚除外する。その後、場のカードX枚をランダムに破壊する。X=除外したカードのコスト",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "excludeCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youHand" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "random",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "name": "exclude"
+                            }
+                        },
+                        {
+                            "destroyCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "others",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youField", "opponentField" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "random",
+                                    "numPicks": {
+                                        "numValueCalculator": {
+                                            "type": "cardCost",
+                                            "cardsChoice": {
+                                                "source": {
+                                                    "how": "all",
+                                                    "numPicks": { "pureValue": 1 },
+                                                    "orPlayerConditions": [],
+                                                    "orCardConditions": [
+                                                        {
+                                                            "contextCondition": "any",
+                                                            "actionContext": {
+                                                                "actionContextCardsOfExcludeCard": {
+                                                                    "actionName": "exclude",
+                                                                    "type": "excluded"
+                                                                }
+                                                            },
+                                                            "ownerCondition": "any"
+                                                        }
+                                                    ],
+                                                    "orCardDefConditions": []
+                                                },
+                                                "how": "all",
+                                                "numPicks": { "pureValue": 1 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "異次元からの来訪者",
+            "flavorText": "このカードが場に出たとき、このカードを\u002BX/\u002B0 する。X=すでに除外されている自分のカードの数",
+            "isToken": false,
+            "type": "creature",
+            "power": 1,
+            "toughness": 1,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "modifyCard": {
+                                "power": {
+                                    "operator": "add",
+                                    "value": {
+                                        "numValueCalculator": {
+                                            "type": "count",
+                                            "cardsChoice": {
+                                                "source": {
+                                                    "how": "all",
+                                                    "numPicks": { "pureValue": 1 },
+                                                    "orPlayerConditions": [],
+                                                    "orCardConditions": [],
+                                                    "orCardDefConditions": [
+                                                        {
+                                                            "outZoneCondition": {
+                                                                "value": [ "youExcluded" ],
+                                                                "not": false
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                "how": "all",
+                                                "numPicks": { "pureValue": 1 }
+                                            }
+                                        }
+                                    }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "異次元からの脱出",
+            "flavorText": "自分の除外済みカードからランダムで一つを選択する。そのカードを場に追加する。",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "addCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": [
+                                            {
+                                                "outZoneCondition": {
+                                                    "value": [ "youExcluded" ],
+                                                    "not": false
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "how": "random",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "zoneToAddCard": { "pureValue": [ "youField" ] },
+                                "numOfAddCards": 1
                             }
                         }
                     ]

@@ -14,6 +14,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectTimingDamageBeforeEvent DamageBefore { get; }
         public EffectTimingDamageAfterEvent DamageAfter { get; }
         public EffectTimingMoveCardEvent MoveCard { get; }
+        public EffectTimingExcludeCardEvent ExcludeCard { get; }
 
         public EffectTiming(
             EffectTimingStartTurnEvent StartTurn = null,
@@ -24,7 +25,8 @@ namespace Cauldron.Shared.MessagePackObjects
             EffectTimingAttackAfterEvent AttackAfter = null,
             EffectTimingDamageBeforeEvent DamageBefore = null,
             EffectTimingDamageAfterEvent DamageAfter = null,
-            EffectTimingMoveCardEvent MoveCard = null
+            EffectTimingMoveCardEvent MoveCard = null,
+            EffectTimingExcludeCardEvent ExcludeCard = null
             )
         {
             this.StartTurn = StartTurn;
@@ -36,6 +38,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.DamageBefore = DamageBefore;
             this.DamageAfter = DamageAfter;
             this.MoveCard = MoveCard;
+            this.ExcludeCard = ExcludeCard;
         }
     }
 }

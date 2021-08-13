@@ -99,6 +99,12 @@ namespace Cauldron.Core_Test
                 SampleCards.Gnoll,
                 SampleCards.Sealed,
                 SampleCards.Virus,
+                SampleCards.Search,
+                SampleCards.Exclude,
+                SampleCards.DDObserver,
+                SampleCards.DDTransaction,
+                SampleCards.DDVisitor,
+                SampleCards.ReturnFromDD,
             });
 
             var actual = JsonConverter.Serialize(test);

@@ -6,7 +6,6 @@
         {
             return zonePrettyName switch
             {
-                ZonePrettyName.CardPool => (true, new Zone(default, ZoneName.CardPool)),
                 ZonePrettyName.YouHand => (true, new Zone(effectOwnerId, ZoneName.Hand)),
                 ZonePrettyName.OpponentHand => (true, new Zone(opponentId, ZoneName.Hand)),
                 ZonePrettyName.OwnerHand => (true, new Zone(cardOwnerId, ZoneName.Hand)),

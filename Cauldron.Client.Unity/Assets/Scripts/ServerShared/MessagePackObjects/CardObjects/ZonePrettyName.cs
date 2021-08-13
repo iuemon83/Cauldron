@@ -6,8 +6,6 @@ namespace Cauldron.Shared
     {
         [DisplayText("なし")]
         None,
-        [DisplayText("カードプール")]
-        CardPool,
         [DisplayText("あなたの場")]
         YouField,
         [DisplayText("相手の場")]

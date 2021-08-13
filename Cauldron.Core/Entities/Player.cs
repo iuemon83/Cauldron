@@ -24,6 +24,9 @@ namespace Cauldron.Core.Entities
         public Field Field { get; }
 
         public Cemetery Cemetery { get; }
+
+        public List<CardDef> Excludes { get; }
+
         public bool IsFirst { get; }
 
         public int MaxHp { get; private set; }
@@ -52,6 +55,7 @@ namespace Cauldron.Core.Entities
             this.Hands = new Hands();
             this.Field = new Field(this.RuleBook);
             this.Cemetery = new Cemetery();
+            this.Excludes = new List<CardDef>();
             this.IsFirst = isFirst;
 
             foreach (var card in deck)

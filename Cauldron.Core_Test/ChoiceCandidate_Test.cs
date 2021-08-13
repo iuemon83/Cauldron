@@ -191,10 +191,10 @@ namespace Cauldron.Core_Test
 
             var testChoice = new Choice(
                 new ChoiceSource(
-                    orCardConditions: new[]
+                    OrCardDefConditions: new[]
                     {
-                        new CardCondition(
-                            ZoneCondition: new(new(new[] { ZonePrettyName.CardPool })),
+                        new CardDefCondition(
+                            OutZoneCondition: new(new[] { OutZonePrettyName.CardPool }),
                             NameCondition: new TextCondition(
                                 new TextValue(fairy.FullName),
                                 TextCondition.CompareValue.Equality
@@ -277,10 +277,10 @@ namespace Cauldron.Core_Test
 
             var testChoice = new Choice(
                 new ChoiceSource(
-                    orCardConditions: new[]
+                    OrCardDefConditions: new[]
                     {
-                        new CardCondition(
-                            ZoneCondition: new(new(new[] { ZonePrettyName.CardPool })),
+                        new CardDefCondition(
+                            OutZoneCondition: new(new[] { OutZonePrettyName.CardPool }),
                             NameCondition: new(
                                 new TextValue(fairy.FullName),
                                 TextCondition.CompareValue.Equality

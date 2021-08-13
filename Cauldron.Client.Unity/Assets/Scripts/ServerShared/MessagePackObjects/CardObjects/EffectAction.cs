@@ -7,6 +7,7 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public EffectActionDamage Damage { get; } = null;
         public EffectActionAddCard AddCard { get; } = null;
+        public EffectActionExcludeCard ExcludeCard { get; } = null;
         public EffectActionModifyCard ModifyCard { get; } = null;
         public EffectActionDestroyCard DestroyCard { get; } = null;
         public EffectActionModifyDamage ModifyDamage { get; } = null;
@@ -20,6 +21,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectAction(
             EffectActionDamage Damage = null,
             EffectActionAddCard AddCard = null,
+            EffectActionExcludeCard ExcludeCard = null,
             EffectActionModifyCard ModifyCard = null,
             EffectActionDestroyCard DestroyCard = null,
             EffectActionModifyDamage ModifyDamage = null,
@@ -33,13 +35,13 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             this.Damage = Damage;
             this.AddCard = AddCard;
+            this.ExcludeCard = ExcludeCard;
             this.ModifyCard = ModifyCard;
             this.DestroyCard = DestroyCard;
             this.ModifyDamage = ModifyDamage;
             this.ModifyPlayer = ModifyPlayer;
             this.DrawCard = DrawCard;
             this.MoveCard = MoveCard;
-            this.AddEffect = AddEffect;
             this.AddEffect = AddEffect;
             this.SetVariable = SetVariable;
             this.Win = Win;

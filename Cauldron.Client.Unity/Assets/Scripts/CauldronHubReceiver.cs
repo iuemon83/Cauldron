@@ -13,6 +13,12 @@ namespace Assets.Scripts
         void ICauldronHubReceiver.OnAddCard(GameContext gameContext, AddCardNotifyMessage message)
             => this.onAddCard.OnNext((gameContext, message));
 
+        public IObservable<(GameContext gameContext, ExcludeCardNotifyMessage message)> OnExcludeCard => onExcludeCard;
+        private readonly Subject<(GameContext gameContext, ExcludeCardNotifyMessage message)> onExcludeCard
+            = new Subject<(GameContext gameContext, ExcludeCardNotifyMessage message)>();
+        void ICauldronHubReceiver.OnExcludeCard(GameContext gameContext, ExcludeCardNotifyMessage message)
+            => this.onExcludeCard.OnNext((gameContext, message));
+
         public IObservable<AskMessage> OnAsk => onAsk;
         private readonly Subject<AskMessage> onAsk = new Subject<AskMessage>();
         void ICauldronHubReceiver.OnAsk(AskMessage onAskMessage)

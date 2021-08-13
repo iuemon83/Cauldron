@@ -20,6 +20,10 @@ namespace Cauldron.Shared.MessagePackObjects
             {
                 return actionContextCards.ActionContextCardsOfMoveCard.GetRsult(effectOwnerCard, eventArgs);
             }
+            else if (actionContextCards?.ActionContextCardsOfExcludeCard != null)
+            {
+                return actionContextCards.ActionContextCardsOfExcludeCard.GetRsult(effectOwnerCard, eventArgs);
+            }
             else
             {
                 return Array.Empty<Card>();

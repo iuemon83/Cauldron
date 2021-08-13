@@ -48,6 +48,11 @@
         OnMoveCard,
 
         /// <summary>
+        /// カードの除外時
+        /// </summary>
+        OnExclude,
+
+        /// <summary>
         /// ターン開始時
         /// </summary>
         OnStartTurn,

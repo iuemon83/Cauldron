@@ -141,10 +141,12 @@ namespace Cauldron.Core_Test
                 // 相手は倒す
                 Assert.Equal(0, goblinT1.Toughness);
 
-                // 相手を倒しきれないのでダメージを受ける
-                await g.AttackToCreature(pid, testCard.Id, goblinT3.Id);
+                var testCard2 = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
 
-                Assert.Equal(0, testCard.Toughness);
+                // 相手を倒しきれないのでダメージを受ける
+                await g.AttackToCreature(pid, testCard2.Id, goblinT3.Id);
+
+                Assert.Equal(0, testCard2.Toughness);
                 Assert.Equal(0, goblinT3.Toughness);
             });
         }
@@ -2722,6 +2724,223 @@ namespace Cauldron.Core_Test
             await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 // ドローしたカードのパワーが4以上なら破壊する
+            });
+        }
+
+        [Fact]
+        public async Task Exclude()
+        {
+            var testCardDef = SampleCards.Exclude;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            CardId choiceCardId = default;
+            ValueTask<ChoiceAnswer> askCardAction(PlayerId playerId, ChoiceCandidates choiceCandidates, int n)
+            {
+                var answer = new ChoiceAnswer(
+                    Array.Empty<PlayerId>(),
+                    new[] { choiceCardId },
+                    Array.Empty<CardDefId>()
+                    );
+
+                return ValueTask.FromResult(answer);
+            }
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(
+                        AskCardAction: askCardAction)));
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                choiceCardId = goblin.Id;
+
+                // 除外済みカードなし
+                Assert.Single(p.Field.AllCards);
+                Assert.Empty(p.Excludes);
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Empty(p.Field.AllCards);
+                Assert.Single(p.Excludes);
+                Assert.Equal(goblinDef.Id, p.Excludes[0].Id);
+            });
+        }
+
+        [Fact]
+        public async Task DDObserver()
+        {
+            var testCardDef = SampleCards.DDObserver;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
+
+            // 先攻
+            var testCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                // 場に出る以前に除外されていても影響なし
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                await g.ExcludeCard(goblin);
+
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+
+                // 攻撃力はもとのまま
+                Assert.Equal(testCard.BasePower, testCard.Power);
+
+                await g.ExcludeCard(goblin2);
+
+                // カードが除外されたので攻撃力が1上がる
+                Assert.Equal(testCard.BasePower + 1, testCard.Power);
+
+                return testCard;
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+
+                // まだ攻撃力はもとのまま
+                Assert.Equal(testCard.BasePower + 1, testCard.Power);
+
+                await g.ExcludeCard(goblin);
+
+                // 相手のカードが除外されても攻撃力が上がる
+                Assert.Equal(testCard.BasePower + 2, testCard.Power);
+            });
+        }
+
+        [Fact]
+        public async Task DDVisitor()
+        {
+            var testCardDef = SampleCards.DDVisitor;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                // 除外済み:0 なので、ベースのまま
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(testCard.BasePower, testCard.Power);
+
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                await g.ExcludeCard(goblin);
+
+                // 除外済み:1 なので、+1されている
+                var testCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(testCard2.BasePower + 1, testCard2.Power);
+
+                var goblin3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                await g.ExcludeCard(goblin3);
+
+                // 除外済み:2 なので、+2されている
+                var testCard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(testCard3.BasePower + 2, testCard3.Power);
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                // 相手の除外済み枚数は影響なし
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(testCard.BasePower, testCard.Power);
+            });
+        }
+
+        [Fact]
+        public async Task ReturnFromDD()
+        {
+            var testCardDef = SampleCards.ReturnFromDD;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+
+                // なにも除外されていないので、なにも起きない
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Empty(p.Field.AllCards);
+
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                await g.ExcludeCard(goblin);
+
+                Assert.Empty(p.Field.AllCards);
+
+                // 除外済みカードのコピーが場に追加される
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Single(p.Field.AllCards);
+                Assert.Equal(goblinDef.Id, p.Field.AllCards[0].CardDefId);
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+
+                // 自分の除外済みカードだけが対象なので、なにも起きない
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Empty(p.Field.AllCards);
+            });
+        }
+
+        [Fact]
+        public async Task DDTransaction()
+        {
+            var testCardDef = SampleCards.DDTransaction;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            var goblinC2Def = SampleCards.Goblin;
+            goblinC2Def.Cost = 2;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, goblinC2Def });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+
+                // 手札を2コストのカードだけにする（除外されるカードを固定するため）
+                await g.Discard(p.Id, p.Hands.AllCards.Select(c => c.Id).ToArray());
+                await g.GenerateNewCard(goblinC2Def.Id, new Zone(pId, ZoneName.Hand), default);
+
+                var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                var goblin3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                var goblin4 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+
+                Assert.Equal(4, p.Field.AllCards.Count);
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 手札から1枚除外される
+                Assert.Empty(p.Hands.AllCards);
+
+                // 場のカードが2枚破壊される（除外したカードがコスト=2なので）
+                Assert.Equal(2, p.Field.AllCards.Count);
             });
         }
     }

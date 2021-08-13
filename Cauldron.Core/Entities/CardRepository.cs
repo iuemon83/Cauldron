@@ -73,5 +73,10 @@ namespace Cauldron.Core.Entities
             var exists = this.CardDefListById.TryGetValue(carddefId, out var card);
             return (exists, card);
         }
+
+        public bool Remove(Card cardToExclude)
+        {
+            return this.CardsById.Remove(cardToExclude.Id, out var _);
+        }
     }
 }

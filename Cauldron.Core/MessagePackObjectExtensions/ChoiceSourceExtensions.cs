@@ -76,18 +76,14 @@ namespace Cauldron.Shared.MessagePackObjects
         public static async ValueTask<IEnumerable<CardDef>> ListMatchedCardDefs(this ChoiceSource choiceSource,
             Card effectOwnerCard, EffectEventArgs eventArgs, CardRepository cardRepository, int numDuplicates)
         {
-            var mathedCards = new Dictionary<CardDefId, CardDef>();
-            foreach (var cond in choiceSource.OrCardConditions)
+            var mathedCards = new List<CardDef>();
+            foreach (var cond in choiceSource.OrCardDefConditions)
             {
                 var carddefs = await cond.ListMatchedCardDefs(effectOwnerCard, eventArgs, cardRepository);
-                foreach (var c in carddefs)
-                {
-                    // 重複はいらない
-                    mathedCards.TryAdd(c.Id, c);
-                }
+                mathedCards.AddRange(carddefs);
             }
 
-            return mathedCards.Values
+            return mathedCards
                 .SelectMany(c => Enumerable.Repeat(c, numDuplicates));
         }
     }

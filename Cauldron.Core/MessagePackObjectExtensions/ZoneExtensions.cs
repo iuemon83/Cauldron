@@ -13,7 +13,6 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             return zoneMessage.ZoneName switch
             {
-                ZoneName.CardPool => ZonePrettyName.CardPool,
                 ZoneName.Hand => zoneMessage.PlayerId == card.OwnerId ? ZonePrettyName.YouHand : ZonePrettyName.OpponentHand,
                 ZoneName.Field => zoneMessage.PlayerId == card.OwnerId ? ZonePrettyName.YouField : ZonePrettyName.OpponentField,
                 ZoneName.Cemetery => zoneMessage.PlayerId == card.OwnerId ? ZonePrettyName.YouCemetery : ZonePrettyName.OpponentCemetery,
