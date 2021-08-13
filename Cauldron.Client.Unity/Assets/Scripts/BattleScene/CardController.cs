@@ -175,11 +175,19 @@ public class CardController : MonoBehaviour
             .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f)
             .ToAwaiter();
 
-        var seq = DOTween.Sequence();
-        await seq.Append(this.transform.DOMove(dest, 0.3f))
+        await DOTween.Sequence()
+            .Append(this.transform.DOMove(dest, 0.3f))
             .Join(this.transform.DORotate(new Vector3(0, 0, 1800), 0.3f, RotateMode.WorldAxisAdd))
             .ToAwaiter();
 
         this.bounceHandIconImage.gameObject.SetActive(false);
+    }
+
+    public async Task ExcludeEffect()
+    {
+        await DOTween.Sequence()
+            .Append(this.transform.DOScale(0f, 0.3f))
+            .Join(this.transform.DORotate(new Vector3(0, 0, 1800), 0.3f, RotateMode.WorldAxisAdd))
+            .ToAwaiter();
     }
 }

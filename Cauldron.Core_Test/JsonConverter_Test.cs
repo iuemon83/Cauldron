@@ -105,6 +105,7 @@ namespace Cauldron.Core_Test
                 SampleCards.DDTransaction,
                 SampleCards.DDVisitor,
                 SampleCards.ReturnFromDD,
+                SampleCards.DDShieldGoblin,
             });
 
             var actual = JsonConverter.Serialize(test);

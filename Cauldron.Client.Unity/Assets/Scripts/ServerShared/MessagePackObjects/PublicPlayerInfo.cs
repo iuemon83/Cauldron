@@ -10,6 +10,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public Card[] Field { get; }
         public int DeckCount { get; }
         public Card[] Cemetery { get; }
+        public CardDef[] Excluded { get; }
         public int HandsCount { get; }
         public int MaxHp { get; }
         public int CurrentHp { get; }
@@ -23,6 +24,7 @@ namespace Cauldron.Shared.MessagePackObjects
             Card[] Field,
             int DeckCount,
             Card[] Cemetery,
+            CardDef[] Excluded,
             int HandsCount,
             int MaxHp,
             int CurrentHp,
@@ -36,6 +38,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Field = Field;
             this.DeckCount = DeckCount;
             this.Cemetery = Cemetery;
+            this.Excluded = Excluded;
             this.HandsCount = HandsCount;
             this.MaxHp = MaxHp;
             this.CurrentHp = CurrentHp;

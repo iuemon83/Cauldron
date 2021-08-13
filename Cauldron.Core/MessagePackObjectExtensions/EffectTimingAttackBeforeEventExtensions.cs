@@ -13,19 +13,32 @@ namespace Cauldron.Shared.MessagePackObjects
                 return false;
             }
 
-            if (_this.AttackCardCondition != null)
+            return await IsMatchedAttackCardCondition(_this.AttackCardCondition, effectOwnerCard, eventArgs)
+                && await IsMatchedGuardCardCondition(_this.GuardCardCondition, effectOwnerCard, eventArgs);
+
+            static async ValueTask<bool> IsMatchedAttackCardCondition(CardCondition attackCardCondition,
+                Card effectOwnerCard, EffectEventArgs eventArgs)
             {
+                if (attackCardCondition == null)
+                {
+                    return true;
+                }
+
                 return eventArgs.BattleContext.AttackCard != null
-                    && await _this.AttackCardCondition.IsMatch(eventArgs.BattleContext.AttackCard, effectOwnerCard, eventArgs);
+                    && await attackCardCondition.IsMatch(eventArgs.BattleContext.AttackCard, effectOwnerCard, eventArgs);
             }
 
-            if (_this.GuardCardCondition != null)
+            static async ValueTask<bool> IsMatchedGuardCardCondition(CardCondition guardCardCondition,
+                Card effectOwnerCard, EffectEventArgs eventArgs)
             {
-                return eventArgs.BattleContext.GuardCard != null
-                    && await _this.GuardCardCondition.IsMatch(eventArgs.BattleContext.GuardCard, effectOwnerCard, eventArgs);
-            }
+                if (guardCardCondition == null)
+                {
+                    return true;
+                }
 
-            return true;
+                return eventArgs.BattleContext.GuardCard != null
+                    && await guardCardCondition.IsMatch(eventArgs.BattleContext.GuardCard, effectOwnerCard, eventArgs);
+            }
         }
     }
 }

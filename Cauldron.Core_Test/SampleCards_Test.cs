@@ -2943,5 +2943,119 @@ namespace Cauldron.Core_Test
                 Assert.Equal(2, p.Field.AllCards.Count);
             });
         }
+
+        [Fact]
+        public async Task DDShieldGoblin_UŒ‚‚·‚é()
+        {
+            var testCardDef = SampleCards.DDShieldGoblin;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
+
+            // æU
+            var goblin = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                return await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+            });
+
+            // ŒãU
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+                var op = g.GetOpponent(pId);
+
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Single(p.Field.AllCards);
+                Assert.Single(op.Field.AllCards);
+
+                Assert.Empty(p.Excludes);
+                Assert.Empty(op.Excludes);
+
+                var status = await g.AttackToCreature(pId, testCard.Id, goblin.Id);
+                Assert.Equal(GameMasterStatusCode.OK, status);
+
+                // UŒ‚‚µ‚½•û‚à‚³‚ê‚½•û‚àA—¼•ûœŠO‚³‚ê‚éB
+                Assert.Empty(p.Field.AllCards);
+                Assert.Empty(op.Field.AllCards);
+
+                Assert.Single(p.Excludes);
+                Assert.Single(op.Excludes);
+            });
+        }
+
+        [Fact]
+        public async Task DDShieldGoblin_UŒ‚‚³‚ê‚é()
+        {
+            var testCardDef = SampleCards.DDShieldGoblin;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
+
+            // æU
+            var testCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                return await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+            });
+
+            // ŒãU
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+                var op = g.GetOpponent(pId);
+
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+
+                Assert.Single(p.Field.AllCards);
+                Assert.Single(op.Field.AllCards);
+
+                Assert.Empty(p.Excludes);
+                Assert.Empty(op.Excludes);
+
+                var status = await g.AttackToCreature(pId, goblin.Id, testCard.Id);
+                Assert.Equal(GameMasterStatusCode.OK, status);
+
+                // UŒ‚‚µ‚½•û‚à‚³‚ê‚½•û‚àA—¼•ûœŠO‚³‚ê‚éB
+                Assert.Empty(p.Field.AllCards);
+                Assert.Empty(op.Field.AllCards);
+
+                Assert.Single(p.Excludes);
+                Assert.Single(op.Excludes);
+            });
+        }
+
+        [Fact]
+        public async Task DDShieldGoblin_ƒvƒŒƒCƒ„[‚ÖUŒ‚‚·‚é()
+        {
+            var testCardDef = SampleCards.DDShieldGoblin;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef });
+
+            // æU
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+                var op = g.GetOpponent(pId);
+
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Single(p.Field.AllCards);
+                Assert.Empty(p.Excludes);
+
+                var status = await g.AttackToPlayer(pId, testCard.Id, op.Id);
+                Assert.Equal(GameMasterStatusCode.OK, status);
+
+                // ƒvƒŒƒCƒ„[‚ÖUŒ‚‚µ‚½ê‡‚ÍAœŠO‚³‚ê‚È‚¢
+                Assert.Single(p.Field.AllCards);
+                Assert.Empty(p.Excludes);
+            });
+        }
     }
 }

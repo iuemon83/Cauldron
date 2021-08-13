@@ -15,11 +15,13 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private TextMeshProUGUI statusText;
     [SerializeField]
-    private TextMeshProUGUI deckText;
+    private TextMeshProUGUI numDecksText;
     [SerializeField]
-    private TextMeshProUGUI cemeteryText;
+    private TextMeshProUGUI numCemeteriesText;
     [SerializeField]
-    private TextMeshProUGUI handText;
+    private TextMeshProUGUI numHandsText;
+    [SerializeField]
+    private TextMeshProUGUI numExcludedsText;
     [SerializeField]
     private TextMeshProUGUI damageText;
     [SerializeField]
@@ -67,9 +69,10 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.PlayerId = publicPlayerInfo.Id;
         this.nameText.text = publicPlayerInfo.Name;
         this.statusText.text = $"[{publicPlayerInfo.CurrentHp} / {publicPlayerInfo.MaxHp}] [{publicPlayerInfo.CurrentMp} / {publicPlayerInfo.MaxMp}]";
-        this.deckText.text = publicPlayerInfo.DeckCount.ToString();
-        this.cemeteryText.text = publicPlayerInfo.Cemetery.Length.ToString();
-        this.handText.text = publicPlayerInfo.HandsCount.ToString();
+        this.numDecksText.text = publicPlayerInfo.DeckCount.ToString();
+        this.numCemeteriesText.text = publicPlayerInfo.Cemetery.Length.ToString();
+        this.numExcludedsText.text = publicPlayerInfo.Excluded.Length.ToString();
+        this.numHandsText.text = publicPlayerInfo.HandsCount.ToString();
         this.firstText.gameObject.SetActive(publicPlayerInfo.IsFirst);
     }
 

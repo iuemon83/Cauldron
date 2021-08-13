@@ -87,6 +87,7 @@ public class BattleSceneController : MonoBehaviour
             holder.Receiver.OnModifyCard.Subscribe((a) => this.OnModifyCard(a.gameContext, a.message)),
             holder.Receiver.OnModifyPlayer.Subscribe((a) => this.OnModifyPlayer(a.gameContext, a.message)),
             holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.message)),
+            holder.Receiver.OnExcludeCard.Subscribe((a) => this.OnExcludeCard(a.gameContext, a.message)),
             holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.playerId)),
         });
 
@@ -313,6 +314,14 @@ public class BattleSceneController : MonoBehaviour
             this.youPlayerController.Set(publicInfo);
 
             var youHands = you.Hands;
+            var removeHandIdList = this.handCardObjectsByCardId.Keys
+                .Where(id => !youHands.Any(c => c.Id == id))
+                .ToArray();
+            foreach (var handCardId in removeHandIdList)
+            {
+                // なくなったものを削除する
+                this.RemoveHandCardObj(handCardId);
+            }
             foreach (var handIndex in Enumerable.Range(0, Mathf.Min(youHands.Length, 10)))
             {
                 var handCard = youHands[handIndex];
@@ -320,18 +329,20 @@ public class BattleSceneController : MonoBehaviour
             }
 
             var youFieldCards = publicInfo.Field;
+            var removeFieldIdList = this.fieldCardControllersByCardId
+                .Where(x => x.Value.Card.OwnerId == publicInfo.Id
+                    && !youFieldCards.Any(c => c.Id == x.Key))
+                .Select(x => x.Key)
+                .ToArray();
+            foreach (var fieldCardId in removeFieldIdList)
+            {
+                // なくなったものを削除する
+                this.RemoveFieldCardObj(fieldCardId);
+            }
             foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(youFieldCards.Length, 5)))
             {
                 var fieldCard = youFieldCards[fieldIndex];
-                var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard);
-                fieldCardObj.transform.position = this.youFieldSpaces[fieldIndex].transform.position;
-            }
-
-            var youCemeteryCards = publicInfo.Cemetery;
-            foreach (var cemeteryIndex in Enumerable.Range(0, youCemeteryCards.Length))
-            {
-                var cemeteryCard = youCemeteryCards[cemeteryIndex];
-                RemoveCardObjectByCardId(cemeteryCard.Id);
+                var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard, publicInfo.Id, fieldIndex);
             }
         }
 
@@ -341,19 +352,21 @@ public class BattleSceneController : MonoBehaviour
             this.opponentPlayerController.Set(opponent);
 
             var opponentFieldCards = opponent.Field;
+            var removeFieldIdList = this.fieldCardControllersByCardId
+                .Where(x => x.Value.Card.OwnerId == opponent.Id
+                    && !opponentFieldCards.Any(c => c.Id == x.Key))
+                .Select(x => x.Key)
+                .ToArray();
+            foreach (var fieldCardId in removeFieldIdList)
+            {
+                // なくなったものを削除する
+                this.RemoveFieldCardObj(fieldCardId);
+            }
             foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(opponentFieldCards.Length, 5)))
             {
                 var fieldCard = opponentFieldCards[fieldIndex];
 
-                var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard);
-                fieldCardObj.transform.position = this.opponentFieldSpaces[fieldIndex].transform.position;
-            }
-
-            var opponentCemeteryCards = opponent.Cemetery;
-            foreach (var cemeteryIndex in Enumerable.Range(0, opponentCemeteryCards.Length))
-            {
-                var cemeteryCard = opponentCemeteryCards[cemeteryIndex];
-                RemoveCardObjectByCardId(cemeteryCard.Id);
+                var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard, opponent.Id, fieldIndex);
             }
         }
 
@@ -385,7 +398,7 @@ public class BattleSceneController : MonoBehaviour
         return controller;
     }
 
-    private FieldCardController GetOrCreateFieldCardObject(Card card)
+    private FieldCardController GetOrCreateFieldCardObject(Card card, PlayerId playerId, int index)
     {
         if (!fieldCardControllersByCardId.TryGetValue(card.Id, out var cardController))
         {
@@ -398,6 +411,9 @@ public class BattleSceneController : MonoBehaviour
         cardController.Init(card);
 
         cardController.transform.SetParent(this.canvas.transform, false);
+        cardController.transform.position = playerId == this.YouId
+            ? this.youFieldSpaces[index].transform.position
+            : this.opponentFieldSpaces[index].transform.position;
 
         return cardController;
     }
@@ -445,10 +461,12 @@ public class BattleSceneController : MonoBehaviour
 
     void OnStartTurn(GameContext gameContext, PlayerId playerId)
     {
-        // 自分のターン
-        Debug.Log("ターン開始: " + this.client.PlayerName);
+        Debug.Log($"OnStartTurn({this.client.PlayerName})");
+
         this.updateViewActionQueue.Enqueue(async () =>
         {
+            Debug.Log($"ターン開始: {this.client.PlayerName}");
+
             if (this.youPlayerController.PlayerId == playerId)
             {
                 this.youPlayerController.SetActiveTurn(true);
@@ -465,24 +483,55 @@ public class BattleSceneController : MonoBehaviour
 
     void OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)
     {
-        var (ownerName, cardName) = Utility.GetCardName(gameContext, addCardNotifyMessage.ToZone, addCardNotifyMessage.CardId);
-        var playerName = Utility.GetPlayerName(gameContext, addCardNotifyMessage.ToZone.PlayerId);
+        Debug.Log($"OnAddCard({this.client.PlayerName})");
 
-        Debug.Log($"追加: {cardName}({ownerName}) to {addCardNotifyMessage.ToZone.ZoneName}({playerName})");
-        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            var (ownerName, cardName) = Utility.GetCardName(gameContext,
+                addCardNotifyMessage.ToZone,
+                addCardNotifyMessage.CardId);
+            var playerName = Utility.GetPlayerName(gameContext, addCardNotifyMessage.ToZone.PlayerId);
+            Debug.Log($"追加: {cardName}({ownerName}) to {addCardNotifyMessage.ToZone.ZoneName}({playerName})");
+
+            await this.UpdateGameContext(gameContext);
+        });
+    }
+
+    void OnExcludeCard(GameContext gameContext, ExcludeCardNotifyMessage notify)
+    {
+        Debug.Log($"OnExcludeCard({this.client.PlayerName})");
+
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            var (ownerName, cardName) = Utility.GetCardName(this.currentGameContext, notify.CardId);
+
+            Debug.Log($"除外: {cardName}({ownerName})");
+
+            if (this.fieldCardControllersByCardId.TryGetValue(notify.CardId, out var fieldCardController)
+                && fieldCardController.Card.Type != CardType.Sorcery)
+            {
+                await fieldCardController.ExcludeEffect();
+            }
+            else if (this.handCardObjectsByCardId.TryGetValue(notify.CardId, out var handCardController))
+            {
+                await handCardController.ExcludeEffect();
+            }
+
+            await this.UpdateGameContext(gameContext);
+        });
     }
 
     void OnMoveCard(GameContext gameContext, MoveCardNotifyMessage notify)
     {
-        var (ownerName, cardName) = Utility.GetCardName(gameContext, notify.ToZone, notify.CardId);
-        var playerName = Utility.GetPlayerName(gameContext, notify.ToZone.PlayerId);
-
-        Debug.Log($"移動: {cardName}({ownerName}) to {notify.ToZone.ZoneName}({playerName})");
-
-        Debug.Log($"OnMoveCard({notify.ToZone.PlayerId}): {this.client.PlayerName}");
+        Debug.Log($"OnMoveCard({this.client.PlayerName})");
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
+            var (ownerName, cardName) = Utility.GetCardName(gameContext, notify.ToZone, notify.CardId);
+            var playerName = Utility.GetPlayerName(gameContext, notify.ToZone.PlayerId);
+
+            Debug.Log($"移動: {cardName}({ownerName}) to {notify.ToZone.ZoneName}({playerName})");
+
             var cardId = notify.CardId;
             var targetPlayer = notify.ToZone.PlayerId == this.YouId
                 ? this.youPlayerController
@@ -534,13 +583,8 @@ public class BattleSceneController : MonoBehaviour
                             ? gameContext.You.PublicPlayerInfo.Field.First(c => c.Id == cardId)
                             : gameContext.Opponent.Field.First(c => c.Id == cardId);
 
-                        var fieldCard = this.GetOrCreateFieldCardObject(card);
+                        var fieldCard = this.GetOrCreateFieldCardObject(card, notify.ToZone.PlayerId, notify.Index);
                         await fieldCard.transform.DOScale(1.2f, 0).ToAwaiter();
-
-                        fieldCard.transform.position = notify.ToZone.PlayerId == this.YouId
-                            ? this.youFieldSpaces[notify.Index].transform.position
-                            : this.opponentFieldSpaces[notify.Index].transform.position;
-
                         await fieldCard.transform.DOScale(1f, 0.3f).ToAwaiter();
                         break;
                     }
@@ -558,20 +602,26 @@ public class BattleSceneController : MonoBehaviour
 
     void OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)
     {
-        var (ownerName, cardName) = Utility.GetCardName(gameContext, modifyCardNotifyMessage.CardId);
+        Debug.Log($"OnModifyCard({this.client.PlayerName})");
 
-        Debug.Log($"修整: {cardName}({ownerName})");
-        this.updateViewActionQueue.Enqueue(async () => await this.UpdateGameContext(gameContext));
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            var (ownerName, cardName) = Utility.GetCardName(gameContext, modifyCardNotifyMessage.CardId);
+            Debug.Log($"修整: {cardName}({ownerName})");
+
+            await this.UpdateGameContext(gameContext);
+        });
     }
 
     void OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage notify)
     {
-        var playerName = Utility.GetPlayerName(gameContext, notify.PlayerId);
-
-        Debug.Log($"修整: {playerName}");
+        Debug.Log($"OnModifyPlayer({this.client.PlayerName})");
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
+            var playerName = Utility.GetPlayerName(gameContext, notify.PlayerId);
+            Debug.Log($"修整: {playerName}");
+
             static async Task HealOrDamageEffect(PlayerController playerController, int oldHp, int newHp)
             {
                 if (playerController == null) return;
@@ -610,20 +660,22 @@ public class BattleSceneController : MonoBehaviour
 
     void OnBattle(GameContext gameContext, BattleNotifyMessage notify)
     {
-        var (ownerPlayerName, attackCardName) = Utility.GetCardName(gameContext, notify.AttackCardId);
-        if (notify.GuardCardId == default)
-        {
-            var guardPlayerName = Utility.GetPlayerName(gameContext, notify.GuardPlayerId);
-            Debug.Log($"戦闘: {attackCardName}({ownerPlayerName}) > {guardPlayerName}");
-        }
-        else
-        {
-            var (guardCardOwnerName, guardCardName) = Utility.GetCardName(gameContext, notify.GuardCardId);
-            Debug.Log($"戦闘: {attackCardName}({ownerPlayerName}) > {guardCardName}({guardCardOwnerName})");
-        }
+        Debug.Log($"OnBattle({this.client.PlayerName})");
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
+            var (ownerPlayerName, attackCardName) = Utility.GetCardName(gameContext, notify.AttackCardId);
+            if (notify.GuardCardId == default)
+            {
+                var guardPlayerName = Utility.GetPlayerName(gameContext, notify.GuardPlayerId);
+                Debug.Log($"戦闘: {attackCardName}({ownerPlayerName}) > {guardPlayerName}");
+            }
+            else
+            {
+                var (guardCardOwnerName, guardCardName) = Utility.GetCardName(gameContext, notify.GuardCardId);
+                Debug.Log($"戦闘: {attackCardName}({ownerPlayerName}) > {guardCardName}({guardCardOwnerName})");
+            }
+
             if (fieldCardControllersByCardId.TryGetValue(notify.AttackCardId, out var attackCard))
             {
                 if (notify.GuardCardId == default)
@@ -652,36 +704,38 @@ public class BattleSceneController : MonoBehaviour
 
     void OnDamage(GameContext gameContext, DamageNotifyMessage notify)
     {
-        switch (notify.Reason)
-        {
-            case DamageNotifyMessage.ReasonValue.DrawDeath:
-                {
-                    var guardPlayerName = Utility.GetPlayerName(gameContext, notify.GuardPlayerId);
-                    Debug.Log($"ダメージ: [{notify.Reason}] {guardPlayerName} {notify.Damage}");
-                    break;
-                }
-
-            case DamageNotifyMessage.ReasonValue.Attack:
-            case DamageNotifyMessage.ReasonValue.Effect:
-                {
-                    var (ownerPlayerName, cardName) = Utility.GetCardName(gameContext, notify.SourceCardId);
-                    if (notify.GuardCardId == default)
-                    {
-                        var guardPlayerName = Utility.GetPlayerName(gameContext, notify.GuardPlayerId);
-                        Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardPlayerName} {notify.Damage}");
-                    }
-                    else
-                    {
-                        var (guardCardOwnerName, guardCardName) = Utility.GetCardName(gameContext, notify.GuardCardId);
-                        Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardCardName}({guardCardOwnerName}) {notify.Damage}");
-                    }
-
-                    break;
-                }
-        }
+        Debug.Log($"OnDamage({this.client.PlayerName})");
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
+            switch (notify.Reason)
+            {
+                case DamageNotifyMessage.ReasonValue.DrawDeath:
+                    {
+                        var guardPlayerName = Utility.GetPlayerName(gameContext, notify.GuardPlayerId);
+                        Debug.Log($"ダメージ: [{notify.Reason}] {guardPlayerName} {notify.Damage}");
+                        break;
+                    }
+
+                case DamageNotifyMessage.ReasonValue.Attack:
+                case DamageNotifyMessage.ReasonValue.Effect:
+                    {
+                        var (ownerPlayerName, cardName) = Utility.GetCardName(gameContext, notify.SourceCardId);
+                        if (notify.GuardCardId == default)
+                        {
+                            var guardPlayerName = Utility.GetPlayerName(gameContext, notify.GuardPlayerId);
+                            Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardPlayerName} {notify.Damage}");
+                        }
+                        else
+                        {
+                            var (guardCardOwnerName, guardCardName) = Utility.GetCardName(gameContext, notify.GuardCardId);
+                            Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardCardName}({guardCardOwnerName}) {notify.Damage}");
+                        }
+
+                        break;
+                    }
+            }
+
             if (notify.GuardCardId == default)
             {
                 if (this.youPlayerController.PlayerId == notify.GuardPlayerId)

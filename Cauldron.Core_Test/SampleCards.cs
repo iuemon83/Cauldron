@@ -207,6 +207,54 @@ namespace Cauldron.Core_Test
                         })
                 });
 
+        public static CardDef DDShieldGoblin
+            => SampleCards.Creature(2, "異次元の盾持ちゴブリン", "このカードの戦闘時に、このカードと戦闘相手を除外する。",
+                1, 2, abilities: new[] { CreatureAbility.Cover },
+                effects: new[] {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                AttackBefore: new(
+                                    AttackCardCondition: new(
+                                        CardCondition.ContextConditionValue.This),
+                                    GuardCardCondition: new(
+                                        CardCondition.ContextConditionValue.Others))))),
+                        new[]{
+                            new EffectAction(
+                                ExcludeCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.Guard),
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.This)
+                                            })))),
+                        }),
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                AttackBefore: new(
+                                    AttackCardCondition: new(
+                                        CardCondition.ContextConditionValue.Others),
+                                    GuardCardCondition: new(
+                                        CardCondition.ContextConditionValue.This))))),
+                        new[]{
+                            new EffectAction(
+                                ExcludeCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.Attack),
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.This)
+                                            })))),
+                        })
+                });
+
         public static CardDef DeadlyGoblin
             => SampleCards.Creature(3, "暗殺ゴブリン", "暗殺者", 1, 1,
                 abilities: new[] { CreatureAbility.Stealth, CreatureAbility.Deadly });
@@ -1683,7 +1731,7 @@ namespace Cauldron.Core_Test
 
         public static CardDef ReturnFromDD
             => SampleCards.Sorcery(1, "異次元からの脱出",
-                "自分の除外済みカードからランダムで一つを選択する。そのカードを場に追加する。",
+                "自分の除外済みのクリーチャーカードをランダムで一つを選択する。そのカードを場に追加する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -1697,6 +1745,10 @@ namespace Cauldron.Core_Test
                                             OrCardDefConditions: new[]
                                             {
                                                 new CardDefCondition(
+                                                    TypeCondition: new(new[]
+                                                    {
+                                                        CardType.Creature
+                                                    }),
                                                     OutZoneCondition: new(new[]
                                                     {
                                                         OutZonePrettyName.YouExcluded

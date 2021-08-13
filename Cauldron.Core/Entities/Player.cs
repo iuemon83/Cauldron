@@ -140,6 +140,7 @@ namespace Cauldron.Core.Entities
             this.Field.AllCards.ToArray(),
             this.Deck.Count,
             this.Cemetery.AllCards.ToArray(),
+            this.Excludes.ToArray(),
             this.Hands.Count,
             this.MaxHp,
             this.CurrentHp,

@@ -5,7 +5,12 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class ZoneExtensions
     {
-        public static readonly ZoneName[] PublicZoneNames = new[] { ZoneName.Field, ZoneName.Cemetery, ZoneName.CardPool };
+        public static readonly ZoneName[] PublicZoneNames = new[] {
+            ZoneName.Field,
+            ZoneName.Cemetery,
+            ZoneName.CardPool,
+            ZoneName.Excluded,
+        };
 
         public static bool IsPublic(this Zone zoneMessage) => PublicZoneNames.Contains(zoneMessage.ZoneName);
 

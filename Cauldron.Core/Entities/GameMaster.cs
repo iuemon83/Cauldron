@@ -500,28 +500,24 @@ namespace Cauldron.Core.Entities
         public async ValueTask<bool> ExcludeCard(Card cardToExclude)
         {
             var excluded = false;
+            Player player = default;
             switch (cardToExclude.Zone.ZoneName)
             {
                 case ZoneName.Field:
                     {
-                        var (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
+                        bool exists;
+                        (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
                         if (exists)
                         {
                             player.Field.Remove(cardToExclude);
-                            this.cardRepository.Remove(cardToExclude);
-
-                            var (existsDef, def) = this.cardRepository.TryGetCardDefById(cardToExclude.CardDefId);
-                            if (existsDef)
-                            {
-                                player.Excludes.Add(def);
-                            }
                             excluded = true;
                         }
                         break;
                     }
                 case ZoneName.Hand:
                     {
-                        var (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
+                        bool exists;
+                        (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
                         if (exists)
                         {
                             player.Hands.Remove(cardToExclude);
@@ -531,34 +527,22 @@ namespace Cauldron.Core.Entities
                     }
                 case ZoneName.Deck:
                     {
-                        var (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
+                        bool exists;
+                        (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
                         if (exists)
                         {
                             player.Deck.Remove(cardToExclude);
-                            this.cardRepository.Remove(cardToExclude);
-
-                            var (existsDef, def) = this.cardRepository.TryGetCardDefById(cardToExclude.CardDefId);
-                            if (existsDef)
-                            {
-                                player.Excludes.Add(def);
-                            }
                             excluded = true;
                         }
                         break;
                     }
                 case ZoneName.Cemetery:
                     {
-                        var (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
+                        bool exists;
+                        (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
                         if (exists)
                         {
                             player.Cemetery.Remove(cardToExclude);
-                            this.cardRepository.Remove(cardToExclude);
-
-                            var (existsDef, def) = this.cardRepository.TryGetCardDefById(cardToExclude.CardDefId);
-                            if (existsDef)
-                            {
-                                player.Excludes.Add(def);
-                            }
                             excluded = true;
                         }
                         break;
@@ -569,19 +553,27 @@ namespace Cauldron.Core.Entities
 
             if (excluded)
             {
-                this.logger.LogInformation($"Exclude: {cardToExclude}");
+                this.cardRepository.Remove(cardToExclude);
 
-                await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnExclude, this,
-                    SourceCard: cardToExclude));
+                var (existsDef, def) = this.cardRepository.TryGetCardDefById(cardToExclude.CardDefId);
+                if (existsDef)
+                {
+                    player.Excludes.Add(def);
+                }
+
+                this.logger.LogInformation($"Exclude: {cardToExclude}");
 
                 foreach (var p in this.playerRepository.AllPlayers)
                 {
                     this.EventListener.OnExcludeCard?.Invoke(p.Id,
                         this.CreateGameContext(p.Id),
                         new ExcludeCardNotifyMessage(
-                            cardToExclude.Zone.IsPublic() ? cardToExclude.Id : default)
+                            cardToExclude.Id)
                         );
                 }
+
+                await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnExclude, this,
+                    SourceCard: cardToExclude));
             }
 
             return excluded;
