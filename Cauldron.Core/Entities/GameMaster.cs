@@ -560,6 +560,7 @@ namespace Cauldron.Core.Entities
 
             if (excluded)
             {
+                cardToExclude.Zone = new(cardToExclude.OwnerId, ZoneName.Excluded);
                 this.cardRepository.Remove(cardToExclude);
 
                 var (existsDef, def) = this.cardRepository.TryGetCardDefById(cardToExclude.CardDefId);
