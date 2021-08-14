@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.34.0" />
-    <PackageReference Include="MagicOnion.Server" Version="4.0.4" />
+    <PackageReference Include="MagicOnion.Server" Version="4.3.1" />
   </ItemGroup>
 
   <ItemGroup>
