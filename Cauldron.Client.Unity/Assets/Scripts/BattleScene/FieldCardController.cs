@@ -1,5 +1,5 @@
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -58,27 +58,25 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
         this.selectedIcon.SetActive(value);
     }
 
-    public async Task DamageEffect(int value)
+    public async UniTask DamageEffect(int value)
     {
         this.damageText.text = value.ToString();
         this.damageText.gameObject.SetActive(true);
         await this.damageText.gameObject.transform
             .DOMove(new Vector3(0, -20, 0), 0.5f)
-            .SetRelative(true)
-            .ToAwaiter();
+            .SetRelative(true);
         this.damageText.gameObject.SetActive(false);
     }
 
-    public async Task DestroyEffect()
+    public async UniTask DestroyEffect()
     {
         this.destroyIcon.gameObject.SetActive(true);
         await this.destroyIcon.transform
-            .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f)
-            .ToAwaiter();
+            .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f);
         this.destroyIcon.gameObject.SetActive(false);
     }
 
-    public async Task AttackEffect(PlayerController dest)
+    public async UniTask AttackEffect(PlayerController dest)
     {
         var origIndex = this.transform.GetSiblingIndex();
 
@@ -89,7 +87,7 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
         this.transform.SetSiblingIndex(origIndex);
     }
 
-    public async Task AttackEffect(FieldCardController dest)
+    public async UniTask AttackEffect(FieldCardController dest)
     {
         var origIndex = this.transform.GetSiblingIndex();
 
@@ -100,21 +98,18 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
         this.transform.SetSiblingIndex(origIndex);
     }
 
-    public async Task AttackEffect(Vector3 dest)
+    public async UniTask AttackEffect(Vector3 dest)
     {
         await this.transform
-            .DOScale(1.2f, 0.2f)
-            .ToAwaiter();
+            .DOScale(1.2f, 0.2f);
 
         await this.transform
             .DOMove(dest, 0.2f)
             .SetLoops(2, LoopType.Yoyo)
-            .SetEase(Ease.InQuart)
-            .ToAwaiter();
+            .SetEase(Ease.InQuart);
 
         await this.transform
-            .DOScale(1f, 0f)
-            .ToAwaiter();
+            .DOScale(1f, 0f);
     }
 
     public override void ResetAllIcon()

@@ -1,13 +1,12 @@
-﻿using Grpc.Core;
+﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts
 {
     public class ConnectionHolder : MonoBehaviour
     {
-        public static async Task<ConnectionHolder> Create(string serverHost, string playerName)
+        public static async UniTask<ConnectionHolder> Create(string serverHost, string playerName)
         {
             // DontDestroy化
             var holder = Find();
@@ -29,12 +28,12 @@ namespace Assets.Scripts
 
         public CauldronHubReceiver Receiver { get; } = new CauldronHubReceiver();
 
-        private Channel channel;
+        private Grpc.Core.Channel channel;
         public Client Client { get; private set; }
 
-        private async Task Connect(string serverHost, string playerName)
+        private async UniTask Connect(string serverHost, string playerName)
         {
-            this.channel = new Channel(serverHost, ChannelCredentials.Insecure);
+            this.channel = new Grpc.Core.Channel(serverHost, Grpc.Core.ChannelCredentials.Insecure);
 
             await this.channel.ConnectAsync(DateTime.UtcNow.Add(TimeSpan.FromSeconds(5)));
 

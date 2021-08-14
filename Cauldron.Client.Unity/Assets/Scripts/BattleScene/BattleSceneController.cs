@@ -1,12 +1,12 @@
 using Assets.Scripts;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -56,7 +56,7 @@ public class BattleSceneController : MonoBehaviour
     private readonly Dictionary<CardId, HandCardController> handCardObjectsByCardId = new Dictionary<CardId, HandCardController>();
     private readonly Dictionary<CardId, FieldCardController> fieldCardControllersByCardId = new Dictionary<CardId, FieldCardController>();
 
-    private readonly ConcurrentQueue<Func<Task>> updateViewActionQueue = new ConcurrentQueue<Func<Task>>();
+    private readonly ConcurrentQueue<Func<UniTask>> updateViewActionQueue = new ConcurrentQueue<Func<UniTask>>();
 
     private Client client;
 
@@ -118,13 +118,13 @@ public class BattleSceneController : MonoBehaviour
         }
     }
 
-    public async ValueTask PlayFromHand(HandCardController handCardController)
+    public async UniTask PlayFromHand(HandCardController handCardController)
     {
         this.ResetAllMarks();
         await this.client.PlayFromHand(handCardController.CardId);
     }
 
-    public async ValueTask AttackToOpponentPlayerIfSelectedAttackCard()
+    public async UniTask AttackToOpponentPlayerIfSelectedAttackCard()
     {
         if (this.attackCardController == null)
         {
@@ -175,7 +175,7 @@ public class BattleSceneController : MonoBehaviour
         }
     }
 
-    public async ValueTask MarkingAttackTargets()
+    public async UniTask MarkingAttackTargets()
     {
         var targets = await this.client.ListAttackTargets(this.attackCardController.CardId);
 
@@ -311,7 +311,7 @@ public class BattleSceneController : MonoBehaviour
         dialog.transform.SetParent(this.canvas.transform, false);
     }
 
-    private async Task UpdateGameContext(GameContext gameContext)
+    private async UniTask UpdateGameContext(GameContext gameContext)
     {
         if (gameContext == null)
         {
@@ -388,7 +388,7 @@ public class BattleSceneController : MonoBehaviour
             this.ShowEndGameDialog(gameContext.WinnerPlayerId);
         }
 
-        await Task.Delay(TimeSpan.FromSeconds(0.3));
+        await UniTask.Delay(TimeSpan.FromSeconds(0.3));
     }
 
     private HandCardController GetOrCreateHandCardObject(CardId cardId, Card card, int index)
@@ -464,7 +464,7 @@ public class BattleSceneController : MonoBehaviour
             onOkAction: async () =>
             {
                 await this.client.LeaveGame();
-                Utility.LoadAsyncScene(this, SceneNames.ListGameScene);
+                await Utility.LoadAsyncScene(SceneNames.ListGameScene);
             });
         dialog.transform.SetParent(this.canvas.transform, false);
     }
@@ -619,8 +619,8 @@ public class BattleSceneController : MonoBehaviour
                             : gameContext.Opponent.Field.First(c => c.Id == cardId);
 
                         var fieldCard = this.GetOrCreateFieldCardObject(card, notify.ToZone.PlayerId, notify.Index);
-                        await fieldCard.transform.DOScale(1.2f, 0).ToAwaiter();
-                        await fieldCard.transform.DOScale(1f, 0.3f).ToAwaiter();
+                        await fieldCard.transform.DOScale(1.2f, 0);
+                        await fieldCard.transform.DOScale(1f, 0.3f);
                         break;
                     }
 
@@ -657,7 +657,7 @@ public class BattleSceneController : MonoBehaviour
             var playerName = Utility.GetPlayerName(gameContext, notify.PlayerId);
             Debug.Log($"ПCРо: {playerName}");
 
-            static async Task HealOrDamageEffect(PlayerController playerController, int oldHp, int newHp)
+            static async UniTask HealOrDamageEffect(PlayerController playerController, int oldHp, int newHp)
             {
                 if (playerController == null) return;
 

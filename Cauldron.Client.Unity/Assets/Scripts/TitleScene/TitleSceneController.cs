@@ -1,6 +1,6 @@
 using Assets.Scripts;
+using Cysharp.Threading.Tasks;
 using System;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -46,10 +46,10 @@ public class TitleSceneController : MonoBehaviour
         LocalData.ServerAddress = this.ipOrHostNameText.text;
         LocalData.PlayerName = this.playerNameText.text;
 
-        Utility.LoadAsyncScene(this, SceneNames.ListGameScene);
+        await Utility.LoadAsyncScene(SceneNames.ListGameScene);
     }
 
-    private async Task<bool> DoValidation()
+    private async UniTask<bool> DoValidation()
     {
         if (string.IsNullOrWhiteSpace(this.playerNameText.text))
         {

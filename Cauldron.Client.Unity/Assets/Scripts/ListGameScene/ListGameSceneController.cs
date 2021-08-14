@@ -1,5 +1,6 @@
 using Assets.Scripts;
 using Assets.Scripts.ServerShared.MessagePackObjects;
+using Cysharp.Threading.Tasks;
 using Grpc.Core;
 using System;
 using UniRx;
@@ -57,7 +58,7 @@ public class ListGameSceneController : MonoBehaviour
                     var holder = ConnectionHolder.Find();
                     await holder.Client.EnterGame(gameOutline.GameId, deck);
 
-                    Utility.LoadAsyncScene(this, SceneNames.BattleScene);
+                    await Utility.LoadAsyncScene(SceneNames.BattleScene);
                 });
         });
     }
@@ -81,10 +82,10 @@ public class ListGameSceneController : MonoBehaviour
                 }
 
                 IDisposable disposable = default;
-                disposable = holder.Receiver.OnJoinGame.Subscribe(_ =>
+                disposable = holder.Receiver.OnJoinGame.Subscribe(async _ =>
                 {
                     disposable?.Dispose();
-                    Utility.LoadAsyncScene(this, SceneNames.BattleScene);
+                    await Utility.LoadAsyncScene(SceneNames.BattleScene);
                 });
 
                 var title = "‘Îí‘Šè‚ğ‘Ò‚Á‚Ä‚¢‚Ü‚·...";
@@ -108,9 +109,9 @@ public class ListGameSceneController : MonoBehaviour
         this.RefreshGameList();
     }
 
-    public void OnDeckButtonClick()
+    public async UniTaskVoid OnDeckButtonClick()
     {
-        Utility.LoadAsyncScene(this, SceneNames.ListDeckScene);
+        await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }
 
     public void OnVsAiButtonClick()
@@ -145,7 +146,7 @@ public class ListGameSceneController : MonoBehaviour
 
         // ©•ª‘¤‚ÌÚ‘±ˆ—‚±‚±‚Ü‚Å----
 
-        Utility.LoadAsyncScene(this, SceneNames.BattleScene, () =>
+        await Utility.LoadAsyncScene(SceneNames.BattleScene, () =>
         {
             // AI‘¤‚ğÚ‘±‚·‚é
             var aiClientController = FindObjectOfType<AiClientController>();

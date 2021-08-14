@@ -1,5 +1,5 @@
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -19,12 +19,11 @@ public class HandCardController : CardController, IPointerClickHandler, IPointer
         BattleSceneController.Instance.ShowCardDetail(this.Card);
     }
 
-    public async Task DestroyEffect()
+    public async UniTask DestroyEffect()
     {
         this.destroyIcon.gameObject.SetActive(true);
         await this.destroyIcon.transform
-            .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f)
-            .ToAwaiter();
+            .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f);
         this.destroyIcon.gameObject.SetActive(false);
     }
 }

@@ -1,9 +1,9 @@
 ﻿using Assets.Scripts;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.Services;
+using Cysharp.Threading.Tasks;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 public class AiClient
 {
@@ -25,18 +25,23 @@ public class AiClient
         this.LoggingError = logError;
     }
 
-    public async Task Destroy()
+    public async UniTask Destroy()
     {
-        await this.client?.Destroy();
+        if (this.client == null)
+        {
+            return;
+        }
+
+        await this.client.Destroy();
     }
 
-    public async ValueTask Ready(IDeck deck)
+    public async UniTask Ready(IDeck deck)
     {
         this.PlayerId = await this.client.EnterGame(this.gameId, deck);
         await this.client.ReadyGame();
     }
 
-    public async ValueTask PlayTurn()
+    public async UniTask PlayTurn()
     {
         await this.client.StartTurn();
         await this.PlayFromHand();
@@ -44,7 +49,7 @@ public class AiClient
         await this.client.EndTurn();
     }
 
-    public async ValueTask PlayFromHand()
+    public async UniTask PlayFromHand()
     {
         while (true)
         {
@@ -66,7 +71,7 @@ public class AiClient
         }
     }
 
-    public async ValueTask Attack()
+    public async UniTask Attack()
     {
         // フィールドのすべてのカードで敵に攻撃
         var allCreatures = this.client.MyCreatureCards;
@@ -95,7 +100,7 @@ public class AiClient
         }
     }
 
-    public async ValueTask<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceCandidates choiceCandidates, int numPicks)
+    public async UniTask<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceCandidates choiceCandidates, int numPicks)
     {
         this.Logging($"answer: questionId={questionId}");
 

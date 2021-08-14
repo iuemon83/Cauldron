@@ -3,16 +3,15 @@ using Assets.Scripts.ServerShared.MessagePackObjects;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.Services;
-using Grpc.Core;
+using Cysharp.Threading.Tasks;
 using MagicOnion.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 public class Client
 {
-    private readonly Channel channel;
+    private readonly Grpc.Core.Channel channel;
     private readonly ICauldronHub magiconionClient;
     private readonly ICauldronService magiconionServiceClient;
 
@@ -32,15 +31,15 @@ public class Client
         .ToArray();
 
     public Client(string serverAddress, string playerName, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
-        : this(new Channel(serverAddress, ChannelCredentials.Insecure), playerName, default, cauldronHubReceiver, logInfo, logError)
+        : this(new Grpc.Core.Channel(serverAddress, Grpc.Core.ChannelCredentials.Insecure), playerName, default, cauldronHubReceiver, logInfo, logError)
     {
     }
 
-    public Client(Channel channel, string playerName, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+    public Client(Grpc.Core.Channel channel, string playerName, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
         : this(channel, playerName, default, cauldronHubReceiver, logInfo, logError)
     { }
 
-    public Client(Channel channel, string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+    public Client(Grpc.Core.Channel channel, string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
     {
         this.PlayerName = playerName;
         this.GameId = gameId;
@@ -53,13 +52,13 @@ public class Client
         this.LogError = logError;
     }
 
-    public async Task Destroy()
+    public async UniTask Destroy()
     {
         await this.magiconionClient.DisposeAsync();
         await this.channel.ShutdownAsync();
     }
 
-    private async ValueTask<bool> PlayAction(Func<ValueTask> action)
+    private async UniTask<bool> PlayAction(Func<UniTask> action)
     {
         if (this.currentContext?.GameOver ?? false)
         {
@@ -75,7 +74,7 @@ public class Client
         return true;
     }
 
-    public async ValueTask<GameId> OpenNewGame()
+    public async UniTask<GameId> OpenNewGame()
     {
         this.LogInfo("OpenNewGame: " + this.PlayerName);
 
@@ -103,17 +102,17 @@ public class Client
         return this.GameId;
     }
 
-    public async ValueTask<RuleBook> GetRuleBook()
+    public async UniTask<RuleBook> GetRuleBook()
     {
         return await this.magiconionClient.GetRuleBook();
     }
 
-    public async ValueTask<CardDef[]> GetCardPool()
+    public async UniTask<CardDef[]> GetCardPool()
     {
         return await this.magiconionClient.GetCardPool();
     }
 
-    public ValueTask<PlayerId> EnterGame(IDeck deck)
+    public UniTask<PlayerId> EnterGame(IDeck deck)
     {
         if (this.GameId == default)
         {
@@ -123,7 +122,7 @@ public class Client
         return this.EnterGame(this.GameId, deck);
     }
 
-    public async ValueTask<PlayerId> EnterGame(GameId gameId, IDeck deck)
+    public async UniTask<PlayerId> EnterGame(GameId gameId, IDeck deck)
     {
         this.currentContext = null;
         this.GameId = gameId;
@@ -147,7 +146,7 @@ public class Client
         return this.PlayerId;
     }
 
-    public async ValueTask LeaveGame()
+    public async UniTask LeaveGame()
     {
         if (this.GameId == default)
         {
@@ -165,13 +164,13 @@ public class Client
             .Select(cardDef => cardDef.Id);
     }
 
-    public async ValueTask ReadyGame()
+    public async UniTask ReadyGame()
     {
         this.LogInfo($"ReadyGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
         await this.magiconionClient.ReadyGame(new ReadyGameRequest(this.GameId, this.PlayerId));
     }
 
-    public async ValueTask StartTurn()
+    public async UniTask StartTurn()
     {
         await this.PlayAction(async () =>
         {
@@ -181,7 +180,7 @@ public class Client
         });
     }
 
-    public async ValueTask PlayFromHand(CardId cardId)
+    public async UniTask PlayFromHand(CardId cardId)
     {
         await this.PlayAction(async () =>
         {
@@ -197,17 +196,17 @@ public class Client
         });
     }
 
-    public async ValueTask<(GameMasterStatusCode, CardId[])> ListPlayableCardId()
+    public async UniTask<(GameMasterStatusCode, CardId[])> ListPlayableCardId()
     {
         return await this.magiconionClient.ListPlayableCardId(this.GameId);
     }
 
-    public async ValueTask Attack(CardId attackCardId, CardId guardCardId)
+    public async UniTask Attack(CardId attackCardId, CardId guardCardId)
     {
         await this.magiconionClient.AttackToCreature(new AttackToCreatureRequest(this.GameId, this.PlayerId, attackCardId, guardCardId));
     }
 
-    public async ValueTask<(PlayerId[], CardId[])> ListAttackTargets(CardId cardId)
+    public async UniTask<(PlayerId[], CardId[])> ListAttackTargets(CardId cardId)
     {
         var (status, (pList, cList)) = await this.magiconionClient.ListAttackTargets(this.GameId, cardId);
 
@@ -220,12 +219,12 @@ public class Client
         return (pList, cList);
     }
 
-    public async ValueTask AttackToOpponentPlayer(CardId attackCardId)
+    public async UniTask AttackToOpponentPlayer(CardId attackCardId)
     {
         await this.magiconionClient.AttackToPlayer(new AttackToPlayerRequest(this.GameId, this.PlayerId, attackCardId, this.currentContext.Opponent.Id));
     }
 
-    public async ValueTask EndTurn()
+    public async UniTask EndTurn()
     {
         await this.PlayAction(async () =>
         {
@@ -234,12 +233,12 @@ public class Client
         });
     }
 
-    public async ValueTask<GameMasterStatusCode> Surrender()
+    public async UniTask<GameMasterStatusCode> Surrender()
     {
         return await this.magiconionClient.Surrender(this.GameId);
     }
 
-    public async ValueTask<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceAnswer choiceAnswer)
+    public async UniTask<GameMasterStatusCode> AnswerChoice(Guid questionId, ChoiceAnswer choiceAnswer)
     {
         this.LogInfo($"answer: questionId={questionId}");
 
@@ -248,8 +247,8 @@ public class Client
         return result;
     }
 
-    public Task<GameOutline[]> ListOpenGames()
+    public async UniTask<GameOutline[]> ListOpenGames()
     {
-        return this.magiconionClient.ListOpenGames();
+        return await this.magiconionClient.ListOpenGames();
     }
 }

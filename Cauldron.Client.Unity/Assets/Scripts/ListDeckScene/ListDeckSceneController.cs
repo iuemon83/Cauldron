@@ -1,4 +1,5 @@
 using Assets.Scripts;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -53,14 +54,14 @@ public class ListDeckSceneController : MonoBehaviour
         }
     }
 
-    public void OnNewButtonClick()
+    public async UniTaskVoid OnNewButtonClick()
     {
-        Utility.LoadAsyncScene(this, SceneNames.EditDeckScene);
+        await Utility.LoadAsyncScene(SceneNames.EditDeckScene);
     }
 
-    public void OnEditButtonClick()
+    public async UniTaskVoid OnEditButtonClick()
     {
-        Utility.LoadAsyncScene(this, SceneNames.EditDeckScene, () =>
+        await Utility.LoadAsyncScene(SceneNames.EditDeckScene, () =>
         {
             var editDeckSceneController = FindObjectOfType<EditDeckSceneController>();
             editDeckSceneController.DeckToEdit = this.selectedNode.Source;
@@ -82,9 +83,9 @@ public class ListDeckSceneController : MonoBehaviour
         dialog.transform.SetParent(this.canvas.transform, false);
     }
 
-    public void OnCloseButtonClick()
+    public async UniTaskVoid OnCloseButtonClick()
     {
-        Utility.LoadAsyncScene(this, SceneNames.ListGameScene);
+        await Utility.LoadAsyncScene(SceneNames.ListGameScene);
     }
 
     private void AddToDeckListView(IDeck source)

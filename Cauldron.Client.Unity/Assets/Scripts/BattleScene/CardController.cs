@@ -1,8 +1,8 @@
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System.Linq;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -139,55 +139,50 @@ public class CardController : MonoBehaviour
         this.VisiblePickedIcon(false);
     }
 
-    public async Task BounceDeckEffect(PlayerController dest)
+    public async UniTask BounceDeckEffect(PlayerController dest)
     {
         this.transform.SetAsLastSibling();
 
         await this.BounceDeckEffect(dest.transform.position);
     }
 
-    public async Task BounceDeckEffect(Vector3 dest)
+    public async UniTask BounceDeckEffect(Vector3 dest)
     {
         this.bounceDeckIconImage.gameObject.SetActive(true);
         await this.bounceDeckIconImage.transform
-            .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f)
-            .ToAwaiter();
+            .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f);
 
         var seq = DOTween.Sequence();
         await seq.Append(this.transform.DOMove(dest, 0.3f))
-            .Join(this.transform.DORotate(new Vector3(0, 0, 1800), 0.3f, RotateMode.WorldAxisAdd))
-            .ToAwaiter();
+            .Join(this.transform.DORotate(new Vector3(0, 0, 1800), 0.3f, RotateMode.WorldAxisAdd));
 
         this.bounceDeckIconImage.gameObject.SetActive(false);
     }
 
-    public async Task BounceHandEffect(PlayerController dest)
+    public async UniTask BounceHandEffect(PlayerController dest)
     {
         this.transform.SetAsLastSibling();
 
         await this.BounceHandEffect(dest.transform.position);
     }
 
-    public async Task BounceHandEffect(Vector3 dest)
+    public async UniTask BounceHandEffect(Vector3 dest)
     {
         this.bounceHandIconImage.gameObject.SetActive(true);
         await this.bounceHandIconImage.transform
-            .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f)
-            .ToAwaiter();
+            .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f);
 
         await DOTween.Sequence()
             .Append(this.transform.DOMove(dest, 0.3f))
-            .Join(this.transform.DORotate(new Vector3(0, 0, 1800), 0.3f, RotateMode.WorldAxisAdd))
-            .ToAwaiter();
+            .Join(this.transform.DORotate(new Vector3(0, 0, 1800), 0.3f, RotateMode.WorldAxisAdd));
 
         this.bounceHandIconImage.gameObject.SetActive(false);
     }
 
-    public async Task ExcludeEffect()
+    public async UniTask ExcludeEffect()
     {
         await DOTween.Sequence()
             .Append(this.transform.DOScale(0f, 0.3f))
-            .Join(this.transform.DORotate(new Vector3(0, 0, 1800), 0.3f, RotateMode.WorldAxisAdd))
-            .ToAwaiter();
+            .Join(this.transform.DORotate(new Vector3(0, 0, 1800), 0.3f, RotateMode.WorldAxisAdd));
     }
 }

@@ -1,10 +1,9 @@
 ﻿using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts
@@ -63,18 +62,13 @@ namespace Assets.Scripts
             return (ownerName, card.Name);
         }
 
-        public static void LoadAsyncScene(MonoBehaviour monoBehaviour, SceneNames sceneName, Action onLoadAction = null)
+        public static async UniTask LoadAsyncScene(SceneNames sceneName, Action onLoadAction = null)
         {
-            monoBehaviour.StartCoroutine(LoadAsyncSceneCoroutine(sceneName, onLoadAction));
-        }
-
-        private static IEnumerator LoadAsyncSceneCoroutine(SceneNames sceneName, Action onLoadAction)
-        {
-            yield return SceneManager.LoadSceneAsync(sceneName.ToString(), LoadSceneMode.Additive);
+            await SceneManager.LoadSceneAsync(sceneName.ToString(), LoadSceneMode.Additive);
 
             onLoadAction?.Invoke();
 
-            yield return SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+            await SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }

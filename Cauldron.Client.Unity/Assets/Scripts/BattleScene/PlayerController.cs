@@ -1,6 +1,6 @@
 using Cauldron.Shared.MessagePackObjects;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -123,26 +123,24 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.pickedIcon.SetActive(value);
     }
 
-    public async Task DamageEffect(int value)
+    public async UniTask DamageEffect(int value)
     {
         this.damageText.text = value.ToString();
         this.damageText.gameObject.SetActive(true);
         await this.damageText.gameObject.transform
             .DOMove(new Vector3(0, -20, 0), 0.5f)
-            .SetRelative(true)
-            .ToAwaiter();
+            .SetRelative(true);
         this.damageText.gameObject.SetActive(false);
         this.damageText.gameObject.transform.localPosition = Vector3.zero;
     }
 
-    public async Task HealEffect(int value)
+    public async UniTask HealEffect(int value)
     {
         this.healText.text = value.ToString();
         this.healText.gameObject.SetActive(true);
         await this.healText.gameObject.transform
             .DOMove(new Vector3(0, 20, 0), 0.5f)
-            .SetRelative(true)
-            .ToAwaiter();
+            .SetRelative(true);
         this.healText.gameObject.SetActive(false);
         this.healText.gameObject.transform.localPosition = Vector3.zero;
     }

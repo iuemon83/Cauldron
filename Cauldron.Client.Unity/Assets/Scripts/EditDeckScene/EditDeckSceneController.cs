@@ -1,6 +1,7 @@
 using Assets.Scripts;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -76,7 +77,7 @@ public class EditDeckSceneController : MonoBehaviour
     private bool IsValidNumCards() => this.currentDeckTotalCount >= this.ruleBook.MinNumDeckCards
         && this.currentDeckTotalCount <= this.ruleBook.MaxNumDeckCards;
 
-    public void OnSaveButtonClick()
+    public async UniTaskVoid OnSaveButtonClick()
     {
         var deckName = this.deckNameInputField.text;
         if (string.IsNullOrWhiteSpace(deckName))
@@ -103,12 +104,12 @@ public class EditDeckSceneController : MonoBehaviour
             new DeckRepository().Update(this.DeckToEdit.Id, deckName, cardDefList);
         }
 
-        Utility.LoadAsyncScene(this, SceneNames.ListDeckScene);
+        await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }
 
-    public void OnCancelButtonClick()
+    public async UniTaskVoid OnCancelButtonClick()
     {
-        Utility.LoadAsyncScene(this, SceneNames.ListDeckScene);
+        await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }
 
     private void AddToCardPool(CardDef cardDef)
