@@ -9,6 +9,15 @@ using UnityEngine.UI;
 
 public class CardController : MonoBehaviour
 {
+    private static Color GetPowerToughnessTextColor(int baseValue, int actualValue)
+    {
+        return baseValue == actualValue
+            ? Color.white
+            : baseValue > actualValue
+                ? Color.red
+                : Color.green;
+    }
+
     [SerializeField]
     protected TextMeshProUGUI CardNameText;
 
@@ -97,7 +106,9 @@ public class CardController : MonoBehaviour
         {
             case CardType.Creature:
                 this.PowerText.text = this.Card.Power.ToString();
+                this.PowerText.color = GetPowerToughnessTextColor(this.Card.BasePower, this.Card.Power);
                 this.ToughnessText.text = this.Card.Toughness.ToString();
+                this.ToughnessText.color = GetPowerToughnessTextColor(this.Card.BaseToughness, this.Card.Toughness);
                 this.PowerSpace.SetActive(true);
                 this.ToughnessSpace.SetActive(true);
                 break;
