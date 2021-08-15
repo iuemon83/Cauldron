@@ -7,6 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -48,6 +49,10 @@ public class BattleSceneController : MonoBehaviour
 
     [SerializeField]
     private Button choiceCardButton;
+    [SerializeField]
+    private TextMeshProUGUI numPicksText;
+    [SerializeField]
+    private TextMeshProUGUI numPicksLimitText;
 
     private readonly List<PlayerId> pickedPlayerIdList = new List<PlayerId>();
     private readonly List<CardId> pickedCardIdList = new List<CardId>();
@@ -69,6 +74,29 @@ public class BattleSceneController : MonoBehaviour
     private GameContext currentGameContext;
 
     private FieldCardController attackCardController;
+
+    private int NumPicks
+    {
+        get { return int.Parse(this.numPicksText.text); }
+        set
+        {
+            this.numPicksText.text = value.ToString();
+            if (value != 0
+                && this.NumPicks >= this.NumPicksLimit)
+            {
+                this.numPicksText.color = Color.red;
+            }
+            else
+            {
+                this.numPicksText.color = Color.white;
+            }
+        }
+    }
+    private int NumPicksLimit
+    {
+        get { return int.Parse(this.numPicksLimitText.text); }
+        set { this.numPicksLimitText.text = value.ToString(); }
+    }
 
     private async void Start()
     {
@@ -261,6 +289,9 @@ public class BattleSceneController : MonoBehaviour
 
             return;
         }
+
+        this.NumPicks = 0;
+        this.NumPicksLimit = 0;
 
         // ƒŠƒZƒbƒg
         this.ResetAllMarks();
@@ -831,6 +862,8 @@ public class BattleSceneController : MonoBehaviour
         }
 
         this.choiceCardButton.interactable = true;
+        this.NumPicks = 0;
+        this.NumPicksLimit = this.askParams.NumPicks;
     }
 
     public void ShowCardDetail(Card card)
@@ -843,6 +876,7 @@ public class BattleSceneController : MonoBehaviour
         this.pickedPlayerIdList.Add(playerController.PlayerId);
         playerController.ResetAllIcon();
         playerController.VisiblePickedIcon(true);
+        this.NumPicks += 1;
     }
 
     public void UnPick(PlayerController playerController)
@@ -850,6 +884,7 @@ public class BattleSceneController : MonoBehaviour
         this.pickedPlayerIdList.Remove(playerController.PlayerId);
         playerController.ResetAllIcon();
         playerController.VisiblePickCandidateIcon(true);
+        this.NumPicks -= 1;
     }
 
     public void Pick(CardController cardController)
@@ -857,6 +892,7 @@ public class BattleSceneController : MonoBehaviour
         this.pickedCardIdList.Add(cardController.CardId);
         cardController.ResetAllIcon();
         cardController.VisiblePickedIcon(true);
+        this.NumPicks += 1;
     }
 
     public void UnPick(CardController cardController)
@@ -864,6 +900,7 @@ public class BattleSceneController : MonoBehaviour
         this.pickedCardIdList.Remove(cardController.CardId);
         cardController.ResetAllIcon();
         cardController.VisiblePickCandidateIcon(true);
+        this.NumPicks -= 1;
     }
 
     public void ResetAllMarks()
