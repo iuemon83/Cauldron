@@ -15,7 +15,7 @@
 
 ```sh
 cd Cauldron.Web.Server
-dotnet publish -c Release -o out
+dotnet publish -c Release -o release
 docker build . -t cauldronweb_server
 docker run --rm -p 5000:80 --name cauldronweb_server cauldronweb_server
 ```
