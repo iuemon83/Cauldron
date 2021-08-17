@@ -7,6 +7,14 @@ using System.Linq;
 
 public class AiClient
 {
+    public static async UniTask<AiClient> Factory(string serverAddress, string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+    {
+        var c = new AiClient(gameId, logInfo, logError);
+        await c.Connect(serverAddress, playerName, cauldronHubReceiver, logInfo, logError);
+
+        return c;
+    }
+
     public PlayerId PlayerId { get; private set; }
 
     private readonly Action<string> Logging;
@@ -14,15 +22,20 @@ public class AiClient
 
     private readonly GameId gameId;
 
-    private readonly Client client;
+    private Client client;
 
-    public AiClient(string serverAddress, string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+    private AiClient(GameId gameId, Action<string> logInfo, Action<string> logError)
     {
         this.gameId = gameId;
 
-        this.client = new Client(serverAddress, playerName, cauldronHubReceiver, logInfo, logError);
         this.Logging = logInfo;
         this.LoggingError = logError;
+    }
+
+    private async UniTask Connect(string serverAddress, string playerName,
+        ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+    {
+        this.client = await Client.Factory(serverAddress, playerName, cauldronHubReceiver, logInfo, logError);
     }
 
     public async UniTask Destroy()

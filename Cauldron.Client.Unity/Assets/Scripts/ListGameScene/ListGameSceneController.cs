@@ -146,11 +146,11 @@ public class ListGameSceneController : MonoBehaviour
 
         // ©•ª‘¤‚ÌÚ‘±ˆ—‚±‚±‚Ü‚Å----
 
-        await Utility.LoadAsyncScene(SceneNames.BattleScene, () =>
+        await Utility.LoadAsyncScene(SceneNames.BattleScene, async () =>
         {
             // AI‘¤‚ğÚ‘±‚·‚é
             var aiClientController = FindObjectOfType<AiClientController>();
-            aiClientController.StartClient(gameId, aiDeck);
+            await aiClientController.StartClient(gameId, aiDeck);
         });
     }
 }

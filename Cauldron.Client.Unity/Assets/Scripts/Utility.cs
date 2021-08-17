@@ -62,11 +62,28 @@ namespace Assets.Scripts
             return (ownerName, card.Name);
         }
 
-        public static async UniTask LoadAsyncScene(SceneNames sceneName, Action onLoadAction = null)
+        public static async UniTask LoadAsyncScene(SceneNames sceneName)
+        {
+            await LoadAsyncScene(sceneName, () => { });
+        }
+
+        public static async UniTask LoadAsyncScene(SceneNames sceneName, Action onLoadAction)
         {
             await SceneManager.LoadSceneAsync(sceneName.ToString(), LoadSceneMode.Additive);
 
             onLoadAction?.Invoke();
+
+            await SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        public static async UniTask LoadAsyncScene(SceneNames sceneName, Func<UniTask> onLoadActionAsync)
+        {
+            await SceneManager.LoadSceneAsync(sceneName.ToString(), LoadSceneMode.Additive);
+
+            if (onLoadActionAsync != null)
+            {
+                await onLoadActionAsync();
+            }
 
             await SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
         }

@@ -37,7 +37,7 @@ namespace Assets.Scripts
 
             await this.channel.ConnectAsync(DateTime.UtcNow.Add(TimeSpan.FromSeconds(5)));
 
-            this.Client = new Client(this.channel, playerName, this.Receiver, Debug.Log, Debug.LogError);
+            this.Client = await Client.Factory(this.channel, playerName, this.Receiver, Debug.Log, Debug.LogError);
         }
 
         private void OnDestroy()

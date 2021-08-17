@@ -1,6 +1,7 @@
 using Assets.Scripts;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.Services;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class AiClientController : MonoBehaviour, ICauldronHubReceiver
@@ -16,9 +17,10 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
         }
     }
 
-    public async void StartClient(GameId gameId, IDeck deck)
+    public async UniTask StartClient(GameId gameId, IDeck deck)
     {
-        this.client = new AiClient(LocalData.ServerAddress, this.playerName, gameId, this, Debug.Log, Debug.LogError);
+        this.client = await AiClient.Factory(LocalData.ServerAddress, this.playerName, gameId,
+            this, Debug.Log, Debug.LogError);
 
         await this.client.Ready(deck);
     }

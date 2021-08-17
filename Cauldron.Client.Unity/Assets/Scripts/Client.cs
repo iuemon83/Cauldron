@@ -11,9 +11,34 @@ using System.Linq;
 
 public class Client
 {
+    public static async UniTask<Client> Factory(string serverAddress, string playerName,
+        ICauldronHubReceiver cauldronHubReceiver,
+        Action<string> logInfo, Action<string> logError)
+    {
+        return await Client.Factory(new Grpc.Core.Channel(serverAddress, Grpc.Core.ChannelCredentials.Insecure),
+             playerName, default, cauldronHubReceiver, logInfo, logError);
+    }
+
+    public static async UniTask<Client> Factory(Grpc.Core.Channel channel, string playerName,
+        ICauldronHubReceiver cauldronHubReceiver,
+        Action<string> logInfo, Action<string> logError)
+    {
+        return await Client.Factory(channel, playerName, default, cauldronHubReceiver, logInfo, logError);
+    }
+
+    public static async UniTask<Client> Factory(Grpc.Core.Channel channel,
+        string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver,
+        Action<string> logInfo, Action<string> logError)
+    {
+        var client = new Client(channel, playerName, gameId, logInfo, logError);
+        await client.Connect(cauldronHubReceiver);
+
+        return client;
+    }
+
     private readonly Grpc.Core.Channel channel;
-    private readonly ICauldronHub magiconionClient;
-    private readonly ICauldronService magiconionServiceClient;
+    private ICauldronHub magiconionClient;
+    private ICauldronService magiconionServiceClient;
 
     public GameId GameId { get; private set; }
     public readonly string PlayerName;
@@ -30,26 +55,23 @@ public class Client
         .Select(c => c.Id)
         .ToArray();
 
-    public Client(string serverAddress, string playerName, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
-        : this(new Grpc.Core.Channel(serverAddress, Grpc.Core.ChannelCredentials.Insecure), playerName, default, cauldronHubReceiver, logInfo, logError)
-    {
-    }
-
-    public Client(Grpc.Core.Channel channel, string playerName, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
-        : this(channel, playerName, default, cauldronHubReceiver, logInfo, logError)
-    { }
-
-    public Client(Grpc.Core.Channel channel, string playerName, GameId gameId, ICauldronHubReceiver cauldronHubReceiver, Action<string> logInfo, Action<string> logError)
+    private Client(Grpc.Core.Channel channel, string playerName, GameId gameId,
+        Action<string> logInfo, Action<string> logError)
     {
         this.PlayerName = playerName;
         this.GameId = gameId;
 
         this.channel = channel;
-        var logger = new ClientLogger();
-        this.magiconionServiceClient = MagicOnionClient.Create<ICauldronService>(channel);
-        this.magiconionClient = StreamingHubClient.Connect<ICauldronHub, ICauldronHubReceiver>(channel, cauldronHubReceiver, logger: logger);
         this.LogInfo = logInfo;
         this.LogError = logError;
+    }
+
+    private async UniTask Connect(ICauldronHubReceiver cauldronHubReceiver)
+    {
+        var logger = new ClientLogger();
+        this.magiconionServiceClient = MagicOnionClient.Create<ICauldronService>(this.channel);
+        this.magiconionClient = await StreamingHubClient.ConnectAsync<ICauldronHub, ICauldronHubReceiver>(
+            this.channel, cauldronHubReceiver, logger: logger);
     }
 
     public async UniTask Destroy()
