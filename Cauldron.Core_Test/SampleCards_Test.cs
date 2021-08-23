@@ -2721,7 +2721,7 @@ namespace Cauldron.Core_Test
             });
 
             // 先攻2
-            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
             {
                 // ドローしたカードのパワーが4以上なら破壊する
             });

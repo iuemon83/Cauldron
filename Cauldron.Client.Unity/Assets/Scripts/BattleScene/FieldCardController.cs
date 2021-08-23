@@ -103,13 +103,12 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
         await this.transform
             .DOScale(1.2f, 0.2f);
 
-        await this.transform
-            .DOMove(dest, 0.2f)
-            .SetLoops(2, LoopType.Yoyo)
-            .SetEase(Ease.InQuart);
-
-        await this.transform
-            .DOScale(1f, 0f);
+        await DOTween.Sequence()
+            .Append(this.transform
+                .DOMove(dest, 0.2f)
+                .SetLoops(2, LoopType.Yoyo)
+                .SetEase(Ease.InQuart))
+            .Join(this.transform.DOScale(1f, 0.2f));
     }
 
     public override void ResetAllIcon()

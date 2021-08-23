@@ -109,7 +109,7 @@ public class ListGameSceneController : MonoBehaviour
         this.RefreshGameList();
     }
 
-    public async UniTaskVoid OnDeckButtonClick()
+    public async void OnDeckButtonClick()
     {
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }

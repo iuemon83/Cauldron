@@ -77,7 +77,7 @@ public class EditDeckSceneController : MonoBehaviour
     private bool IsValidNumCards() => this.currentDeckTotalCount >= this.ruleBook.MinNumDeckCards
         && this.currentDeckTotalCount <= this.ruleBook.MaxNumDeckCards;
 
-    public async UniTaskVoid OnSaveButtonClick()
+    public async void OnSaveButtonClick()
     {
         var deckName = this.deckNameInputField.text;
         if (string.IsNullOrWhiteSpace(deckName))
@@ -107,7 +107,7 @@ public class EditDeckSceneController : MonoBehaviour
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }
 
-    public async UniTaskVoid OnCancelButtonClick()
+    public async void OnCancelButtonClick()
     {
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }

@@ -54,12 +54,12 @@ public class ListDeckSceneController : MonoBehaviour
         }
     }
 
-    public async UniTaskVoid OnNewButtonClick()
+    public async void OnNewButtonClick()
     {
         await Utility.LoadAsyncScene(SceneNames.EditDeckScene);
     }
 
-    public async UniTaskVoid OnEditButtonClick()
+    public async void OnEditButtonClick()
     {
         await Utility.LoadAsyncScene(SceneNames.EditDeckScene, () =>
         {
@@ -83,7 +83,7 @@ public class ListDeckSceneController : MonoBehaviour
         dialog.transform.SetParent(this.canvas.transform, false);
     }
 
-    public async UniTaskVoid OnCloseButtonClick()
+    public async void OnCloseButtonClick()
     {
         await Utility.LoadAsyncScene(SceneNames.ListGameScene);
     }

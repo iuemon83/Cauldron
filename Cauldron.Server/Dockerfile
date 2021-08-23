@@ -4,7 +4,7 @@ WORKDIR /source
 
 # copy csproj and restore as distinct layers
 COPY . .
-WORKDIR /source/Cauldron.Web.Server
+WORKDIR /source/Cauldron.Server
 RUN dotnet restore
 
 # copy everything else and build app
@@ -14,4 +14,4 @@ RUN dotnet publish -c release -o /app
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build /app ./
-ENTRYPOINT ["dotnet", "Cauldron.Web.Server.dll"]
+ENTRYPOINT ["dotnet", "Cauldron.Server.dll"]
