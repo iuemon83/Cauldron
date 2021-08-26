@@ -133,6 +133,12 @@ namespace Cauldron.Core.Entities
             };
         }
 
+        public static bool IsDead(Card card)
+        {
+            return card.Type == CardType.Creature
+                && card.Toughness <= 0;
+        }
+
         public RuleBook RuleBook { get; }
 
         private readonly ILogger logger;
@@ -647,6 +653,7 @@ namespace Cauldron.Core.Entities
                     break;
 
                 case ZoneName.Field:
+                    // 場の枚数が上限なら、直接墓地に行く
                     if (toPlayer.Field.Full)
                     {
                         this.logger.LogInformation("field is full");
@@ -659,6 +666,7 @@ namespace Cauldron.Core.Entities
                     break;
 
                 case ZoneName.Hand:
+                    // 手札の枚数が上限なら、直接墓地に行く
                     if (toPlayer.Hands.Count == this.RuleBook.MaxNumHands)
                     {
                         this.logger.LogInformation("hand is full");
@@ -728,6 +736,14 @@ namespace Cauldron.Core.Entities
 
             // カードの移動イベント
             await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: card, MoveCardContext: moveCardContext));
+
+            // 移動先が場で、対象のカードが死亡していれば破壊する
+            if (moveCardContext.To.ZoneName == ZoneName.Field
+                && IsDead(card))
+            {
+                await this.DestroyCard(card);
+                return;
+            }
         }
 
         public GameContext CreateGameContext(PlayerId playerId)
