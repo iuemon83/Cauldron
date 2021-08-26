@@ -145,17 +145,15 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef MagicShieldGoblin
-            => SampleCards.Creature(2, "魔法の盾持ちゴブリン", "このカードが攻撃されたとき、攻撃したカードを相手の手札に移動する。",
+            => SampleCards.Creature(2, "魔法の盾持ちゴブリン", "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
                 1, 2, abilities: new[] { CreatureAbility.Cover },
                 effects: new[] {
                     new CardEffect(
                         new EffectCondition(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                DamageAfter: new(
-                                    EffectTimingDamageBeforeEvent.TypeValue.Battle,
-                                    EffectTimingDamageBeforeEvent.SourceValue.Take,
-                                    CardCondition: new(
+                                AttackAfter: new(
+                                    GuardCardCondition: new(
                                         ContextCondition: CardCondition.ContextConditionValue.This
                                     ))))),
                         new[]
@@ -167,10 +165,15 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    ContextCondition: CardCondition.ContextConditionValue.Attack
+                                                    ContextCondition: CardCondition.ContextConditionValue.Attack,
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]{
+                                                            ZonePrettyName.OpponentField,
+                                                            ZonePrettyName.YouField,
+                                                        }))
                                                 )
                                             })),
-                                    ZonePrettyName.OpponentHand))
+                                    ZonePrettyName.OwnerHand))
                         })
                 });
 
@@ -182,10 +185,8 @@ namespace Cauldron.Core_Test
                         new EffectCondition(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                DamageAfter: new(
-                                    EffectTimingDamageBeforeEvent.TypeValue.Battle,
-                                    EffectTimingDamageBeforeEvent.SourceValue.Take,
-                                    CardCondition: new(
+                                AttackAfter: new(
+                                    GuardCardCondition: new(
                                         ContextCondition: CardCondition.ContextConditionValue.This
                                     ))))),
                         new[]
@@ -197,7 +198,12 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    ContextCondition: CardCondition.ContextConditionValue.Attack
+                                                    ContextCondition: CardCondition.ContextConditionValue.Attack,
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]{
+                                                            ZonePrettyName.OpponentField,
+                                                            ZonePrettyName.YouField,
+                                                        }))
                                                 )
                                             })),
                                     ZonePrettyName.OpponentDeck,

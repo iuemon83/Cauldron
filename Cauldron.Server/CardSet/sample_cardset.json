@@ -342,7 +342,7 @@
         {
             "cost": 2,
             "name": "魔法の盾持ちゴブリン",
-            "flavorText": "このカードが攻撃されたとき、攻撃したカードを相手の手札に移動する。",
+            "flavorText": "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
             "isToken": false,
             "type": "creature",
             "power": 1,
@@ -354,10 +354,8 @@
                         "zonePrettyName": "youField",
                         "when": {
                             "timing": {
-                                "damageAfter": {
-                                    "type": "battle",
-                                    "source": "take",
-                                    "cardCondition": {
+                                "attackAfter": {
+                                    "guardCardCondition": {
                                         "contextCondition": "this",
                                         "ownerCondition": "any"
                                     }
@@ -376,6 +374,10 @@
                                         "orCardConditions": [
                                             {
                                                 "contextCondition": "attack",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "opponentField", "youField" ] },
+                                                    "not": false
+                                                },
                                                 "ownerCondition": "any"
                                             }
                                         ],
@@ -384,7 +386,7 @@
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
                                 },
-                                "to": "opponentHand"
+                                "to": "ownerHand"
                             }
                         }
                     ]
@@ -406,10 +408,8 @@
                         "zonePrettyName": "youField",
                         "when": {
                             "timing": {
-                                "damageAfter": {
-                                    "type": "battle",
-                                    "source": "take",
-                                    "cardCondition": {
+                                "attackAfter": {
+                                    "guardCardCondition": {
                                         "contextCondition": "this",
                                         "ownerCondition": "any"
                                     }
@@ -428,6 +428,10 @@
                                         "orCardConditions": [
                                             {
                                                 "contextCondition": "attack",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "opponentField", "youField" ] },
+                                                    "not": false
+                                                },
                                                 "ownerCondition": "any"
                                             }
                                         ],

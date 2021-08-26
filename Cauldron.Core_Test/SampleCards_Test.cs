@@ -432,6 +432,49 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task MagicShieldGoblin_攻撃カードが破壊された場合()
+        {
+            var testCardDef = SampleCards.MagicShieldGoblin;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+            goblinDef.Toughness = 1;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, });
+
+            var p1TestCard　= await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                return await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+            });
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var (_, p) = g.playerRepository.TryGet(pid);
+                var op = g.GetOpponent(pid);
+
+                // 攻撃されると攻撃したカードを持ち主の手札に戻す
+                var p2Goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+
+                var beforpHandsIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.AssertGameAction(() => g.AttackToCreature(pid, p2Goblin.Id, p1TestCard.Id));
+
+                var afterHandsIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
+                var diffHandsIdList = afterHandsIdList
+                    .Except(beforpHandsIdList)
+                    .ToArray();
+
+                // 攻撃したカードは破壊され墓地に行く
+                Assert.Empty(p.Field.AllCards);
+                Assert.Single(p.Cemetery.AllCards);
+
+                // 手札には戻らない
+                Assert.Empty(diffHandsIdList);
+            });
+        }
+
+        [Fact]
         public async Task SuperMagicShieldGoblin()
         {
             var testCardDef = SampleCards.SuperMagicShieldGoblin;
