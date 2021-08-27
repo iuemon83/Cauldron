@@ -443,7 +443,7 @@ namespace Cauldron.Core_Test
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, });
 
-            var p1TestCard　= await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            var p1TestCard = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 return await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
             });
@@ -3142,6 +3142,61 @@ namespace Cauldron.Core_Test
                 // プレイヤーへ攻撃した場合は、除外されない
                 Assert.Single(p.Field.AllCards);
                 Assert.Empty(p.Excludes);
+            });
+        }
+
+        [Fact]
+        public async Task BreakCover()
+        {
+            var testCardDef = SampleCards.BreakCover;
+            testCardDef.Cost = 0;
+
+            var coverCardDef = SampleCards.Goblin;
+            coverCardDef.Cost = 0;
+            coverCardDef.Abilities.Add(CreatureAbility.Cover);
+
+            var noCoverCardDef = SampleCards.Goblin;
+            noCoverCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, coverCardDef, noCoverCardDef });
+
+            // 先攻
+            var (cover, cover2, nocover, nocover2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+                var op = g.GetOpponent(pId);
+
+                var coverCard = await TestUtil.NewCardAndPlayFromHand(g, pId, coverCardDef.Id);
+                var coverCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, coverCardDef.Id);
+                var noCoverCard = await TestUtil.NewCardAndPlayFromHand(g, pId, noCoverCardDef.Id);
+                var noCoverCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, noCoverCardDef.Id);
+
+                return (coverCard, coverCard2, noCoverCard, noCoverCard2);
+            });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+                var op = g.GetOpponent(pId);
+
+                var mycover = await TestUtil.NewCardAndPlayFromHand(g, pId, coverCardDef.Id);
+
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 相手の場のカバー持ちからカバーがなくなっている
+                Assert.Empty(cover.Abilities);
+                Assert.Empty(cover2.Abilities);
+
+                // 相手の場のカバー持ちだけに1ダメージ
+                Assert.Equal(cover.BaseToughness - 1, cover.Toughness);
+                Assert.Equal(cover2.BaseToughness - 1, cover2.Toughness);
+                Assert.Equal(nocover.BaseToughness, nocover.Toughness);
+                Assert.Equal(nocover2.BaseToughness, nocover2.Toughness);
+
+                // 自分の場のカバーはそのまま
+                Assert.Contains(CreatureAbility.Cover, mycover.Abilities);
+                Assert.Equal(mycover.BaseToughness, mycover.Toughness);
             });
         }
     }

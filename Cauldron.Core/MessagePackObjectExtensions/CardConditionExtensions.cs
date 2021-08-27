@@ -1,6 +1,7 @@
 ﻿using Cauldron.Core.Entities;
 using Cauldron.Core.Entities.Effect;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -39,7 +40,7 @@ namespace Cauldron.Shared.MessagePackObjects
             }
         }
 
-        public static async ValueTask<bool> IsMatch(this CardCondition cardCondition,
+        public static async ValueTask<bool> IsMatch(this CardCondition _this,
             Card cardToMatch, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             static bool ContextConditionIsMatch(CardCondition.ContextConditionValue value,
@@ -101,16 +102,31 @@ namespace Cauldron.Shared.MessagePackObjects
                 };
             }
 
+            static bool AbilitiesConditionIsMatch(
+                IReadOnlyCollection<CreatureAbility> value, Card cardToMatch)
+            {
+                if (value == default)
+                {
+                    return true;
+                }
+
+                return value.Any(x => cardToMatch.Abilities.Contains(x));
+            }
+
             return
-                ContextConditionIsMatch(cardCondition.ContextCondition, cardToMatch, effectOwnerCard, effectEventArgs)
-                && OwnerConditionIsMatch(cardCondition.OwnerCondition, cardToMatch, effectOwnerCard)
-                && (cardCondition.CostCondition?.IsMatch(cardToMatch.Cost) ?? true)
-                && (cardCondition.PowerCondition?.IsMatch(cardToMatch.Power) ?? true)
-                && (cardCondition.ToughnessCondition?.IsMatch(cardToMatch.Toughness) ?? true)
-                && (await (cardCondition.CardSetCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch) ?? ValueTask.FromResult(true)))
-                && (await (cardCondition.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Name) ?? ValueTask.FromResult(true)))
-                && (cardCondition.TypeCondition?.IsMatch(cardToMatch.Type) ?? true)
-                && (await (cardCondition.ZoneCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Zone) ?? ValueTask.FromResult(true)))
+                ContextConditionIsMatch(_this.ContextCondition, cardToMatch, effectOwnerCard, effectEventArgs)
+                && OwnerConditionIsMatch(_this.OwnerCondition, cardToMatch, effectOwnerCard)
+                && (_this.CostCondition?.IsMatch(cardToMatch.Cost) ?? true)
+                && (_this.PowerCondition?.IsMatch(cardToMatch.Power) ?? true)
+                && (_this.ToughnessCondition?.IsMatch(cardToMatch.Toughness) ?? true)
+                && (await (_this.CardSetCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch)
+                    ?? ValueTask.FromResult(true)))
+                && (await (_this.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Name)
+                    ?? ValueTask.FromResult(true)))
+                && (_this.TypeCondition?.IsMatch(cardToMatch.Type) ?? true)
+                && (await (_this.ZoneCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Zone)
+                    ?? ValueTask.FromResult(true)))
+                && AbilitiesConditionIsMatch(_this.AbilityCondition, cardToMatch)
                 ;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.ServerShared.MessagePackObjects;
 using MessagePack;
+using System.Collections.Generic;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -91,6 +92,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public CardTypeCondition TypeCondition { get; }
         public ZoneCondition ZoneCondition { get; }
         public OwnerConditionValue OwnerCondition { get; }
+        public IReadOnlyCollection<CreatureAbility> AbilityCondition { get; }
 
         public CardCondition(
             ContextConditionValue ContextCondition = ContextConditionValue.Any,
@@ -102,7 +104,8 @@ namespace Cauldron.Shared.MessagePackObjects
             TextCondition NameCondition = default,
             CardTypeCondition TypeCondition = default,
             ZoneCondition ZoneCondition = default,
-            OwnerConditionValue OwnerCondition = OwnerConditionValue.Any
+            OwnerConditionValue OwnerCondition = OwnerConditionValue.Any,
+            IReadOnlyCollection<CreatureAbility> AbilityCondition = default
             )
         {
             this.ContextCondition = ContextCondition;
@@ -115,6 +118,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.TypeCondition = TypeCondition;
             this.ZoneCondition = ZoneCondition;
             this.OwnerCondition = OwnerCondition;
+            this.AbilityCondition = AbilityCondition;
         }
     }
 }

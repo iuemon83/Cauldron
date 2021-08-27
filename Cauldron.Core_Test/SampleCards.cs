@@ -1642,6 +1642,51 @@ namespace Cauldron.Core_Test
                         })
                 });
 
+        public static CardDef BreakCover
+            => SampleCards.Sorcery(1, "盾砕き",
+                "相手の場の「カバー」アビリティを持つすべてのクリーチャーから、「カバー」アビリティを削除する。その後それらのクリーチャーに1ダメージを与える。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Spell,
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]
+                                                    {
+                                                        ZonePrettyName.OpponentField,
+                                                    })),
+                                                    AbilityCondition: new[]{ CreatureAbility.Cover }
+                                                ),
+                                            })
+                                        ),
+                                    Ability: new(
+                                        CreatureAbilityModifier.OperatorValue.Remove,
+                                        CreatureAbility.Cover),
+                                    Name: "modify"
+                                    )),
+                            new EffectAction(
+                                Damage: new(
+                                    new NumValue(1),
+                                    new Choice(
+                                        new ChoiceSource(orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ActionContext: new(
+                                                    ActionContextCardsOfModifyCard:new(
+                                                        "modify",
+                                                        ActionContextCardsOfModifyCard.TypeValue.Modified
+                                                    )))
+                                        }))))
+                        })
+                });
+
         public static CardDef Exclude
             => SampleCards.Sorcery(1, "除外", "場にあるカード一つを選択する。それを「除外」する。",
                 effects: new[]

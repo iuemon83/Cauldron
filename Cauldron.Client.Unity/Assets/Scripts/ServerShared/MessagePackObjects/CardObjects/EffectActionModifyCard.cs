@@ -12,12 +12,15 @@ namespace Cauldron.Shared.MessagePackObjects
         public CreatureAbilityModifier Ability { get; }
         public Choice Choice { get; }
 
+        public string Name { get; } = null;
+
         public EffectActionModifyCard(
             Choice Choice,
             NumValueModifier Cost = null,
             NumValueModifier Power = null,
             NumValueModifier Toughness = null,
-            CreatureAbilityModifier Ability = null
+            CreatureAbilityModifier Ability = null,
+            string Name = null
             )
         {
             this.Cost = Cost;
@@ -25,6 +28,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Toughness = Toughness;
             this.Ability = Ability;
             this.Choice = Choice;
+            this.Name = Name;
         }
     }
 }

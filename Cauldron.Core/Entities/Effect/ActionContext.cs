@@ -4,6 +4,7 @@
         ActionAddEffectContext ActionAddEffectContext = null,
         ActionDestroyCardContext ActionDestroyCardContext = null,
         ActionMoveCardContext ActionMoveCardContext = null,
-        ActionExcludeCardContext ActionExcludeCardContext = null
+        ActionExcludeCardContext ActionExcludeCardContext = null,
+        ActionModifyCardContext ActionModifyCardContext = null
         );
 }
