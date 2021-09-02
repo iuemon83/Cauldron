@@ -27,6 +27,8 @@ namespace Cauldron.Shared.MessagePackObjects
                 GameEvent.OnMoveCard => effectTiming.MoveCard?.IsMatch(effectOwnerCard, eventArgs) ?? false,
                 GameEvent.OnExclude => await (effectTiming.ExcludeCard?.IsMatch(effectOwnerCard, eventArgs)
                     ?? ValueTask.FromResult(false)),
+                GameEvent.OnModifyCounter => await (effectTiming.ModifyCounter?.IsMatch(effectOwnerCard, eventArgs)
+                    ?? ValueTask.FromResult(false)),
                 _ => false,
             };
         }
@@ -68,6 +70,10 @@ namespace Cauldron.Shared.MessagePackObjects
             else if (effectTiming.Play != null)
             {
                 return GameEvent.OnPlay;
+            }
+            else if (effectTiming.ModifyCounter != null)
+            {
+                return GameEvent.OnModifyCounter;
             }
             else if (effectTiming.StartTurn != null)
             {

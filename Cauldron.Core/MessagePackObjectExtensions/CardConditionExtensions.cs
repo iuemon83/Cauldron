@@ -127,6 +127,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 && (await (_this.ZoneCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Zone)
                     ?? ValueTask.FromResult(true)))
                 && AbilitiesConditionIsMatch(_this.AbilityCondition, cardToMatch)
+                && (_this.CounterCondition?.IsMatch(cardToMatch) ?? true)
                 ;
         }
     }

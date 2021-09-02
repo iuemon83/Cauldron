@@ -57,7 +57,7 @@ namespace Cauldron.Core_Test
             };
         }
 
-        public static readonly EffectCondition Spell
+        public static readonly EffectCondition Etb
             = new(ZonePrettyName.YouField, new(new(Play: new(EffectTimingPlayEvent.SourceValue.This))));
 
 
@@ -99,14 +99,15 @@ namespace Cauldron.Core_Test
                                 Damage: new(
                                     new NumValue(
                                         NumValueCalculator: new(
-                                            NumValueCalculator.ValueType.CardPower,
-                                            new Choice(
-                                                new ChoiceSource(
-                                                    orCardConditions: new[]
-                                                    {
-                                                        new CardCondition(
-                                                            CardCondition.ContextConditionValue.This)
-                                                    })))),
+                                            ForCard: new(
+                                                NumValueCalculatorForCard.TypeValue.CardPower,
+                                                new Choice(
+                                                    new ChoiceSource(
+                                                        orCardConditions: new[]
+                                                        {
+                                                            new CardCondition(
+                                                                CardCondition.ContextConditionValue.This)
+                                                        }))))),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
@@ -126,14 +127,15 @@ namespace Cauldron.Core_Test
                                 Damage: new(
                                     new NumValue(
                                         NumValueCalculator: new(
-                                            NumValueCalculator.ValueType.CardPower,
-                                            new Choice(
-                                                new ChoiceSource(
-                                                    orCardConditions: new[]
-                                                    {
-                                                        new CardCondition(
-                                                            CardCondition.ContextConditionValue.This)
-                                                    })))),
+                                            ForCard: new(
+                                                NumValueCalculatorForCard.TypeValue.CardPower,
+                                                new Choice(
+                                                    new ChoiceSource(
+                                                        orCardConditions: new[]
+                                                        {
+                                                            new CardCondition(
+                                                                CardCondition.ContextConditionValue.This)
+                                                        }))))),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
@@ -369,7 +371,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]{
                             new EffectAction(
                                 MoveCard: new(
@@ -403,20 +405,21 @@ namespace Cauldron.Core_Test
                             If: new(
                                 new NumCondition(4, NumCondition.CompareValue.GreaterThan),
                                 new NumValue(NumValueCalculator: new(
-                                    NumValueCalculator.ValueType.Count,
-                                    new Choice(
-                                        new ChoiceSource(orCardConditions: new[]{
-                                            new CardCondition(
-                                                ZoneCondition: new(new ZoneValue(new[]
-                                                {
-                                                    ZonePrettyName.OpponentField
-                                                })),
-                                                TypeCondition: new(new[]
-                                                {
-                                                    CardType.Creature
-                                                })
-                                            )
-                                        })))))),
+                                    ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(
+                                            new ChoiceSource(orCardConditions: new[]{
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]
+                                                    {
+                                                        ZonePrettyName.OpponentField
+                                                    })),
+                                                    TypeCondition: new(new[]
+                                                    {
+                                                        CardType.Creature
+                                                    })
+                                                )
+                                            }))))))),
                         new[]{
                             new EffectAction(
                                 MoveCard: new(
@@ -492,7 +495,7 @@ namespace Cauldron.Core_Test
                 {
                     // カードを2枚引く
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -645,7 +648,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]{
                             // 効果を付与したカードを破壊する
                             new EffectAction(DestroyCard: new(
@@ -805,7 +808,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]{
                             new EffectAction(
                                 DrawCard: new(
@@ -837,7 +840,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -997,20 +1000,21 @@ namespace Cauldron.Core_Test
                 {
                     // 手札をすべて捨てて、捨てた枚数パワーアップ
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]{
                             new EffectAction(SetVariable: new(
                                 "x",
                                 new NumValue(NumValueCalculator: new(
-                                    NumValueCalculator.ValueType.Count,
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition(
-                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.YouHand }))
-                                                )
-                                            }))
+                                    ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(
+                                            new ChoiceSource(
+                                                orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ZoneCondition: new(new(new[]{ ZonePrettyName.YouHand }))
+                                                    )
+                                                })))
                                     )))),
                             new EffectAction(MoveCard: new(
                                 new Choice(
@@ -1033,10 +1037,10 @@ namespace Cauldron.Core_Test
                                         })),
                                 Power: new NumValueModifier(
                                     NumValueModifier.OperatorValue.Add,
-                                    new NumValue(NumValueVariableCalculator: new("x"))),
+                                    new NumValue(NumVariable: new("x"))),
                                 Toughness: new NumValueModifier(
                                     NumValueModifier.OperatorValue.Add,
-                                    new NumValue(NumValueVariableCalculator: new("x")))
+                                    new NumValue(NumVariable: new("x")))
                                 ))
                         })
                 });
@@ -1080,7 +1084,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]{
                             new EffectAction(
                                 AddCard: new(
@@ -1223,17 +1227,18 @@ namespace Cauldron.Core_Test
                                         Choice.HowValue.Random,
                                         new NumValue(
                                             NumValueCalculator: new(
-                                                NumValueCalculator.ValueType.Count,
-                                                new Choice(
-                                                    new ChoiceSource(
-                                                        orCardConditions: new[]{
-                                                            new CardCondition(
-                                                                ActionContext: new(
-                                                                    ActionContextCardsOfDestroyCard: new(
-                                                                        "destroy",
-                                                                        ActionContextCardsOfDestroyCard.TypeValue.Destroyed)
-                                                                ))
-                                                        }))))),
+                                                ForCard: new(
+                                                    NumValueCalculatorForCard.TypeValue.Count,
+                                                    new Choice(
+                                                        new ChoiceSource(
+                                                            orCardConditions: new[]{
+                                                                new CardCondition(
+                                                                    ActionContext: new(
+                                                                        ActionContextCardsOfDestroyCard: new(
+                                                                            "destroy",
+                                                                            ActionContextCardsOfDestroyCard.TypeValue.Destroyed)
+                                                                    ))
+                                                            })))))),
                                     ZonePrettyName.YouCemetery))
                         }),
                 });
@@ -1293,7 +1298,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1329,7 +1334,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1359,7 +1364,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1392,17 +1397,18 @@ namespace Cauldron.Core_Test
                                     Toughness: new(
                                         NumValueModifier.OperatorValue.Replace,
                                         new NumValue(NumValueCalculator: new(
-                                            NumValueCalculator.ValueType.CardBaseToughness,
-                                            new Choice(
-                                                new ChoiceSource(orCardConditions: new[]
-                                                {
-                                                    new CardCondition(
-                                                        ActionContext: new(
-                                                            ActionContextCardsOfMoveCard: new(
-                                                                "move",
-                                                                ActionContextCardsOfMoveCard.TypeValue.Moved))
-                                                    )
-                                                })))))))
+                                            ForCard: new(
+                                                NumValueCalculatorForCard.TypeValue.CardBaseToughness,
+                                                new Choice(
+                                                    new ChoiceSource(orCardConditions: new[]
+                                                    {
+                                                        new CardCondition(
+                                                            ActionContext: new(
+                                                                ActionContextCardsOfMoveCard: new(
+                                                                    "move",
+                                                                    ActionContextCardsOfMoveCard.TypeValue.Moved))
+                                                        )
+                                                    }))))))))
                         }
                     )
                 });
@@ -1412,7 +1418,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1438,7 +1444,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1481,7 +1487,7 @@ namespace Cauldron.Core_Test
             effects: new[]
             {
                 new CardEffect(
-                    SampleCards.Spell,
+                    SampleCards.Etb,
                     new[]
                     {
                         new EffectAction(
@@ -1511,7 +1517,7 @@ namespace Cauldron.Core_Test
             effects: new[]
             {
                 new CardEffect(
-                    SampleCards.Spell,
+                    SampleCards.Etb,
                     new[]
                     {
                         new EffectAction(
@@ -1541,7 +1547,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(Damage: new(
@@ -1559,7 +1565,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(ModifyPlayer: new(
@@ -1579,7 +1585,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(AddCard: new(
@@ -1614,7 +1620,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1648,7 +1654,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1692,7 +1698,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1750,7 +1756,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1765,17 +1771,18 @@ namespace Cauldron.Core_Test
                                         NumValueModifier.OperatorValue.Add,
                                         new NumValue(
                                             NumValueCalculator: new(
-                                                NumValueCalculator.ValueType.Count,
-                                                new Choice(
-                                                    new ChoiceSource(
-                                                        OrCardDefConditions: new[]
-                                                        {
-                                                            new CardDefCondition(
-                                                                OutZoneCondition: new(new[]
-                                                                {
-                                                                    OutZonePrettyName.YouExcluded
-                                                                }))
-                                                        })))))
+                                                ForCard: new(
+                                                    NumValueCalculatorForCard.TypeValue.Count,
+                                                    new Choice(
+                                                        new ChoiceSource(
+                                                            OrCardDefConditions: new[]
+                                                            {
+                                                                new CardDefCondition(
+                                                                    OutZoneCondition: new(new[]
+                                                                    {
+                                                                        OutZonePrettyName.YouExcluded
+                                                                    }))
+                                                            }))))))
                                     ))
                         }),
                 });
@@ -1786,7 +1793,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1820,7 +1827,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -1857,17 +1864,18 @@ namespace Cauldron.Core_Test
                                         Choice.HowValue.Random,
                                         new NumValue(
                                             NumValueCalculator: new(
-                                                NumValueCalculator.ValueType.CardCost,
-                                                new Choice(
-                                                    new ChoiceSource(
-                                                        orCardConditions: new[]
-                                                        {
-                                                            new CardCondition(
-                                                                ActionContext: new(
-                                                                    ActionContextCardsOfExcludeCard: new(
-                                                                        "exclude",
-                                                                        ActionContextCardsOfExcludeCard.TypeValue.Excluded)))
-                                                        })))))
+                                                ForCard: new(
+                                                    NumValueCalculatorForCard.TypeValue.CardCost,
+                                                    new Choice(
+                                                        new ChoiceSource(
+                                                            orCardConditions: new[]
+                                                            {
+                                                                new CardCondition(
+                                                                    ActionContext: new(
+                                                                        ActionContextCardsOfExcludeCard: new(
+                                                                            "exclude",
+                                                                            ActionContextCardsOfExcludeCard.TypeValue.Excluded)))
+                                                            }))))))
                                     ))
                         }),
                 });
@@ -1919,7 +1927,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(AddCard: new(
@@ -1944,7 +1952,7 @@ namespace Cauldron.Core_Test
             => SampleCards.Sorcery(1, "非常食", "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
                 effects: new[] {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]{
                             new EffectAction(MoveCard: new(
                                 new Choice(new ChoiceSource(
@@ -1969,17 +1977,18 @@ namespace Cauldron.Core_Test
                                     Hp: new(
                                         NumValueModifier.OperatorValue.Add,
                                         new NumValue(NumValueCalculator: new(
-                                            NumValueCalculator.ValueType.CardCost,
-                                            new Choice(new ChoiceSource(
-                                                orCardConditions: new[]
-                                                {
-                                                    new CardCondition(
-                                                        ActionContext: new(ActionContextCardsOfMoveCard: new(
-                                                            "moveCard",
-                                                            ActionContextCardsOfMoveCard.TypeValue.Moved
-                                                            ))
-                                                    )
-                                                }))))))))
+                                            ForCard: new(
+                                                NumValueCalculatorForCard.TypeValue.CardCost,
+                                                new Choice(new ChoiceSource(
+                                                    orCardConditions: new[]
+                                                    {
+                                                        new CardCondition(
+                                                            ActionContext: new(ActionContextCardsOfMoveCard: new(
+                                                                "moveCard",
+                                                                ActionContextCardsOfMoveCard.TypeValue.Moved
+                                                                ))
+                                                        )
+                                                    })))))))))
                         })
                 });
 
@@ -1987,7 +1996,7 @@ namespace Cauldron.Core_Test
             => SampleCards.Sorcery(1, "集合", "あなたの手札に「ゴブリン」を3枚加える。",
                 effects: new[] {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -2016,7 +2025,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -2043,7 +2052,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -2093,7 +2102,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -2126,7 +2135,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]{
                             new EffectAction(
                                 AddEffect: new(
@@ -2173,22 +2182,23 @@ namespace Cauldron.Core_Test
             effects: new[]
             {
                 new CardEffect(
-                    SampleCards.Spell,
+                    SampleCards.Etb,
                     new[]
                     {
                         // 手札の枚数をとっとく
                         new EffectAction(SetVariable: new(
                             "x",
                             new NumValue(NumValueCalculator: new(
-                                NumValueCalculator.ValueType.Count,
-                                new Choice(
-                                    new ChoiceSource(
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition(
-                                                ZoneCondition: new(new(new[]{ ZonePrettyName.YouHand }))
-                                            )
-                                        })))))),
+                                ForCard: new(
+                                    NumValueCalculatorForCard.TypeValue.Count,
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.YouHand }))
+                                                )
+                                            }))))))),
                         // 手札をすべて捨てる
                         new EffectAction(
                             MoveCard: new(
@@ -2206,7 +2216,7 @@ namespace Cauldron.Core_Test
                         // 捨てたカードと同じ枚数引く
                         new EffectAction(
                             DrawCard: new(
-                                new NumValue(NumValueVariableCalculator: new("x")),
+                                new NumValue(NumVariable: new("x")),
                                 new PlayerCondition(Type: PlayerCondition.TypeValue.You)
                                 )),
                     }
@@ -2219,24 +2229,25 @@ namespace Cauldron.Core_Test
                 {
                     // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
                                 Damage: new EffectActionDamage(
                                     new NumValue(
                                         NumValueCalculator: new(
-                                            NumValueCalculator.ValueType.Count,
-                                            new Choice(
-                                                new ChoiceSource(
-                                                    orCardConditions: new[]
-                                                    {
-                                                        new CardCondition(
-                                                            TypeCondition: new(new[]{CardType.Creature}),
-                                                            ZoneCondition: new(
-                                                                new ZoneValue(new[]{ZonePrettyName.YouField}))
-                                                        )
-                                                    })))),
+                                            ForCard: new(
+                                                NumValueCalculatorForCard.TypeValue.Count,
+                                                new Choice(
+                                                    new ChoiceSource(
+                                                        orCardConditions: new[]
+                                                        {
+                                                            new CardCondition(
+                                                                TypeCondition: new(new[]{CardType.Creature}),
+                                                                ZoneCondition: new(
+                                                                    new ZoneValue(new[]{ZonePrettyName.YouField}))
+                                                            )
+                                                        }))))),
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
@@ -2259,7 +2270,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -2286,7 +2297,7 @@ namespace Cauldron.Core_Test
             => SampleCards.Sorcery(2, "手札へ戻す", "場のカード1枚を選択する。選択したカードを持ち主の手札に移動する。",
                 effects: new[] {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -2310,7 +2321,7 @@ namespace Cauldron.Core_Test
             => SampleCards.Sorcery(2, "デッキへ戻す", "場のカード1枚を選択する。選択したカードを持ち主のデッキのランダムな位置に移動する。",
                 effects: new[] {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -2336,7 +2347,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -2363,7 +2374,7 @@ namespace Cauldron.Core_Test
             effects: new[]
             {
                 new CardEffect(
-                    SampleCards.Spell,
+                    SampleCards.Etb,
                     new[]
                     {
                         new EffectAction(
@@ -2392,7 +2403,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -2472,7 +2483,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Spell,
+                        SampleCards.Etb,
                         new[]
                         {
                             new EffectAction(
@@ -2614,14 +2625,15 @@ namespace Cauldron.Core_Test
                             If: new(
                                 new NumCondition(30, NumCondition.CompareValue.GreaterThan),
                                 new NumValue(NumValueCalculator: new(
-                                    NumValueCalculator.ValueType.Count,
-                                    new Choice(new ChoiceSource(
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition(
-                                                ZoneCondition: new(new(new[]{ ZonePrettyName.YouCemetery }))
-                                            )
-                                        })))))),
+                                    ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(new(new[]{ ZonePrettyName.YouCemetery }))
+                                                )
+                                            }))))))),
                         new[]{
                             new EffectAction(Damage: new(
                                 new NumValue(6),
@@ -2647,7 +2659,7 @@ namespace Cauldron.Core_Test
             {
                 // 使用時、すべての自分クリーチャーを+0/+1
                 new CardEffect(
-                    SampleCards.Spell,
+                    SampleCards.Etb,
                     new[]
                     {
                         new EffectAction(
@@ -2774,6 +2786,311 @@ namespace Cauldron.Core_Test
                                                 new PlayerCondition(
                                                     Type: PlayerCondition.TypeValue.You)
                                             }))))
+                        }),
+                });
+
+        public static CardDef MagicObject
+            => SampleCards.Creature(1, "魔力吸収体",
+                "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが置かれるたびに、このカードを+1/+0する。このカードから「魔法」カウンターが取り除かれるたびに、このカードを-1/+0する。",
+                1, 1,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                Play: new(EffectTimingPlayEvent.SourceValue.Other,
+                                    new CardCondition(
+                                        TypeCondition: new(new[]{ CardType.Sorcery })))))),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCounter: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(CardCondition.ContextConditionValue.This)
+                                            })),
+                                    "魔法",
+                                    new NumValueModifier(
+                                        NumValueModifier.OperatorValue.Add,
+                                        new NumValue(1))))
+                        }),
+
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                ModifyCounter: new(
+                                    OrCardConditions: new[]
+                                    {
+                                        new CardCondition(CardCondition.ContextConditionValue.This)
+                                    },
+                                    "魔法",
+                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Add)))),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(CardCondition.ContextConditionValue.This)
+                                        })),
+                                    Power: new(
+                                        NumValueModifier.OperatorValue.Add,
+                                        new NumValue(1))))
+                        }),
+
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                ModifyCounter: new(
+                                    OrCardConditions: new[]
+                                    {
+                                        new CardCondition(CardCondition.ContextConditionValue.This)
+                                    },
+                                    "魔法",
+                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Remove)))),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(CardCondition.ContextConditionValue.This)
+                                        })),
+                                    Power: new(
+                                        NumValueModifier.OperatorValue.Sub,
+                                        new NumValue(1))))
+                        })
+                });
+
+        public static CardDef MagicMonster
+            => SampleCards.Creature(5, "魔法生物",
+                "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。",
+                3, 4,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouHand,
+                            new EffectWhen(new EffectTiming(
+                                Play: new(EffectTimingPlayEvent.SourceValue.Other,
+                                    new CardCondition(
+                                        OwnerCondition: CardCondition.OwnerConditionValue.You,
+                                        TypeCondition: new(new[]{ CardType.Sorcery })))))),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCounter: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(CardCondition.ContextConditionValue.This)
+                                            })),
+                                    "魔法",
+                                    new NumValueModifier(
+                                        NumValueModifier.OperatorValue.Add,
+                                        new NumValue(1))))
+                        }),
+
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouHand,
+                            new EffectWhen(new EffectTiming(
+                                ModifyCounter: new(
+                                    OrCardConditions: new[]
+                                    {
+                                        new CardCondition(CardCondition.ContextConditionValue.This)
+                                    },
+                                    "魔法",
+                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Add)))),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(CardCondition.ContextConditionValue.This)
+                                        })),
+                                    Cost: new(
+                                        NumValueModifier.OperatorValue.Sub,
+                                        new NumValue(1))))
+                        })
+                });
+
+        public static CardDef BeginnerSorcerer
+            => SampleCards.Creature(2, "初級魔導士",
+                "このカードが場に出たとき、あなたの場のカード1枚を選択する。そのカードに「魔法」カウンターを2つ置く。",
+                1, 2,
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                Play: new(EffectTimingPlayEvent.SourceValue.This)))),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCounter: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.Others,
+                                                    ZoneCondition: new(new ZoneValue(new[]
+                                                    {
+                                                        ZonePrettyName.YouField
+                                                    }))),
+                                            }),
+                                        Choice.HowValue.Choose,
+                                        new NumValue(1)),
+                                    "魔法",
+                                    new NumValueModifier(
+                                        NumValueModifier.OperatorValue.Add,
+                                        new NumValue(2))))
+                        }),
+                });
+
+        public static CardDef GreatSorcerer
+            => SampleCards.Creature(9, "偉大な魔導士",
+                "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードを場に出したとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札すべてに「魔法」カウンターを5個おく。",
+                5, 5,
+                effects: new[]
+                {
+                    // 魔法をプレイするたび、カウンターを置く。
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouHand,
+                            new EffectWhen(new EffectTiming(
+                                Play: new(EffectTimingPlayEvent.SourceValue.Other,
+                                    new CardCondition(
+                                        OwnerCondition: CardCondition.OwnerConditionValue.You,
+                                        TypeCondition: new(new[]{ CardType.Sorcery })))))),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCounter: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(CardCondition.ContextConditionValue.This)
+                                            })),
+                                    "魔法",
+                                    new NumValueModifier(
+                                        NumValueModifier.OperatorValue.Add,
+                                        new NumValue(1))))
+                        }),
+
+                    // カウンターが置かれるたび、コスト-1
+                    new CardEffect(
+                        new EffectCondition(ZonePrettyName.YouHand,
+                            new EffectWhen(new EffectTiming(
+                                ModifyCounter: new(
+                                    OrCardConditions: new[]
+                                    {
+                                        new CardCondition(CardCondition.ContextConditionValue.This)
+                                    },
+                                    "魔法",
+                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Add)))),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCard: new(
+                                    new Choice(new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(CardCondition.ContextConditionValue.This)
+                                        })),
+                                    Cost: new(
+                                        NumValueModifier.OperatorValue.Sub,
+                                        new NumValue(1))))
+                        }),
+
+                    // カードが場に出たとき
+                    new CardEffect(
+                        SampleCards.Etb,
+                        new[]
+                        {
+                            new EffectAction(
+                                ExcludeCard: new(
+                                    new Choice(new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouHand
+                                                })))
+                                        })))),
+                            new EffectAction(
+                                DrawCard: new(
+                                    new NumValue(5),
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You))),
+                            new EffectAction(
+                                ModifyCounter: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]
+                                                    {
+                                                        ZonePrettyName.YouHand
+                                                    })))
+                                            })),
+                                    "魔法",
+                                    new NumValueModifier(
+                                        NumValueModifier.OperatorValue.Add,
+                                        new NumValue(5))))
+                        })
+                });
+
+        public static CardDef UltraMagic
+            => SampleCards.Sorcery(3, "大魔法",
+                "このカードが場に出たとき、あなたの場からすべての「魔法」カウンターを取り除く。その後、相手にXのダメージを与える。X=取り除いた「魔法」カウンターの数+1",
+                effects: new[]
+                {
+                    new CardEffect(
+                        SampleCards.Etb,
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyCounter: new(
+                                    new Choice(new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouField
+                                                })))
+                                        })),
+                                    "魔法",
+                                    new NumValueModifier(
+                                        NumValueModifier.OperatorValue.Replace,
+                                        new NumValue(0)
+                                    ),
+                                    "remove_counters")),
+                            new EffectAction(
+                                Damage: new(
+                                    new NumValue(
+                                        NumValueCalculator: new(
+                                            ForCounter: new(
+                                                ActionContextCounters: new(
+                                                    OfModifyCounter: new(
+                                                        "remove_counters",
+                                                        ActionContextCountersOfModifyCounter.TypeValue.Modified)))),
+                                        NumValueModifier: new(
+                                            NumValueModifier.OperatorValue.Add,
+                                            new NumValue(1))),
+                                    new Choice(new ChoiceSource(
+                                        orPlayerConditions: new[]
+                                        {
+                                            new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                        }))))
                         }),
                 });
     }

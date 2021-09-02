@@ -42,6 +42,12 @@ namespace Assets.Scripts
         void ICauldronHubReceiver.OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage message)
             => this.onModifyCard.OnNext((gameContext, message));
 
+        public IObservable<(GameContext gameContext, ModifyCounterNotifyMessage message)> OnModifyCounter => onModifyCounter;
+        private readonly Subject<(GameContext gameContext, ModifyCounterNotifyMessage message)> onModifyCounter
+            = new Subject<(GameContext gameContext, ModifyCounterNotifyMessage message)>();
+        void ICauldronHubReceiver.OnModifyCounter(GameContext gameContext, ModifyCounterNotifyMessage message)
+            => this.onModifyCounter.OnNext((gameContext, message));
+
         public IObservable<(GameContext gameContext, ModifyPlayerNotifyMessage message)> OnModifyPlayer => onModifyPlayer;
         private readonly Subject<(GameContext gameContext, ModifyPlayerNotifyMessage message)> onModifyPlayer
             = new Subject<(GameContext gameContext, ModifyPlayerNotifyMessage message)>();

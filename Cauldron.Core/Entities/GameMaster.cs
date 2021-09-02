@@ -1282,6 +1282,86 @@ namespace Cauldron.Core.Entities
             return GameMasterStatusCode.OK;
         }
 
+        public async ValueTask ModifyCounter(PlayerId targetPlayerId, string counterName, int numCounters)
+        {
+            this.logger.LogInformation($"start set counter.");
+
+            var (exists, targetPlayer) = this.playerRepository.TryGet(targetPlayerId);
+            if (!exists)
+            {
+                this.logger.LogError($"player not exists. player id={targetPlayerId}");
+                return;
+            }
+
+            targetPlayer.ModifyCounter(counterName, numCounters);
+
+            this.logger.LogInformation($"set counter. player={targetPlayer.Name}, counter={counterName}:{numCounters}");
+
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnModityCounter?.Invoke(
+                    p.Id,
+                    this.CreateGameContext(p.Id),
+                    new ModifyCounterNotifyMessage(
+                        counterName, numCounters, TargetPlayerId: targetPlayerId));
+            }
+
+            var addOrRemove = numCounters > 0
+                ? EffectTimingModifyCounterOnCardEvent.OperatorValue.Add
+                : EffectTimingModifyCounterOnCardEvent.OperatorValue.Remove;
+
+            var abs = Math.Abs(numCounters);
+            for (var i = 0; i < abs; i++)
+            {
+                await this.effectManager.DoEffect(new EffectEventArgs(
+                    GameEvent.OnModifyCounter, this,
+                    SourcePlayer: targetPlayer,
+                    ModifyCounterContext: new(
+                        counterName,
+                        addOrRemove
+                    )));
+            }
+        }
+
+        public async ValueTask ModifyCounter(Card targetCard, string counterName, int numCounters)
+        {
+            this.logger.LogInformation($"start set counter.");
+
+            targetCard.ModifyCounter(counterName, numCounters);
+
+            this.logger.LogInformation($"set counter. card={targetCard}, counter={counterName}:{numCounters}");
+
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                // 非公開領域なら、カードの持ち主以外にはカードを知らせない
+                var targetCardId = !targetCard.Zone.IsPublic() && p.Id != targetCard.OwnerId
+                    ? default
+                    : targetCard.Id;
+
+                this.EventListener?.OnModityCounter?.Invoke(
+                    p.Id,
+                    this.CreateGameContext(p.Id),
+                    new ModifyCounterNotifyMessage(
+                        counterName, numCounters,
+                        TargetCardId: targetCardId));
+            }
+
+            var addOrRemove = numCounters > 0
+                ? EffectTimingModifyCounterOnCardEvent.OperatorValue.Add
+                : EffectTimingModifyCounterOnCardEvent.OperatorValue.Remove;
+
+            var abs = Math.Abs(numCounters);
+            for (var i = 0; i < abs; i++)
+            {
+                await this.effectManager.DoEffect(new EffectEventArgs(
+                    GameEvent.OnModifyCounter, this,
+                    SourceCard: targetCard,
+                    ModifyCounterContext: new(
+                        counterName,
+                        addOrRemove
+                    )));
+            }
+        }
         private readonly Dictionary<(CardId, string), (int Num, string Text)> variablesByName = new();
 
         public void SetVariable(CardId cardId, string name, int value)

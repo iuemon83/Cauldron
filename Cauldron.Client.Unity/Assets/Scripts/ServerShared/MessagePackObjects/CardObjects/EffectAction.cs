@@ -16,6 +16,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectActionMoveCard MoveCard { get; } = null;
         public EffectActionAddEffect AddEffect { get; } = null;
         public EffectActionSetVariable SetVariable { get; } = null;
+        public EffectActionModifyCounter ModifyCounter { get; } = null;
         public EffectActionWin Win { get; } = null;
 
         public EffectAction(
@@ -30,6 +31,7 @@ namespace Cauldron.Shared.MessagePackObjects
             EffectActionMoveCard MoveCard = null,
             EffectActionAddEffect AddEffect = null,
             EffectActionSetVariable SetVariable = null,
+            EffectActionModifyCounter ModifyCounter = null,
             EffectActionWin Win = null
             )
         {
@@ -44,6 +46,8 @@ namespace Cauldron.Shared.MessagePackObjects
             this.MoveCard = MoveCard;
             this.AddEffect = AddEffect;
             this.SetVariable = SetVariable;
+            this.ModifyCounter = ModifyCounter
+                ;
             this.Win = Win;
         }
     }

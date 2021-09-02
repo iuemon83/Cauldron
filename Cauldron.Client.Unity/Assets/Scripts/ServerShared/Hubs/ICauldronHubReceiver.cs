@@ -13,6 +13,7 @@ namespace Cauldron.Shared.Services
         void OnExcludeCard(GameContext gameContext, ExcludeCardNotifyMessage message);
         void OnMoveCard(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage);
         void OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage);
+        void OnModifyCounter(GameContext gameContext, ModifyCounterNotifyMessage message);
         void OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage);
         void OnDamage(GameContext gameContext, DamageNotifyMessage damageNotifyMessage);
         void OnBattle(GameContext gameContext, BattleNotifyMessage message);

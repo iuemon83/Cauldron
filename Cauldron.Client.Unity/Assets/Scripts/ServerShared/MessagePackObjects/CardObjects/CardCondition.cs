@@ -93,6 +93,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public ZoneCondition ZoneCondition { get; }
         public OwnerConditionValue OwnerCondition { get; }
         public IReadOnlyCollection<CreatureAbility> AbilityCondition { get; }
+        public CounterCondition CounterCondition { get; }
 
         public CardCondition(
             ContextConditionValue ContextCondition = ContextConditionValue.Any,
@@ -105,7 +106,8 @@ namespace Cauldron.Shared.MessagePackObjects
             CardTypeCondition TypeCondition = default,
             ZoneCondition ZoneCondition = default,
             OwnerConditionValue OwnerCondition = OwnerConditionValue.Any,
-            IReadOnlyCollection<CreatureAbility> AbilityCondition = default
+            IReadOnlyCollection<CreatureAbility> AbilityCondition = default,
+            CounterCondition CounterCondition = default
             )
         {
             this.ContextCondition = ContextCondition;
@@ -119,6 +121,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.ZoneCondition = ZoneCondition;
             this.OwnerCondition = OwnerCondition;
             this.AbilityCondition = AbilityCondition;
+            this.CounterCondition = CounterCondition;
         }
     }
 }

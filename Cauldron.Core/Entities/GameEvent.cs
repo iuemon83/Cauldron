@@ -61,5 +61,10 @@
         /// ターン終了時
         /// </summary>
         OnEndTurn,
+
+        /// <summary>
+        /// カウンターの変更時
+        /// </summary>
+        OnModifyCounter,
     }
 }

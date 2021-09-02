@@ -1,26 +1,25 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using Cauldron.Shared.MessagePackObjects.Value;
 using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects.Value
 {
     public static class NumValueExtensions
     {
-        public static async ValueTask<int> Calculate(this NumValue numValue, Card effectOwnerCard, EffectEventArgs effectEventArgs)
+        public static async ValueTask<int> Calculate(this NumValue _this, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             async ValueTask<int> CalcBaseValue()
             {
-                if (numValue.PureValue != null)
+                if (_this.PureValue != null)
                 {
-                    return numValue.PureValue.Value;
+                    return _this.PureValue.Value;
                 }
-                else if (numValue.NumValueCalculator != null)
+                else if (_this.NumValueCalculator != null)
                 {
-                    return await numValue.NumValueCalculator.Calculate(effectOwnerCard, effectEventArgs);
+                    return await _this.NumValueCalculator.Calculate(effectOwnerCard, effectEventArgs);
                 }
-                else if (numValue.NumValueVariableCalculator != null)
+                else if (_this.NumVariable != null)
                 {
-                    return numValue.NumValueVariableCalculator.Calculate(effectOwnerCard, effectEventArgs);
+                    return _this.NumVariable.Calculate(effectOwnerCard, effectEventArgs);
                 }
                 else
                 {
@@ -30,7 +29,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
 
             var baseValue = await CalcBaseValue();
 
-            return await (numValue.NumValueModifier?.Modify(effectOwnerCard, effectEventArgs, baseValue)
+            return await (_this.NumValueModifier?.Modify(effectOwnerCard, effectEventArgs, baseValue)
                 ?? ValueTask.FromResult(baseValue));
         }
     }

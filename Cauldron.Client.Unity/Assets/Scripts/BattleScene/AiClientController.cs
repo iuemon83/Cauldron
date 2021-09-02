@@ -87,4 +87,8 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     void ICauldronHubReceiver.OnEndGame(GameContext gameContext)
     {
     }
+
+    void ICauldronHubReceiver.OnModifyCounter(GameContext gameContext, ModifyCounterNotifyMessage message)
+    {
+    }
 }

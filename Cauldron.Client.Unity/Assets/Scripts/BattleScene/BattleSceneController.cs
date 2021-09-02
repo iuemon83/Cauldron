@@ -114,6 +114,7 @@ public class BattleSceneController : MonoBehaviour
             holder.Receiver.OnDamage.Subscribe((a) => this.OnDamage(a.gameContext, a.message)),
             holder.Receiver.OnModifyCard.Subscribe((a) => this.OnModifyCard(a.gameContext, a.message)),
             holder.Receiver.OnModifyPlayer.Subscribe((a) => this.OnModifyPlayer(a.gameContext, a.message)),
+            holder.Receiver.OnModifyCounter.Subscribe((a) => this.OnModifyCounter(a.gameContext, a.message)),
             holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.message)),
             holder.Receiver.OnExcludeCard.Subscribe((a) => this.OnExcludeCard(a.gameContext, a.message)),
             holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.playerId)),
@@ -718,6 +719,27 @@ public class BattleSceneController : MonoBehaviour
                 await HealOrDamageEffect(this.opponentPlayerController,
                     this.currentGameContext.Opponent.CurrentHp,
                     gameContext.Opponent.CurrentHp);
+            }
+
+            await this.UpdateGameContext(gameContext);
+        });
+    }
+
+    void OnModifyCounter(GameContext gameContext, ModifyCounterNotifyMessage notify)
+    {
+        Debug.Log($"OnModifyCounter({this.client.PlayerName})");
+
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            if (notify.TargetCardId != default)
+            {
+                var (ownerName, cardName) = Utility.GetCardName(gameContext, notify.TargetCardId);
+                Debug.Log($"カウンター: {notify.CounterName}({notify.NumCounters}) > {cardName}({ownerName})");
+            }
+            else if (notify.TargetPlayerId != default)
+            {
+                var playerName = Utility.GetPlayerName(gameContext, notify.TargetPlayerId);
+                Debug.Log($"カウンター: {notify.CounterName}({notify.NumCounters}) > {playerName}");
             }
 
             await this.UpdateGameContext(gameContext);

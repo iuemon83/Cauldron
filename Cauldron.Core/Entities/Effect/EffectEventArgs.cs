@@ -9,6 +9,7 @@ namespace Cauldron.Core.Entities.Effect
         Card SourceCard = null,
         BattleContext BattleContext = null,
         DamageContext DamageContext = null,
-        MoveCardContext MoveCardContext = null
+        MoveCardContext MoveCardContext = null,
+        ModifyCounterContext ModifyCounterContext = null
         );
 }

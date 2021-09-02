@@ -50,6 +50,8 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public List<CardEffect> Effects { get; set; }
 
+        private Dictionary<string, int> counter = new Dictionary<string, int>();
+
         /// <summary>
         /// 攻撃可能となるまでのターン数
         /// </summary>
@@ -105,6 +107,23 @@ namespace Cauldron.Shared.MessagePackObjects
                 default:
                     return $"{this.Name}[{this.Cost},{this.Power},{this.Toughness}]";
             }
+        }
+
+        public void ModifyCounter(string name, int addValue)
+        {
+            if (!this.counter.TryGetValue(name, out var num))
+            {
+                this.counter.Add(name, 0);
+            }
+
+            this.counter[name] = num + addValue;
+        }
+
+        public int GetCounter(string name)
+        {
+            return this.counter.TryGetValue(name, out var num)
+                ? num
+                : 0;
         }
     }
 }

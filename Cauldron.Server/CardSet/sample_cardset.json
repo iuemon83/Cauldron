@@ -99,22 +99,24 @@
                             "damage": {
                                 "value": {
                                     "numValueCalculator": {
-                                        "type": "cardPower",
-                                        "cardsChoice": {
-                                            "source": {
+                                        "forCard": {
+                                            "type": "cardPower",
+                                            "cardsChoice": {
+                                                "source": {
+                                                    "how": "all",
+                                                    "numPicks": { "pureValue": 1 },
+                                                    "orPlayerConditions": [],
+                                                    "orCardConditions": [
+                                                        {
+                                                            "contextCondition": "this",
+                                                            "ownerCondition": "any"
+                                                        }
+                                                    ],
+                                                    "orCardDefConditions": []
+                                                },
                                                 "how": "all",
-                                                "numPicks": { "pureValue": 1 },
-                                                "orPlayerConditions": [],
-                                                "orCardConditions": [
-                                                    {
-                                                        "contextCondition": "this",
-                                                        "ownerCondition": "any"
-                                                    }
-                                                ],
-                                                "orCardDefConditions": []
-                                            },
-                                            "how": "all",
-                                            "numPicks": { "pureValue": 1 }
+                                                "numPicks": { "pureValue": 1 }
+                                            }
                                         }
                                     }
                                 },
@@ -157,22 +159,24 @@
                             "damage": {
                                 "value": {
                                     "numValueCalculator": {
-                                        "type": "cardPower",
-                                        "cardsChoice": {
-                                            "source": {
+                                        "forCard": {
+                                            "type": "cardPower",
+                                            "cardsChoice": {
+                                                "source": {
+                                                    "how": "all",
+                                                    "numPicks": { "pureValue": 1 },
+                                                    "orPlayerConditions": [],
+                                                    "orCardConditions": [
+                                                        {
+                                                            "contextCondition": "this",
+                                                            "ownerCondition": "any"
+                                                        }
+                                                    ],
+                                                    "orCardDefConditions": []
+                                                },
                                                 "how": "all",
-                                                "numPicks": { "pureValue": 1 },
-                                                "orPlayerConditions": [],
-                                                "orCardConditions": [
-                                                    {
-                                                        "contextCondition": "this",
-                                                        "ownerCondition": "any"
-                                                    }
-                                                ],
-                                                "orCardDefConditions": []
-                                            },
-                                            "how": "all",
-                                            "numPicks": { "pureValue": 1 }
+                                                "numPicks": { "pureValue": 1 }
+                                            }
                                         }
                                     }
                                 },
@@ -656,30 +660,32 @@
                             },
                             "numValue": {
                                 "numValueCalculator": {
-                                    "type": "count",
-                                    "cardsChoice": {
-                                        "source": {
+                                    "forCard": {
+                                        "type": "count",
+                                        "cardsChoice": {
+                                            "source": {
+                                                "how": "all",
+                                                "numPicks": { "pureValue": 1 },
+                                                "orPlayerConditions": [],
+                                                "orCardConditions": [
+                                                    {
+                                                        "contextCondition": "any",
+                                                        "typeCondition": {
+                                                            "value": [ "creature" ],
+                                                            "not": false
+                                                        },
+                                                        "zoneCondition": {
+                                                            "value": { "pureValue": [ "opponentField" ] },
+                                                            "not": false
+                                                        },
+                                                        "ownerCondition": "any"
+                                                    }
+                                                ],
+                                                "orCardDefConditions": []
+                                            },
                                             "how": "all",
-                                            "numPicks": { "pureValue": 1 },
-                                            "orPlayerConditions": [],
-                                            "orCardConditions": [
-                                                {
-                                                    "contextCondition": "any",
-                                                    "typeCondition": {
-                                                        "value": [ "creature" ],
-                                                        "not": false
-                                                    },
-                                                    "zoneCondition": {
-                                                        "value": { "pureValue": [ "opponentField" ] },
-                                                        "not": false
-                                                    },
-                                                    "ownerCondition": "any"
-                                                }
-                                            ],
-                                            "orCardDefConditions": []
-                                        },
-                                        "how": "all",
-                                        "numPicks": { "pureValue": 1 }
+                                            "numPicks": { "pureValue": 1 }
+                                        }
                                     }
                                 }
                             }
@@ -1662,26 +1668,28 @@
                                 "name": "x",
                                 "numValue": {
                                     "numValueCalculator": {
-                                        "type": "count",
-                                        "cardsChoice": {
-                                            "source": {
+                                        "forCard": {
+                                            "type": "count",
+                                            "cardsChoice": {
+                                                "source": {
+                                                    "how": "all",
+                                                    "numPicks": { "pureValue": 1 },
+                                                    "orPlayerConditions": [],
+                                                    "orCardConditions": [
+                                                        {
+                                                            "contextCondition": "any",
+                                                            "zoneCondition": {
+                                                                "value": { "pureValue": [ "youHand" ] },
+                                                                "not": false
+                                                            },
+                                                            "ownerCondition": "any"
+                                                        }
+                                                    ],
+                                                    "orCardDefConditions": []
+                                                },
                                                 "how": "all",
-                                                "numPicks": { "pureValue": 1 },
-                                                "orPlayerConditions": [],
-                                                "orCardConditions": [
-                                                    {
-                                                        "contextCondition": "any",
-                                                        "zoneCondition": {
-                                                            "value": { "pureValue": [ "youHand" ] },
-                                                            "not": false
-                                                        },
-                                                        "ownerCondition": "any"
-                                                    }
-                                                ],
-                                                "orCardDefConditions": []
-                                            },
-                                            "how": "all",
-                                            "numPicks": { "pureValue": 1 }
+                                                "numPicks": { "pureValue": 1 }
+                                            }
                                         }
                                     }
                                 }
@@ -1716,11 +1724,11 @@
                             "modifyCard": {
                                 "power": {
                                     "operator": "add",
-                                    "value": { "numValueVariableCalculator": { "name": "x" } }
+                                    "value": { "numVariable": { "name": "x" } }
                                 },
                                 "toughness": {
                                     "operator": "add",
-                                    "value": { "numValueVariableCalculator": { "name": "x" } }
+                                    "value": { "numVariable": { "name": "x" } }
                                 },
                                 "choice": {
                                     "source": {
@@ -2039,28 +2047,30 @@
                                     "how": "random",
                                     "numPicks": {
                                         "numValueCalculator": {
-                                            "type": "count",
-                                            "cardsChoice": {
-                                                "source": {
+                                            "forCard": {
+                                                "type": "count",
+                                                "cardsChoice": {
+                                                    "source": {
+                                                        "how": "all",
+                                                        "numPicks": { "pureValue": 1 },
+                                                        "orPlayerConditions": [],
+                                                        "orCardConditions": [
+                                                            {
+                                                                "contextCondition": "any",
+                                                                "actionContext": {
+                                                                    "actionContextCardsOfDestroyCard": {
+                                                                        "actionName": "destroy",
+                                                                        "type": "destroyed"
+                                                                    }
+                                                                },
+                                                                "ownerCondition": "any"
+                                                            }
+                                                        ],
+                                                        "orCardDefConditions": []
+                                                    },
                                                     "how": "all",
-                                                    "numPicks": { "pureValue": 1 },
-                                                    "orPlayerConditions": [],
-                                                    "orCardConditions": [
-                                                        {
-                                                            "contextCondition": "any",
-                                                            "actionContext": {
-                                                                "actionContextCardsOfDestroyCard": {
-                                                                    "actionName": "destroy",
-                                                                    "type": "destroyed"
-                                                                }
-                                                            },
-                                                            "ownerCondition": "any"
-                                                        }
-                                                    ],
-                                                    "orCardDefConditions": []
-                                                },
-                                                "how": "all",
-                                                "numPicks": { "pureValue": 1 }
+                                                    "numPicks": { "pureValue": 1 }
+                                                }
                                             }
                                         }
                                     }
@@ -2308,28 +2318,30 @@
                                     "operator": "replace",
                                     "value": {
                                         "numValueCalculator": {
-                                            "type": "cardBaseToughness",
-                                            "cardsChoice": {
-                                                "source": {
+                                            "forCard": {
+                                                "type": "cardBaseToughness",
+                                                "cardsChoice": {
+                                                    "source": {
+                                                        "how": "all",
+                                                        "numPicks": { "pureValue": 1 },
+                                                        "orPlayerConditions": [],
+                                                        "orCardConditions": [
+                                                            {
+                                                                "contextCondition": "any",
+                                                                "actionContext": {
+                                                                    "actionContextCardsOfMoveCard": {
+                                                                        "actionName": "move",
+                                                                        "type": "moved"
+                                                                    }
+                                                                },
+                                                                "ownerCondition": "any"
+                                                            }
+                                                        ],
+                                                        "orCardDefConditions": []
+                                                    },
                                                     "how": "all",
-                                                    "numPicks": { "pureValue": 1 },
-                                                    "orPlayerConditions": [],
-                                                    "orCardConditions": [
-                                                        {
-                                                            "contextCondition": "any",
-                                                            "actionContext": {
-                                                                "actionContextCardsOfMoveCard": {
-                                                                    "actionName": "move",
-                                                                    "type": "moved"
-                                                                }
-                                                            },
-                                                            "ownerCondition": "any"
-                                                        }
-                                                    ],
-                                                    "orCardDefConditions": []
-                                                },
-                                                "how": "all",
-                                                "numPicks": { "pureValue": 1 }
+                                                    "numPicks": { "pureValue": 1 }
+                                                }
                                             }
                                         }
                                     }
@@ -2991,24 +3003,26 @@
                                     "operator": "add",
                                     "value": {
                                         "numValueCalculator": {
-                                            "type": "count",
-                                            "cardsChoice": {
-                                                "source": {
-                                                    "how": "all",
-                                                    "numPicks": { "pureValue": 1 },
-                                                    "orPlayerConditions": [],
-                                                    "orCardConditions": [],
-                                                    "orCardDefConditions": [
-                                                        {
-                                                            "outZoneCondition": {
-                                                                "value": [ "youExcluded" ],
-                                                                "not": false
+                                            "forCard": {
+                                                "type": "count",
+                                                "cardsChoice": {
+                                                    "source": {
+                                                        "how": "all",
+                                                        "numPicks": { "pureValue": 1 },
+                                                        "orPlayerConditions": [],
+                                                        "orCardConditions": [],
+                                                        "orCardDefConditions": [
+                                                            {
+                                                                "outZoneCondition": {
+                                                                    "value": [ "youExcluded" ],
+                                                                    "not": false
+                                                                }
                                                             }
-                                                        }
-                                                    ]
-                                                },
-                                                "how": "all",
-                                                "numPicks": { "pureValue": 1 }
+                                                        ]
+                                                    },
+                                                    "how": "all",
+                                                    "numPicks": { "pureValue": 1 }
+                                                }
                                             }
                                         }
                                     }
@@ -3146,28 +3160,30 @@
                                     "how": "random",
                                     "numPicks": {
                                         "numValueCalculator": {
-                                            "type": "cardCost",
-                                            "cardsChoice": {
-                                                "source": {
+                                            "forCard": {
+                                                "type": "cardCost",
+                                                "cardsChoice": {
+                                                    "source": {
+                                                        "how": "all",
+                                                        "numPicks": { "pureValue": 1 },
+                                                        "orPlayerConditions": [],
+                                                        "orCardConditions": [
+                                                            {
+                                                                "contextCondition": "any",
+                                                                "actionContext": {
+                                                                    "actionContextCardsOfExcludeCard": {
+                                                                        "actionName": "exclude",
+                                                                        "type": "excluded"
+                                                                    }
+                                                                },
+                                                                "ownerCondition": "any"
+                                                            }
+                                                        ],
+                                                        "orCardDefConditions": []
+                                                    },
                                                     "how": "all",
-                                                    "numPicks": { "pureValue": 1 },
-                                                    "orPlayerConditions": [],
-                                                    "orCardConditions": [
-                                                        {
-                                                            "contextCondition": "any",
-                                                            "actionContext": {
-                                                                "actionContextCardsOfExcludeCard": {
-                                                                    "actionName": "exclude",
-                                                                    "type": "excluded"
-                                                                }
-                                                            },
-                                                            "ownerCondition": "any"
-                                                        }
-                                                    ],
-                                                    "orCardDefConditions": []
-                                                },
-                                                "how": "all",
-                                                "numPicks": { "pureValue": 1 }
+                                                    "numPicks": { "pureValue": 1 }
+                                                }
                                             }
                                         }
                                     }
@@ -3375,28 +3391,30 @@
                                         "operator": "add",
                                         "value": {
                                             "numValueCalculator": {
-                                                "type": "cardCost",
-                                                "cardsChoice": {
-                                                    "source": {
+                                                "forCard": {
+                                                    "type": "cardCost",
+                                                    "cardsChoice": {
+                                                        "source": {
+                                                            "how": "all",
+                                                            "numPicks": { "pureValue": 1 },
+                                                            "orPlayerConditions": [],
+                                                            "orCardConditions": [
+                                                                {
+                                                                    "contextCondition": "any",
+                                                                    "actionContext": {
+                                                                        "actionContextCardsOfMoveCard": {
+                                                                            "actionName": "moveCard",
+                                                                            "type": "moved"
+                                                                        }
+                                                                    },
+                                                                    "ownerCondition": "any"
+                                                                }
+                                                            ],
+                                                            "orCardDefConditions": []
+                                                        },
                                                         "how": "all",
-                                                        "numPicks": { "pureValue": 1 },
-                                                        "orPlayerConditions": [],
-                                                        "orCardConditions": [
-                                                            {
-                                                                "contextCondition": "any",
-                                                                "actionContext": {
-                                                                    "actionContextCardsOfMoveCard": {
-                                                                        "actionName": "moveCard",
-                                                                        "type": "moved"
-                                                                    }
-                                                                },
-                                                                "ownerCondition": "any"
-                                                            }
-                                                        ],
-                                                        "orCardDefConditions": []
-                                                    },
-                                                    "how": "all",
-                                                    "numPicks": { "pureValue": 1 }
+                                                        "numPicks": { "pureValue": 1 }
+                                                    }
                                                 }
                                             }
                                         }
@@ -3743,26 +3761,28 @@
                                 "name": "x",
                                 "numValue": {
                                     "numValueCalculator": {
-                                        "type": "count",
-                                        "cardsChoice": {
-                                            "source": {
+                                        "forCard": {
+                                            "type": "count",
+                                            "cardsChoice": {
+                                                "source": {
+                                                    "how": "all",
+                                                    "numPicks": { "pureValue": 1 },
+                                                    "orPlayerConditions": [],
+                                                    "orCardConditions": [
+                                                        {
+                                                            "contextCondition": "any",
+                                                            "zoneCondition": {
+                                                                "value": { "pureValue": [ "youHand" ] },
+                                                                "not": false
+                                                            },
+                                                            "ownerCondition": "any"
+                                                        }
+                                                    ],
+                                                    "orCardDefConditions": []
+                                                },
                                                 "how": "all",
-                                                "numPicks": { "pureValue": 1 },
-                                                "orPlayerConditions": [],
-                                                "orCardConditions": [
-                                                    {
-                                                        "contextCondition": "any",
-                                                        "zoneCondition": {
-                                                            "value": { "pureValue": [ "youHand" ] },
-                                                            "not": false
-                                                        },
-                                                        "ownerCondition": "any"
-                                                    }
-                                                ],
-                                                "orCardDefConditions": []
-                                            },
-                                            "how": "all",
-                                            "numPicks": { "pureValue": 1 }
+                                                "numPicks": { "pureValue": 1 }
+                                            }
                                         }
                                     }
                                 }
@@ -3795,7 +3815,7 @@
                         },
                         {
                             "drawCard": {
-                                "numCards": { "numValueVariableCalculator": { "name": "x" } },
+                                "numCards": { "numVariable": { "name": "x" } },
                                 "playerCondition": {
                                     "context": "any",
                                     "type": "you"
@@ -3826,30 +3846,32 @@
                             "damage": {
                                 "value": {
                                     "numValueCalculator": {
-                                        "type": "count",
-                                        "cardsChoice": {
-                                            "source": {
+                                        "forCard": {
+                                            "type": "count",
+                                            "cardsChoice": {
+                                                "source": {
+                                                    "how": "all",
+                                                    "numPicks": { "pureValue": 1 },
+                                                    "orPlayerConditions": [],
+                                                    "orCardConditions": [
+                                                        {
+                                                            "contextCondition": "any",
+                                                            "typeCondition": {
+                                                                "value": [ "creature" ],
+                                                                "not": false
+                                                            },
+                                                            "zoneCondition": {
+                                                                "value": { "pureValue": [ "youField" ] },
+                                                                "not": false
+                                                            },
+                                                            "ownerCondition": "any"
+                                                        }
+                                                    ],
+                                                    "orCardDefConditions": []
+                                                },
                                                 "how": "all",
-                                                "numPicks": { "pureValue": 1 },
-                                                "orPlayerConditions": [],
-                                                "orCardConditions": [
-                                                    {
-                                                        "contextCondition": "any",
-                                                        "typeCondition": {
-                                                            "value": [ "creature" ],
-                                                            "not": false
-                                                        },
-                                                        "zoneCondition": {
-                                                            "value": { "pureValue": [ "youField" ] },
-                                                            "not": false
-                                                        },
-                                                        "ownerCondition": "any"
-                                                    }
-                                                ],
-                                                "orCardDefConditions": []
-                                            },
-                                            "how": "all",
-                                            "numPicks": { "pureValue": 1 }
+                                                "numPicks": { "pureValue": 1 }
+                                            }
                                         }
                                     }
                                 },
@@ -4514,26 +4536,28 @@
                             },
                             "numValue": {
                                 "numValueCalculator": {
-                                    "type": "count",
-                                    "cardsChoice": {
-                                        "source": {
+                                    "forCard": {
+                                        "type": "count",
+                                        "cardsChoice": {
+                                            "source": {
+                                                "how": "all",
+                                                "numPicks": { "pureValue": 1 },
+                                                "orPlayerConditions": [],
+                                                "orCardConditions": [
+                                                    {
+                                                        "contextCondition": "any",
+                                                        "zoneCondition": {
+                                                            "value": { "pureValue": [ "youCemetery" ] },
+                                                            "not": false
+                                                        },
+                                                        "ownerCondition": "any"
+                                                    }
+                                                ],
+                                                "orCardDefConditions": []
+                                            },
                                             "how": "all",
-                                            "numPicks": { "pureValue": 1 },
-                                            "orPlayerConditions": [],
-                                            "orCardConditions": [
-                                                {
-                                                    "contextCondition": "any",
-                                                    "zoneCondition": {
-                                                        "value": { "pureValue": [ "youCemetery" ] },
-                                                        "not": false
-                                                    },
-                                                    "ownerCondition": "any"
-                                                }
-                                            ],
-                                            "orCardDefConditions": []
-                                        },
-                                        "how": "all",
-                                        "numPicks": { "pureValue": 1 }
+                                            "numPicks": { "pureValue": 1 }
+                                        }
                                     }
                                 }
                             }
@@ -4789,6 +4813,568 @@
                                             {
                                                 "context": "any",
                                                 "type": "you"
+                                            }
+                                        ],
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "魔力吸収体",
+            "flavorText": "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが置かれるたびに、このカードを\u002B1/\u002B0する。このカードから「魔法」カウンターが取り除かれるたびに、このカードを-1/\u002B0する。",
+            "isToken": false,
+            "type": "creature",
+            "power": 1,
+            "toughness": 1,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": {
+                            "timing": {
+                                "play": {
+                                    "source": "other",
+                                    "cardCondition": {
+                                        "contextCondition": "any",
+                                        "typeCondition": {
+                                            "value": [ "sorcery" ],
+                                            "not": false
+                                        },
+                                        "ownerCondition": "any"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyCounter": {
+                                "targetsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "counterName": "魔法",
+                                "numCountersModifier": {
+                                    "operator": "add",
+                                    "value": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": {
+                            "timing": {
+                                "modifyCounter": {
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ],
+                                    "countername": "魔法",
+                                    "operator": "add"
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyCard": {
+                                "power": {
+                                    "operator": "add",
+                                    "value": { "pureValue": 1 }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": {
+                            "timing": {
+                                "modifyCounter": {
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ],
+                                    "countername": "魔法",
+                                    "operator": "remove"
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyCard": {
+                                "power": {
+                                    "operator": "sub",
+                                    "value": { "pureValue": 1 }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 5,
+            "name": "魔法生物",
+            "flavorText": "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。",
+            "isToken": false,
+            "type": "creature",
+            "power": 3,
+            "toughness": 4,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youHand",
+                        "when": {
+                            "timing": {
+                                "play": {
+                                    "source": "other",
+                                    "cardCondition": {
+                                        "contextCondition": "any",
+                                        "typeCondition": {
+                                            "value": [ "sorcery" ],
+                                            "not": false
+                                        },
+                                        "ownerCondition": "you"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyCounter": {
+                                "targetsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "counterName": "魔法",
+                                "numCountersModifier": {
+                                    "operator": "add",
+                                    "value": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "youHand",
+                        "when": {
+                            "timing": {
+                                "modifyCounter": {
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ],
+                                    "countername": "魔法",
+                                    "operator": "add"
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyCard": {
+                                "cost": {
+                                    "operator": "sub",
+                                    "value": { "pureValue": 1 }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 2,
+            "name": "初級魔導士",
+            "flavorText": "このカードが場に出たとき、あなたの場のカード1枚を選択する。そのカードに「魔法」カウンターを2つ置く。",
+            "isToken": false,
+            "type": "creature",
+            "power": 1,
+            "toughness": 2,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "modifyCounter": {
+                                "targetsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "others",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youField" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "choose",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "counterName": "魔法",
+                                "numCountersModifier": {
+                                    "operator": "add",
+                                    "value": { "pureValue": 2 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 9,
+            "name": "偉大な魔導士",
+            "flavorText": "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードを場に出したとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札すべてに「魔法」カウンターを5個おく。",
+            "isToken": false,
+            "type": "creature",
+            "power": 5,
+            "toughness": 5,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youHand",
+                        "when": {
+                            "timing": {
+                                "play": {
+                                    "source": "other",
+                                    "cardCondition": {
+                                        "contextCondition": "any",
+                                        "typeCondition": {
+                                            "value": [ "sorcery" ],
+                                            "not": false
+                                        },
+                                        "ownerCondition": "you"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyCounter": {
+                                "targetsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "counterName": "魔法",
+                                "numCountersModifier": {
+                                    "operator": "add",
+                                    "value": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "youHand",
+                        "when": {
+                            "timing": {
+                                "modifyCounter": {
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ],
+                                    "countername": "魔法",
+                                    "operator": "add"
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyCard": {
+                                "cost": {
+                                    "operator": "sub",
+                                    "value": { "pureValue": 1 }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "this",
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "excludeCard": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youHand" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        },
+                        {
+                            "drawCard": {
+                                "numCards": { "pureValue": 5 },
+                                "playerCondition": {
+                                    "context": "any",
+                                    "type": "you"
+                                }
+                            }
+                        },
+                        {
+                            "modifyCounter": {
+                                "targetsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youHand" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "counterName": "魔法",
+                                "numCountersModifier": {
+                                    "operator": "add",
+                                    "value": { "pureValue": 5 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 3,
+            "name": "大魔法",
+            "flavorText": "このカードが場に出たとき、あなたの場からすべての「魔法」カウンターを取り除く。その後、相手にXのダメージを与える。X=取り除いた「魔法」カウンターの数\u002B1",
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effects": [
+                {
+                    "condition": {
+                        "zonePrettyName": "youField",
+                        "when": { "timing": { "play": { "source": "this" } } }
+                    },
+                    "actions": [
+                        {
+                            "modifyCounter": {
+                                "targetsChoice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [],
+                                        "orCardConditions": [
+                                            {
+                                                "contextCondition": "any",
+                                                "zoneCondition": {
+                                                    "value": { "pureValue": [ "youField" ] },
+                                                    "not": false
+                                                },
+                                                "ownerCondition": "any"
+                                            }
+                                        ],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "counterName": "魔法",
+                                "numCountersModifier": {
+                                    "operator": "replace",
+                                    "value": { "pureValue": 0 }
+                                },
+                                "name": "remove_counters"
+                            }
+                        },
+                        {
+                            "damage": {
+                                "value": {
+                                    "numValueCalculator": {
+                                        "forCounter": {
+                                            "actionContextCounters": {
+                                                "ofModifyCounter": {
+                                                    "actionName": "remove_counters",
+                                                    "type": "modified"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "numValueModifier": {
+                                        "operator": "add",
+                                        "value": { "pureValue": 1 }
+                                    }
+                                },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [
+                                            {
+                                                "context": "any",
+                                                "type": "opponent"
                                             }
                                         ],
                                         "orCardConditions": [],

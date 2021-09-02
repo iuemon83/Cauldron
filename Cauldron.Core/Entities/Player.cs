@@ -37,6 +37,8 @@ namespace Cauldron.Core.Entities
         public int UsedMp { get; private set; }
         public int CurrentMp => Math.Max(0, this.MaxMp - this.UsedMp);
 
+        private Dictionary<string, int> counter = new();
+
         public Player(PlayerId id, string name, RuleBook ruleBook, IReadOnlyList<Card> deck, bool isFirst)
         {
             foreach (var card in deck)
@@ -148,5 +150,22 @@ namespace Cauldron.Core.Entities
             this.CurrentMp,
             this.IsFirst
             );
+
+        public void ModifyCounter(string name, int value)
+        {
+            if (!this.counter.TryGetValue(name, out var v))
+            {
+                this.counter.Add(name, 0);
+            }
+
+            this.counter[name] = v + value;
+        }
+
+        public int GetCounter(string name)
+        {
+            return this.counter.TryGetValue(name, out var num)
+                ? num
+                : 0;
+        }
     }
 }

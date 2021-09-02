@@ -28,6 +28,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 (c,e) => effectAction.AddEffect?.Execute(c,e),
                 (c,e) => effectAction.SetVariable?.Execute(c,e),
                 (c,e) => effectAction.Win?.Execute(c,e),
+                (c,e) => effectAction.ModifyCounter?.Execute(c,e),
             };
 
             var result = effectEventArgs;

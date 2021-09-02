@@ -7,18 +7,18 @@ namespace Cauldron.Shared.MessagePackObjects.Value
     {
         public int? PureValue { get; }
         public NumValueCalculator NumValueCalculator { get; }
-        public NumValueVariableCalculator NumValueVariableCalculator { get; }
+        public NumVariable NumVariable { get; }
         public NumValueModifier NumValueModifier { get; }
 
         public NumValue(
             int? PureValue = null,
             NumValueCalculator NumValueCalculator = null,
-            NumValueVariableCalculator NumValueVariableCalculator = null,
+            NumVariable NumVariable = null,
             NumValueModifier NumValueModifier = null)
         {
             this.PureValue = PureValue;
             this.NumValueCalculator = NumValueCalculator;
-            this.NumValueVariableCalculator = NumValueVariableCalculator;
+            this.NumVariable = NumVariable;
             this.NumValueModifier = NumValueModifier;
         }
     }

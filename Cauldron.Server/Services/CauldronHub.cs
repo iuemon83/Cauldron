@@ -198,6 +198,11 @@ namespace Cauldron.Server.Services
                         this.BroadcastTo(this.room, playerId.Value).OnMoveCard(gameContext, message);
                         this._logger.LogInformation($"OnMoveCard: {playerId}");
                     },
+                    OnModityCounter: (playerId, gameContext, message) =>
+                    {
+                        this.BroadcastTo(this.room, playerId.Value).OnModifyCounter(gameContext, message);
+                        this._logger.LogInformation($"OnModifyCounter: {playerId}");
+                    },
                     OnEndGame: (playerId, gameContext) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnEndGame(gameContext);
