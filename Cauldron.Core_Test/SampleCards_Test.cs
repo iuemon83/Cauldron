@@ -1470,9 +1470,6 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Shield;
             testCardDef.Cost = 0;
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
             // カードの選択処理のテスト
             static ValueTask<ChoiceAnswer> testAskCardAction(PlayerId _, ChoiceCandidates c, int i)
             {
@@ -1485,7 +1482,6 @@ namespace Cauldron.Core_Test
 
             var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
                 TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
                 EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
 
             // 先攻

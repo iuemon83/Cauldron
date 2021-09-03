@@ -78,8 +78,6 @@ namespace Cauldron.Server.Services
         private readonly IConfiguration configuration;
         private readonly ILogger<CauldronHub> _logger;
 
-        private string CardSetDirectoryPath => this.configuration["CardSetDirectoryPath"];
-
         private IGroup room;
         private PlayerDef self;
         private GameId gameId;
@@ -132,7 +130,7 @@ namespace Cauldron.Server.Services
         Task<CardDef[]> ICauldronHub.GetCardPool()
         {
             var cardRepository = new CardRepository(defaultRulebook);
-            cardRepository.SetCardPool(CardPool.ReadFromDirectory(this.CardSetDirectoryPath));
+            cardRepository.SetCardPool(CardPoolInitializer.CardPoolSingleton);
 
             return Task.FromResult(cardRepository.CardPool.ToArray());
         }
@@ -154,7 +152,7 @@ namespace Cauldron.Server.Services
         {
             var ruleBook = request.RuleBook;
             var cardRepository = new CardRepository(ruleBook);
-            cardRepository.SetCardPool(CardPool.ReadFromDirectory(this.CardSetDirectoryPath));
+            cardRepository.SetCardPool(CardPoolInitializer.CardPoolSingleton);
 
             var options = new GameMasterOptions(ruleBook, cardRepository, this._logger,
                 new GameEventListener(

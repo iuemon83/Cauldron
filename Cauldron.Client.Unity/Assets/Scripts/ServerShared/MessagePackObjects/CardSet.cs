@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using System.Linq;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -12,6 +13,12 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             this.Name = name;
             this.Cards = cards;
+        }
+
+        public bool IsValid()
+        {
+            return this.Cards.ToLookup(c => c.Name)
+                .All(g => g.Count() == 1);
         }
     }
 }

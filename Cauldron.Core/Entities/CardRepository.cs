@@ -23,9 +23,9 @@ namespace Cauldron.Core.Entities
             this.ruleBook = ruleBook;
         }
 
-        public void SetCardPool(IEnumerable<CardSet> cardsetList)
+        public void SetCardPool(CardPool cardPool)
         {
-            foreach (var cardset in cardsetList)
+            foreach (var cardset in cardPool.cardSets)
             {
                 foreach (var cardDef in cardset.Cards)
                 {

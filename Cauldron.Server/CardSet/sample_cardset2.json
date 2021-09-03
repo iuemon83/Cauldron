@@ -1,0 +1,27 @@
+{
+    "name": "Sample2",
+    "cards": [
+        {
+            "cost": 1,
+            "name": "ゴブリン",
+            "flavorText": "ほかのカードセットと名前がかぶっている",
+            "isToken": false,
+            "type": "creature",
+            "power": 1,
+            "toughness": 2,
+            "abilities": [],
+            "effects": []
+        },
+        {
+            "cost": 1,
+            "name": "ゴブリン2",
+            "flavorText": "ほかのカードセットと名前がかぶっていない",
+            "isToken": false,
+            "type": "creature",
+            "power": 1,
+            "toughness": 2,
+            "abilities": [],
+            "effects": []
+        }
+    ]
+}

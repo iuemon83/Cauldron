@@ -199,7 +199,7 @@ namespace Cauldron.Core_Test
 
         public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck, GameMasterOptions options)
         {
-            options.CardRepository.SetCardPool(new[] { new CardSet(SampleCards.CardsetName, cardpool.ToArray()) });
+            options.CardRepository.SetCardPool(new CardPool(new[] { new CardSet(SampleCards.CardsetName, cardpool.ToArray()) }));
 
             var testGameMaster = new GameMaster(options);
             var deckCardDefIdList = deck.Select(c => c.Id);

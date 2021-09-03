@@ -46,20 +46,12 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblinDef, testCardDef }) });
-
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
 
             // ゴブリン出してから効果クリーチャーを出す
-            var (goblinCard, goblinCard2, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, goblinCard2, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -75,19 +67,19 @@ namespace Cauldron.Core_Test
                 Array.Empty<CardDef>()
             );
             var numPicks = await testChoice.NumPicks.Calculate(
-                testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
+                testCard, new EffectEventArgs(GameEvent.OnAttack, c.GameMaster));
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard,
-                new EffectEventArgs(GameEvent.OnAttack, testGameMaster),
-                testGameMaster.playerRepository,
-                testCardFactory,
+                new EffectEventArgs(GameEvent.OnAttack, c.GameMaster),
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
-            var actual2 = await testGameMaster.Choice(testCard, testChoice,
-                new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
+            var actual2 = await c.GameMaster.Choice(testCard, testChoice,
+                new EffectEventArgs(GameEvent.OnAttack, c.GameMaster));
             TestUtil.AssertCollection(
                 Array.Empty<PlayerId>(),
                 actual.PlayerIdList);
@@ -133,20 +125,12 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
 
             // ゴブリン出してから効果クリーチャーを出す
-            var (goblinCard, goblinCard2, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, goblinCard2, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
@@ -161,12 +145,12 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
             );
-            var eventargs = new EffectEventArgs(GameEvent.OnAttack, testGameMaster);
+            var eventargs = new EffectEventArgs(GameEvent.OnAttack, c.GameMaster);
             var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, eventargs,
-                testGameMaster.playerRepository,
-                testCardFactory,
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
@@ -177,7 +161,7 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.Choice(testCard, testChoice, eventargs);
+            var actual2 = await c.GameMaster.Choice(testCard, testChoice, eventargs);
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -221,20 +205,12 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, fairy, testCardDef }) });
-
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, fairy, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
 
             // ゴブリン出してから効果クリーチャーを出す
-            var (goblinCard, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -251,8 +227,8 @@ namespace Cauldron.Core_Test
             var numPicks = await testChoice.NumPicks.Calculate(testCard, null);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, null,
-                testGameMaster.playerRepository,
-                testCardFactory,
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
@@ -263,7 +239,7 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 new[] { fairy }
             );
-            var actual2 = await testGameMaster.Choice(testCard, testChoice, null);
+            var actual2 = await c.GameMaster.Choice(testCard, testChoice, null);
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -308,20 +284,12 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, fairy, testCardDef }) });
-
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, fairy, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
 
             // ゴブリン出してから効果クリーチャーを出す
-            var (goblinCard, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -338,8 +306,8 @@ namespace Cauldron.Core_Test
             var numPicks = await testChoice.NumPicks.Calculate(testCard, null);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, null,
-                testGameMaster.playerRepository,
-                testCardFactory,
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
@@ -350,7 +318,7 @@ namespace Cauldron.Core_Test
                 Array.Empty<Card>(),
                 new[] { fairy, fairy }
             );
-            var actual2 = await testGameMaster.Choice(testCard, testChoice, null);
+            var actual2 = await c.GameMaster.Choice(testCard, testChoice, null);
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -388,20 +356,12 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
 
             // ゴブリン出してから効果クリーチャーを出す
-            var (goblinCard, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -411,26 +371,26 @@ namespace Cauldron.Core_Test
 
             // 候補の検証
             var expected = new ChoiceCandidates(
-                new[] { player2Id },
+                new[] { c.Player2.Id },
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
             );
             var numPicks = await testChoice.NumPicks.Calculate(testCard, null);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, null,
-                testGameMaster.playerRepository,
-                testCardFactory,
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
             var expected2 = new ChoiceResult(
-                new[] { player2Id },
+                new[] { c.Player2.Id },
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.Choice(testCard, testChoice, null);
+            var actual2 = await c.GameMaster.Choice(testCard, testChoice, null);
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -468,47 +428,39 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
 
             // ゴブリン出してから効果クリーチャーを出す
-            var (goblinCard, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 候補の検証
                 var expected = new ChoiceCandidates(
-                     new[] { player1Id },
+                     new[] { c.Player1.Id },
                      Array.Empty<Card>(),
                      Array.Empty<CardDef>()
                  );
                 var numPicks = await testChoice.NumPicks.Calculate(
-                    testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
+                    testCard, new EffectEventArgs(GameEvent.OnAttack, c.GameMaster));
                 var actual = await testChoice.Source.ChoiceCandidates(
-                    testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster),
-                    testGameMaster.playerRepository,
-                    testCardFactory,
+                    testCard, new EffectEventArgs(GameEvent.OnAttack, c.GameMaster),
+                    c.GameMaster.playerRepository,
+                    c.CardRepository,
                     testChoice.How,
                     numPicks);
                 TestUtil.AssertChoiceResult(expected, actual);
 
                 // 抽出結果の検証
                 var expected2 = new ChoiceResult(
-                     new[] { player1Id },
+                     new[] { c.Player1.Id },
                      Array.Empty<Card>(),
                      Array.Empty<CardDef>()
                  );
-                var actual2 = await testGameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
+                var actual2 = await c.GameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnAttack, c.GameMaster));
                 TestUtil.AssertChoiceResult(expected2, actual2);
 
                 return (goblinCard, testCard);
@@ -516,27 +468,27 @@ namespace Cauldron.Core_Test
 
             // 候補の検証
             var expected = new ChoiceCandidates(
-                new[] { player2Id },
+                new[] { c.Player2.Id },
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
             );
             var numPicks = await testChoice.NumPicks.Calculate(
-                testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
+                testCard, new EffectEventArgs(GameEvent.OnAttack, c.GameMaster));
             var actual = await testChoice.Source.ChoiceCandidates(
-                testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster),
-                testGameMaster.playerRepository,
-                testCardFactory,
+                testCard, new EffectEventArgs(GameEvent.OnAttack, c.GameMaster),
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
             var expected2 = new ChoiceResult(
-                new[] { player2Id },
+                new[] { c.Player2.Id },
                 Array.Empty<Card>(),
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnAttack, testGameMaster));
+            var actual2 = await c.GameMaster.Choice(testCard, testChoice, new EffectEventArgs(GameEvent.OnAttack, c.GameMaster));
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -559,22 +511,14 @@ namespace Cauldron.Core_Test
                 new NumValue(1));
             var testCardDef = SampleCards.Artifact(0, "test", "test", false);
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
             // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
 
             // 先行
             // ゴブリン2体出す
-            var (goblinCard, goblinCard2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, goblinCard2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
@@ -584,7 +528,7 @@ namespace Cauldron.Core_Test
 
             // 後攻
             // 効果クリーチャーを出す
-            await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
@@ -595,18 +539,18 @@ namespace Cauldron.Core_Test
                      Array.Empty<CardDef>()
                  );
 
-                var eventargs = new EffectEventArgs(GameEvent.OnAttack, testGameMaster);
+                var eventargs = new EffectEventArgs(GameEvent.OnAttack, c.GameMaster);
                 var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
                 var actual = await testChoice.Source.ChoiceCandidates(
                     testCard, eventargs,
-                    testGameMaster.playerRepository,
-                    testCardFactory,
+                    c.GameMaster.playerRepository,
+                    c.CardRepository,
                     testChoice.How,
                     numPicks);
                 TestUtil.AssertChoiceResult(expected, actual);
 
                 // 抽出結果の検証
-                var actual2 = await testGameMaster.Choice(testCard, testChoice, eventargs);
+                var actual2 = await c.GameMaster.Choice(testCard, testChoice, eventargs);
                 TestUtil.AssertChoiceResult(expected, actual2, 1);
             });
         }
@@ -636,22 +580,14 @@ namespace Cauldron.Core_Test
                 new NumValue(1));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
             // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
 
             // 先行
             // ゴブリン2体出す
-            var (goblinCard, goblinCard2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, goblinCard2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
@@ -661,29 +597,29 @@ namespace Cauldron.Core_Test
 
             // 後攻
             // 効果クリーチャーを出す
-            var testCard = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var testCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 return await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
             });
 
             // 候補の検証
             var expected = new ChoiceCandidates(
-                new[] { player1Id },
+                new[] { c.Player1.Id },
                 new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
             );
-            var eventargs = new EffectEventArgs(GameEvent.OnAttack, testGameMaster);
+            var eventargs = new EffectEventArgs(GameEvent.OnAttack, c.GameMaster);
             var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, eventargs,
-                testGameMaster.playerRepository,
-                testCardFactory,
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // 抽出結果の検証
-            var actual2 = await testGameMaster.Choice(testCard, testChoice, eventargs);
+            var actual2 = await c.GameMaster.Choice(testCard, testChoice, eventargs);
             TestUtil.AssertChoiceResult(expected, actual2, 1);
         }
 
@@ -706,9 +642,6 @@ namespace Cauldron.Core_Test
                 new NumValue(1));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
             // カードの選択処理のテスト
             var isCalledAskAction = false;
             ChoiceCandidates expected = null;
@@ -725,18 +658,13 @@ namespace Cauldron.Core_Test
             }
 
             // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
 
             // 先行
             // ゴブリン2体出す
-            var (goblinCard, goblinCard2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, goblinCard2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
@@ -746,7 +674,7 @@ namespace Cauldron.Core_Test
 
             // 後攻
             // 効果クリーチャーを出す
-            var (goblinCard3, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard3, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -761,18 +689,18 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard, goblinCard2 },
                 Array.Empty<CardDef>()
             );
-            var eventargs = new EffectEventArgs(GameEvent.OnAttack, testGameMaster);
+            var eventargs = new EffectEventArgs(GameEvent.OnAttack, c.GameMaster);
             var numPicks = await testChoice.NumPicks.Calculate(testCard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testCard, eventargs,
-                testGameMaster.playerRepository,
-                testCardFactory,
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
-            await testGameMaster.Choice(testCard, testChoice, eventargs);
+            await c.GameMaster.Choice(testCard, testChoice, eventargs);
             Assert.True(isCalledAskAction);
         }
 
@@ -796,9 +724,6 @@ namespace Cauldron.Core_Test
                 new NumValue(1));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
             // カードの選択処理のテスト
             var isCalledAskAction = false;
             ChoiceCandidates expected = null;
@@ -817,18 +742,13 @@ namespace Cauldron.Core_Test
             }
 
             // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(
-                cardRepository: testCardFactory,
-                EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
+                TestUtil.GameMasterOptions(
+                    EventListener: TestUtil.GameEventListener(AskCardAction: testAskCardAction)));
 
             // 先行
             // ゴブリン2体出す
-            var (goblinCard, goblinCard2) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, goblinCard2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
@@ -838,7 +758,7 @@ namespace Cauldron.Core_Test
 
             // 後攻
             // 効果クリーチャーを出す
-            var (goblinCard3, goblinCard4, testcard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard3, goblinCard4, testcard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var goblinCard4 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
@@ -854,18 +774,18 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard3, goblinCard4 },
                 Array.Empty<CardDef>()
             );
-            var eventargs = new EffectEventArgs(GameEvent.OnAttack, testGameMaster);
+            var eventargs = new EffectEventArgs(GameEvent.OnAttack, c.GameMaster);
             var numPicks = await testChoice.NumPicks.Calculate(testcard, eventargs);
             var actual = await testChoice.Source.ChoiceCandidates(
                 testcard, eventargs,
-                testGameMaster.playerRepository,
-                testCardFactory,
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
 
             // カード選択処理のテスト
-            await testGameMaster.Choice(testcard, testChoice, eventargs);
+            await c.GameMaster.Choice(testcard, testChoice, eventargs);
             Assert.True(isCalledAskAction);
         }
 
@@ -885,20 +805,12 @@ namespace Cauldron.Core_Test
                     }));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
             // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef });
 
             // 先行
             // ゴブリンと効果カード出す
-            var cards = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var cards = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -915,8 +827,8 @@ namespace Cauldron.Core_Test
             var numPicks = await testChoice.NumPicks.Calculate(cards.testCard, null);
             var actual = await testChoice.Source.ChoiceCandidates(
                 cards.testCard, null,
-                testGameMaster.playerRepository,
-                testCardFactory,
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
@@ -927,7 +839,7 @@ namespace Cauldron.Core_Test
                 new[] { cards.testCard },
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.Choice(cards.testCard, testChoice, null);
+            var actual2 = await c.GameMaster.Choice(cards.testCard, testChoice, null);
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 
@@ -947,20 +859,12 @@ namespace Cauldron.Core_Test
                     }));
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1);
 
-            var testCardFactory = new CardRepository(TestUtil.TestRuleBook);
-            testCardFactory.SetCardPool(new[] { new CardSet("Test", new[] { goblin, testCardDef }) });
-
             // 以下テスト
-            var testGameMaster = new GameMaster(TestUtil.GameMasterOptions(cardRepository: testCardFactory));
-
-            var (_, player1Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player1", Enumerable.Repeat(testCardDef.Id, 40));
-            var (_, player2Id) = testGameMaster.CreateNewPlayer(PlayerId.NewId(), "player2", Enumerable.Repeat(testCardDef.Id, 40));
-
-            await testGameMaster.StartGame(player1Id);
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef });
 
             // 先行
             // ゴブリンと効果カード出す
-            var (goblinCard, testCard) = await TestUtil.Turn(testGameMaster, async (g, pId) =>
+            var (goblinCard, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin.Id);
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -975,11 +879,11 @@ namespace Cauldron.Core_Test
                 Array.Empty<CardDef>()
             );
             var numPicks = await testChoice.NumPicks.Calculate(
-                testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster, SourceCard: goblinCard));
+                testCard, new EffectEventArgs(GameEvent.OnAttack, c.GameMaster, SourceCard: goblinCard));
             var actual = await testChoice.Source.ChoiceCandidates(
-                testCard, new EffectEventArgs(GameEvent.OnAttack, testGameMaster, SourceCard: goblinCard),
-                testGameMaster.playerRepository,
-                testCardFactory,
+                testCard, new EffectEventArgs(GameEvent.OnAttack, c.GameMaster, SourceCard: goblinCard),
+                c.GameMaster.playerRepository,
+                c.CardRepository,
                 testChoice.How,
                 numPicks);
             TestUtil.AssertChoiceResult(expected, actual);
@@ -990,8 +894,8 @@ namespace Cauldron.Core_Test
                 new[] { goblinCard },
                 Array.Empty<CardDef>()
             );
-            var actual2 = await testGameMaster.Choice(testCard, testChoice,
-                new EffectEventArgs(GameEvent.OnAttack, testGameMaster, SourceCard: goblinCard));
+            var actual2 = await c.GameMaster.Choice(testCard, testChoice,
+                new EffectEventArgs(GameEvent.OnAttack, c.GameMaster, SourceCard: goblinCard));
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
     }
