@@ -6,16 +6,15 @@
 
 ## カードの作成
 
-ブラウザからオリジナルカードの作成ができます。
+https://cauldron.iuemon.xyz/editor/
+
+ブラウザから**オリジナルカード**の作成ができます。
 
 ![cauldron-tool](https://user-images.githubusercontent.com/12682383/120923636-98144e00-c70a-11eb-8f35-7a02b66a550b.png)
 
+## ゲーム
 
-# Cauldron.Web.Server
+### 動作環境
 
-```sh
-cd Cauldron.Web.Server
-dotnet publish -c Release -o release
-docker build . -t cauldron-web-api
-docker run --rm -p 5000:80 --name cauldron-web-api cauldron-web-api
-```
+* サーバーサイド
+  * .NET5.0+
