@@ -20,14 +20,17 @@ namespace Cauldron.Shared.MessagePackObjects
         /// 2枚選択して、それぞれ1枚ずつ加える => 1
         /// </summary>
         public int NumOfAddCards { get; }
+        public string Name { get; }
 
         public EffectActionAddCard(Choice Choice, ZoneValue ZoneToAddCard,
-            InsertCardPosition InsertCardPosition = null, int NumOfAddCards = 1)
+            InsertCardPosition InsertCardPosition = null, int NumOfAddCards = 1,
+            string Name = null)
         {
             this.Choice = Choice;
             this.ZoneToAddCard = ZoneToAddCard;
             this.InsertCardPosition = InsertCardPosition;
             this.NumOfAddCards = NumOfAddCards;
+            this.Name = Name;
         }
     }
 }

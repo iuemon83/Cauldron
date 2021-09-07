@@ -416,20 +416,26 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public async ValueTask<GameMasterStatusCode> Draw(PlayerId playerId, int numCards)
+        public async ValueTask<(GameMasterStatusCode, IReadOnlyList<Card>)> Draw(PlayerId playerId, int numCards)
         {
             var (exists, player) = this.playerRepository.TryGet(playerId);
             if (!exists)
             {
-                return GameMasterStatusCode.PlayerNotExists;
+                return (GameMasterStatusCode.PlayerNotExists, default);
             }
 
+            var drawnCards = new List<Card>();
             foreach (var _ in Enumerable.Range(0, numCards))
             {
                 var (success, drawCard) = player.Draw();
                 var isDrawed = success;
                 var isDiscarded = !success && drawCard != default;
                 var deckIsEmpty = !success && drawCard == default;
+
+                if (drawCard != default)
+                {
+                    drawnCards.Add(drawCard);
+                }
 
                 if (deckIsEmpty)
                 {
@@ -492,7 +498,7 @@ namespace Cauldron.Core.Entities
                 }
             }
 
-            return GameMasterStatusCode.OK;
+            return (GameMasterStatusCode.OK, drawnCards);
         }
 
         public async ValueTask<Card> GenerateNewCard(CardDefId cardDefId, Zone zone, InsertCardPosition insertCardPosition)

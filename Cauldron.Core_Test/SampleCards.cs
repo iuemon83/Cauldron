@@ -673,9 +673,9 @@ namespace Cauldron.Core_Test
                                         orCardConditions: new[]
                                         {
                                             new CardCondition(
-                                                ActionContext: new(ActionContextCardsOfDestroyCard: new(
+                                                ActionContext: new(DestroyCard: new(
                                                     "delete",
-                                                    ActionContextCardsOfDestroyCard.TypeValue.Destroyed))
+                                                    ActionContextCardsOfDestroyCard.TypeValue.DestroyedCards))
                                             )
                                         })),
                                 new ZoneValue(new[]{ ZonePrettyName.OwnerField })
@@ -1234,9 +1234,9 @@ namespace Cauldron.Core_Test
                                                             orCardConditions: new[]{
                                                                 new CardCondition(
                                                                     ActionContext: new(
-                                                                        ActionContextCardsOfDestroyCard: new(
+                                                                        DestroyCard: new(
                                                                             "destroy",
-                                                                            ActionContextCardsOfDestroyCard.TypeValue.Destroyed)
+                                                                            ActionContextCardsOfDestroyCard.TypeValue.DestroyedCards)
                                                                     ))
                                                             })))))),
                                     ZonePrettyName.YouCemetery))
@@ -1389,7 +1389,7 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition(
                                                 ActionContext: new(
-                                                    ActionContextCardsOfMoveCard: new(
+                                                    MoveCard: new(
                                                         "move",
                                                         ActionContextCardsOfMoveCard.TypeValue.Moved))
                                             )
@@ -1404,7 +1404,7 @@ namespace Cauldron.Core_Test
                                                     {
                                                         new CardCondition(
                                                             ActionContext: new(
-                                                                ActionContextCardsOfMoveCard: new(
+                                                                MoveCard: new(
                                                                     "move",
                                                                     ActionContextCardsOfMoveCard.TypeValue.Moved))
                                                         )
@@ -1470,7 +1470,7 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition(
                                                 ActionContext: new(
-                                                    ActionContextCardsOfMoveCard: new(
+                                                    MoveCard: new(
                                                         "move",
                                                         ActionContextCardsOfMoveCard.TypeValue.Moved))
                                             )
@@ -1685,7 +1685,7 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition(
                                                 ActionContext: new(
-                                                    ActionContextCardsOfModifyCard:new(
+                                                    ModifyCard:new(
                                                         "modify",
                                                         ActionContextCardsOfModifyCard.TypeValue.Modified
                                                     )))
@@ -1872,7 +1872,7 @@ namespace Cauldron.Core_Test
                                                             {
                                                                 new CardCondition(
                                                                     ActionContext: new(
-                                                                        ActionContextCardsOfExcludeCard: new(
+                                                                        ExcludeCard: new(
                                                                             "exclude",
                                                                             ActionContextCardsOfExcludeCard.TypeValue.Excluded)))
                                                             }))))))
@@ -1983,7 +1983,7 @@ namespace Cauldron.Core_Test
                                                     orCardConditions: new[]
                                                     {
                                                         new CardCondition(
-                                                            ActionContext: new(ActionContextCardsOfMoveCard: new(
+                                                            ActionContext: new(MoveCard: new(
                                                                 "moveCard",
                                                                 ActionContextCardsOfMoveCard.TypeValue.Moved
                                                                 ))
@@ -2428,7 +2428,7 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    ActionContext: new(ActionContextCardsOfMoveCard: new(
+                                                    ActionContext: new(MoveCard: new(
                                                         "search_card",
                                                         ActionContextCardsOfMoveCard.TypeValue.Moved
                                                         ))

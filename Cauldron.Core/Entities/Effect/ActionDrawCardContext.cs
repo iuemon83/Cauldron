@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace Cauldron.Core.Entities.Effect
 {
-    public record ActionMoveCardContext(IReadOnlyList<Card> MovedCards)
+    public record ActionDrawCardContext(IReadOnlyList<Card> DrawnCards)
     {
-        public IEnumerable<Card> GetCards(ActionContextCardsOfMoveCard.TypeValue type)
+        public IEnumerable<Card> GetCards(ActionContextCardsOfDrawCard.TypeValue type)
             => type switch
             {
-                ActionContextCardsOfMoveCard.TypeValue.Moved => this.MovedCards,
+                ActionContextCardsOfDrawCard.TypeValue.DrawnCards => this.DrawnCards,
                 _ => Array.Empty<Card>()
             };
     }

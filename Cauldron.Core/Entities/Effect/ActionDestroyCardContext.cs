@@ -9,7 +9,7 @@ namespace Cauldron.Core.Entities.Effect
         public IEnumerable<Card> GetCards(ActionContextCardsOfDestroyCard.TypeValue type)
             => type switch
             {
-                ActionContextCardsOfDestroyCard.TypeValue.Destroyed => this.DestroyedCards,
+                ActionContextCardsOfDestroyCard.TypeValue.DestroyedCards => this.DestroyedCards,
                 _ => Array.Empty<Card>()
             };
     }

@@ -7,9 +7,10 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectActionDestroyCardExtensions
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionDestroyCard effectActionDestroyCard, Card effectOwnerCard, EffectEventArgs args)
+        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionDestroyCard _this,
+            Card effectOwnerCard, EffectEventArgs args)
         {
-            var choiceResult = await args.GameMaster.Choice(effectOwnerCard, effectActionDestroyCard.Choice, args);
+            var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.Choice, args);
 
             var deletedCardList = new List<Card>();
             foreach (var card in choiceResult.CardList)
@@ -21,10 +22,10 @@ namespace Cauldron.Shared.MessagePackObjects
                 }
             }
 
-            if (!string.IsNullOrEmpty(effectActionDestroyCard.Name))
+            if (!string.IsNullOrEmpty(_this.Name))
             {
-                var context = new ActionContext(ActionDestroyCardContext: new(deletedCardList));
-                args.GameMaster.SetActionContext(effectOwnerCard.Id, effectActionDestroyCard.Name, context);
+                var context = new ActionContext(DestroyCard: new(deletedCardList));
+                args.GameMaster.SetActionContext(effectOwnerCard.Id, _this.Name, context);
             }
 
             return (deletedCardList.Any(), args);

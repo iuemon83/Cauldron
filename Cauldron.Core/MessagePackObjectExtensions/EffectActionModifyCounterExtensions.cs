@@ -44,7 +44,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             if (!string.IsNullOrEmpty(_this.Name))
             {
-                var context = new ActionContext(ActionModifyCounterContext: new(
+                var context = new ActionContext(ModifyCounter: new(
                     targetCards.CardList,
                     Math.Max(0, totalNumBeforeCounters),
                     Math.Max(0, totalNumAfterCounters)

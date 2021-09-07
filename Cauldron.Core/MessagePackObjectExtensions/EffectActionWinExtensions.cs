@@ -5,7 +5,8 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectActionWinExtensions
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionWin _this, Card effectOwnerCard, EffectEventArgs args)
+        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionWin _this,
+            Card effectOwnerCard, EffectEventArgs args)
         {
             var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.ChoicePlayers, args);
             var targets = choiceResult.PlayerIdList;

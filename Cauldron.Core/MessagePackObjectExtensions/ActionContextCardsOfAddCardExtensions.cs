@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
-    public static class ActionContextCardsOfAddEffectExtensions
+    public static class ActionContextCardsOfAddCardExtensions
     {
-        public static IEnumerable<Card> GetRsult(this ActionContextCardsOfAddEffect _this,
+        public static IEnumerable<Card> GetRsult(this ActionContextCardsOfAddCard _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
             return args.GameMaster.TryGetActionContext(effectOwnerCard.Id, _this.ActionName, out var value)
-                ? value?.AddEffect?.GetCards(_this.Type)
+                ? value?.AddCard?.GetCards(_this.Type)
                 : Array.Empty<Card>();
         }
     }

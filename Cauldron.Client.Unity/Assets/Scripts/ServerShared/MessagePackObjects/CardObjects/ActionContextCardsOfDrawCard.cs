@@ -3,22 +3,24 @@
 namespace Cauldron.Shared.MessagePackObjects
 {
     /// <summary>
-    /// 効果追加アクションのコンテキスト（カード型）
+    /// ドローアクションのコンテキスト（カード型）
     /// </summary>
     [MessagePackObject(true)]
-    public class ActionContextCardsOfAddEffect
+    public class ActionContextCardsOfDrawCard
     {
         public enum TypeValue
         {
-            TargetCards
+            DrawnCards
         }
 
         public string ActionName { get; }
+
         public TypeValue Type { get; }
 
-        public ActionContextCardsOfAddEffect(
+        public ActionContextCardsOfDrawCard(
             string ActionName,
-            TypeValue Type)
+            TypeValue Type
+            )
         {
             this.ActionName = ActionName;
             this.Type = Type;

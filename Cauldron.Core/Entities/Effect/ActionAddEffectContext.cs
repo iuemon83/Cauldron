@@ -12,9 +12,5 @@ namespace Cauldron.Core.Entities.Effect
                 ActionContextCardsOfAddEffect.TypeValue.TargetCards => this.TargetdCards,
                 _ => Array.Empty<Card>()
             };
-
-        public int GetNum() => 0;
-
-        public string GetText() => "";
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Cauldron.Core.Entities.Effect;
 using Cauldron.Shared.MessagePackObjects.Value;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,7 +8,8 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectActionAddCardExtensions
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionAddCard effectActionAddCard, Card effectOwnerCard, EffectEventArgs effectEventArgs)
+        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionAddCard _this,
+            Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             var (exists, owner) = effectEventArgs.GameMaster.playerRepository.TryGet(effectOwnerCard.OwnerId);
             if (!exists)
@@ -17,7 +19,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             var opponent = effectEventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId);
 
-            var zonePrettyNames = await effectActionAddCard.ZoneToAddCard.Calculate(effectOwnerCard, effectEventArgs);
+            var zonePrettyNames = await _this.ZoneToAddCard.Calculate(effectOwnerCard, effectEventArgs);
 
             if (!zonePrettyNames.Any())
             {
@@ -31,7 +33,7 @@ namespace Cauldron.Shared.MessagePackObjects
             }
 
             var choiceResult = await effectEventArgs.GameMaster
-                .Choice(effectOwnerCard, effectActionAddCard.Choice, effectEventArgs);
+                .Choice(effectOwnerCard, _this.Choice, effectEventArgs);
 
             var cardDefAndZones = choiceResult.CardList
                 .Select(c => (
@@ -41,12 +43,20 @@ namespace Cauldron.Shared.MessagePackObjects
                 .Select(x => (x.Item1.CardDef, x.Item2.Zone))
                 .Concat(choiceResult.CardDefList.Select(cd => (CardDef: cd, Zone: defaultZone)));
 
+            var addedCards = new List<Card>();
             foreach (var (cardDef, zone) in cardDefAndZones)
             {
-                foreach (var cd in Enumerable.Repeat(cardDef, effectActionAddCard.NumOfAddCards))
+                foreach (var cd in Enumerable.Repeat(cardDef, _this.NumOfAddCards))
                 {
-                    await effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, effectActionAddCard.InsertCardPosition);
+                    var card = await effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, _this.InsertCardPosition);
+                    addedCards.Add(card);
                 }
+            }
+
+            if (!string.IsNullOrEmpty(_this.Name))
+            {
+                var context = new ActionContext(AddCard: new(addedCards));
+                effectEventArgs.GameMaster.SetActionContext(effectOwnerCard.Id, _this.Name, context);
             }
 
             return (true, effectEventArgs);

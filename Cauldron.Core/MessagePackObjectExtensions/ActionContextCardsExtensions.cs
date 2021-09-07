@@ -8,25 +8,41 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public static IEnumerable<Card> GetCards(this ActionContextCards _this, Card effectOwnerCard, EffectEventArgs eventArgs)
         {
-            if (_this?.ActionContextCardsOfAddEffect != null)
+            if (_this?.AddCard != null)
             {
-                return _this.ActionContextCardsOfAddEffect.GetRsult(effectOwnerCard, eventArgs);
+                return _this.AddCard.GetRsult(effectOwnerCard, eventArgs);
             }
-            if (_this?.ActionContextCardsOfDestroyCard != null)
+            if (_this?.AddEffect != null)
             {
-                return _this.ActionContextCardsOfDestroyCard.GetRsult(effectOwnerCard, eventArgs);
+                return _this.AddEffect.GetRsult(effectOwnerCard, eventArgs);
             }
-            else if (_this?.ActionContextCardsOfMoveCard != null)
+            if (_this?.Damage != null)
             {
-                return _this.ActionContextCardsOfMoveCard.GetRsult(effectOwnerCard, eventArgs);
+                return _this.Damage.GetRsult(effectOwnerCard, eventArgs);
             }
-            else if (_this?.ActionContextCardsOfExcludeCard != null)
+            if (_this?.DestroyCard != null)
             {
-                return _this.ActionContextCardsOfExcludeCard.GetRsult(effectOwnerCard, eventArgs);
+                return _this.DestroyCard.GetRsult(effectOwnerCard, eventArgs);
             }
-            else if (_this?.ActionContextCardsOfModifyCard != null)
+            if (_this?.DrawCard != null)
             {
-                return _this.ActionContextCardsOfModifyCard.GetRsult(effectOwnerCard, eventArgs);
+                return _this.DrawCard.GetRsult(effectOwnerCard, eventArgs);
+            }
+            else if (_this?.ExcludeCard != null)
+            {
+                return _this.ExcludeCard.GetRsult(effectOwnerCard, eventArgs);
+            }
+            else if (_this?.ModifyCard != null)
+            {
+                return _this.ModifyCard.GetRsult(effectOwnerCard, eventArgs);
+            }
+            else if (_this?.ModifyCounter != null)
+            {
+                return _this.ModifyCounter.GetRsult(effectOwnerCard, eventArgs);
+            }
+            else if (_this?.MoveCard != null)
+            {
+                return _this.MoveCard.GetRsult(effectOwnerCard, eventArgs);
             }
             else
             {

@@ -7,7 +7,8 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectActionModifyDamageExtensions
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionModifyDamage effectActionModifyDamage, Card effectOwnerCard, EffectEventArgs args)
+        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionModifyDamage _this,
+            Card effectOwnerCard, EffectEventArgs args)
         {
             var done = false;
 
@@ -15,7 +16,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             if (args.DamageContext != null)
             {
-                var value = await effectActionModifyDamage.Value.Modify(effectOwnerCard, args, args.DamageContext.Value);
+                var value = await _this.Value.Modify(effectOwnerCard, args, args.DamageContext.Value);
                 result = args with
                 {
                     DamageContext = args.DamageContext with

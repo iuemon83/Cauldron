@@ -6,10 +6,13 @@ namespace Cauldron.Shared.MessagePackObjects
     public class EffectActionWin
     {
         public Choice ChoicePlayers { get; }
+        public string Name { get; } = null;
 
-        public EffectActionWin(Choice ChoicePlayers)
+        public EffectActionWin(Choice ChoicePlayers,
+            string Name = null)
         {
             this.ChoicePlayers = ChoicePlayers;
+            this.Name = Name;
         }
     }
 }

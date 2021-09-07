@@ -10,7 +10,7 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public enum TypeValue
         {
-            Destroyed
+            DestroyedCards
         }
 
         public string ActionName { get; }

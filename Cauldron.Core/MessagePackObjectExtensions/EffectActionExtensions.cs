@@ -11,24 +11,25 @@ namespace Cauldron.Shared.MessagePackObjects
         /// <param name="ownerCard"></param>
         /// <param name="effectEventArgs"></param>
         /// <returns></returns>
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectAction effectAction, Card ownerCard, EffectEventArgs effectEventArgs)
+        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectAction _this,
+            Card ownerCard, EffectEventArgs effectEventArgs)
         {
             //TODO この順番もけっこう重要
             var actions = new Func<Card, EffectEventArgs, ValueTask<(bool, EffectEventArgs)>?>[]
             {
-                (c,e) => effectAction.Damage?.Execute(c,e),
-                (c,e) => effectAction.AddCard?.Execute(c,e),
-                (c,e) => effectAction.ExcludeCard?.Execute(c,e),
-                (c,e) => effectAction.ModifyCard?.Execute(c,e),
-                (c,e) => effectAction.DestroyCard?.Execute(c,e),
-                (c,e) => effectAction.ModifyDamage?.Execute(c,e),
-                (c,e) => effectAction.ModifyPlayer?.Execute(c,e),
-                (c,e) => effectAction.DrawCard?.Execute(c,e),
-                (c,e) => effectAction.MoveCard?.Execute(c,e),
-                (c,e) => effectAction.AddEffect?.Execute(c,e),
-                (c,e) => effectAction.SetVariable?.Execute(c,e),
-                (c,e) => effectAction.Win?.Execute(c,e),
-                (c,e) => effectAction.ModifyCounter?.Execute(c,e),
+                (c,e) => _this.AddCard?.Execute(c,e),
+                (c,e) => _this.AddEffect?.Execute(c,e),
+                (c,e) => _this.Damage?.Execute(c,e),
+                (c,e) => _this.DestroyCard?.Execute(c,e),
+                (c,e) => _this.DrawCard?.Execute(c,e),
+                (c,e) => _this.ExcludeCard?.Execute(c,e),
+                (c,e) => _this.ModifyCard?.Execute(c,e),
+                (c,e) => _this.ModifyCounter?.Execute(c,e),
+                (c,e) => _this.ModifyDamage?.Execute(c,e),
+                (c,e) => _this.ModifyPlayer?.Execute(c,e),
+                (c,e) => _this.MoveCard?.Execute(c,e),
+                (c,e) => _this.SetVariable?.Execute(c,e),
+                (c,e) => _this.Win?.Execute(c,e),
             };
 
             var result = effectEventArgs;

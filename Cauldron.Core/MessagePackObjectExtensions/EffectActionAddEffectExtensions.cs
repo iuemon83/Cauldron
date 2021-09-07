@@ -5,21 +5,22 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectActionAddEffectExtensions
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionAddEffect effectActionAddEffect, Card effectOwnerCard, EffectEventArgs args)
+        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionAddEffect _this,
+            Card effectOwnerCard, EffectEventArgs args)
         {
-            var choiceResult = await args.GameMaster.Choice(effectOwnerCard, effectActionAddEffect.CardsChoice, args);
+            var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.CardsChoice, args);
             var targets = choiceResult.CardList;
 
             var done = false;
             foreach (var card in targets)
             {
-                args.GameMaster.AddEffect(card, effectActionAddEffect.EffectToAdd);
+                args.GameMaster.AddEffect(card, _this.EffectToAdd);
             }
 
-            if (!string.IsNullOrEmpty(effectActionAddEffect.Name))
+            if (!string.IsNullOrEmpty(_this.Name))
             {
-                var context = new ActionContext(ActionAddEffectContext: new(targets));
-                args.GameMaster.SetActionContext(effectOwnerCard.Id, effectActionAddEffect.Name, context);
+                var context = new ActionContext(AddEffect: new(targets));
+                args.GameMaster.SetActionContext(effectOwnerCard.Id, _this.Name, context);
             }
 
             return (done, args);

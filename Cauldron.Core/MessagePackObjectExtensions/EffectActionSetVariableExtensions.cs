@@ -6,12 +6,13 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectActionSetVariableExtensions
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionSetVariable effectActionSetVariable, Card effectOwnerCard, EffectEventArgs args)
+        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionSetVariable _this,
+            Card effectOwnerCard, EffectEventArgs args)
         {
-            if (effectActionSetVariable.NumValue != null)
+            if (_this.NumValue != null)
             {
-                var value = await effectActionSetVariable.NumValue.Calculate(effectOwnerCard, args);
-                args.GameMaster.SetVariable(effectOwnerCard.Id, effectActionSetVariable.Name, value);
+                var value = await _this.NumValue.Calculate(effectOwnerCard, args);
+                args.GameMaster.SetVariable(effectOwnerCard.Id, _this.Name, value);
             }
 
             return (true, args);

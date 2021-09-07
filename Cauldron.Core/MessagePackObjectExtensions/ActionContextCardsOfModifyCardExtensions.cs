@@ -10,7 +10,7 @@ namespace Cauldron.Shared.MessagePackObjects
             Card effectOwnerCard, EffectEventArgs args)
         {
             return args.GameMaster.TryGetActionContext(effectOwnerCard.Id, _this.ActionName, out var value)
-                ? value?.ActionModifyCardContext?.GetCards(_this.Type)
+                ? value?.ModifyCard?.GetCards(_this.Type)
                 : Array.Empty<Card>();
         }
     }

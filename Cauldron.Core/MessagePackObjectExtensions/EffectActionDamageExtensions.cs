@@ -6,13 +6,14 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectActionDamageExtensions
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionDamage effectActionDamage, Card effectOwnerCard, EffectEventArgs args)
+        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionDamage _this,
+            Card effectOwnerCard, EffectEventArgs args)
         {
-            var choiceResult = await args.GameMaster.Choice(effectOwnerCard, effectActionDamage.Choice, args);
+            var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.Choice, args);
 
             var done = false;
 
-            var damageValue = await effectActionDamage.Value.Calculate(effectOwnerCard, args);
+            var damageValue = await _this.Value.Calculate(effectOwnerCard, args);
 
             foreach (var playerId in choiceResult.PlayerIdList)
             {
@@ -43,6 +44,12 @@ namespace Cauldron.Shared.MessagePackObjects
                 await args.GameMaster.HitCreature(damageContext);
 
                 done = true;
+            }
+
+            if (!string.IsNullOrEmpty(_this.Name))
+            {
+                var context = new ActionContext(Damage: new(choiceResult.CardList));
+                args.GameMaster.SetActionContext(effectOwnerCard.Id, _this.Name, context);
             }
 
             return (done, args);

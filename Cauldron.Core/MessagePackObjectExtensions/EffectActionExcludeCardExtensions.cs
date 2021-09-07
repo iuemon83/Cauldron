@@ -24,7 +24,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             if (!string.IsNullOrEmpty(_this.Name))
             {
-                var context = new ActionContext(ActionExcludeCardContext: new(excludedCardList));
+                var context = new ActionContext(ExcludeCard: new(excludedCardList));
                 effectEventArgs.GameMaster.SetActionContext(effectOwnerCard.Id, _this.Name, context);
             }
 

@@ -1,15 +1,16 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using System.Collections.Generic;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
-    public static class ActionContextCountersOfModifyCounterExtensions
+    public static class ActionContextCardsOfDamageExtensions
     {
-        public static int GetRsult(this ActionContextCountersOfModifyCounter _this,
+        public static IEnumerable<Card> GetRsult(this ActionContextCardsOfDamage _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
             return args.GameMaster.TryGetActionContext(effectOwnerCard.Id, _this.ActionName, out var value)
-                ? value?.ModifyCounter?.GetCounters(_this.Type) ?? 0
-                : 0;
+                ? value?.Damage?.GetCards(_this.Type)
+                : System.Array.Empty<Card>();
         }
     }
 }

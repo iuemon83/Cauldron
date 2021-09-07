@@ -8,11 +8,13 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public NumValue NumCards { get; }
         public PlayerCondition PlayerCondition { get; }
-
-        public EffectActionDrawCard(NumValue NumCards, PlayerCondition PlayerCondition)
+        public string Name { get; }
+        public EffectActionDrawCard(NumValue NumCards, PlayerCondition PlayerCondition,
+            string Name = null)
         {
             this.NumCards = NumCards;
             this.PlayerCondition = PlayerCondition;
+            this.Name = Name;
         }
     }
 }

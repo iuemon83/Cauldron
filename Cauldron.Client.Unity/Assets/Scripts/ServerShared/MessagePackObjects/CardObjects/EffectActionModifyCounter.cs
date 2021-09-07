@@ -6,19 +6,9 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectActionModifyCounter
     {
-        //public enum OperatorValue
-        //{
-        //    Add,
-        //    Remove
-        //}
-
         public Choice TargetsChoice { get; }
 
         public string CounterName { get; }
-
-        //public OperatorValue Operator { get; }
-
-        //public NumValue NumValue { get; }
 
         public NumValueModifier NumCountersModifier { get; }
 

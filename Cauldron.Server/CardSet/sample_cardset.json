@@ -1120,9 +1120,9 @@
                                             {
                                                 "contextCondition": "any",
                                                 "actionContext": {
-                                                    "actionContextCardsOfDestroyCard": {
+                                                    "destroyCard": {
                                                         "actionName": "delete",
-                                                        "type": "destroyed"
+                                                        "type": "destroyedCards"
                                                     }
                                                 },
                                                 "ownerCondition": "any"
@@ -2058,9 +2058,9 @@
                                                             {
                                                                 "contextCondition": "any",
                                                                 "actionContext": {
-                                                                    "actionContextCardsOfDestroyCard": {
+                                                                    "destroyCard": {
                                                                         "actionName": "destroy",
-                                                                        "type": "destroyed"
+                                                                        "type": "destroyedCards"
                                                                     }
                                                                 },
                                                                 "ownerCondition": "any"
@@ -2329,7 +2329,7 @@
                                                             {
                                                                 "contextCondition": "any",
                                                                 "actionContext": {
-                                                                    "actionContextCardsOfMoveCard": {
+                                                                    "moveCard": {
                                                                         "actionName": "move",
                                                                         "type": "moved"
                                                                     }
@@ -2355,7 +2355,7 @@
                                             {
                                                 "contextCondition": "any",
                                                 "actionContext": {
-                                                    "actionContextCardsOfMoveCard": {
+                                                    "moveCard": {
                                                         "actionName": "move",
                                                         "type": "moved"
                                                     }
@@ -2481,7 +2481,7 @@
                                             {
                                                 "contextCondition": "any",
                                                 "actionContext": {
-                                                    "actionContextCardsOfMoveCard": {
+                                                    "moveCard": {
                                                         "actionName": "move",
                                                         "type": "moved"
                                                     }
@@ -2863,7 +2863,7 @@
                                             {
                                                 "contextCondition": "any",
                                                 "actionContext": {
-                                                    "actionContextCardsOfModifyCard": {
+                                                    "modifyCard": {
                                                         "actionName": "modify",
                                                         "type": "modified"
                                                     }
@@ -3171,7 +3171,7 @@
                                                             {
                                                                 "contextCondition": "any",
                                                                 "actionContext": {
-                                                                    "actionContextCardsOfExcludeCard": {
+                                                                    "excludeCard": {
                                                                         "actionName": "exclude",
                                                                         "type": "excluded"
                                                                     }
@@ -3402,7 +3402,7 @@
                                                                 {
                                                                     "contextCondition": "any",
                                                                     "actionContext": {
-                                                                        "actionContextCardsOfMoveCard": {
+                                                                        "moveCard": {
                                                                             "actionName": "moveCard",
                                                                             "type": "moved"
                                                                         }
@@ -4206,7 +4206,7 @@
                                             {
                                                 "contextCondition": "any",
                                                 "actionContext": {
-                                                    "actionContextCardsOfMoveCard": {
+                                                    "moveCard": {
                                                         "actionName": "search_card",
                                                         "type": "moved"
                                                     }

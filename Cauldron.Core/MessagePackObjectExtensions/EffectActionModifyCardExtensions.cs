@@ -21,7 +21,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             if (!string.IsNullOrEmpty(_this.Name))
             {
-                var context = new ActionContext(ActionModifyCardContext: new(targets));
+                var context = new ActionContext(ModifyCard: new(targets));
                 effectEventArgs.GameMaster.SetActionContext(effectOwnerCard.Id, _this.Name, context);
             }
 
