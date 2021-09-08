@@ -577,7 +577,9 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef FireGoblin
-            => SampleCards.Creature(4, "火炎のゴブリン", "このカードが場に出たとき、相手プレイヤーか、相手の場にいるクリーチャーカード1枚に2ダメージを与える。", 4, 2,
+            => SampleCards.Creature(4, "火炎のゴブリン",
+                "このカードが場に出たとき、相手プレイヤーか、相手の場にいるクリーチャーカード1枚に2ダメージを与える。",
+                4, 2,
                 effects: new[]
                 {
                     new CardEffect(
@@ -644,7 +646,10 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef MadScientist
-            => SampleCards.Creature(4, "マッドサイエンティスト", "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーをもとの場に出す。", 3, 3,
+            => SampleCards.Creature(4, "マッドサイエンティスト",
+                "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。" +
+                "その後、破壊したカードのコピーをもとの場に出す。",
+                3, 3,
                 effects: new[]
                 {
                     new CardEffect(
@@ -862,7 +867,9 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef LeaderGoblin
-            => SampleCards.Creature(5, "ゴブリンリーダー", "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのクリーチャーのパワーを1増加する。", 1, 5,
+            => SampleCards.Creature(5, "ゴブリンリーダー",
+                "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのクリーチャーのパワーを1増加する。",
+                1, 5,
                 effects: new[]
                 {
                     // プレイ時：自分のクリーチャーすべてを+1/+0 する。
@@ -995,7 +1002,9 @@ namespace Cauldron.Core_Test
             => SampleCards.Creature(5, "戦闘ゴブリン", "", 3, 5, isToken: true);
 
         public static CardDef TyrantGoblin
-            => SampleCards.Creature(6, "暴君ゴブリン", "このカードが場に出たとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。", 6, 6,
+            => SampleCards.Creature(6, "暴君ゴブリン",
+                "このカードが場に出たとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。",
+                6, 6,
                 effects: new[]
                 {
                     // 手札をすべて捨てて、捨てた枚数パワーアップ
@@ -1145,7 +1154,8 @@ namespace Cauldron.Core_Test
                 abilities: new[] { CreatureAbility.Cover });
 
         public static CardDef Firelord
-            => SampleCards.Creature(8, "炎の王", "このカードが場にあるとき、あなたのターン終了時に、ランダムな敵クリーチャー1体か敵プレイヤーに8ダメージを与える。",
+            => SampleCards.Creature(8, "炎の王",
+                "このカードが場にあるとき、あなたのターン終了時に、ランダムな敵クリーチャー1体か敵プレイヤーに8ダメージを与える。",
                 8, 8, abilities: new[] { CreatureAbility.CantAttack },
                 effects: new[]
                 {
@@ -1188,7 +1198,8 @@ namespace Cauldron.Core_Test
 
         public static CardDef Death
             => SampleCards.Creature(10, "死",
-                "このカードをプレイしたとき、このカードを除く全てのクリーチャーを破壊する。その後、X枚のランダムな自分の手札を墓地へ移動する。X=この効果で破壊したクリーチャーの数",
+                "このカードをプレイしたとき、このカードを除く全てのクリーチャーを破壊する。" +
+                "その後、X枚のランダムな自分の手札を墓地へ移動する。X=この効果で破壊したクリーチャーの数",
                 12, 12,
                 effects: new[]
                 {
@@ -1360,7 +1371,8 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef Salvage
-            => SampleCards.Sorcery(1, "サルベージ", "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",
+            => SampleCards.Sorcery(1, "サルベージ",
+                "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -1881,7 +1893,9 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef Parasite
-            => SampleCards.Creature(1, "寄生虫", "このカードがデッキから手札に移動したとき、このカードをあなたの場に出す。このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
+            => SampleCards.Creature(1, "寄生虫",
+                "このカードがデッキから手札に移動したとき、このカードをあなたの場に出す。" +
+                "このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
                 1, 1, isToken: true,
                 effects: new[]
                 {
@@ -2048,7 +2062,8 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef FirstAttack
-            => SampleCards.Sorcery(2, "ゴブリンの一撃", "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに1ダメージを与える。あなたの手札に「ゴブリンの二撃」1枚を加える。",
+            => SampleCards.Sorcery(2, "ゴブリンの一撃",
+                "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに1ダメージを与える。あなたの手札に「ゴブリンの二撃」1枚を加える。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -2098,7 +2113,9 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef SecondAttack
-            => SampleCards.Sorcery(2, "ゴブリンの二撃", "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに2ダメージを与える。", isToken: true,
+            => SampleCards.Sorcery(2, "ゴブリンの二撃",
+                "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに2ダメージを与える。",
+                isToken: true,
                 effects: new[]
                 {
                     new CardEffect(
@@ -2178,7 +2195,8 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-        public static CardDef ChangeHands => SampleCards.Sorcery(2, "手札入れ替え", "あなたは手札をすべて捨てる。あなたは捨てた枚数カードをドローする。",
+        public static CardDef ChangeHands => SampleCards.Sorcery(2, "手札入れ替え",
+            "あなたは手札をすべて捨てる。あなたは捨てた枚数カードをドローする。",
             effects: new[]
             {
                 new CardEffect(
@@ -2445,7 +2463,8 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef GoblinCaptureJar
-            => SampleCards.Sorcery(4, "ゴブリン封印の壺", "あなたの場か、相手の場にあるクリーチャーのうち、名前に「ゴブリン」を含むカードすべてのパワーを1にし、「封印」状態にする。",
+            => SampleCards.Sorcery(4, "ゴブリン封印の壺",
+                "あなたの場か、相手の場にあるクリーチャーのうち、名前に「ゴブリン」を含むカードすべてのパワーを1にし、「封印」状態にする。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -2479,7 +2498,8 @@ namespace Cauldron.Core_Test
 
         public static CardDef Virus
             => SampleCards.Sorcery(5, "ウイルス",
-                "相手の場と相手の手札にあるパワー4以上のクリーチャーをすべて墓地に移動する。3回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
+                "相手の場と相手の手札にあるパワー4以上のクリーチャーをすべて墓地に移動する。" +
+                "3回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -2531,7 +2551,8 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef OldShield
-            => SampleCards.Artifact(1, "ぼろの盾", "あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
+            => SampleCards.Artifact(1, "ぼろの盾",
+                "あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -2571,7 +2592,8 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef OldWall
-            => SampleCards.Artifact(1, "ぼろの壁", "あなたか、あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
+            => SampleCards.Artifact(1, "ぼろの壁",
+                "あなたか、あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -2616,7 +2638,8 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef GoblinStatue
-            => SampleCards.Artifact(4, "呪いのゴブリン像", "あなたのターン終了時、もしあなたの墓地が30枚以上なら、相手プレイヤー、相手の場にあるクリーチャーすべてに6ダメージを与える。",
+            => SampleCards.Artifact(4, "呪いのゴブリン像",
+                "あなたのターン終了時、もしあなたの墓地が30枚以上なら、相手プレイヤー、相手の場にあるクリーチャーすべてに6ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -2654,7 +2677,9 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef HolyStatue
-            => SampleCards.Artifact(4, "癒やしの像", "あなたの場にあるクリーチャーすべては+0/+1 の修整を受ける。あなたが場にクリーチャーを出したとき、それは+0/+1 の修整を受ける。",
+            => SampleCards.Artifact(4, "癒やしの像",
+                "あなたの場にあるクリーチャーすべては+0/+1 の修整を受ける。" +
+                "あなたが場にクリーチャーを出したとき、それは+0/+1 の修整を受ける。",
             effects: new[]
             {
                 // 使用時、すべての自分クリーチャーを+0/+1
@@ -2791,7 +2816,9 @@ namespace Cauldron.Core_Test
 
         public static CardDef MagicObject
             => SampleCards.Creature(1, "魔力吸収体",
-                "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが置かれるたびに、このカードを+1/+0する。このカードから「魔法」カウンターが取り除かれるたびに、このカードを-1/+0する。",
+                "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔法」カウンターを1つ置く。" +
+                "このカードに「魔法」カウンターが置かれるたびに、このカードを+1/+0する。" +
+                "このカードから「魔法」カウンターが取り除かれるたびに、このカードを-1/+0する。",
                 1, 1,
                 effects: new[]
                 {
@@ -2868,7 +2895,8 @@ namespace Cauldron.Core_Test
 
         public static CardDef MagicMonster
             => SampleCards.Creature(5, "魔法生物",
-                "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。",
+                "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。" +
+                "このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。",
                 3, 4,
                 effects: new[]
                 {
@@ -2956,7 +2984,9 @@ namespace Cauldron.Core_Test
 
         public static CardDef GreatSorcerer
             => SampleCards.Creature(9, "偉大な魔導士",
-                "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードを場に出したとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札すべてに「魔法」カウンターを5個おく。",
+                "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。" +
+                "このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。" +
+                "このカードを場に出したとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札すべてに「魔法」カウンターを5個おく。",
                 5, 5,
                 effects: new[]
                 {
@@ -3050,7 +3080,8 @@ namespace Cauldron.Core_Test
 
         public static CardDef UltraMagic
             => SampleCards.Sorcery(3, "大魔法",
-                "このカードが場に出たとき、あなたの場からすべての「魔法」カウンターを取り除く。その後、相手にXのダメージを与える。X=取り除いた「魔法」カウンターの数+1",
+                "このカードが場に出たとき、あなたの場からすべての「魔法」カウンターを取り除く。" +
+                "その後、相手にXのダメージを与える。X=取り除いた「魔法」カウンターの数+1",
                 effects: new[]
                 {
                     new CardEffect(
