@@ -19,6 +19,11 @@ namespace Cauldron.Shared.MessagePackObjects
                 return false;
             }
 
+            if (eventArgs.DamageContext.Value <= 0)
+            {
+                return false;
+            }
+
             var playerMatch = PlayerIsMatch(_this, effectOwnerCard, eventArgs);
 
             var cardMatch = await CardIsMatch(_this, effectOwnerCard, eventArgs);

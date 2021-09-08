@@ -2203,6 +2203,42 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task OldShield_0ダメージ()
+        {
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+            goblinDef.Power = 1;
+            goblinDef.Toughness = 5;
+
+            var testCardDef = SampleCards.OldShield;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
+
+            // 先攻
+            var goblinCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var goblinCard = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                return goblinCard;
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var op = g.GetOpponent(pId);
+
+                var goblinCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                await c.GameMaster.AttackToCreature(pId, goblinCard2.Id, goblinCard.Id);
+
+                // 1枚は破壊されるが、もう1枚は破壊されない
+                Assert.Equal(2, op.Field.Count);
+            });
+        }
+
+        [Fact]
         public async Task OldWall_プレイヤーを攻撃()
         {
             var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
