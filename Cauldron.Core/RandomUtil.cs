@@ -6,7 +6,10 @@ namespace Cauldron.Core
 {
     public static class RandomUtil
     {
-        public static readonly Random Random = new Random();
+        public static readonly Random Random = new();
+
+        public static int RandomValue(int min, int max) => RandomUtil.Random.Next(min, max + 1);
+
         public static T RandomPick<T>(IReadOnlyList<T> source) => source.Any() ? source[RandomUtil.Random.Next(source.Count)] : default;
         public static IEnumerable<T> RandomPick<T>(IReadOnlyList<T> source, int picksNum)
         {

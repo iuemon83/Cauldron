@@ -8,6 +8,11 @@ namespace Cauldron.Shared.MessagePackObjects.Value
         public static async ValueTask<int> Calculate(this NumValueCalculator _this,
             Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
+            if (_this.Random != null)
+            {
+                return _this.Random.Calculate();
+            }
+
             if (_this.ForCard != null)
             {
                 return await _this.ForCard.Calculate(effectOwnerCard, effectEventArgs);

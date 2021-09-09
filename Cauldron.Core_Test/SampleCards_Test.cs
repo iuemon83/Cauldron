@@ -1133,15 +1133,20 @@ namespace Cauldron.Core_Test
             {
                 var op = g.GetOpponent(pId);
 
-                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                for (var i = 0; i < 10; i++)
+                {
+                    var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
-                var beforeOpHp = op.CurrentHp;
+                    var beforeOpHp = op.CurrentHp;
 
-                await g.DestroyCard(testCard);
+                    await g.DestroyCard(testCard);
 
-                var afterOpHp = op.CurrentHp;
+                    var damage = beforeOpHp - op.CurrentHp;
 
-                Assert.Equal(4, beforeOpHp - afterOpHp);
+                    Assert.True(1 <= damage && damage <= 4);
+
+                    op.GainHp(4);
+                }
             });
         }
 

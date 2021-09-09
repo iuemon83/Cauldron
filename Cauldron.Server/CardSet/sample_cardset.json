@@ -1755,7 +1755,7 @@
         {
             "cost": 1,
             "name": "ドクターボム",
-            "flavorText": "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーに4ダメージを与える。",
+            "flavorText": "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーにランダムに1~4ダメージを与える。",
             "isToken": true,
             "type": "creature",
             "power": 1,
@@ -1770,7 +1770,14 @@
                     "actions": [
                         {
                             "damage": {
-                                "value": { "pureValue": 4 },
+                                "value": {
+                                    "numValueCalculator": {
+                                        "random": {
+                                            "min": 1,
+                                            "max": 4
+                                        }
+                                    }
+                                },
                                 "choice": {
                                     "source": {
                                         "how": "all",

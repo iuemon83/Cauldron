@@ -1056,7 +1056,7 @@ namespace Cauldron.Core_Test
 
         public static CardDef DoctorBomb
             => SampleCards.Creature(1, "ドクターボム",
-                "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーに4ダメージを与える。",
+                "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーにランダムに1~4ダメージを与える。",
                 1, 1, isToken: true,
                 effects: new[]
                 {
@@ -1067,7 +1067,8 @@ namespace Cauldron.Core_Test
                         new[]{
                             new EffectAction(
                                 Damage: new(
-                                    new NumValue(4),
+                                    new NumValue(
+                                            NumValueCalculator: new(Random: new(1, 4))),
                                     new Choice(
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
@@ -1083,7 +1084,8 @@ namespace Cauldron.Core_Test
                                                 )
                                             }),
                                         how: Choice.HowValue.Random,
-                                        numPicks: new NumValue(1))))
+                                        numPicks: new NumValue(1)
+                                        )))
                         })
                 });
 
