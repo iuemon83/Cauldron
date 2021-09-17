@@ -12,6 +12,8 @@ namespace Cauldron.Server
             {
                 throw new InvalidOperationException("カードプールが不正です。");
             }
+
+            CardPoolSingleton = cardpool;
         }
 
         public static CardPool CardPoolSingleton { get; private set; }

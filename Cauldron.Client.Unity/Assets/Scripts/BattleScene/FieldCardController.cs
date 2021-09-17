@@ -14,6 +14,8 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
     [SerializeField]
     private TextMeshProUGUI damageText;
     [SerializeField]
+    private Image backgroundImage;
+    [SerializeField]
     private Image destroyIcon;
 
     public bool IsAttackTarget => this.attackTargetIcon.activeSelf;
@@ -72,8 +74,14 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
     {
         this.destroyIcon.gameObject.SetActive(true);
         await this.destroyIcon.transform
-            .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f);
+            .DOScale(new Vector3(1.2f, 1.2f), 0.3f);
         this.destroyIcon.gameObject.SetActive(false);
+        await DOTween
+            .ToAlpha(
+                () => this.backgroundImage.color,
+                c => this.backgroundImage.color = c,
+                0f,
+                0.2f);
     }
 
     public async UniTask AttackEffect(PlayerController dest)
@@ -100,12 +108,17 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
 
     public async UniTask AttackEffect(Vector3 dest)
     {
+        var destVec = Vector3.MoveTowards(
+            this.transform.position,
+            dest,
+            (dest - this.transform.position).magnitude - 60);
+
         await this.transform
             .DOScale(1.2f, 0.2f);
 
         await DOTween.Sequence()
             .Append(this.transform
-                .DOMove(dest, 0.2f)
+                .DOMove(destVec, 0.2f)
                 .SetLoops(2, LoopType.Yoyo)
                 .SetEase(Ease.InQuart))
             .Join(this.transform.DOScale(1f, 0.2f));
