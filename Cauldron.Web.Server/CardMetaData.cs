@@ -57,6 +57,7 @@ namespace Cauldron.Web.Server
         public MetaDataElm[] EffectTimingStartTurnEventSources { get; }
             = Convert<EffectTimingStartTurnEvent.SourceValue>();
         public MetaDataElm[] ChoiceHowList { get; } = Convert<Choice.HowValue>();
+        public MetaDataElm[] ChoiceSourceHowList { get; } = Convert<ChoiceSource.HowValue>();
         public MetaDataElm[] NumConditionCompares { get; } = Convert<NumCondition.CompareValue>();
         public MetaDataElm[] NumValueCalculatorForCardValueTypes { get; } = Convert<NumValueCalculatorForCard.TypeValue>();
         public MetaDataElm[] NumValueModifierOperators { get; } = Convert<NumValueModifier.OperatorValue>();

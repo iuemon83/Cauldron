@@ -1,4 +1,5 @@
-﻿using Cauldron.Shared.MessagePackObjects.Value;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
 using System;
 
@@ -15,10 +16,12 @@ namespace Cauldron.Shared.MessagePackObjects
             /// <summary>
             /// ランダム選択
             /// </summary>
+            [DisplayText("ランダム")]
             Random,
             /// <summary>
             /// すべて
             /// </summary>
+            [DisplayText("すべて")]
             All,
         }
 
