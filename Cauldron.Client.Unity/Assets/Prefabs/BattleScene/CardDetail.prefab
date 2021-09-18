@@ -239,13 +239,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 005e811d39ae0ed4d9e8cdbb62a66e9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardNameText: {fileID: 3888882663627528157}
-  FlavorText: {fileID: 278128111136649821}
-  PowerSpace: {fileID: 908024452974981606}
-  ToughnessSpace: {fileID: 908024452119309693}
-  CostText: {fileID: 4254850053689449196}
-  PowerText: {fileID: 1262348635427437146}
-  ToughnessText: {fileID: 1791627792891120229}
+  cardNameText: {fileID: 3888882663627528157}
+  effectText: {fileID: 278128111136649821}
+  powerSpace: {fileID: 908024452974981400}
+  toughnessSpace: {fileID: 908024452119309695}
+  costText: {fileID: 4254850053689449196}
+  powerText: {fileID: 1262348635427437146}
+  toughnessText: {fileID: 1791627792891120229}
 --- !u!1 &908024452119309693
 GameObject:
   m_ObjectHideFlags: 0

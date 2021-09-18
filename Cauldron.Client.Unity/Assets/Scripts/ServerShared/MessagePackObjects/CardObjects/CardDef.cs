@@ -33,6 +33,8 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public List<CreatureAbility> Abilities { get; set; } = new List<CreatureAbility>();
 
+        public string EffectText { get; set; }
+
         public IReadOnlyList<CardEffect> Effects { get; set; } = Array.Empty<CardEffect>();
 
         /// <summary>
@@ -60,6 +62,7 @@ namespace Cauldron.Shared.MessagePackObjects
             int Power,
             int Toughness,
             List<CreatureAbility> Abilities,
+            string EffectText,
             IReadOnlyList<CardEffect> Effects,
             int? NumTurnsToCanAttack,
             int? NumAttacksLimitInTurn
@@ -75,6 +78,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Power = Power;
             this.Toughness = Toughness;
             this.Abilities = Abilities;
+            this.EffectText = EffectText;
             this.Effects = Effects;
             this.NumTurnsToCanAttack = NumTurnsToCanAttack;
             this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;

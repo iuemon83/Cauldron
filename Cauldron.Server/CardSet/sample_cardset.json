@@ -26,7 +26,7 @@
         {
             "cost": 1,
             "name": "素早いゴブリン",
-            "flavorText": "このカードは場に出したターンに攻撃できる。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
@@ -73,12 +73,13 @@
         {
             "cost": 3,
             "name": "二刀流のゴブリン",
-            "flavorText": "このカードの戦闘時、戦闘開始前に相手クリーチャーに、Xのダメージを与える。X=このカードの攻撃力",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 2,
             "toughness": 1,
             "abilities": [],
+            "effectText": "このカードの戦闘時、戦闘開始前に相手クリーチャーに、Xのダメージを与える。X=このカードの攻撃力",
             "effects": [
                 {
                     "condition": {
@@ -205,12 +206,13 @@
         {
             "cost": 2,
             "name": "魔法の盾持ちゴブリン",
-            "flavorText": "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 2,
             "abilities": [ "cover" ],
+            "effectText": "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
             "effects": [
                 {
                     "condition": {
@@ -259,12 +261,13 @@
         {
             "cost": 2,
             "name": "強魔法の盾持ちゴブリン",
-            "flavorText": "このカードが攻撃されたとき、攻撃したカードを相手のデッキの一番上に移動する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 2,
             "abilities": [ "cover" ],
+            "effectText": "このカードが攻撃されたとき、攻撃したカードを相手のデッキの一番上に移動する。",
             "effects": [
                 {
                     "condition": {
@@ -317,12 +320,13 @@
         {
             "cost": 2,
             "name": "異次元の盾持ちゴブリン",
-            "flavorText": "このカードの戦闘時に、このカードと戦闘相手を除外する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 2,
             "abilities": [ "cover" ],
+            "effectText": "このカードの戦闘時に、このカードと戦闘相手を除外する。",
             "effects": [
                 {
                     "condition": {
@@ -430,12 +434,13 @@
         {
             "cost": 1,
             "name": "ゴブリンの技師",
-            "flavorText": "このカードが破壊されたとき、手札に「からくりゴブリン」1枚を加える。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "このカードが破壊されたとき、手札に「からくりゴブリン」1枚を加える。",
             "effects": [
                 {
                     "condition": {
@@ -480,12 +485,13 @@
         {
             "cost": 1,
             "name": "魔法の本",
-            "flavorText": "このカードが場に出たとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
             "effects": [
                 {
                     "condition": {
@@ -528,12 +534,13 @@
         {
             "cost": 1,
             "name": "ゴブリンフォロワー",
-            "flavorText": "あなたが「ゴブリン」と名のつくクリーチャーカードをプレイしたとき、このカードをデッキから場に出す。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "あなたが「ゴブリン」と名のつくクリーチャーカードをプレイしたとき、このカードをデッキから場に出す。",
             "effects": [
                 {
                     "condition": {
@@ -592,12 +599,13 @@
         {
             "cost": 2,
             "name": "ゴブリンのペット",
-            "flavorText": "このカードが場に出たとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 2,
             "toughness": 6,
             "abilities": [ "cover" ],
+            "effectText": "このカードが場に出たとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
             "effects": [
                 {
                     "condition": {
@@ -641,12 +649,13 @@
         {
             "cost": 3,
             "name": "催眠術師",
-            "flavorText": "このカードが場に出たとき、敵のフィールドにクリーチャーが4体以上いるなら、ランダムに1体を選択し、それをあなたの場に移動する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 3,
             "toughness": 3,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、敵のフィールドにクリーチャーが4体以上いるなら、ランダムに1体を選択し、それをあなたの場に移動する。",
             "effects": [
                 {
                     "condition": {
@@ -728,12 +737,13 @@
         {
             "cost": 3,
             "name": "分身ゴブリン",
-            "flavorText": "このカードが場に出たとき、「分身ゴブリン」一体を場に出す。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 2,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、「分身ゴブリン」一体を場に出す。",
             "effects": [
                 {
                     "condition": {
@@ -770,12 +780,13 @@
         {
             "cost": 3,
             "name": "多重分身ゴブリン",
-            "flavorText": "このカードが場に出たとき、「多重分身ゴブリン」2体を場に出す。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、「多重分身ゴブリン」2体を場に出す。",
             "effects": [
                 {
                     "condition": {
@@ -812,12 +823,13 @@
         {
             "cost": 2,
             "name": "ゴブリンの強欲",
-            "flavorText": "あなたはカードを2枚ドローする。このカードが手札から捨てられたとき、あなたはカードを1枚ドローする。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたはカードを2枚ドローする。このカードが手札から捨てられたとき、あなたはカードを1枚ドローする。",
             "effects": [
                 {
                     "condition": {
@@ -866,12 +878,13 @@
         {
             "cost": 3,
             "name": "呪術師ゴブリン",
-            "flavorText": "このカードが場に出たとき、相手の場にあるランダムなクリーチャーカード1枚を破壊する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、相手の場にあるランダムなクリーチャーカード1枚を破壊する。",
             "effects": [
                 {
                     "condition": {
@@ -914,12 +927,13 @@
         {
             "cost": 3,
             "name": "優しいゴブリン",
-            "flavorText": "このカードが場に出たとき、あなたのHPを2回復する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 2,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、あなたのHPを2回復する。",
             "effects": [
                 {
                     "condition": {
@@ -960,12 +974,13 @@
         {
             "cost": 4,
             "name": "火炎のゴブリン",
-            "flavorText": "このカードが場に出たとき、相手プレイヤーか、相手の場にいるクリーチャーカード1枚に2ダメージを与える。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 4,
             "toughness": 2,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、相手プレイヤーか、相手の場にいるクリーチャーカード1枚に2ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -1014,12 +1029,13 @@
         {
             "cost": 4,
             "name": "初心者召喚士",
-            "flavorText": "このカードが破壊されたとき、ランダムなコスト2のクリーチャーを1体場に出す。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 3,
             "toughness": 3,
             "abilities": [],
+            "effectText": "このカードが破壊されたとき、ランダムなコスト2のクリーチャーを1体場に出す。",
             "effects": [
                 {
                     "condition": {
@@ -1067,12 +1083,13 @@
         {
             "cost": 4,
             "name": "マッドサイエンティスト",
-            "flavorText": "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーをもとの場に出す。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 3,
             "toughness": 3,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーをもとの場に出す。",
             "effects": [
                 {
                     "condition": {
@@ -1144,12 +1161,13 @@
         {
             "cost": 4,
             "name": "ゴブリンの勇者",
-            "flavorText": "自分が受けるダメージを2軽減する。自分の場の他のクリーチャーカードが戦闘で与えるダメージを1増加する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 2,
             "toughness": 2,
             "abilities": [],
+            "effectText": "自分が受けるダメージを2軽減する。自分の場の他のクリーチャーカードが戦闘で与えるダメージを1増加する。",
             "effects": [
                 {
                     "condition": {
@@ -1218,12 +1236,13 @@
         {
             "cost": 4,
             "name": "顔なし",
-            "flavorText": "あなたの次のターン開始時、あなたのMPは2減少する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 7,
             "toughness": 7,
             "abilities": [],
+            "effectText": "あなたの次のターン開始時、あなたのMPは2減少する。",
             "effects": [
                 {
                     "condition": {
@@ -1269,12 +1288,13 @@
         {
             "cost": 5,
             "name": "預言者",
-            "flavorText": "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を7にする",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 0,
             "toughness": 7,
             "abilities": [],
+            "effectText": "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を7にする",
             "effects": [
                 {
                     "condition": {
@@ -1313,12 +1333,13 @@
         {
             "cost": 5,
             "name": "マジックドラゴン",
-            "flavorText": "このカードが場に出たとき、あなたはカードを1枚ドローする。このカードが場にある限り、あなたがプレイした魔法カードによるダメージを\u002B1する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 4,
             "toughness": 4,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、あなたはカードを1枚ドローする。このカードが場にある限り、あなたがプレイした魔法カードによるダメージを\u002B1する。",
             "effects": [
                 {
                     "condition": {
@@ -1373,12 +1394,13 @@
         {
             "cost": 5,
             "name": "ゴブリンの巨人",
-            "flavorText": "このカードが場に出たとき、自分の場にある他のクリチャーカードに3ダメージを与える。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 3,
             "toughness": 7,
             "abilities": [ "cover" ],
+            "effectText": "このカードが場に出たとき、自分の場にある他のクリチャーカードに3ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -1422,12 +1444,13 @@
         {
             "cost": 5,
             "name": "ゴブリンリーダー",
-            "flavorText": "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのクリーチャーのパワーを1増加する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 5,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのクリーチャーのパワーを1増加する。",
             "effects": [
                 {
                     "condition": {
@@ -1479,12 +1502,13 @@
         {
             "cost": 5,
             "name": "サイコ",
-            "flavorText": "このクリーチャーがダメージを受けるとき、1度だけそのダメージを0にする。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 3,
             "toughness": 4,
             "abilities": [ "cover" ],
+            "effectText": "このクリーチャーがダメージを受けるとき、1度だけそのダメージを0にする。",
             "effects": [
                 {
                     "condition": {
@@ -1532,12 +1556,13 @@
         {
             "cost": 6,
             "name": "悪夢",
-            "flavorText": "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を2倍にする",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 2,
             "toughness": 8,
             "abilities": [],
+            "effectText": "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を2倍にする",
             "effects": [
                 {
                     "condition": {
@@ -1576,12 +1601,13 @@
         {
             "cost": 6,
             "name": "騎兵ゴブリン",
-            "flavorText": "あなたが魔法カードをプレイしたとき、あなたの場に「騎兵ゴブリン」1枚を追加する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 3,
             "toughness": 5,
             "abilities": [],
+            "effectText": "あなたが魔法カードをプレイしたとき、あなたの場に「騎兵ゴブリン」1枚を追加する。",
             "effects": [
                 {
                     "condition": {
@@ -1650,12 +1676,13 @@
         {
             "cost": 6,
             "name": "暴君ゴブリン",
-            "flavorText": "このカードが場に出たとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 6,
             "toughness": 6,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。",
             "effects": [
                 {
                     "condition": {
@@ -1755,12 +1782,13 @@
         {
             "cost": 1,
             "name": "ドクターボム",
-            "flavorText": "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーにランダムに1~4ダメージを与える。",
+            "flavorText": "",
             "isToken": true,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーにランダムに1~4ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -1816,12 +1844,13 @@
         {
             "cost": 7,
             "name": "ドクター",
-            "flavorText": "このカードが場に出たとき、「ドクターボム」2枚をあなたの場に追加する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 7,
             "toughness": 7,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、「ドクターボム」2枚をあなたの場に追加する。",
             "effects": [
                 {
                     "condition": {
@@ -1866,12 +1895,13 @@
         {
             "cost": 7,
             "name": "災い",
-            "flavorText": "このクリーチャーがダメージを受けるたび、「ノール」1体をあなたの場に追加する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 6,
             "toughness": 6,
             "abilities": [],
+            "effectText": "このクリーチャーがダメージを受けるたび、「ノール」1体をあなたの場に追加する。",
             "effects": [
                 {
                     "condition": {
@@ -1938,12 +1968,13 @@
         {
             "cost": 8,
             "name": "炎の王",
-            "flavorText": "このカードが場にあるとき、あなたのターン終了時に、ランダムな敵クリーチャー1体か敵プレイヤーに8ダメージを与える。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 8,
             "toughness": 8,
             "abilities": [ "cantAttack" ],
+            "effectText": "このカードが場にあるとき、あなたのターン終了時に、ランダムな敵クリーチャー1体か敵プレイヤーに8ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -1992,12 +2023,13 @@
         {
             "cost": 10,
             "name": "死",
-            "flavorText": "このカードをプレイしたとき、このカードを除く全てのクリーチャーを破壊する。その後、X枚のランダムな自分の手札を墓地へ移動する。X=この効果で破壊したクリーチャーの数",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 12,
             "toughness": 12,
             "abilities": [],
+            "effectText": "このカードをプレイしたとき、このカードを除く全てのクリーチャーを破壊する。その後、X枚のランダムな自分の手札を墓地へ移動する。X=この効果で破壊したクリーチャーの数",
             "effects": [
                 {
                     "condition": {
@@ -2092,12 +2124,13 @@
         {
             "cost": 0,
             "name": "一時的なランプ",
-            "flavorText": "あなたの最大MPを1増加する。ターン終了時あなたの最大MPを1減少する。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたの最大MPを1増加する。ターン終了時あなたの最大MPを1減少する。",
             "effects": [
                 {
                     "condition": {
@@ -2177,12 +2210,13 @@
         {
             "cost": 1,
             "name": "ファイア",
-            "flavorText": "プレイヤーか、場のクリーチャー1体を選択する。それに1ダメージを与える。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "プレイヤーか、場のクリーチャー1体を選択する。それに1ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -2231,12 +2265,13 @@
         {
             "cost": 1,
             "name": "稲妻",
-            "flavorText": "ランダムな場のクリーチャー1体に2ダメージを与える。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "ランダムな場のクリーチャー1体に2ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -2280,12 +2315,13 @@
         {
             "cost": 1,
             "name": "サルベージ",
-            "flavorText": "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",
             "effects": [
                 {
                     "condition": {
@@ -2384,12 +2420,13 @@
         {
             "cost": 1,
             "name": "リサイクル",
-            "flavorText": "墓地のカードを1枚選択する。それのコピーをあなたの手札に加える。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "墓地のカードを1枚選択する。それのコピーをあなたの手札に加える。",
             "effects": [
                 {
                     "condition": {
@@ -2430,12 +2467,13 @@
         {
             "cost": 1,
             "name": "簡易蘇生",
-            "flavorText": "墓地のクリーチャーをランダムに1体選択する。それをあなたの場に出す。それのタフネスを1にする。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "墓地のクリーチャーをランダムに1体選択する。それをあなたの場に出す。それのタフネスを1にする。",
             "effects": [
                 {
                     "condition": {
@@ -2510,12 +2548,13 @@
         {
             "cost": 1,
             "name": "剣",
-            "flavorText": "あなたの場にあるクリチャー1体を選択する。それは\u002B1/\u002B0 の修整を受ける。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたの場にあるクリチャー1体を選択する。それは\u002B1/\u002B0 の修整を受ける。",
             "effects": [
                 {
                     "condition": {
@@ -2562,12 +2601,13 @@
         {
             "cost": 1,
             "name": "盾",
-            "flavorText": "あなたの場にあるクリチャー1体を選択する。それは\u002B0/\u002B1 の修整を受ける。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたの場にあるクリチャー1体を選択する。それは\u002B0/\u002B1 の修整を受ける。",
             "effects": [
                 {
                     "condition": {
@@ -2614,12 +2654,13 @@
         {
             "cost": 1,
             "name": "ヒット",
-            "flavorText": "相手プレイヤーに1ダメージを与える。",
+            "flavorText": "",
             "isToken": true,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "相手プレイヤーに1ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -2655,12 +2696,13 @@
         {
             "cost": 1,
             "name": "ヒール",
-            "flavorText": "あなたのライフを1回復する。",
+            "flavorText": "",
             "isToken": true,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたのライフを1回復する。",
             "effects": [
                 {
                     "condition": {
@@ -2701,12 +2743,13 @@
         {
             "cost": 1,
             "name": "ヒットorヒール",
-            "flavorText": "「ヒット」か「ヒール」のうち1枚を選択し、それを自分の手札に加える。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "「ヒット」か「ヒール」のうち1枚を選択し、それを自分の手札に加える。",
             "effects": [
                 {
                     "condition": {
@@ -2763,12 +2806,13 @@
         {
             "cost": 0,
             "name": "封印",
-            "flavorText": "選択したクリーチャー1体を「封印」状態にする",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "選択したクリーチャー1体を「封印」状態にする",
             "effects": [
                 {
                     "condition": {
@@ -2815,12 +2859,13 @@
         {
             "cost": 1,
             "name": "盾砕き",
-            "flavorText": "相手の場の「カバー」アビリティを持つすべてのクリーチャーから、「カバー」アビリティを削除する。その後それらのクリーチャーに1ダメージを与える。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "相手の場の「カバー」アビリティを持つすべてのクリーチャーから、「カバー」アビリティを削除する。その後それらのクリーチャーに1ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -2892,12 +2937,13 @@
         {
             "cost": 1,
             "name": "除外",
-            "flavorText": "場にあるカード一つを選択する。それを「除外」する。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "場にあるカード一つを選択する。それを「除外」する。",
             "effects": [
                 {
                     "condition": {
@@ -2936,12 +2982,13 @@
         {
             "cost": 1,
             "name": "異次元の観測者",
-            "flavorText": "このカードが場にあるとき、場のほかのカードが除外されるたびに、このカードを\u002B1/\u002B0する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "このカードが場にあるとき、場のほかのカードが除外されるたびに、このカードを\u002B1/\u002B0する。",
             "effects": [
                 {
                     "condition": {
@@ -2991,12 +3038,13 @@
         {
             "cost": 1,
             "name": "異次元からの来訪者",
-            "flavorText": "このカードが場に出たとき、このカードを\u002BX/\u002B0 する。X=すでに除外されている自分のカードの数",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、このカードを\u002BX/\u002B0 する。X=すでに除外されている自分のカードの数",
             "effects": [
                 {
                     "condition": {
@@ -3059,12 +3107,13 @@
         {
             "cost": 1,
             "name": "異次元からの脱出",
-            "flavorText": "自分の除外済みのクリーチャーカードをランダムで一つを選択する。そのカードを場に追加する。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "自分の除外済みのクリーチャーカードをランダムで一つを選択する。そのカードを場に追加する。",
             "effects": [
                 {
                     "condition": {
@@ -3107,12 +3156,13 @@
         {
             "cost": 1,
             "name": "異次元との取引",
-            "flavorText": "自分の手札をランダムに1枚除外する。その後、場のカードX枚をランダムに破壊する。X=除外したカードのコスト",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "自分の手札をランダムに1枚除外する。その後、場のカードX枚をランダムに破壊する。X=除外したカードのコスト",
             "effects": [
                 {
                     "condition": {
@@ -3204,12 +3254,13 @@
         {
             "cost": 1,
             "name": "寄生虫",
-            "flavorText": "このカードがデッキから手札に移動したとき、このカードをあなたの場に出す。このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
+            "flavorText": "",
             "isToken": true,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "このカードがデッキから手札に移動したとき、このカードをあなたの場に出す。このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
             "effects": [
                 {
                     "condition": {
@@ -3282,12 +3333,13 @@
         {
             "cost": 1,
             "name": "虫つかい",
-            "flavorText": "このカードをプレイしたとき、相手のデッキの1番上に「寄生虫」を1枚追加する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "このカードをプレイしたとき、相手のデッキの1番上に「寄生虫」を1枚追加する。",
             "effects": [
                 {
                     "condition": {
@@ -3336,12 +3388,13 @@
         {
             "cost": 1,
             "name": "非常食",
-            "flavorText": "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
             "effects": [
                 {
                     "condition": {
@@ -3436,12 +3489,13 @@
         {
             "cost": 1,
             "name": "集合",
-            "flavorText": "あなたの手札に「ゴブリン」を3枚加える。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたの手札に「ゴブリン」を3枚加える。",
             "effects": [
                 {
                     "condition": {
@@ -3486,12 +3540,13 @@
         {
             "cost": 2,
             "name": "複製",
-            "flavorText": "相手の場のカードを一枚選択する。そのカードと同名のカードを一枚あなたの手札に加える。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "相手の場のカードを一枚選択する。そのカードと同名のカードを一枚あなたの手札に加える。",
             "effects": [
                 {
                     "condition": {
@@ -3532,12 +3587,13 @@
         {
             "cost": 2,
             "name": "ゴブリンの一撃",
-            "flavorText": "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに1ダメージを与える。あなたの手札に「ゴブリンの二撃」1枚を加える。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに1ダメージを与える。あなたの手札に「ゴブリンの二撃」1枚を加える。",
             "effects": [
                 {
                     "condition": {
@@ -3614,12 +3670,13 @@
         {
             "cost": 2,
             "name": "ゴブリンの二撃",
-            "flavorText": "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに2ダメージを与える。",
+            "flavorText": "",
             "isToken": true,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに2ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -3668,12 +3725,13 @@
         {
             "cost": 2,
             "name": "聖なる盾",
-            "flavorText": "あなたの場にある他のカードに次の効果を付与する。「ターン終了時まで、受けるダメージは0になる。」",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたの場にある他のカードに次の効果を付与する。「ターン終了時まで、受けるダメージは0になる。」",
             "effects": [
                 {
                     "condition": {
@@ -3750,12 +3808,13 @@
         {
             "cost": 2,
             "name": "手札入れ替え",
-            "flavorText": "あなたは手札をすべて捨てる。あなたは捨てた枚数カードをドローする。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたは手札をすべて捨てる。あなたは捨てた枚数カードをドローする。",
             "effects": [
                 {
                     "condition": {
@@ -3836,12 +3895,13 @@
         {
             "cost": 2,
             "name": "袋叩き",
-            "flavorText": "相手の場にあるクリーチャー1体を選択する。それにXダメージを与える。X=あなたの場にあるクリーチャーの数",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "相手の場にあるクリーチャー1体を選択する。それにXダメージを与える。X=あなたの場にあるクリーチャーの数",
             "effects": [
                 {
                     "condition": {
@@ -3915,12 +3975,13 @@
         {
             "cost": 2,
             "name": "ランプ",
-            "flavorText": "あなたのMPの最大値を1増加し、利用可能なMPを1減少する。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたのMPの最大値を1増加し、利用可能なMPを1減少する。",
             "effects": [
                 {
                     "condition": {
@@ -3965,12 +4026,13 @@
         {
             "cost": 2,
             "name": "手札へ戻す",
-            "flavorText": "場のカード1枚を選択する。選択したカードを持ち主の手札に移動する。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "場のカード1枚を選択する。選択したカードを持ち主の手札に移動する。",
             "effects": [
                 {
                     "condition": {
@@ -4010,12 +4072,13 @@
         {
             "cost": 2,
             "name": "デッキへ戻す",
-            "flavorText": "場のカード1枚を選択する。選択したカードを持ち主のデッキのランダムな位置に移動する。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "場のカード1枚を選択する。選択したカードを持ち主のデッキのランダムな位置に移動する。",
             "effects": [
                 {
                     "condition": {
@@ -4059,12 +4122,13 @@
         {
             "cost": 3,
             "name": "二重複製",
-            "flavorText": "相手の場のカードを一枚選択する。そのカードと同名のカードを二枚あなたの手札に加える。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "相手の場のカードを一枚選択する。そのカードと同名のカードを二枚あなたの手札に加える。",
             "effects": [
                 {
                     "condition": {
@@ -4105,12 +4169,13 @@
         {
             "cost": 3,
             "name": "一斉射撃",
-            "flavorText": "相手プレイヤーか、相手の場にあるクリーチャーすべてに、1ダメージを与える。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "相手プレイヤーか、相手の場にあるクリーチャーすべてに、1ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -4159,12 +4224,13 @@
         {
             "cost": 3,
             "name": "探索",
-            "flavorText": "あなたのデッキからランダムなカード1枚を、あなたの手札に加える。そのカードのコストを半分にする。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたのデッキからランダムなカード1枚を、あなたの手札に加える。そのカードのコストを半分にする。",
             "effects": [
                 {
                     "condition": {
@@ -4235,12 +4301,13 @@
         {
             "cost": 4,
             "name": "ゴブリン封印の壺",
-            "flavorText": "あなたの場か、相手の場にあるクリーチャーのうち、名前に「ゴブリン」を含むカードすべてのパワーを1にし、「封印」状態にする。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたの場か、相手の場にあるクリーチャーのうち、名前に「ゴブリン」を含むカードすべてのパワーを1にし、「封印」状態にする。",
             "effects": [
                 {
                     "condition": {
@@ -4296,12 +4363,13 @@
         {
             "cost": 5,
             "name": "ウイルス",
-            "flavorText": "相手の場と相手の手札にあるパワー4以上のクリーチャーをすべて墓地に移動する。3回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "相手の場と相手の手札にあるパワー4以上のクリーチャーをすべて墓地に移動する。3回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
             "effects": [
                 {
                     "condition": {
@@ -4386,12 +4454,13 @@
         {
             "cost": 1,
             "name": "ぼろの盾",
-            "flavorText": "あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
+            "flavorText": "",
             "isToken": false,
             "type": "artifact",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
             "effects": [
                 {
                     "condition": {
@@ -4453,12 +4522,13 @@
         {
             "cost": 1,
             "name": "ぼろの壁",
-            "flavorText": "あなたか、あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
+            "flavorText": "",
             "isToken": false,
             "type": "artifact",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたか、あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
             "effects": [
                 {
                     "condition": {
@@ -4524,12 +4594,13 @@
         {
             "cost": 4,
             "name": "呪いのゴブリン像",
-            "flavorText": "あなたのターン終了時、もしあなたの墓地が30枚以上なら、相手プレイヤー、相手の場にあるクリーチャーすべてに6ダメージを与える。",
+            "flavorText": "",
             "isToken": false,
             "type": "artifact",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたのターン終了時、もしあなたの墓地が30枚以上なら、相手プレイヤー、相手の場にあるクリーチャーすべてに6ダメージを与える。",
             "effects": [
                 {
                     "condition": {
@@ -4612,12 +4683,13 @@
         {
             "cost": 4,
             "name": "癒やしの像",
-            "flavorText": "あなたの場にあるクリーチャーすべては\u002B0/\u002B1 の修整を受ける。あなたが場にクリーチャーを出したとき、それは\u002B0/\u002B1 の修整を受ける。",
+            "flavorText": "",
             "isToken": false,
             "type": "artifact",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたの場にあるクリーチャーすべては\u002B0/\u002B1 の修整を受ける。あなたが場にクリーチャーを出したとき、それは\u002B0/\u002B1 の修整を受ける。",
             "effects": [
                 {
                     "condition": {
@@ -4712,12 +4784,13 @@
         {
             "cost": 1,
             "name": "勝利への道",
-            "flavorText": "あなたのターン開始時に、場にあるこのカードを墓地に移動する。場にあるこのカードが墓地に移動されたとき、「勝利の像」1枚をあなたの場に追加する。",
+            "flavorText": "",
             "isToken": false,
             "type": "artifact",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたのターン開始時に、場にあるこのカードを墓地に移動する。場にあるこのカードが墓地に移動されたとき、「勝利の像」1枚をあなたの場に追加する。",
             "effects": [
                 {
                     "condition": {
@@ -4797,12 +4870,13 @@
         {
             "cost": 10,
             "name": "勝利の像",
-            "flavorText": "あなたのターン開始時に、このカードがあなたの場にあるとき、あなたはゲームに勝利する。",
+            "flavorText": "",
             "isToken": true,
             "type": "artifact",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "あなたのターン開始時に、このカードがあなたの場にあるとき、あなたはゲームに勝利する。",
             "effects": [
                 {
                     "condition": {
@@ -4837,12 +4911,13 @@
         {
             "cost": 1,
             "name": "魔力吸収体",
-            "flavorText": "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが置かれるたびに、このカードを\u002B1/\u002B0する。このカードから「魔法」カウンターが取り除かれるたびに、このカードを-1/\u002B0する。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが置かれるたびに、このカードを\u002B1/\u002B0する。このカードから「魔法」カウンターが取り除かれるたびに、このカードを-1/\u002B0する。",
             "effects": [
                 {
                     "condition": {
@@ -4986,12 +5061,13 @@
         {
             "cost": 5,
             "name": "魔法生物",
-            "flavorText": "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 3,
             "toughness": 4,
             "abilities": [],
+            "effectText": "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。",
             "effects": [
                 {
                     "condition": {
@@ -5090,12 +5166,13 @@
         {
             "cost": 2,
             "name": "初級魔導士",
-            "flavorText": "このカードが場に出たとき、あなたの場のカード1枚を選択する。そのカードに「魔法」カウンターを2つ置く。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 2,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、あなたの場のカード1枚を選択する。そのカードに「魔法」カウンターを2つ置く。",
             "effects": [
                 {
                     "condition": {
@@ -5139,12 +5216,13 @@
         {
             "cost": 9,
             "name": "偉大な魔導士",
-            "flavorText": "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードを場に出したとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札すべてに「魔法」カウンターを5個おく。",
+            "flavorText": "",
             "isToken": false,
             "type": "creature",
             "power": 5,
             "toughness": 5,
             "abilities": [],
+            "effectText": "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードを場に出したとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札すべてに「魔法」カウンターを5つ置く。",
             "effects": [
                 {
                     "condition": {
@@ -5313,12 +5391,13 @@
         {
             "cost": 3,
             "name": "大魔法",
-            "flavorText": "このカードが場に出たとき、あなたの場からすべての「魔法」カウンターを取り除く。その後、相手にXのダメージを与える。X=取り除いた「魔法」カウンターの数\u002B1",
+            "flavorText": "",
             "isToken": false,
             "type": "sorcery",
             "power": 0,
             "toughness": 0,
             "abilities": [],
+            "effectText": "このカードが場に出たとき、あなたの場からすべての「魔法」カウンターを取り除く。その後、相手にXのダメージを与える。X=取り除いた「魔法」カウンターの数\u002B1",
             "effects": [
                 {
                     "condition": {

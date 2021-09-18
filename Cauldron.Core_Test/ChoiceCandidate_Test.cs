@@ -409,7 +409,7 @@ namespace Cauldron.Core_Test
                         )
                     }));
             var testCardDef = SampleCards.Artifact(0, "test", "test", false,
-                new[]
+                effects: new[]
                 {
                     // ターン開始時、カレントプレイヤーに1ダメージ
                     new CardEffect(

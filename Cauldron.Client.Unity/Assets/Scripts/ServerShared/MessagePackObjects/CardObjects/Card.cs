@@ -48,9 +48,11 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public List<CreatureAbility> Abilities { get; set; }
 
+        public string EffectText { get; set; }
+
         public List<CardEffect> Effects { get; set; }
 
-        private Dictionary<string, int> counter = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> counter = new Dictionary<string, int>();
 
         /// <summary>
         /// 攻撃可能となるまでのターン数
@@ -89,6 +91,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.BaseToughness = cardDef.Toughness;
 
             this.Abilities = new List<CreatureAbility>(cardDef.Abilities);
+            this.EffectText = cardDef.EffectText;
             this.Effects = cardDef.Effects.ToList();
             this.NumTurnsToCanAttack = cardDef.NumTurnsToCanAttack.Value;
             this.NumAttacksLimitInTurn = cardDef.NumAttacksLimitInTurn.Value;

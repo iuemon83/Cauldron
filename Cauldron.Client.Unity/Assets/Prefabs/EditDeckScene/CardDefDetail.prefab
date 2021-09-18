@@ -861,8 +861,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardNameText: {fileID: 7261756754201570798}
   flavorText: {fileID: 1057061069513750875}
-  powerSpace: {fileID: 7579831428991528378}
-  toughnessSpace: {fileID: 7579831427598922017}
+  effectText: {fileID: 1057061069513750875}
+  powerSpace: {fileID: 7579831428991528260}
+  toughnessSpace: {fileID: 7579831427598922019}
   costText: {fileID: 6179473179687275117}
   powerText: {fileID: 2304903427121762305}
   toughnessText: {fileID: 753331234712299186}

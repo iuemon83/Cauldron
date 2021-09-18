@@ -2,18 +2,26 @@ using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardDetailController : MonoBehaviour
 {
-    public TextMeshProUGUI CardNameText;
-    public TextMeshProUGUI FlavorText;
+    [SerializeField]
+    public TextMeshProUGUI cardNameText;
+    [SerializeField]
+    public TextMeshProUGUI effectText;
 
-    public GameObject PowerSpace;
-    public GameObject ToughnessSpace;
+    [SerializeField]
+    public Image powerSpace;
+    [SerializeField]
+    public Image toughnessSpace;
 
-    public TextMeshProUGUI CostText;
-    public TextMeshProUGUI PowerText;
-    public TextMeshProUGUI ToughnessText;
+    [SerializeField]
+    public TextMeshProUGUI costText;
+    [SerializeField]
+    public TextMeshProUGUI powerText;
+    [SerializeField]
+    public TextMeshProUGUI toughnessText;
 
     protected Card card;
     protected CardDef cardDef;
@@ -23,43 +31,43 @@ public class CardDetailController : MonoBehaviour
     {
         if (this.card != null)
         {
-            this.CardNameText.text = this.card.Name;
-            this.FlavorText.text = this.card.FlavorText;
-            this.CostText.text = this.card.Cost.ToString();
+            this.cardNameText.text = this.card.Name;
+            this.effectText.text = this.card.EffectText;
+            this.costText.text = this.card.Cost.ToString();
 
             switch (this.card.Type)
             {
                 case CardType.Creature:
-                    this.PowerText.text = this.card.Power.ToString();
-                    this.ToughnessText.text = this.card.Toughness.ToString();
-                    this.PowerSpace.SetActive(true);
-                    this.ToughnessSpace.SetActive(true);
+                    this.powerText.text = this.card.Power.ToString();
+                    this.toughnessText.text = this.card.Toughness.ToString();
+                    this.powerSpace.gameObject.SetActive(true);
+                    this.toughnessSpace.gameObject.SetActive(true);
                     break;
 
                 default:
-                    this.PowerSpace.SetActive(false);
-                    this.ToughnessSpace.SetActive(false);
+                    this.powerSpace.gameObject.SetActive(false);
+                    this.toughnessSpace.gameObject.SetActive(false);
                     break;
             }
         }
         else if (this.cardDef != null)
         {
-            this.CardNameText.text = this.cardDef.Name;
-            this.FlavorText.text = this.cardDef.FlavorText;
-            this.CostText.text = this.cardDef.Cost.ToString();
+            this.cardNameText.text = this.cardDef.Name;
+            this.effectText.text = this.cardDef.EffectText;
+            this.costText.text = this.cardDef.Cost.ToString();
 
             switch (this.cardDef.Type)
             {
                 case CardType.Creature:
-                    this.PowerText.text = this.cardDef.Power.ToString();
-                    this.ToughnessText.text = this.cardDef.Toughness.ToString();
-                    this.PowerSpace.SetActive(true);
-                    this.ToughnessSpace.SetActive(true);
+                    this.powerText.text = this.cardDef.Power.ToString();
+                    this.toughnessText.text = this.cardDef.Toughness.ToString();
+                    this.powerSpace.gameObject.SetActive(true);
+                    this.toughnessSpace.gameObject.SetActive(true);
                     break;
 
                 default:
-                    this.PowerSpace.SetActive(false);
-                    this.ToughnessSpace.SetActive(false);
+                    this.powerSpace.gameObject.SetActive(false);
+                    this.toughnessSpace.gameObject.SetActive(false);
                     break;
             }
         }

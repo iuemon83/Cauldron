@@ -2,6 +2,7 @@ using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardDefDetailController : MonoBehaviour
 {
@@ -9,11 +10,13 @@ public class CardDefDetailController : MonoBehaviour
     private TextMeshProUGUI cardNameText;
     [SerializeField]
     private TextMeshProUGUI flavorText;
+    [SerializeField]
+    private TextMeshProUGUI effectText;
 
     [SerializeField]
-    private GameObject powerSpace;
+    private Image powerSpace;
     [SerializeField]
-    private GameObject toughnessSpace;
+    private Image toughnessSpace;
 
     [SerializeField]
     private TextMeshProUGUI costText;
@@ -33,7 +36,7 @@ public class CardDefDetailController : MonoBehaviour
         }
 
         this.cardNameText.text = this.source.Name;
-        this.flavorText.text = this.source.FlavorText;
+        this.effectText.text = this.source.EffectText;
         this.costText.text = this.source.Cost.ToString();
 
         switch (this.source.Type)
@@ -41,13 +44,13 @@ public class CardDefDetailController : MonoBehaviour
             case CardType.Creature:
                 this.powerText.text = this.source.Power.ToString();
                 this.toughnessText.text = this.source.Toughness.ToString();
-                this.powerSpace.SetActive(true);
-                this.toughnessSpace.SetActive(true);
+                this.powerSpace.gameObject.SetActive(true);
+                this.toughnessSpace.gameObject.SetActive(true);
                 break;
 
             default:
-                this.powerSpace.SetActive(false);
-                this.toughnessSpace.SetActive(false);
+                this.powerSpace.gameObject.SetActive(false);
+                this.toughnessSpace.gameObject.SetActive(false);
                 break;
         }
     }
