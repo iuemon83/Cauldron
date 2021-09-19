@@ -1,29 +1,28 @@
 using Assets.Scripts;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ListDeckSceneController : MonoBehaviour
 {
     [SerializeField]
-    private Canvas canvas;
+    private Canvas canvas = default;
 
     [SerializeField]
-    private GameObject deckListViewNodePrefab;
+    private GameObject deckListViewNodePrefab = default;
 
     [SerializeField]
-    private ConfirmDialogController confirmDialogController;
+    private ConfirmDialogController confirmDialogController = default;
 
     [SerializeField]
-    private GameObject deckListView;
+    private GameObject deckListView = default;
     [SerializeField]
-    private Button newButton;
+    private Button newButton = default;
     [SerializeField]
-    private Button editButton;
+    private Button editButton = default;
     [SerializeField]
-    private Button deleteButton;
+    private Button deleteButton = default;
     [SerializeField]
-    private Button closeButton;
+    private Button closeButton = default;
 
     private Transform deckListViewContent;
     private ListDeckScene_ListDeckNodeController selectedNode;

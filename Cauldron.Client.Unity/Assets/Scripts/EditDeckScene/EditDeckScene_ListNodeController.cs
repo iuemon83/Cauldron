@@ -8,13 +8,13 @@ using UnityEngine.EventSystems;
 public class EditDeckScene_ListNodeController : MonoBehaviour, IPointerEnterHandler
 {
     [SerializeField]
-    private TextMeshProUGUI cardNameText;
+    private TextMeshProUGUI cardNameText = default;
     [SerializeField]
-    private TextMeshProUGUI cardStatsText;
+    private TextMeshProUGUI cardStatsText = default;
     [SerializeField]
-    private TextMeshProUGUI currentDeckCountText;
+    private TextMeshProUGUI currentDeckCountText = default;
     [SerializeField]
-    private TextMeshProUGUI limitDeckCountText;
+    private TextMeshProUGUI limitDeckCountText = default;
 
     private Action AddToDeckAction { get; set; }
     private Action RemoveFromDeckAction { get; set; }

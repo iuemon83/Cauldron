@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class HandCardController : CardController, IPointerClickHandler, IPointerEnterHandler
 {
     [SerializeField]
-    private Image destroyIcon;
+    private Image destroyIcon = default;
 
     public async void OnPointerClick(PointerEventData eventData)
     {

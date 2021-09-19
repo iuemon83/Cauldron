@@ -19,40 +19,40 @@ public class BattleSceneController : MonoBehaviour
     public PlayerId YouId => this.youPlayerController.PlayerId;
 
     [SerializeField]
-    private HandCardController handCardPrefab;
+    private HandCardController handCardPrefab = default;
     [SerializeField]
-    private FieldCardController fieldCardPrefab;
+    private FieldCardController fieldCardPrefab = default;
 
     [SerializeField]
-    private Canvas canvas;
+    private Canvas canvas = default;
     [SerializeField]
-    private ConfirmDialogController confirmDialogController;
+    private ConfirmDialogController confirmDialogController = default;
     [SerializeField]
-    private ChoiceDialogController choiceDialogController;
+    private ChoiceDialogController choiceDialogController = default;
 
     [SerializeField]
-    private GameObject[] youHandSpaces;
+    private GameObject[] youHandSpaces = default;
     [SerializeField]
-    private GameObject[] youFieldSpaces;
+    private GameObject[] youFieldSpaces = default;
 
     [SerializeField]
-    private PlayerController youPlayerController;
+    private PlayerController youPlayerController = default;
 
     [SerializeField]
-    private GameObject[] opponentFieldSpaces;
+    private GameObject[] opponentFieldSpaces = default;
 
     [SerializeField]
-    private PlayerController opponentPlayerController;
+    private PlayerController opponentPlayerController = default;
 
     [SerializeField]
-    private CardDetailController cardDetailController;
+    private CardDetailController cardDetailController = default;
 
     [SerializeField]
-    private Button choiceCardButton;
+    private Button choiceCardButton = default;
     [SerializeField]
-    private TextMeshProUGUI numPicksText;
+    private TextMeshProUGUI numPicksText = default;
     [SerializeField]
-    private TextMeshProUGUI numPicksLimitText;
+    private TextMeshProUGUI numPicksLimitText = default;
 
     private readonly List<PlayerId> pickedPlayerIdList = new List<PlayerId>();
     private readonly List<CardId> pickedCardIdList = new List<CardId>();

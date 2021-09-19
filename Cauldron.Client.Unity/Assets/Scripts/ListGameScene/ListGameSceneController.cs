@@ -1,6 +1,5 @@
 using Assets.Scripts;
 using Assets.Scripts.ServerShared.MessagePackObjects;
-using Cysharp.Threading.Tasks;
 using Grpc.Core;
 using System;
 using UniRx;
@@ -9,15 +8,15 @@ using UnityEngine;
 public class ListGameSceneController : MonoBehaviour
 {
     [SerializeField]
-    private GameObject GameList;
+    private GameObject GameList = default;
     [SerializeField]
-    private GameObject GameListNodePrefab;
+    private GameObject GameListNodePrefab = default;
     [SerializeField]
-    private ListDeckDialogController SelectDeckDialog;
+    private ListDeckDialogController SelectDeckDialog = default;
     [SerializeField]
-    private Canvas canvas;
+    private Canvas canvas = default;
     [SerializeField]
-    private ConfirmDialogController confirmDialogController;
+    private ConfirmDialogController confirmDialogController = default;
 
     private Transform listContent;
 

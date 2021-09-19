@@ -9,31 +9,31 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
-    private TextMeshProUGUI firstText;
+    private TextMeshProUGUI firstText = default;
     [SerializeField]
-    private TextMeshProUGUI nameText;
+    private TextMeshProUGUI nameText = default;
     [SerializeField]
-    private TextMeshProUGUI statusText;
+    private TextMeshProUGUI statusText = default;
     [SerializeField]
-    private TextMeshProUGUI numDecksText;
+    private TextMeshProUGUI numDecksText = default;
     [SerializeField]
-    private TextMeshProUGUI numCemeteriesText;
+    private TextMeshProUGUI numCemeteriesText = default;
     [SerializeField]
-    private TextMeshProUGUI numHandsText;
+    private TextMeshProUGUI numHandsText = default;
     [SerializeField]
-    private TextMeshProUGUI numExcludedsText;
+    private TextMeshProUGUI numExcludedsText = default;
     [SerializeField]
-    private TextMeshProUGUI damageText;
+    private TextMeshProUGUI damageText = default;
     [SerializeField]
-    private TextMeshProUGUI healText;
+    private TextMeshProUGUI healText = default;
     [SerializeField]
-    private GameObject attackTargetIcon;
+    private GameObject attackTargetIcon = default;
     [SerializeField]
-    private GameObject pickCandidateIcon;
+    private GameObject pickCandidateIcon = default;
     [SerializeField]
-    private GameObject pickedIcon;
+    private GameObject pickedIcon = default;
     [SerializeField]
-    private Image outline;
+    private Image outline = default;
 
     public PlayerId PlayerId { get; private set; }
 

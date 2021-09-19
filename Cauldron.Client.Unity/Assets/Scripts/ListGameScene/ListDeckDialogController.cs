@@ -7,16 +7,16 @@ using UnityEngine.UI;
 public class ListDeckDialogController : MonoBehaviour
 {
     [SerializeField]
-    private GameObject deckListView;
+    private GameObject deckListView = default;
 
     [SerializeField]
-    private GameObject listNodePrefab;
+    private GameObject listNodePrefab = default;
 
     [SerializeField]
-    private TextMeshProUGUI titleText;
+    private TextMeshProUGUI titleText = default;
 
     [SerializeField]
-    private Button okButton;
+    private Button okButton = default;
 
     private Transform deckListContent;
     private ListDeckNodeController selectedNode;

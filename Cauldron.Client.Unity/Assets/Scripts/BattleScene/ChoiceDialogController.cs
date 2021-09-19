@@ -9,19 +9,19 @@ using UnityEngine.UI;
 public class ChoiceDialogController : MonoBehaviour
 {
     [SerializeField]
-    private GameObject CandidatesView;
+    private GameObject CandidatesView = default;
     [SerializeField]
-    private ChoiceDialog_ListNodeController listNodePrefab;
+    private ChoiceDialog_ListNodeController listNodePrefab = default;
     [SerializeField]
-    private CardDetailController cardDetailController;
+    private CardDetailController cardDetailController = default;
     [SerializeField]
-    private Button okButton;
+    private Button okButton = default;
     [SerializeField]
-    private TextMeshProUGUI countText;
+    private TextMeshProUGUI countText = default;
 
     private Transform cardPoolListContent;
 
-    private List<ChoiceDialog_ListNodeController> nodeList = new List<ChoiceDialog_ListNodeController>();
+    private readonly List<ChoiceDialog_ListNodeController> nodeList = new List<ChoiceDialog_ListNodeController>();
 
     private Action<ChoiceAnswer> okAction;
     private int choiceCount => this.nodeList.Sum(c => c.CurrentCount);

@@ -9,15 +9,15 @@ using UnityEngine.UI;
 public class ChoiceDialog_ListNodeController : MonoBehaviour, IPointerEnterHandler
 {
     [SerializeField]
-    private TextMeshProUGUI cardNameText;
+    private TextMeshProUGUI cardNameText = default;
     [SerializeField]
-    private TextMeshProUGUI currentCountText;
+    private TextMeshProUGUI currentCountText = default;
     [SerializeField]
-    private TextMeshProUGUI limitCountText;
+    private TextMeshProUGUI limitCountText = default;
     [SerializeField]
-    private Image controllerIconImage;
+    private Image controllerIconImage = default;
     [SerializeField]
-    private Image zoneIconImage;
+    private Image zoneIconImage = default;
 
     private Action addToDeckAction;
     private Action removeFromDeckAction;

@@ -19,35 +19,35 @@ public class CardController : MonoBehaviour
     }
 
     [SerializeField]
-    protected TextMeshProUGUI CardNameText;
+    protected TextMeshProUGUI CardNameText = default;
 
     [SerializeField]
-    protected GameObject PowerSpace;
+    protected GameObject PowerSpace = default;
     [SerializeField]
-    protected GameObject ToughnessSpace;
+    protected GameObject ToughnessSpace = default;
 
     [SerializeField]
-    protected TextMeshProUGUI CostText;
+    protected TextMeshProUGUI CostText = default;
     [SerializeField]
-    protected TextMeshProUGUI PowerText;
+    protected TextMeshProUGUI PowerText = default;
     [SerializeField]
-    protected TextMeshProUGUI ToughnessText;
+    protected TextMeshProUGUI ToughnessText = default;
 
     [SerializeField]
-    protected Image CardImage;
+    protected Image CardImage = default;
 
     [SerializeField]
-    protected GameObject PickCandidateIcon;
+    protected GameObject PickCandidateIcon = default;
     [SerializeField]
-    protected GameObject PickedIcon;
+    protected GameObject PickedIcon = default;
     [SerializeField]
-    private GameObject abilityView;
+    private GameObject abilityView = default;
     [SerializeField]
-    private Image abilityIconImage;
+    private Image abilityIconImage = default;
     [SerializeField]
-    private Image bounceDeckIconImage;
+    private Image bounceDeckIconImage = default;
     [SerializeField]
-    private Image bounceHandIconImage;
+    private Image bounceHandIconImage = default;
 
     public CardId CardId => this.Card.Id;
 

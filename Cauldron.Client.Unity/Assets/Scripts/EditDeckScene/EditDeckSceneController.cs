@@ -11,17 +11,17 @@ using UnityEngine.UI;
 public class EditDeckSceneController : MonoBehaviour
 {
     [SerializeField]
-    private GameObject cardPoolList;
+    private GameObject cardPoolList = default;
     [SerializeField]
-    private GameObject deckList;
+    private GameObject deckList = default;
     [SerializeField]
-    private GameObject listNodePrefab;
+    private GameObject listNodePrefab = default;
     [SerializeField]
-    private InputField deckNameInputField;
+    private InputField deckNameInputField = default;
     [SerializeField]
-    private TextMeshProUGUI deckCountText;
+    private TextMeshProUGUI deckCountText = default;
     [SerializeField]
-    private CardDefDetailController cardDefDetailController;
+    private CardDefDetailController cardDefDetailController = default;
 
     public IDeck DeckToEdit { get; set; }
 

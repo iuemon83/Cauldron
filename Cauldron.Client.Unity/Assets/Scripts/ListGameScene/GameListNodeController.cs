@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameListNodeController : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI OwnerNameText;
+    private TextMeshProUGUI OwnerNameText = default;
 
     private Action onJoinButtonClickAction;
 

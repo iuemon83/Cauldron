@@ -8,15 +8,15 @@ using UnityEngine.UI;
 public class FieldCardController : CardController, IPointerClickHandler, IPointerEnterHandler
 {
     [SerializeField]
-    private GameObject selectedIcon;
+    private GameObject selectedIcon = default;
     [SerializeField]
-    private GameObject attackTargetIcon;
+    private GameObject attackTargetIcon = default;
     [SerializeField]
-    private TextMeshProUGUI damageText;
+    private TextMeshProUGUI damageText = default;
     [SerializeField]
-    private Image backgroundImage;
+    private Image backgroundImage = default;
     [SerializeField]
-    private Image destroyIcon;
+    private Image destroyIcon = default;
 
     public bool IsAttackTarget => this.attackTargetIcon.activeSelf;
 

@@ -8,10 +8,10 @@ using UnityEngine.UI;
 public class ListDeckNodeController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
-    private TextMeshProUGUI deckNameText;
+    private TextMeshProUGUI deckNameText = default;
 
     [SerializeField]
-    private Image backgroundImage;
+    private Image backgroundImage = default;
 
     public IDeck Source { get; private set; }
 

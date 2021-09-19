@@ -7,21 +7,21 @@ using UnityEngine.UI;
 public class CardDetailController : MonoBehaviour
 {
     [SerializeField]
-    public TextMeshProUGUI cardNameText;
+    public TextMeshProUGUI cardNameText = default;
     [SerializeField]
-    public TextMeshProUGUI effectText;
+    public TextMeshProUGUI effectText = default;
 
     [SerializeField]
-    public Image powerSpace;
+    public Image powerSpace = default;
     [SerializeField]
-    public Image toughnessSpace;
+    public Image toughnessSpace = default;
 
     [SerializeField]
-    public TextMeshProUGUI costText;
+    public TextMeshProUGUI costText = default;
     [SerializeField]
-    public TextMeshProUGUI powerText;
+    public TextMeshProUGUI powerText = default;
     [SerializeField]
-    public TextMeshProUGUI toughnessText;
+    public TextMeshProUGUI toughnessText = default;
 
     protected Card card;
     protected CardDef cardDef;
