@@ -34,7 +34,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Etb,
+                        new EffectCondition(),
                         new[]
                         {
                             new EffectAction(
@@ -113,7 +113,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Etb,
+                        new EffectCondition(),
                         new[]
                         {
                             new EffectAction(

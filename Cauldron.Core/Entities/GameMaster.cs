@@ -641,6 +641,9 @@ namespace Cauldron.Core.Entities
                     // 追加の場合はCardPool でくる
                     break;
 
+                case ZoneName.Temporary:
+                    break;
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -682,6 +685,9 @@ namespace Cauldron.Core.Entities
 
                     toPlayer.Hands.Add(card);
                     toIndex = toPlayer.Hands.Count - 1;
+                    break;
+
+                case ZoneName.Temporary:
                     break;
 
                 default:
@@ -866,17 +872,34 @@ namespace Cauldron.Core.Entities
 
             this.ActivePlayer.UseMp(playingCard.Cost);
 
-            await this.MoveCard(handCardId, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Field)));
+            switch (playingCard.Type)
+            {
+                case CardType.Sorcery:
+                    await this.MoveCard(handCardId, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Temporary)));
+                    break;
 
-            this.effectManager.RegisterEffectIfAnyZoneEffect(playingCard);
+                default:
+                    await this.MoveCard(handCardId, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Field)));
+                    break;
+            }
 
-            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnPlay, this, SourceCard: playingCard));
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnPlay?.Invoke(p.Id,
+                    this.CreateGameContext(p.Id),
+                    new PlayCardNotifyMessage(playingCard.OwnerId, playingCard.CardDefId));
+            }
+
+            var effectArgs = await this.effectManager.DoEffectOnPlay(playingCard,
+                new EffectEventArgs(GameEvent.OnPlay, this, SourceCard: playingCard));
+
+            this.effectManager.RegisterEffectIfNeeded(playingCard);
+            await this.effectManager.DoEffect(effectArgs);
 
             switch (playingCard.Type)
             {
                 case CardType.Sorcery:
-                    await this.MoveCard(handCardId, new(new(playerId, ZoneName.Field), new(playerId, ZoneName.Cemetery)));
-
+                    await this.MoveCard(handCardId, new(new(playerId, ZoneName.Temporary), new(playerId, ZoneName.Cemetery)));
                     break;
 
                 default:

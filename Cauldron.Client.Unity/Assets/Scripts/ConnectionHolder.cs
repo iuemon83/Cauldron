@@ -1,5 +1,9 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Cauldron.Shared;
+using Cauldron.Shared.MessagePackObjects;
+using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -12,7 +16,7 @@ namespace Assets.Scripts
             var holder = Find();
             if (holder == null)
             {
-                var gameObject = new GameObject("ConnectionHolder");
+                var gameObject = new GameObject(nameof(ConnectionHolder));
                 DontDestroyOnLoad(gameObject);
 
                 // 接続
@@ -24,12 +28,26 @@ namespace Assets.Scripts
             return holder;
         }
 
-        public static ConnectionHolder Find() => GameObject.Find("ConnectionHolder")?.GetComponent<ConnectionHolder>();
+        public static ConnectionHolder Find() => GameObject.Find(nameof(ConnectionHolder))?.GetComponent<ConnectionHolder>();
+
+        public IReadOnlyDictionary<CardDefId, CardDef> CardPool { get; private set; }
+            = new Dictionary<CardDefId, CardDef>();
 
         public CauldronHubReceiver Receiver { get; } = new CauldronHubReceiver();
 
         private Grpc.Core.Channel channel;
         public Client Client { get; private set; }
+
+        public async UniTask LoadCardPool()
+        {
+            if (this.Client == null)
+            {
+                throw new InvalidOperationException("カードプールの読み込みに失敗");
+            }
+
+            var cardpool = await this.Client.GetCardPool();
+            this.CardPool = cardpool.ToDictionary(c => c.Id);
+        }
 
         private async UniTask Connect(string serverHost, string playerName)
         {

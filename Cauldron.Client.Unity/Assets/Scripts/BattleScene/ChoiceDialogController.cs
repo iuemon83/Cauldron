@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ChoiceDialogController : MonoBehaviour
 {
@@ -15,8 +14,6 @@ public class ChoiceDialogController : MonoBehaviour
     [SerializeField]
     private CardDetailController cardDetailController = default;
     [SerializeField]
-    private Button okButton = default;
-    [SerializeField]
     private TextMeshProUGUI countText = default;
 
     private Transform cardPoolListContent;
@@ -24,7 +21,7 @@ public class ChoiceDialogController : MonoBehaviour
     private readonly List<ChoiceDialog_ListNodeController> nodeList = new List<ChoiceDialog_ListNodeController>();
 
     private Action<ChoiceAnswer> okAction;
-    private int choiceCount => this.nodeList.Sum(c => c.CurrentCount);
+    private int ChoiceCount => this.nodeList.Sum(c => c.CurrentCount);
     private AskMessage askMessage;
 
     // Start is called before the first frame update
@@ -71,7 +68,7 @@ public class ChoiceDialogController : MonoBehaviour
 
     private void Choice(ChoiceDialog_ListNodeController controller)
     {
-        if (this.choiceCount == this.askMessage.NumPicks)
+        if (this.ChoiceCount == this.askMessage.NumPicks)
         {
             return;
         }
@@ -82,7 +79,7 @@ public class ChoiceDialogController : MonoBehaviour
 
     private void UnChoice(ChoiceDialog_ListNodeController controller)
     {
-        if (this.choiceCount == 0)
+        if (this.ChoiceCount == 0)
         {
             return;
         }
@@ -119,9 +116,9 @@ public class ChoiceDialogController : MonoBehaviour
 
     private void UpdateDeckTotalCountText()
     {
-        this.countText.text = $"{this.choiceCount} / {this.askMessage.NumPicks}";
+        this.countText.text = $"{this.ChoiceCount} / {this.askMessage.NumPicks}";
 
-        this.countText.color = this.choiceCount == this.askMessage.NumPicks
+        this.countText.color = this.ChoiceCount == this.askMessage.NumPicks
             ? Color.red
             : Color.white;
     }

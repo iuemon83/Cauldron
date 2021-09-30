@@ -9,8 +9,6 @@ public class CardDefDetailController : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI cardNameText = default;
     [SerializeField]
-    private TextMeshProUGUI flavorText = default;
-    [SerializeField]
     private TextMeshProUGUI effectText = default;
 
     [SerializeField]

@@ -16,13 +16,9 @@ public class ListDeckSceneController : MonoBehaviour
     [SerializeField]
     private GameObject deckListView = default;
     [SerializeField]
-    private Button newButton = default;
-    [SerializeField]
     private Button editButton = default;
     [SerializeField]
     private Button deleteButton = default;
-    [SerializeField]
-    private Button closeButton = default;
 
     private Transform deckListViewContent;
     private ListDeckScene_ListDeckNodeController selectedNode;

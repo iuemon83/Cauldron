@@ -264,7 +264,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        SampleCards.Etb,
+                        new EffectCondition(),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
@@ -554,7 +554,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        SampleCards.Etb,
+                        new EffectCondition(),
                         new[]
                         {
                             new EffectAction(

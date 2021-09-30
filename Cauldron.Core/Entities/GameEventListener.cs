@@ -6,6 +6,7 @@ namespace Cauldron.Core.Entities
 {
     public record GameEventListener(
         Action<PlayerId, GameContext> OnStartTurn,
+        Action<PlayerId, GameContext, PlayCardNotifyMessage> OnPlay,
         Action<PlayerId, GameContext, AddCardNotifyMessage> OnAddCard,
         Action<PlayerId, GameContext, ExcludeCardNotifyMessage> OnExcludeCard,
         Action<PlayerId, GameContext, MoveCardNotifyMessage> OnMoveCard,

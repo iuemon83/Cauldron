@@ -8,6 +8,7 @@
         Hand,
         Deck,
         Cemetery,
-        Excluded
+        Excluded,
+        Temporary
     }
 }

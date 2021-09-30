@@ -475,6 +475,51 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task MagicShieldGoblin_©•ª‚ª”j‰ó‚³‚ê‚½ê‡()
+        {
+            var testCardDef = SampleCards.MagicShieldGoblin;
+            testCardDef.Cost = 0;
+            testCardDef.Toughness = 1;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+            goblinDef.Power = 2;
+            goblinDef.Toughness = 5;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, });
+
+            var p1TestCard = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                return await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+            });
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var (_, p) = g.playerRepository.TryGet(pid);
+                var op = g.GetOpponent(pid);
+
+                // UŒ‚‚³‚ê‚Ä‚àA©•ª‚ª”j‰ó‚³‚ê‚½ê‡‚Í‘Šè‚ÍèD‚É–ß‚ç‚È‚¢
+                var p2Goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+
+                var beforpHandsIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
+
+                await TestUtil.AssertGameAction(() => g.AttackToCreature(pid, p2Goblin.Id, p1TestCard.Id));
+
+                var afterHandsIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
+                var diffHandsIdList = afterHandsIdList
+                    .Except(beforpHandsIdList)
+                    .ToArray();
+
+                // ”j‰ó‚³‚ê•æ’n‚És‚­
+                Assert.Empty(op.Field.AllCards);
+                Assert.Single(op.Cemetery.AllCards);
+
+                // UŒ‚‘¤‚ÍèD‚É‚Í–ß‚ç‚È‚¢
+                Assert.Empty(diffHandsIdList);
+            });
+        }
+
+        [Fact]
         public async Task SuperMagicShieldGoblin()
         {
             var testCardDef = SampleCards.SuperMagicShieldGoblin;

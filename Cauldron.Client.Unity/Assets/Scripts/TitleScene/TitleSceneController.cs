@@ -8,13 +8,13 @@ using UnityEngine.UI;
 public class TitleSceneController : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI errorMessageText;
+    private TextMeshProUGUI errorMessageText = default;
     [SerializeField]
-    private InputField ipOrHostNameText;
+    private InputField ipOrHostNameText = default;
     [SerializeField]
-    private InputField playerNameText;
+    private InputField playerNameText = default;
     [SerializeField]
-    private Button startButton;
+    private Button startButton = default;
 
     private Text startButtonText;
 
@@ -59,7 +59,8 @@ public class TitleSceneController : MonoBehaviour
 
         try
         {
-            await ConnectionHolder.Create(this.ipOrHostNameText.text, this.playerNameText.text);
+            var holder = await ConnectionHolder.Create(this.ipOrHostNameText.text, this.playerNameText.text);
+            await holder.LoadCardPool();
         }
         catch (Exception e)
         {

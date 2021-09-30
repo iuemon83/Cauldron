@@ -30,5 +30,8 @@ namespace Cauldron.Shared
         OpponentCemetery,
         [DisplayText("持ち主の墓地")]
         OwnerCemetery,
+
+        [DisplayText("一時領域")]
+        Temporary,
     }
 }

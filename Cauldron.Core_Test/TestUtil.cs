@@ -37,6 +37,7 @@ namespace Cauldron.Core_Test
 
         public static GameEventListener GameEventListener(
             Action<PlayerId, GameContext> OnStartTurn = null,
+            Action<PlayerId, GameContext, PlayCardNotifyMessage> OnPlayCard = null,
             Action<PlayerId, GameContext, AddCardNotifyMessage> OnAddCard = null,
             Action<PlayerId, GameContext, ExcludeCardNotifyMessage> OnExcludeCard = null,
             Action<PlayerId, GameContext, MoveCardNotifyMessage> OnMoveCard = null,
@@ -48,7 +49,7 @@ namespace Cauldron.Core_Test
             Action<PlayerId, GameContext> OnEndGame = null,
             Func<PlayerId, ChoiceCandidates, int, ValueTask<ChoiceAnswer>> AskCardAction = null
             ) => new(
-                OnStartTurn, OnAddCard, OnExcludeCard, OnMoveCard, OnModifyCard, OnModifyPlayer,
+                OnStartTurn, OnPlayCard, OnAddCard, OnExcludeCard, OnMoveCard, OnModifyCard, OnModifyPlayer,
                 OnBattle, OnDamage, OnModityCounter, OnEndGame, AskCardAction
                 );
 

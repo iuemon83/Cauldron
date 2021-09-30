@@ -161,6 +161,11 @@ namespace Cauldron.Server.Services
                         this.Broadcast(this.room).OnStartTurn(gameContext, playerId);
                         this._logger.LogInformation($"OnStartTurn: {playerId}");
                     },
+                    OnPlay: (playerId, gameContext, message) =>
+                    {
+                        this.BroadcastTo(this.room, playerId.Value).OnPlayCard(gameContext, message);
+                        this._logger.LogInformation($"OnPlayCard: {playerId}");
+                    },
                     OnAddCard: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnAddCard(gameContext, message);

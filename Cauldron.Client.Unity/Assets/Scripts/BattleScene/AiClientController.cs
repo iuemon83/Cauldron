@@ -52,7 +52,11 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     {
     }
 
-    void ICauldronHubReceiver.OnAddCard(GameContext gameContext, AddCardNotifyMessage addCardNotifyMessage)
+    void ICauldronHubReceiver.OnPlayCard(GameContext gameContext, PlayCardNotifyMessage message)
+    {
+    }
+
+    void ICauldronHubReceiver.OnAddCard(GameContext gameContext, AddCardNotifyMessage message)
     {
     }
 
@@ -60,19 +64,19 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     {
     }
 
-    void ICauldronHubReceiver.OnMoveCard(GameContext gameContext, MoveCardNotifyMessage moveCardNotifyMessage)
+    void ICauldronHubReceiver.OnMoveCard(GameContext gameContext, MoveCardNotifyMessage message)
     {
     }
 
-    void ICauldronHubReceiver.OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage modifyCardNotifyMessage)
+    void ICauldronHubReceiver.OnModifyCard(GameContext gameContext, ModifyCardNotifyMessage message)
     {
     }
 
-    void ICauldronHubReceiver.OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage modifyPlayerNotifyMessage)
+    void ICauldronHubReceiver.OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage message)
     {
     }
 
-    void ICauldronHubReceiver.OnDamage(GameContext gameContext, DamageNotifyMessage damageNotifyMessage)
+    void ICauldronHubReceiver.OnDamage(GameContext gameContext, DamageNotifyMessage message)
     {
     }
 

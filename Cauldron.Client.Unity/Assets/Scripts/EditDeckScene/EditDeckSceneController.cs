@@ -45,9 +45,12 @@ public class EditDeckSceneController : MonoBehaviour
 
         var holder = ConnectionHolder.Find();
         this.ruleBook = await holder.Client.GetRuleBook();
-        var allCards = await holder.Client.GetCardPool();
+        var allCards = holder.CardPool.Values
+            .OrderBy(c => c.Cost)
+            .ThenBy(c => c.FullName)
+            .ToArray();
 
-        foreach (var card in allCards.OrderBy(c => c.Cost).ThenBy(c => c.FullName))
+        foreach (var card in allCards)
         {
             this.AddToCardPool(card);
         }

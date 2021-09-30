@@ -7,6 +7,12 @@ namespace Assets.Scripts
 {
     public class CauldronHubReceiver : ICauldronHubReceiver
     {
+        public IObservable<(GameContext gameContext, PlayCardNotifyMessage message)> OnPlayCard => onPlayCard;
+        private readonly Subject<(GameContext gameContext, PlayCardNotifyMessage message)> onPlayCard
+            = new Subject<(GameContext gameContext, PlayCardNotifyMessage message)>();
+        void ICauldronHubReceiver.OnPlayCard(GameContext gameContext, PlayCardNotifyMessage message)
+            => this.onPlayCard.OnNext((gameContext, message));
+
         public IObservable<(GameContext gameContext, AddCardNotifyMessage message)> OnAddCard => onAddCard;
         private readonly Subject<(GameContext gameContext, AddCardNotifyMessage message)> onAddCard
             = new Subject<(GameContext gameContext, AddCardNotifyMessage message)>();

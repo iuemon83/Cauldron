@@ -494,10 +494,7 @@
             "effectText": "このカードが場に出たとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -608,10 +605,7 @@
             "effectText": "このカードが場に出たとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "moveCard": {
@@ -746,10 +740,7 @@
             "effectText": "このカードが場に出たとき、「分身ゴブリン」一体を場に出す。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -789,10 +780,7 @@
             "effectText": "このカードが場に出たとき、「多重分身ゴブリン」2体を場に出す。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -832,10 +820,7 @@
             "effectText": "あなたはカードを2枚ドローする。このカードが手札から捨てられたとき、あなたはカードを1枚ドローする。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "drawCard": {
@@ -887,10 +872,7 @@
             "effectText": "このカードが場に出たとき、相手の場にあるランダムなクリーチャーカード1枚を破壊する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "destroyCard": {
@@ -936,10 +918,7 @@
             "effectText": "このカードが場に出たとき、あなたのHPを2回復する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyPlayer": {
@@ -983,10 +962,7 @@
             "effectText": "このカードが場に出たとき、相手プレイヤーか、相手の場にいるクリーチャーカード1枚に2ダメージを与える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "damage": {
@@ -1092,10 +1068,7 @@
             "effectText": "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーをもとの場に出す。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "destroyCard": {
@@ -1342,10 +1315,7 @@
             "effectText": "このカードが場に出たとき、あなたはカードを1枚ドローする。このカードが場にある限り、あなたがプレイした魔法カードによるダメージを\u002B1する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "drawCard": {
@@ -1403,10 +1373,7 @@
             "effectText": "このカードが場に出たとき、自分の場にある他のクリチャーカードに3ダメージを与える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "damage": {
@@ -1685,10 +1652,7 @@
             "effectText": "このカードが場に出たとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "setVariable": {
@@ -1853,10 +1817,7 @@
             "effectText": "このカードが場に出たとき、「ドクターボム」2枚をあなたの場に追加する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -2032,10 +1993,7 @@
             "effectText": "このカードをプレイしたとき、このカードを除く全てのクリーチャーを破壊する。その後、X枚のランダムな自分の手札を墓地へ移動する。X=この効果で破壊したクリーチャーの数",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "destroyCard": {
@@ -2133,10 +2091,7 @@
             "effectText": "あなたの最大MPを1増加する。ターン終了時あなたの最大MPを1減少する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyPlayer": {
@@ -2219,10 +2174,7 @@
             "effectText": "プレイヤーか、場のクリーチャー1体を選択する。それに1ダメージを与える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "damage": {
@@ -2274,10 +2226,7 @@
             "effectText": "ランダムな場のクリーチャー1体に2ダメージを与える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "damage": {
@@ -2324,10 +2273,7 @@
             "effectText": "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "moveCard": {
@@ -2429,10 +2375,7 @@
             "effectText": "墓地のカードを1枚選択する。それのコピーをあなたの手札に加える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -2476,10 +2419,7 @@
             "effectText": "墓地のクリーチャーをランダムに1体選択する。それをあなたの場に出す。それのタフネスを1にする。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "moveCard": {
@@ -2557,10 +2497,7 @@
             "effectText": "あなたの場にあるクリチャー1体を選択する。それは\u002B1/\u002B0 の修整を受ける。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyCard": {
@@ -2610,10 +2547,7 @@
             "effectText": "あなたの場にあるクリチャー1体を選択する。それは\u002B0/\u002B1 の修整を受ける。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyCard": {
@@ -2663,10 +2597,7 @@
             "effectText": "相手プレイヤーに1ダメージを与える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "damage": {
@@ -2705,10 +2636,7 @@
             "effectText": "あなたのライフを1回復する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyPlayer": {
@@ -2752,10 +2680,7 @@
             "effectText": "「ヒット」か「ヒール」のうち1枚を選択し、それを自分の手札に加える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -2815,10 +2740,7 @@
             "effectText": "選択したクリーチャー1体を「封印」状態にする",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyCard": {
@@ -2868,10 +2790,7 @@
             "effectText": "相手の場の「カバー」アビリティを持つすべてのクリーチャーから、「カバー」アビリティを削除する。その後それらのクリーチャーに1ダメージを与える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyCard": {
@@ -2935,7 +2854,7 @@
             ]
         },
         {
-            "cost": 1,
+            "cost": 5,
             "name": "除外",
             "flavorText": "",
             "isToken": false,
@@ -2946,10 +2865,7 @@
             "effectText": "場にあるカード一つを選択する。それを「除外」する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "excludeCard": {
@@ -3047,10 +2963,7 @@
             "effectText": "このカードが場に出たとき、このカードを\u002BX/\u002B0 する。X=すでに除外されている自分のカードの数",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyCard": {
@@ -3116,10 +3029,7 @@
             "effectText": "自分の除外済みのクリーチャーカードをランダムで一つを選択する。そのカードを場に追加する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -3165,10 +3075,7 @@
             "effectText": "自分の手札をランダムに1枚除外する。その後、場のカードX枚をランダムに破壊する。X=除外したカードのコスト",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "excludeCard": {
@@ -3179,7 +3086,7 @@
                                         "orPlayerConditions": [],
                                         "orCardConditions": [
                                             {
-                                                "contextCondition": "any",
+                                                "contextCondition": "others",
                                                 "zoneCondition": {
                                                     "value": { "pureValue": [ "youHand" ] },
                                                     "not": false
@@ -3342,10 +3249,7 @@
             "effectText": "このカードをプレイしたとき、相手のデッキの1番上に「寄生虫」を1枚追加する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -3397,10 +3301,7 @@
             "effectText": "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "moveCard": {
@@ -3498,10 +3399,7 @@
             "effectText": "あなたの手札に「ゴブリン」を3枚加える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -3549,10 +3447,7 @@
             "effectText": "相手の場のカードを一枚選択する。そのカードと同名のカードを一枚あなたの手札に加える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -3596,10 +3491,7 @@
             "effectText": "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに1ダメージを与える。あなたの手札に「ゴブリンの二撃」1枚を加える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "damage": {
@@ -3679,10 +3571,7 @@
             "effectText": "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに2ダメージを与える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "damage": {
@@ -3734,10 +3623,7 @@
             "effectText": "あなたの場にある他のカードに次の効果を付与する。「ターン終了時まで、受けるダメージは0になる。」",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addEffect": {
@@ -3817,43 +3703,8 @@
             "effectText": "あなたは手札をすべて捨てる。あなたは捨てた枚数カードをドローする。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
-                        {
-                            "setVariable": {
-                                "name": "x",
-                                "numValue": {
-                                    "numValueCalculator": {
-                                        "forCard": {
-                                            "type": "count",
-                                            "cardsChoice": {
-                                                "source": {
-                                                    "how": "all",
-                                                    "numPicks": { "pureValue": 1 },
-                                                    "orPlayerConditions": [],
-                                                    "orCardConditions": [
-                                                        {
-                                                            "contextCondition": "any",
-                                                            "zoneCondition": {
-                                                                "value": { "pureValue": [ "youHand" ] },
-                                                                "not": false
-                                                            },
-                                                            "ownerCondition": "any"
-                                                        }
-                                                    ],
-                                                    "orCardDefConditions": []
-                                                },
-                                                "how": "all",
-                                                "numPicks": { "pureValue": 1 }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
                         {
                             "moveCard": {
                                 "cardsChoice": {
@@ -3876,12 +3727,41 @@
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
                                 },
-                                "to": "youCemetery"
+                                "to": "youCemetery",
+                                "name": "discard"
                             }
                         },
                         {
                             "drawCard": {
-                                "numCards": { "numVariable": { "name": "x" } },
+                                "numCards": {
+                                    "numValueCalculator": {
+                                        "forCard": {
+                                            "type": "count",
+                                            "cardsChoice": {
+                                                "source": {
+                                                    "how": "all",
+                                                    "numPicks": { "pureValue": 1 },
+                                                    "orPlayerConditions": [],
+                                                    "orCardConditions": [
+                                                        {
+                                                            "contextCondition": "any",
+                                                            "actionContext": {
+                                                                "moveCard": {
+                                                                    "actionName": "discard",
+                                                                    "type": "moved"
+                                                                }
+                                                            },
+                                                            "ownerCondition": "any"
+                                                        }
+                                                    ],
+                                                    "orCardDefConditions": []
+                                                },
+                                                "how": "all",
+                                                "numPicks": { "pureValue": 1 }
+                                            }
+                                        }
+                                    }
+                                },
                                 "playerCondition": {
                                     "context": "any",
                                     "type": "you"
@@ -3904,10 +3784,7 @@
             "effectText": "相手の場にあるクリーチャー1体を選択する。それにXダメージを与える。X=あなたの場にあるクリーチャーの数",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "damage": {
@@ -3984,10 +3861,7 @@
             "effectText": "あなたのMPの最大値を1増加し、利用可能なMPを1減少する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyPlayer": {
@@ -4035,10 +3909,7 @@
             "effectText": "場のカード1枚を選択する。選択したカードを持ち主の手札に移動する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "moveCard": {
@@ -4081,10 +3952,7 @@
             "effectText": "場のカード1枚を選択する。選択したカードを持ち主のデッキのランダムな位置に移動する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "moveCard": {
@@ -4131,10 +3999,7 @@
             "effectText": "相手の場のカードを一枚選択する。そのカードと同名のカードを二枚あなたの手札に加える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "addCard": {
@@ -4178,10 +4043,7 @@
             "effectText": "相手プレイヤーか、相手の場にあるクリーチャーすべてに、1ダメージを与える。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "damage": {
@@ -4233,10 +4095,7 @@
             "effectText": "あなたのデッキからランダムなカード1枚を、あなたの手札に加える。そのカードのコストを半分にする。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "moveCard": {
@@ -4310,10 +4169,7 @@
             "effectText": "あなたの場か、相手の場にあるクリーチャーのうち、名前に「ゴブリン」を含むカードすべてのパワーを1にし、「封印」状態にする。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyCard": {
@@ -4372,10 +4228,7 @@
             "effectText": "相手の場と相手の手札にあるパワー4以上のクリーチャーをすべて墓地に移動する。3回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "destroyCard": {
@@ -4692,10 +4545,7 @@
             "effectText": "あなたの場にあるクリーチャーすべては\u002B0/\u002B1 の修整を受ける。あなたが場にクリーチャーを出したとき、それは\u002B0/\u002B1 の修整を受ける。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyCard": {
@@ -5175,10 +5025,7 @@
             "effectText": "このカードが場に出たとき、あなたの場のカード1枚を選択する。そのカードに「魔法」カウンターを2つ置く。",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyCounter": {
@@ -5317,10 +5164,7 @@
                     ]
                 },
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "excludeCard": {
@@ -5400,10 +5244,7 @@
             "effectText": "このカードが場に出たとき、あなたの場からすべての「魔法」カウンターを取り除く。その後、相手にXのダメージを与える。X=取り除いた「魔法」カウンターの数\u002B1",
             "effects": [
                 {
-                    "condition": {
-                        "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } }
-                    },
+                    "condition": { "zonePrettyName": "none" },
                     "actions": [
                         {
                             "modifyCounter": {

@@ -5,25 +5,35 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectConditionExtensions
     {
-        public static async ValueTask<bool> IsMatchAnyZone(this EffectCondition effectCondition, Card effectOwnerCard, EffectEventArgs eventArgs)
+        public static async ValueTask<bool> IsMatchAnyZone(this EffectCondition _this,
+            Card effectOwnerCard, EffectEventArgs eventArgs)
         {
-            return (await (effectCondition.While?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)))
-                && await effectCondition.When.IsMatch(effectOwnerCard, eventArgs)
-                && (await (effectCondition.If?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)));
+            return (await (_this.While?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)))
+                && await _this.When.IsMatch(effectOwnerCard, eventArgs)
+                && (await (_this.If?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)));
         }
 
-        public static async ValueTask<bool> IsMatch(this EffectCondition effectCondition, Card effectOwnerCard, EffectEventArgs eventArgs)
+        public static async ValueTask<bool> IsMatchOnPlay(this EffectCondition _this,
+            Card effectOwnerCard, EffectEventArgs eventArgs)
         {
-            return effectCondition.IsMatchedZone(effectOwnerCard, eventArgs)
-                && (await (effectCondition.While?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)))
-                && await effectCondition.When.IsMatch(effectOwnerCard, eventArgs)
-                && (await (effectCondition.If?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)));
+            return _this.ZonePrettyName == ZonePrettyName.None
+                && _this.When == default
+                && _this.While == default
+                && (await (_this.If?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)));
         }
 
-        private static bool IsMatchedZone(this EffectCondition effectCondition, Card effectOwnerCard, EffectEventArgs eventArgs)
+        public static async ValueTask<bool> IsMatch(this EffectCondition _this, Card effectOwnerCard, EffectEventArgs eventArgs)
+        {
+            return _this.IsMatchedZone(effectOwnerCard, eventArgs)
+                && (await (_this.While?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)))
+                && await _this.When.IsMatch(effectOwnerCard, eventArgs)
+                && (await (_this.If?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)));
+        }
+
+        private static bool IsMatchedZone(this EffectCondition _this, Card effectOwnerCard, EffectEventArgs eventArgs)
         {
             var opponentId = eventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Id;
-            var (success, zone) = effectCondition.ZonePrettyName.TryGetZone(effectOwnerCard.OwnerId, opponentId, effectOwnerCard.OwnerId);
+            var (success, zone) = _this.ZonePrettyName.TryGetZone(effectOwnerCard.OwnerId, opponentId, effectOwnerCard.OwnerId);
             return success && effectOwnerCard.Zone == zone;
         }
     }
