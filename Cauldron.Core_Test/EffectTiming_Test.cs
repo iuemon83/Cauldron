@@ -14,7 +14,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task すべてのターン開始時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -57,7 +57,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 自分のターン開始時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -96,7 +96,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 相手のターン開始時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -137,7 +137,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task すべてのターン終了時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -180,7 +180,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 自分のターン終了時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -222,7 +222,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 相手のターン終了時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -261,7 +261,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task カードのプレイ時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new EffectCondition(),
@@ -269,7 +269,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 1, 1);
+            var testNormalCardDef = SampleCards.Creature(0, "test2", 1, 1);
 
             var c = await TestUtil.InitTest(new[] { testCardDef, testNormalCardDef });
             await c.GameMaster.StartGame(c.Player1.Id);
@@ -295,7 +295,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 他のカードのプレイ時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 1, 1,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -305,7 +305,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 1, 1);
+            var testNormalCardDef = SampleCards.Creature(0, "test2", 1, 1);
 
             var c = await TestUtil.InitTest(new[] { testCardDef, testNormalCardDef });
             await c.GameMaster.StartGame(c.Player1.Id);
@@ -329,7 +329,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 戦闘ダメージ前時_すべてのクリーチャー()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 5, 0,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 5, numTurnsToCanAttack: 0,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -352,7 +352,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 5, 0);
+            var testNormalCardDef = SampleCards.Creature(0, "test2", 1, 5, numTurnsToCanAttack: 0);
 
             var c = await TestUtil.InitTest(new[] { testCardDef, testNormalCardDef });
             await c.GameMaster.StartGame(c.Player1.Id);
@@ -401,7 +401,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 戦闘ダメージ前時_自分が攻撃()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 5, 0,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 5, numTurnsToCanAttack: 0,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -427,7 +427,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 5, 0);
+            var testNormalCardDef = SampleCards.Creature(0, "test2", 1, 5, numTurnsToCanAttack: 0);
 
             var c = await TestUtil.InitTest(new[] { testCardDef, testNormalCardDef });
             await c.GameMaster.StartGame(c.Player1.Id);
@@ -473,7 +473,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 戦闘ダメージ前時_ほかカードが防御()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 5, 0,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 5, numTurnsToCanAttack: 0,
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
@@ -486,7 +486,7 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-            var testNormalCardDef = SampleCards.Creature(0, "test2", "test2", 1, 5, 0);
+            var testNormalCardDef = SampleCards.Creature(0, "test2", 1, 5, numTurnsToCanAttack: 0);
 
             var c = await TestUtil.InitTest(new[] { testCardDef, testNormalCardDef });
             await c.GameMaster.StartGame(c.Player1.Id);
@@ -533,7 +533,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 戦闘以外のダメージ前時_自分が防御()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 5, 1,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         new(
@@ -593,7 +593,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 自分の破壊時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "test", 1, 5, 1,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         new(

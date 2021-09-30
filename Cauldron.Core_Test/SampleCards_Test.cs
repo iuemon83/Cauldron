@@ -626,7 +626,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MechanicGoblin()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", 1, 2);
             var tokenDef = SampleCards.KarakuriGoblin;
             var testCardDef = SampleCards.MechanicGoblin;
             testCardDef.Cost = 0;
@@ -874,8 +874,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MadScientist()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2);
-
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", 2, 2);
             var testCardDef = SampleCards.MadScientist;
             testCardDef.Cost = 0;
 
@@ -1039,7 +1038,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task LeaderGoblin()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", 1, 2);
             var testCreatureDef = SampleCards.LeaderGoblin;
             testCreatureDef.Cost = 0;
 
@@ -1483,7 +1482,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Sword()
         {
-            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblin = SampleCards.Creature(0, "ゴブリン", 1, 2);
 
             var testCardDef = SampleCards.Sword;
             testCardDef.Cost = 0;
@@ -1515,7 +1514,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Shield()
         {
-            var goblin = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblin = SampleCards.Creature(0, "ゴブリン", 1, 2);
 
             var testCardDef = SampleCards.Shield;
             testCardDef.Cost = 0;
@@ -1747,7 +1746,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task HolyShield()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "", 2, 3, numTurnsToCanAttack: 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", 2, 3, numTurnsToCanAttack: 0);
 
             var testCardDef = SampleCards.HolyShield;
             testCardDef.Cost = 0;
@@ -2151,7 +2150,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldShield_クリーチャーの防御時()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", 2, 2);
 
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
@@ -2185,7 +2184,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldShield_プレイヤーの防御時()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", 2, 2);
 
             var testCardDef = SampleCards.OldShield;
             testCardDef.Cost = 0;
@@ -2291,7 +2290,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldWall_プレイヤーを攻撃()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", 2, 2);
 
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
@@ -2321,7 +2320,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldWall_クリーチャーを攻撃()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 2, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", 2, 2);
 
             var testCardDef = SampleCards.OldWall;
             testCardDef.Cost = 0;
@@ -2422,7 +2421,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task GoblinStatue()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 10, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", 1, 10);
 
             var testCardDef = SampleCards.GoblinStatue;
             testCardDef.Cost = 0;
@@ -2468,7 +2467,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task HolyStatue()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", "テストクリーチャー", 1, 2, 0);
+            var goblinDef = SampleCards.Creature(0, "ゴブリン", 1, 2);
 
             var testCardDef = SampleCards.HolyStatue;
             testCardDef.Cost = 0;

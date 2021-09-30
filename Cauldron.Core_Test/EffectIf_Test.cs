@@ -15,7 +15,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task ©•ª‚Ìê‚ÌƒJ[ƒh‚ª2–‡ˆÈã()
         {
-            var testCardDef = SampleCards.Creature(0, "test", "", 1, 5,
+            var testCardDef = SampleCards.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         new(

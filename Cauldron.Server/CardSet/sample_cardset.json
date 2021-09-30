@@ -10,6 +10,7 @@
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "",
             "effects": []
         },
         {
@@ -21,6 +22,7 @@
             "power": 1,
             "toughness": 2,
             "abilities": [],
+            "effectText": "",
             "effects": []
         },
         {
@@ -32,6 +34,7 @@
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "",
             "effects": [],
             "numTurnsToCanAttack": 0
         },
@@ -44,6 +47,7 @@
             "power": 1,
             "toughness": 2,
             "abilities": [ "cover" ],
+            "effectText": "",
             "effects": []
         },
         {
@@ -55,6 +59,7 @@
             "power": 1,
             "toughness": 1,
             "abilities": [],
+            "effectText": "",
             "effects": [],
             "numAttacksLimitInTurn": 2
         },
@@ -67,6 +72,7 @@
             "power": 7,
             "toughness": 4,
             "abilities": [],
+            "effectText": "",
             "effects": [],
             "numTurnsToCanAttack": 2
         },
@@ -429,6 +435,7 @@
             "power": 1,
             "toughness": 1,
             "abilities": [ "stealth", "deadly" ],
+            "effectText": "",
             "effects": []
         },
         {
@@ -1638,6 +1645,7 @@
             "power": 3,
             "toughness": 5,
             "abilities": [],
+            "effectText": "",
             "effects": []
         },
         {
@@ -1924,6 +1932,7 @@
             "power": 7,
             "toughness": 7,
             "abilities": [ "cover" ],
+            "effectText": "",
             "effects": []
         },
         {
