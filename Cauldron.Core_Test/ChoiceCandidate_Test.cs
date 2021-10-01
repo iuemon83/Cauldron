@@ -191,7 +191,11 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.SourceValue.This)))
+                            new(new(Destroy: new(
+                                OrCardCondition: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                })))
                         ),
                         new[]
                         {
@@ -270,7 +274,11 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.SourceValue.This)))
+                            new(new(Destroy: new(
+                                OrCardCondition: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                })))
                         ),
                         new[]
                         {
@@ -342,7 +350,11 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(Destroy: new EffectTimingDestroyEvent(EffectTimingDestroyEvent.SourceValue.This)))
+                            new(new(Destroy: new(
+                                OrCardCondition: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                })))
                         ),
                         new []
                         {
@@ -415,7 +427,11 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.SourceValue.Both)))
+                            new(new(StartTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition()
+                                })))
                         ),
                         new []{
                             new EffectAction(

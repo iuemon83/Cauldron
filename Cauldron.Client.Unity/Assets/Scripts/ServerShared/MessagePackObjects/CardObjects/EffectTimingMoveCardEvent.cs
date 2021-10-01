@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.ServerShared.MessagePackObjects;
-using MessagePack;
+﻿using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -9,25 +8,18 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTimingMoveCardEvent
     {
-        public enum SourceValue
-        {
-            [DisplayText("このカード")]
-            This,
-            [DisplayText("他のカード")]
-            Other
-        }
+        public CardCondition[] OrCardConditions { get; }
 
-        public EffectTimingMoveCardEvent.SourceValue Source { get; }
         public ZonePrettyName From { get; }
         public ZonePrettyName To { get; }
 
         public EffectTimingMoveCardEvent(
-            EffectTimingMoveCardEvent.SourceValue Source,
+            CardCondition[] OrCardConditions,
             ZonePrettyName From,
             ZonePrettyName To
             )
         {
-            this.Source = Source;
+            this.OrCardConditions = OrCardConditions;
             this.From = From;
             this.To = To;
         }

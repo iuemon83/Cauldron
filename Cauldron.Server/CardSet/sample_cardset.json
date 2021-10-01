@@ -452,7 +452,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youCemetery",
-                        "when": { "timing": { "destroy": { "source": "this" } } }
+                        "when": {
+                            "timing": {
+                                "destroy": {
+                                    "orCardCondition": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "actions": [
                         {
@@ -552,24 +563,25 @@
                         "when": {
                             "timing": {
                                 "play": {
-                                    "source": "other",
-                                    "cardCondition": {
-                                        "contextCondition": "any",
-                                        "nameCondition": {
-                                            "value": { "pureValue": "ゴブリン" },
-                                            "compare": "contains",
-                                            "not": false
-                                        },
-                                        "typeCondition": {
-                                            "value": [ "creature" ],
-                                            "not": false
-                                        },
-                                        "zoneCondition": {
-                                            "value": { "pureValue": [ "youField" ] },
-                                            "not": false
-                                        },
-                                        "ownerCondition": "any"
-                                    }
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "others",
+                                            "nameCondition": {
+                                                "value": { "pureValue": "ゴブリン" },
+                                                "compare": "contains",
+                                                "not": false
+                                            },
+                                            "typeCondition": {
+                                                "value": [ "creature" ],
+                                                "not": false
+                                            },
+                                            "zoneCondition": {
+                                                "value": { "pureValue": [ "youField" ] },
+                                                "not": false
+                                            },
+                                            "ownerCondition": "any"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -661,7 +673,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youField",
-                        "when": { "timing": { "play": { "source": "this" } } },
+                        "when": {
+                            "timing": {
+                                "play": {
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
                         "if": {
                             "numCondition": {
                                 "value": 4,
@@ -846,7 +869,12 @@
                         "when": {
                             "timing": {
                                 "moveCard": {
-                                    "source": "this",
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ],
                                     "from": "youHand",
                                     "to": "youCemetery"
                                 }
@@ -1023,7 +1051,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youCemetery",
-                        "when": { "timing": { "destroy": { "source": "this" } } }
+                        "when": {
+                            "timing": {
+                                "destroy": {
+                                    "orCardCondition": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "actions": [
                         {
@@ -1227,9 +1266,29 @@
                 {
                     "condition": {
                         "zonePrettyName": "none",
-                        "when": { "timing": { "startTurn": { "source": "you" } } },
+                        "when": {
+                            "timing": {
+                                "startTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
                         "while": {
-                            "timing": { "startTurn": { "source": "you" } },
+                            "timing": {
+                                "startTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            },
                             "skip": 0,
                             "take": 1
                         }
@@ -1279,7 +1338,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youField",
-                        "when": { "timing": { "startTurn": { "source": "you" } } }
+                        "when": {
+                            "timing": {
+                                "startTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "actions": [
                         {
@@ -1431,8 +1501,22 @@
                         "zonePrettyName": "youField",
                         "when": {
                             "timing": {
-                                "startTurn": { "source": "you" },
-                                "play": { "source": "this" }
+                                "startTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                },
+                                "play": {
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ]
+                                }
                             }
                         }
                     },
@@ -1541,7 +1625,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youField",
-                        "when": { "timing": { "startTurn": { "source": "you" } } }
+                        "when": {
+                            "timing": {
+                                "startTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "actions": [
                         {
@@ -1589,15 +1684,16 @@
                         "when": {
                             "timing": {
                                 "play": {
-                                    "source": "other",
-                                    "cardCondition": {
-                                        "contextCondition": "any",
-                                        "typeCondition": {
-                                            "value": [ "sorcery" ],
-                                            "not": false
-                                        },
-                                        "ownerCondition": "you"
-                                    }
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "others",
+                                            "typeCondition": {
+                                                "value": [ "sorcery" ],
+                                                "not": false
+                                            },
+                                            "ownerCondition": "you"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1765,7 +1861,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youCemetery",
-                        "when": { "timing": { "destroy": { "source": "this" } } }
+                        "when": {
+                            "timing": {
+                                "destroy": {
+                                    "orCardCondition": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "actions": [
                         {
@@ -1949,7 +2056,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youField",
-                        "when": { "timing": { "endTurn": { "source": "you" } } }
+                        "when": {
+                            "timing": {
+                                "endTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "actions": [
                         {
@@ -2133,9 +2251,29 @@
                 {
                     "condition": {
                         "zonePrettyName": "none",
-                        "when": { "timing": { "endTurn": { "source": "you" } } },
+                        "when": {
+                            "timing": {
+                                "endTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
                         "while": {
-                            "timing": { "endTurn": { "source": "you" } },
+                            "timing": {
+                                "endTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            },
                             "skip": 0,
                             "take": 1
                         }
@@ -3184,7 +3322,12 @@
                         "when": {
                             "timing": {
                                 "moveCard": {
-                                    "source": "this",
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ],
                                     "from": "youDeck",
                                     "to": "youHand"
                                 }
@@ -3218,7 +3361,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youField",
-                        "when": { "timing": { "endTurn": { "source": "you" } } }
+                        "when": {
+                            "timing": {
+                                "endTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "actions": [
                         {
@@ -3677,7 +3831,16 @@
                                                 }
                                             },
                                             "while": {
-                                                "timing": { "endTurn": { "source": "you" } },
+                                                "timing": {
+                                                    "endTurn": {
+                                                        "orPlayerCondition": [
+                                                            {
+                                                                "context": "any",
+                                                                "type": "you"
+                                                            }
+                                                        ]
+                                                    }
+                                                },
                                                 "skip": 0,
                                                 "take": 0
                                             }
@@ -4276,14 +4439,28 @@
                         "when": {
                             "timing": {
                                 "moveCard": {
-                                    "source": "other",
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "others",
+                                            "ownerCondition": "any"
+                                        }
+                                    ],
                                     "from": "opponentDeck",
                                     "to": "opponentHand"
                                 }
                             }
                         },
                         "while": {
-                            "timing": { "endTurn": { "source": "opponent" } },
+                            "timing": {
+                                "endTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "opponent"
+                                        }
+                                    ]
+                                }
+                            },
                             "skip": 0,
                             "take": 3
                         }
@@ -4467,7 +4644,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youField",
-                        "when": { "timing": { "endTurn": { "source": "you" } } },
+                        "when": {
+                            "timing": {
+                                "endTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
                         "if": {
                             "numCondition": {
                                 "value": 30,
@@ -4596,7 +4784,12 @@
                         "when": {
                             "timing": {
                                 "moveCard": {
-                                    "source": "other",
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "others",
+                                            "ownerCondition": "any"
+                                        }
+                                    ],
                                     "from": "youHand",
                                     "to": "youField"
                                 }
@@ -4654,7 +4847,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youField",
-                        "when": { "timing": { "startTurn": { "source": "you" } } }
+                        "when": {
+                            "timing": {
+                                "startTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "actions": [
                         {
@@ -4685,7 +4889,12 @@
                         "when": {
                             "timing": {
                                 "moveCard": {
-                                    "source": "this",
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "this",
+                                            "ownerCondition": "any"
+                                        }
+                                    ],
                                     "from": "youField",
                                     "to": "youCemetery"
                                 }
@@ -4740,7 +4949,18 @@
                 {
                     "condition": {
                         "zonePrettyName": "youField",
-                        "when": { "timing": { "startTurn": { "source": "you" } } }
+                        "when": {
+                            "timing": {
+                                "startTurn": {
+                                    "orPlayerCondition": [
+                                        {
+                                            "context": "any",
+                                            "type": "you"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "actions": [
                         {
@@ -4784,15 +5004,16 @@
                         "when": {
                             "timing": {
                                 "play": {
-                                    "source": "other",
-                                    "cardCondition": {
-                                        "contextCondition": "any",
-                                        "typeCondition": {
-                                            "value": [ "sorcery" ],
-                                            "not": false
-                                        },
-                                        "ownerCondition": "any"
-                                    }
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "others",
+                                            "typeCondition": {
+                                                "value": [ "sorcery" ],
+                                                "not": false
+                                            },
+                                            "ownerCondition": "any"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -4934,15 +5155,16 @@
                         "when": {
                             "timing": {
                                 "play": {
-                                    "source": "other",
-                                    "cardCondition": {
-                                        "contextCondition": "any",
-                                        "typeCondition": {
-                                            "value": [ "sorcery" ],
-                                            "not": false
-                                        },
-                                        "ownerCondition": "you"
-                                    }
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "others",
+                                            "typeCondition": {
+                                                "value": [ "sorcery" ],
+                                                "not": false
+                                            },
+                                            "ownerCondition": "you"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -5086,15 +5308,16 @@
                         "when": {
                             "timing": {
                                 "play": {
-                                    "source": "other",
-                                    "cardCondition": {
-                                        "contextCondition": "any",
-                                        "typeCondition": {
-                                            "value": [ "sorcery" ],
-                                            "not": false
-                                        },
-                                        "ownerCondition": "you"
-                                    }
+                                    "orCardConditions": [
+                                        {
+                                            "contextCondition": "others",
+                                            "typeCondition": {
+                                                "value": [ "sorcery" ],
+                                                "not": false
+                                            },
+                                            "ownerCondition": "you"
+                                        }
+                                    ]
                                 }
                             }
                         }

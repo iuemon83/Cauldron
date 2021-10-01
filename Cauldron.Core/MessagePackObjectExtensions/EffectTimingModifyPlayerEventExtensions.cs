@@ -1,18 +1,27 @@
-﻿using System;
+﻿using Cauldron.Core.Entities.Effect;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectTimingModifyPlayerEventExtensions
     {
-        public static bool IsMatch(this EffectTimingModifyPlayerEvent effectTimingModifyPlayerEvent, PlayerId modifyPlayerId, Card ownerCard)
+        public static bool IsMatch(this EffectTimingModifyPlayerEvent _this,
+            Card ownerCard, EffectEventArgs args)
         {
-            return effectTimingModifyPlayerEvent.Source switch
+            if (args.SourcePlayer == null)
             {
-                EffectTimingModifyPlayerEvent.SourceValue.All => true,
-                EffectTimingModifyPlayerEvent.SourceValue.Owner => modifyPlayerId == ownerCard.OwnerId,
-                EffectTimingModifyPlayerEvent.SourceValue.Other => modifyPlayerId != ownerCard.OwnerId,
-                _ => throw new InvalidOperationException($"{nameof(effectTimingModifyPlayerEvent.Source)}={effectTimingModifyPlayerEvent.Source}"),
-            };
+                return false;
+            }
+
+            foreach (var cond in _this.OrPlayerCondition)
+            {
+                var matched = cond.IsMatch(ownerCard, args, args.SourcePlayer);
+                if (matched)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

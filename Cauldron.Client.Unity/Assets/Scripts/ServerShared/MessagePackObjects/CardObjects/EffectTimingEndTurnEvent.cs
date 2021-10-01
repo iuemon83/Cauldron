@@ -1,26 +1,16 @@
-﻿using Assets.Scripts.ServerShared.MessagePackObjects;
-using MessagePack;
+﻿using MessagePack;
+using System;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
     [MessagePackObject(true)]
     public class EffectTimingEndTurnEvent
     {
-        public enum SourceValue
-        {
-            [DisplayText("あなた")]
-            You,
-            [DisplayText("相手")]
-            Opponent,
-            [DisplayText("両方")]
-            Both
-        }
+        public PlayerCondition[] OrPlayerCondition { get; }
 
-        public EffectTimingEndTurnEvent.SourceValue Source { get; }
-
-        public EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.SourceValue Source)
+        public EffectTimingEndTurnEvent(PlayerCondition[] OrPlayerCondition = null)
         {
-            this.Source = Source;
+            this.OrPlayerCondition = OrPlayerCondition ?? Array.Empty<PlayerCondition>();
         }
     }
 }

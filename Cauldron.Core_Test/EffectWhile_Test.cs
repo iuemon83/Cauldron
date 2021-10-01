@@ -27,7 +27,12 @@ namespace Cauldron.Core_Test
                                         ContextCondition: CardCondition.ContextConditionValue.This,
                                         ZoneCondition: new(new(new[]{ ZonePrettyName.YouField }))
                                     )))),
-                            While: new(new(EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You)), 0, 0)
+                            While: new(new(EndTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                })),
+                                0, 0)
                         ),
                         new[]{
                             new EffectAction(
@@ -89,8 +94,17 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You))),
-                            While: new(new(StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You)), 0, 1)
+                            new(new(StartTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                }))),
+                            While: new(new(StartTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                })),
+                                0, 1)
                         ),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -142,8 +156,17 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You))),
-                            While: new(new(EndTurn: new(EffectTimingEndTurnEvent.SourceValue.You)), 1, 1)
+                            new(new(EndTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                }))),
+                            While: new(new(EndTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                })),
+                                1, 1)
                         ),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -196,8 +219,16 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You))),
-                            While: new(new(StartTurn: new(EffectTimingStartTurnEvent.SourceValue.You)), 2, 1)
+                            new(new(StartTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                }))),
+                            While: new(new(StartTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                })), 2, 1)
                         ),
                         new[]{ TestUtil.TestEffectAction }
                     )

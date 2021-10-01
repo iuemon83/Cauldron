@@ -44,18 +44,6 @@ namespace Cauldron.Web.Server
             = Convert<EffectTimingDamageBeforeEvent.TypeValue>();
         public MetaDataElm[] EffectTimingDamageBeforeEventSources { get; }
             = Convert<EffectTimingDamageBeforeEvent.SourceValue>();
-        public MetaDataElm[] EffectTimingDestroyEventSources { get; }
-            = Convert<EffectTimingDestroyEvent.SourceValue>();
-        public MetaDataElm[] EffectTimingEndTurnEventSources { get; }
-            = Convert<EffectTimingEndTurnEvent.SourceValue>();
-        public MetaDataElm[] EffectTimingModifyPlayerEventSources { get; }
-            = Convert<EffectTimingModifyPlayerEvent.SourceValue>();
-        public MetaDataElm[] EffectTimingMoveCardEventSources { get; }
-            = Convert<EffectTimingMoveCardEvent.SourceValue>();
-        public MetaDataElm[] EffectTimingPlayEventSources { get; }
-            = Convert<EffectTimingPlayEvent.SourceValue>();
-        public MetaDataElm[] EffectTimingStartTurnEventSources { get; }
-            = Convert<EffectTimingStartTurnEvent.SourceValue>();
         public MetaDataElm[] ChoiceHowList { get; } = Convert<Choice.HowValue>();
         public MetaDataElm[] ChoiceSourceHowList { get; } = Convert<ChoiceSource.HowValue>();
         public MetaDataElm[] NumConditionCompares { get; } = Convert<NumCondition.CompareValue>();

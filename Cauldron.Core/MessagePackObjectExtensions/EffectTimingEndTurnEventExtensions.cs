@@ -1,18 +1,32 @@
-﻿using System;
+﻿using Cauldron.Core.Entities.Effect;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectTimingEndTurnEventExtensions
     {
-        public static bool IsMatch(this EffectTimingEndTurnEvent effectTimingEndTurnEvent, PlayerId turnPlayerId, Card ownerCard)
+        public static bool IsMatch(this EffectTimingEndTurnEvent _this,
+            Card ownerCard, EffectEventArgs args)
         {
-            return effectTimingEndTurnEvent.Source switch
+            if (args.SourcePlayer == null)
             {
-                EffectTimingEndTurnEvent.SourceValue.Both => true,
-                EffectTimingEndTurnEvent.SourceValue.You => turnPlayerId == ownerCard.OwnerId,
-                EffectTimingEndTurnEvent.SourceValue.Opponent => turnPlayerId != ownerCard.OwnerId,
-                _ => throw new InvalidOperationException($"{nameof(effectTimingEndTurnEvent.Source)}={effectTimingEndTurnEvent.Source}"),
-            };
+                return false;
+            }
+
+            if (_this.OrPlayerCondition.Length == 0)
+            {
+                return true;
+            }
+
+            foreach (var cond in _this.OrPlayerCondition)
+            {
+                var matched = cond.IsMatch(ownerCard, args, args.SourcePlayer);
+                if (matched)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

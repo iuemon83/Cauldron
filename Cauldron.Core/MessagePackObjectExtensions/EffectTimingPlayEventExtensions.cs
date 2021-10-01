@@ -1,33 +1,29 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectTimingPlayEventExtensions
     {
-        public static async ValueTask<bool> IsMatch(this EffectTimingPlayEvent effectTimingPlayEvent, Card effectOwnerCard, Card sourceCard, EffectEventArgs args)
+        public static async ValueTask<bool> IsMatch(this EffectTimingPlayEvent _this,
+            Card effectOwnerCard, EffectEventArgs args)
         {
-            bool IsMatchedSource(EffectTimingPlayEvent.SourceValue value)
-                => value switch
-                {
-                    EffectTimingPlayEvent.SourceValue.This => effectOwnerCard.Id == sourceCard.Id,
-                    EffectTimingPlayEvent.SourceValue.Other => effectOwnerCard.Id != sourceCard.Id,
-                    _ => throw new InvalidOperationException()
-                };
-
-            async ValueTask<bool> IsMatchedCardCondition(CardCondition cardCondition, Card card)
+            if (args.SourceCard == null)
             {
-                if (cardCondition == null)
+                return false;
+            }
+
+            foreach (var cond in _this.OrCardConditions.Where(c => c != null))
+            {
+                var isMatched = await cond.IsMatch(args.SourceCard, effectOwnerCard, args);
+                if (isMatched)
                 {
                     return true;
                 }
-
-                return await cardCondition.IsMatch(card, effectOwnerCard, args);
             }
 
-            return IsMatchedSource(effectTimingPlayEvent.Source)
-                && await IsMatchedCardCondition(effectTimingPlayEvent.CardCondition, sourceCard);
+            return false;
         }
     }
 }

@@ -1,17 +1,28 @@
-﻿using System;
+﻿using Cauldron.Core.Entities.Effect;
+using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
     public static class EffectTimingDestroyEventExtensions
     {
-        public static bool IsMatch(this EffectTimingDestroyEvent effectTimingDestroyEvent, Card ownerCard, Card source)
+        public static async ValueTask<bool> IsMatch(this EffectTimingDestroyEvent _this,
+            Card ownerCard, EffectEventArgs args)
         {
-            return effectTimingDestroyEvent.Source switch
+            if (args.SourceCard == null)
             {
-                EffectTimingDestroyEvent.SourceValue.This => ownerCard.Id == source.Id,
-                EffectTimingDestroyEvent.SourceValue.Other => ownerCard.Id != source.Id,
-                _ => throw new InvalidOperationException()
-            };
+                return false;
+            }
+
+            foreach (var cc in _this.OrCardCondition)
+            {
+                var matched = await cc.IsMatch(args.SourceCard, ownerCard, args);
+                if (matched)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -11,11 +11,12 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             return eventArgs.GameEvent switch
             {
-                GameEvent.OnStartTurn => effectTiming.StartTurn?.IsMatch(eventArgs.GameMaster.ActivePlayer.Id, effectOwnerCard) ?? false,
-                GameEvent.OnEndTurn => effectTiming.EndTurn?.IsMatch(eventArgs.GameMaster.ActivePlayer.Id, effectOwnerCard) ?? false,
-                GameEvent.OnPlay => await (effectTiming.Play?.IsMatch(effectOwnerCard, eventArgs.SourceCard, eventArgs)
+                GameEvent.OnStartTurn => effectTiming.StartTurn?.IsMatch(effectOwnerCard, eventArgs) ?? false,
+                GameEvent.OnEndTurn => effectTiming.EndTurn?.IsMatch(effectOwnerCard, eventArgs) ?? false,
+                GameEvent.OnPlay => await (effectTiming.Play?.IsMatch(effectOwnerCard, eventArgs)
                     ?? ValueTask.FromResult(false)),
-                GameEvent.OnDestroy => effectTiming.Destroy?.IsMatch(effectOwnerCard, eventArgs.SourceCard) ?? false,
+                GameEvent.OnDestroy => await (effectTiming.Destroy?.IsMatch(effectOwnerCard, eventArgs)
+                    ?? ValueTask.FromResult(false)),
                 GameEvent.OnDamageBefore => await (effectTiming.DamageBefore?.IsMatch(effectOwnerCard, eventArgs)
                     ?? ValueTask.FromResult(false)),
                 GameEvent.OnDamage => await (effectTiming.DamageAfter?.IsMatch(effectOwnerCard, eventArgs)
@@ -24,7 +25,8 @@ namespace Cauldron.Shared.MessagePackObjects
                     ?? ValueTask.FromResult(false)),
                 GameEvent.OnAttack => await (effectTiming.AttackAfter?.IsMatch(effectOwnerCard, eventArgs)
                     ?? ValueTask.FromResult(false)),
-                GameEvent.OnMoveCard => effectTiming.MoveCard?.IsMatch(effectOwnerCard, eventArgs) ?? false,
+                GameEvent.OnMoveCard => await (effectTiming.MoveCard?.IsMatch(effectOwnerCard, eventArgs)
+                    ?? ValueTask.FromResult(false)),
                 GameEvent.OnExclude => await (effectTiming.ExcludeCard?.IsMatch(effectOwnerCard, eventArgs)
                     ?? ValueTask.FromResult(false)),
                 GameEvent.OnModifyCounter => await (effectTiming.ModifyCounter?.IsMatch(effectOwnerCard, eventArgs)

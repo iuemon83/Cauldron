@@ -18,7 +18,7 @@ namespace Cauldron.Core_Test
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
-                            new(new(StartTurn: new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.SourceValue.Both)))
+                            new(new(StartTurn: new()))
                         ),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -61,7 +61,11 @@ namespace Cauldron.Core_Test
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
-                            new(new(StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.SourceValue.You)))),
+                            new(new(StartTurn : new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                })))),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
@@ -100,7 +104,11 @@ namespace Cauldron.Core_Test
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
-                            new(new(StartTurn : new EffectTimingStartTurnEvent(EffectTimingStartTurnEvent.SourceValue.Opponent)))),
+                            new(new(StartTurn : new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                })))),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
@@ -141,7 +149,7 @@ namespace Cauldron.Core_Test
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
-                            new(new(EndTurn: new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.SourceValue.Both)))
+                            new(new(EndTurn: new()))
                         ),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -184,7 +192,11 @@ namespace Cauldron.Core_Test
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
-                            new(new(EndTurn : new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.SourceValue.You)))),
+                            new(new(EndTurn : new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                })))),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
@@ -226,7 +238,11 @@ namespace Cauldron.Core_Test
                 effects: new[]{
                     new CardEffect(
                         new(ZonePrettyName.YouField,
-                            new(new(EndTurn : new EffectTimingEndTurnEvent(EffectTimingEndTurnEvent.SourceValue.Opponent)))),
+                            new(new(EndTurn : new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                })))),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
@@ -300,7 +316,11 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouField,
-                            new(new(Play : new EffectTimingPlayEvent(EffectTimingPlayEvent.SourceValue.Other)))),
+                            new(new(Play : new(
+                                OrCardConditions: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.Others)
+                                })))),
                         new[]{  TestUtil.TestEffectAction }
                     )
                 });
@@ -598,7 +618,11 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new(
                             ZonePrettyName.YouCemetery,
-                            new(new(Destroy: new (EffectTimingDestroyEvent.SourceValue.This)))
+                            new(new(Destroy: new(
+                                OrCardCondition: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                })))
                         ),
                         new[]{ TestUtil.TestEffectAction}
                     )

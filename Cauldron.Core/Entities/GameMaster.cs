@@ -819,7 +819,7 @@ namespace Cauldron.Core.Entities
             this.logger.LogInformation(
                  $"フィールド: {string.Join(",", this.ActivePlayer.Field.AllCards.Select(c => c.Name))}");
 
-            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnStartTurn, this));
+            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnStartTurn, this, SourcePlayer: this.ActivePlayer));
 
             await this.Draw(this.ActivePlayer.Id, 1);
 
@@ -832,7 +832,7 @@ namespace Cauldron.Core.Entities
 
             this.logger.LogInformation($"ターンエンド：{endTurnPlayer.Name}");
 
-            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnEndTurn, this));
+            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnEndTurn, this, SourcePlayer: endTurnPlayer));
 
             this.ActivePlayer = this.NextPlayer;
             this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
