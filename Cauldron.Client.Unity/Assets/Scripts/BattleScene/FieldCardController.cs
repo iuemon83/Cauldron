@@ -41,7 +41,7 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
         else
         {
             // Ž©•ª‚ÌƒJ[ƒh
-            BattleSceneController.Instance.SetAttackCard(this);
+            BattleSceneController.Instance.ToggleAttackCard(this);
         }
     }
 
@@ -73,15 +73,18 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
     public async UniTask DestroyEffect()
     {
         this.destroyIcon.gameObject.SetActive(true);
-        await this.destroyIcon.transform
-            .DOScale(new Vector3(1.2f, 1.2f), 0.3f);
+
+        await DOTween.Sequence()
+            .Append(this.destroyIcon.transform
+                .DOScale(new Vector3(1.2f, 1.2f), 0.3f))
+            .Join(DOTween
+                .ToAlpha(
+                    () => this.backgroundImage.color,
+                    c => this.backgroundImage.color = c,
+                    0f,
+                    0.2f));
+
         this.destroyIcon.gameObject.SetActive(false);
-        await DOTween
-            .ToAlpha(
-                () => this.backgroundImage.color,
-                c => this.backgroundImage.color = c,
-                0f,
-                0.2f);
     }
 
     public async UniTask AttackEffect(PlayerController dest)

@@ -100,6 +100,15 @@ namespace Cauldron.Server.Services
         {
             var currentQuestionId = QuestionManager.AddNewQuestion();
 
+            if (choiceCandidates.Count == 0)
+            {
+                return new ChoiceAnswer(
+                    Array.Empty<PlayerId>(),
+                    Array.Empty<CardId>(),
+                    Array.Empty<CardDefId>()
+                    );
+            }
+
             try
             {
                 this._logger.LogInformation($"called {nameof(AskCard)}: questionId={currentQuestionId}, choiceCandidates={choiceCandidates}");

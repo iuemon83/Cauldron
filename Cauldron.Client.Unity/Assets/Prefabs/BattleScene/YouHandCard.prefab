@@ -1021,6 +1021,7 @@ MonoBehaviour:
   bounceDeckIconImage: {fileID: 1335394923390608831}
   bounceHandIconImage: {fileID: 5187283633332582421}
   destroyIcon: {fileID: 3579226265035597688}
+  backgroundImage: {fileID: 7295014705438889082}
 --- !u!1 &5072380342892051874
 GameObject:
   m_ObjectHideFlags: 0

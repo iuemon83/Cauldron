@@ -8,6 +8,8 @@ public class HandCardController : CardController, IPointerClickHandler, IPointer
 {
     [SerializeField]
     private Image destroyIcon = default;
+    [SerializeField]
+    private Image backgroundImage = default;
 
     public async void OnPointerClick(PointerEventData eventData)
     {
@@ -22,8 +24,17 @@ public class HandCardController : CardController, IPointerClickHandler, IPointer
     public async UniTask DestroyEffect()
     {
         this.destroyIcon.gameObject.SetActive(true);
-        await this.destroyIcon.transform
-            .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f);
+
+        await DOTween.Sequence()
+            .Append(this.destroyIcon.transform
+                .DOPunchScale(new Vector3(0.1f, 0.1f, 0.1f), 0.3f))
+            .Join(DOTween
+                .ToAlpha(
+                    () => this.backgroundImage.color,
+                    c => this.backgroundImage.color = c,
+                    0f,
+                    0.2f));
+
         this.destroyIcon.gameObject.SetActive(false);
     }
 }

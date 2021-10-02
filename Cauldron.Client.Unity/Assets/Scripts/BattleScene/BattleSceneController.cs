@@ -67,7 +67,7 @@ public class BattleSceneController : MonoBehaviour
 
     private Client Client => this.connectionHolder.Client;
 
-    private AskMessage askParams;
+    private AskMessage askMessage;
 
     private bool updating;
 
@@ -187,14 +187,31 @@ public class BattleSceneController : MonoBehaviour
         this.UnSelectAttackCard();
     }
 
-    public async void SetAttackCard(FieldCardController attackCardController)
+    public async void ToggleAttackCard(FieldCardController attackCardController)
     {
-        this.ResetAllMarks();
+        // 選択モードでは機能させない
+        if (this.askMessage != null)
+        {
+            return;
+        }
 
         var isSelected = this.attackCardController?.CardId == attackCardController.CardId;
 
-        if (!isSelected)
+        if (isSelected)
         {
+            // 解除
+            this.attackCardController.VisibleAttackIcon(false);
+
+            this.ResetAttackTargets();
+
+            this.attackCardController = null;
+        }
+        else
+        {
+            this.ResetAllMarks();
+
+            // 攻撃カードとして指定する
+
             if (!fieldCardControllersByCardId.TryGetValue(attackCardController.CardId, out var fieldCardController))
             {
                 return;
@@ -271,22 +288,14 @@ public class BattleSceneController : MonoBehaviour
         this.ShowConfirmSurrenderDialog();
     }
 
-    /// <summary>
-    /// 選択完了ボタンのクリックイベント
-    /// </summary>
-    public async void OnPickedButtonClick()
+    private async UniTask DoAnswer(ChoiceAnswer answer)
     {
-        this.choiceCardButton.interactable = false;
-
-        var (isValid, picked) = this.ValidChoiceAnwser();
-        if (!isValid)
+        if (!this.ValidChoiceAnwser(answer))
         {
-            Debug.Log("選択している対象が正しくない");
-            this.choiceCardButton.interactable = true;
             return;
         }
 
-        var result = await this.Client.AnswerChoice(this.askParams.QuestionId, picked);
+        var result = await this.Client.AnswerChoice(this.askMessage.QuestionId, answer);
         if (result != GameMasterStatusCode.OK)
         {
             Debug.Log($"result: {result}");
@@ -294,56 +303,56 @@ public class BattleSceneController : MonoBehaviour
             return;
         }
 
+        // リセット
+        this.ResetAllMarks();
+
         this.NumPicks = 0;
         this.NumPicksLimit = 0;
+
+        this.askMessage = null;
+    }
+
+    private void ShowChoiceDialog()
+    {
+        var dialog = Instantiate(this.choiceDialogController);
+        dialog.Init(this.askMessage, async answer =>
+        {
+            await this.DoAnswer(answer);
+            Destroy(dialog.gameObject);
+        });
+
+        dialog.transform.SetParent(this.canvas.transform, false);
+    }
+
+    /// <summary>
+    /// 選択完了ボタンのクリックイベント
+    /// </summary>
+    public async void OnPickedButtonClick()
+    {
+        this.choiceCardButton.interactable = false;
+
+        var answer = this.Answer;
+
+        await this.DoAnswer(answer);
 
         // リセット
         this.ResetAllMarks();
     }
 
-    public (bool, ChoiceAnswer) ValidChoiceAnwser()
-    {
-        var picked = new ChoiceAnswer(
-            this.pickedPlayerIdList.ToArray(),
-            this.pickedCardIdList.ToArray(),
-            this.pickedCardDefIdList.ToArray()
-            );
+    private ChoiceAnswer Answer => new ChoiceAnswer(
+        this.pickedPlayerIdList.ToArray(),
+        this.pickedCardIdList.ToArray(),
+        this.pickedCardDefIdList.ToArray()
+        );
 
-        var numPicked = picked.PlayerIdList.Length + picked.CardIdList.Length + picked.CardDefIdList.Length;
-        if (this.askParams.NumPicks < numPicked)
+    private bool ValidChoiceAnwser(ChoiceAnswer answer)
+    {
+        if (this.askMessage.NumPicks < answer.Count())
         {
-            // 選択個数が多い
-            return (false, default);
+            return false;
         }
 
-        return (true, picked);
-    }
-
-    public void ShowChoiceDialog()
-    {
-        var dialog = Instantiate(this.choiceDialogController);
-        dialog.Init(this.askParams, async answer =>
-        {
-            if (answer.Count() > this.askParams.NumPicks)
-            {
-                // 選択した数が多い
-                return;
-            }
-
-            var result = await this.Client.AnswerChoice(this.askParams.QuestionId, answer);
-            if (result != GameMasterStatusCode.OK)
-            {
-                Debug.Log($"result: {result}");
-
-                return;
-            }
-
-            // リセット
-            this.ResetAllMarks();
-            Destroy(dialog.gameObject);
-        });
-
-        dialog.transform.SetParent(this.canvas.transform, false);
+        return true;
     }
 
     private async UniTask UpdateGameContext(GameContext gameContext)
@@ -876,7 +885,7 @@ public class BattleSceneController : MonoBehaviour
         this.pickedCardIdList.Clear();
         this.pickedCardDefIdList.Clear();
 
-        this.askParams = message;
+        this.askMessage = message;
 
         // ダイアログで選択させるか、フィールドから選択させるかの判定
         var choiceFromDialog = message.ChoiceCandidates.CardDefList.Length != 0
@@ -906,7 +915,7 @@ public class BattleSceneController : MonoBehaviour
 
         this.choiceCardButton.interactable = true;
         this.NumPicks = 0;
-        this.NumPicksLimit = this.askParams.NumPicks;
+        this.NumPicksLimit = this.askMessage.NumPicks;
     }
 
     public void ShowCardDetail(Card card)
