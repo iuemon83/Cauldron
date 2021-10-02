@@ -844,6 +844,32 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task DashGoblin()
+        {
+            var testCardDef = SampleCards.DashGoblin;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var op = g.GetOpponent(pId);
+
+                // プレイすると相手に1ダメージ
+                var beforeHp = op.CurrentHp;
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(beforeHp - 1, op.CurrentHp);
+
+                // プレイ以外の方法で場に出ても相手に1ダメージ
+                beforeHp = op.CurrentHp;
+                await g.GenerateNewCard(testCardDef.Id, new(pId, ZoneName.Field), default);
+                Assert.Equal(beforeHp - 1, op.CurrentHp);
+            });
+        }
+
+        [Fact]
         public async Task BeginnerSummoner()
         {
             var testCardDef = SampleCards.BeginnerSummoner;

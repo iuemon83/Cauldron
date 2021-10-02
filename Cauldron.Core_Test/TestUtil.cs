@@ -58,7 +58,7 @@ namespace Cauldron.Core_Test
                 new NumValue(1),
                 new Choice(new ChoiceSource(
                     orPlayerConditions: new[]{
-                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                        new PlayerCondition(PlayerCondition.ContextValue.You)
                     }))));
 
         public static void AssertGameAction(Func<(bool, string)> phase)

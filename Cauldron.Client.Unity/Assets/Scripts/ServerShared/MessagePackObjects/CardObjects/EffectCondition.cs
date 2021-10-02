@@ -8,7 +8,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectCondition
     {
-        public ZonePrettyName ZonePrettyName { get; }
+        public ZonePrettyName Zone { get; }
 
         public EffectWhen When { get; }
 
@@ -17,13 +17,13 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectIf If { get; }
 
         public EffectCondition(
-            ZonePrettyName ZonePrettyName = ZonePrettyName.None,
+            ZonePrettyName Zone = ZonePrettyName.None,
             EffectWhen When = null,
             EffectWhile While = null,
             EffectIf If = null
             )
         {
-            this.ZonePrettyName = ZonePrettyName;
+            this.Zone = Zone;
             this.When = When;
             this.While = While;
             this.If = If;

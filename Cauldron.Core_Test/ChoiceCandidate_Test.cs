@@ -341,7 +341,7 @@ namespace Cauldron.Core_Test
                     orPlayerConditions: new[]
                     {
                         new PlayerCondition(
-                            Type: PlayerCondition.TypeValue.Opponent
+                            PlayerCondition.ContextValue.Opponent
                         )
                     }));
             var testCardDef = SampleCards.Creature(0, "テストクリーチャー", 1, 1,
@@ -417,7 +417,7 @@ namespace Cauldron.Core_Test
                     orPlayerConditions: new[]
                     {
                         new PlayerCondition(
-                            Type: PlayerCondition.TypeValue.Active
+                            PlayerCondition.ContextValue.Active
                         )
                     }));
             var testCardDef = SampleCards.Artifact(0, "test", "test", false,
@@ -582,7 +582,7 @@ namespace Cauldron.Core_Test
                     orPlayerConditions: new[]
                     {
                         new PlayerCondition(
-                            Type: PlayerCondition.TypeValue.Opponent
+                            PlayerCondition.ContextValue.Opponent
                         )
                     },
                     orCardConditions: new[]

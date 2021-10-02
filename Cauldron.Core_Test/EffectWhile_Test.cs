@@ -30,7 +30,7 @@ namespace Cauldron.Core_Test
                             While: new(new(EndTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })),
                                 0, 0)
                         ),
@@ -41,7 +41,7 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                                new PlayerCondition(PlayerCondition.ContextValue.You)
                                             })),
                                     new PlayerModifier(Hp: new NumValueModifier(
                                         NumValueModifier.OperatorValue.Add,
@@ -97,12 +97,12 @@ namespace Cauldron.Core_Test
                             new(new(StartTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 }))),
                             While: new(new(StartTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })),
                                 0, 1)
                         ),
@@ -159,12 +159,12 @@ namespace Cauldron.Core_Test
                             new(new(EndTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 }))),
                             While: new(new(EndTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })),
                                 1, 1)
                         ),
@@ -222,12 +222,12 @@ namespace Cauldron.Core_Test
                             new(new(StartTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 }))),
                             While: new(new(StartTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })), 2, 1)
                         ),
                         new[]{ TestUtil.TestEffectAction }

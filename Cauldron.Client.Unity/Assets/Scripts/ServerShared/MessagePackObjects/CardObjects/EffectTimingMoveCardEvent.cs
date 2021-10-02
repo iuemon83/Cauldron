@@ -15,8 +15,8 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public EffectTimingMoveCardEvent(
             CardCondition[] OrCardConditions,
-            ZonePrettyName From,
-            ZonePrettyName To
+            ZonePrettyName From = ZonePrettyName.None,
+            ZonePrettyName To = ZonePrettyName.None
             )
         {
             this.OrCardConditions = OrCardConditions;

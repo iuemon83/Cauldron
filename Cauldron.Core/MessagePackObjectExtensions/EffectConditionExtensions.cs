@@ -16,7 +16,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public static async ValueTask<bool> IsMatchOnPlay(this EffectCondition _this,
             Card effectOwnerCard, EffectEventArgs eventArgs)
         {
-            return _this.ZonePrettyName == ZonePrettyName.None
+            return _this.Zone == ZonePrettyName.None
                 && _this.When == default
                 && _this.While == default
                 && (await (_this.If?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)));
@@ -33,7 +33,7 @@ namespace Cauldron.Shared.MessagePackObjects
         private static bool IsMatchedZone(this EffectCondition _this, Card effectOwnerCard, EffectEventArgs eventArgs)
         {
             var opponentId = eventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Id;
-            var (success, zone) = _this.ZonePrettyName.TryGetZone(effectOwnerCard.OwnerId, opponentId, effectOwnerCard.OwnerId);
+            var (success, zone) = _this.Zone.TryGetZone(effectOwnerCard.OwnerId, opponentId, effectOwnerCard.OwnerId);
             return success && effectOwnerCard.Zone == zone;
         }
     }

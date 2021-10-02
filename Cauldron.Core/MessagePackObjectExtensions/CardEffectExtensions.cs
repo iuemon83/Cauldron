@@ -62,7 +62,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public static bool ShouldRegisterEffect(this CardEffect _this)
         {
-            return _this.Condition.ZonePrettyName == ZonePrettyName.None
+            return _this.Condition.Zone == ZonePrettyName.None
                 && (_this.Condition.When != default
                     || _this.Condition.While != default);
         }

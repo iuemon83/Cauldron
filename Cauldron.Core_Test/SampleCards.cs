@@ -521,7 +521,7 @@ namespace Cauldron.Core_Test
                         {
                             new EffectAction(
                                 DrawCard: new(new NumValue(2),
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You))
+                                    new PlayerCondition(PlayerCondition.ContextValue.You))
                             )
                         }
                     ),
@@ -538,7 +538,7 @@ namespace Cauldron.Core_Test
                         {
                             new EffectAction(
                                 DrawCard: new(new NumValue(1),
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You))
+                                    new PlayerCondition(PlayerCondition.ContextValue.You))
                             )
                         }
                     )
@@ -589,7 +589,7 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                                new PlayerCondition(PlayerCondition.ContextValue.You)
                                             })),
                                     new PlayerModifier(
                                         Hp: new NumValueModifier(
@@ -604,7 +604,7 @@ namespace Cauldron.Core_Test
         public static CardDef FireGoblin
             => SampleCards.Creature(4, "火炎のゴブリン",
                 4, 2,
-                effectText: "このカードが場に出たとき、相手プレイヤーか、相手の場にいるクリーチャーカード1枚に2ダメージを与える。",
+                effectText: "このカードをプレイしたとき、相手プレイヤーか、相手の場にいるクリーチャーカード1枚に2ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -619,7 +619,7 @@ namespace Cauldron.Core_Test
                                             orPlayerConditions: new[]
                                             {
                                                 new PlayerCondition(
-                                                    Type: PlayerCondition.TypeValue.Opponent
+                                                    PlayerCondition.ContextValue.Opponent
                                                 ),
                                             },
                                             orCardConditions: new[]
@@ -753,7 +753,7 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageBefore: new(
-                                    Type: EffectTimingDamageBeforeEvent.TypeValue.Battle,
+                                    EffectTimingDamageBeforeEvent.TypeValue.Battle,
                                     Source: EffectTimingDamageBeforeEvent.SourceValue.DamageSource,
                                     CardCondition: new CardCondition(
                                         ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
@@ -788,13 +788,13 @@ namespace Cauldron.Core_Test
                                 StartTurn: new(
                                     OrPlayerCondition: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You),
+                                        new PlayerCondition(PlayerCondition.ContextValue.You),
                                     }))),
                             While: new(new(
                                 StartTurn: new(
                                     OrPlayerCondition: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You),
+                                        new PlayerCondition(PlayerCondition.ContextValue.You),
                                     })),
                                 0, 1)
                             ),
@@ -805,7 +805,7 @@ namespace Cauldron.Core_Test
                                     new Choice(new ChoiceSource(
                                         orPlayerConditions: new[]
                                         {
-                                            new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                            new PlayerCondition(PlayerCondition.ContextValue.You)
                                         })),
                                     new PlayerModifier(
                                         Mp: new NumValueModifier(
@@ -829,7 +829,7 @@ namespace Cauldron.Core_Test
                                 StartTurn: new(
                                     OrPlayerCondition: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })))),
                         new[]{
                             new EffectAction(
@@ -859,13 +859,13 @@ namespace Cauldron.Core_Test
                             new EffectAction(
                                 DrawCard: new(
                                     new NumValue(1),
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)))
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)))
                         }),
                     new CardEffect(
                         new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageBefore: new(
-                                    Type: EffectTimingDamageBeforeEvent.TypeValue.NonBattle,
+                                    EffectTimingDamageBeforeEvent.TypeValue.NonBattle,
                                     CardCondition: new(
                                         TypeCondition: new(new[]{ CardType.Sorcery }),
                                         OwnerCondition: CardCondition.OwnerConditionValue.You
@@ -926,7 +926,7 @@ namespace Cauldron.Core_Test
                                     }),
                                 StartTurn: new (
                                     OrPlayerCondition : new[] {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })
                                 ))),
                         new[]
@@ -995,7 +995,7 @@ namespace Cauldron.Core_Test
                                 StartTurn: new(
                                     OrPlayerCondition: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })))),
                         new[]{
                             new EffectAction(
@@ -1134,7 +1134,7 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                                new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                             },
                                             orCardConditions: new[]
                                             {
@@ -1230,7 +1230,7 @@ namespace Cauldron.Core_Test
                                 EndTurn: new(
                                     OrPlayerCondition: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })))),
                         new[]
                         {
@@ -1241,7 +1241,7 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                                new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                             },
                                             orCardConditions: new[]
                                             {
@@ -1335,7 +1335,7 @@ namespace Cauldron.Core_Test
                                     new Choice(new ChoiceSource(
                                         orPlayerConditions: new[]
                                         {
-                                            new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                            new PlayerCondition(PlayerCondition.ContextValue.You)
                                         })),
                                     new PlayerModifier(
                                         MaxMp: new NumValueModifier(
@@ -1352,12 +1352,12 @@ namespace Cauldron.Core_Test
                                 EndTurn: new(
                                     OrPlayerCondition: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
                                     }))),
                             While: new(new EffectTiming(EndTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
                                 }))
                                 , 0, 1)
                             ),
@@ -1368,7 +1368,7 @@ namespace Cauldron.Core_Test
                                     new Choice(new ChoiceSource(
                                         orPlayerConditions: new[]
                                         {
-                                            new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                            new PlayerCondition(PlayerCondition.ContextValue.You)
                                         })),
                                     new PlayerModifier(
                                         MaxMp: new NumValueModifier(
@@ -1407,7 +1407,7 @@ namespace Cauldron.Core_Test
                                             orPlayerConditions: new[]
                                             {
                                                 new PlayerCondition(
-                                                    Type: PlayerCondition.TypeValue.Any
+                                                    PlayerCondition.ContextValue.Any
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
@@ -1650,7 +1650,7 @@ namespace Cauldron.Core_Test
                                 new Choice(new ChoiceSource(
                                     orPlayerConditions: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                        new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                     }))))
                         })
                 });
@@ -1668,7 +1668,7 @@ namespace Cauldron.Core_Test
                                 new Choice(new ChoiceSource(
                                     orPlayerConditions: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })),
                                 new PlayerModifier(Hp: new NumValueModifier(
                                     NumValueModifier.OperatorValue.Add,
@@ -2014,7 +2014,7 @@ namespace Cauldron.Core_Test
                             new EffectWhen(new EffectTiming(EndTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })))),
                         new[]
                         {
@@ -2025,7 +2025,7 @@ namespace Cauldron.Core_Test
                                         orPlayerConditions: new[]
                                         {
                                             new PlayerCondition(
-                                                Type: PlayerCondition.TypeValue.You)
+                                                PlayerCondition.ContextValue.You)
                                         }))))
                         }),
                 });
@@ -2082,7 +2082,7 @@ namespace Cauldron.Core_Test
                                 new Choice(new ChoiceSource(
                                     orPlayerConditions: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })),
                                 new PlayerModifier(
                                     Hp: new(
@@ -2185,7 +2185,7 @@ namespace Cauldron.Core_Test
                                             orPlayerConditions: new[]
                                             {
                                                 new PlayerCondition(
-                                                    Type: PlayerCondition.TypeValue.Opponent
+                                                    PlayerCondition.ContextValue.Opponent
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
@@ -2237,7 +2237,7 @@ namespace Cauldron.Core_Test
                                             orPlayerConditions: new[]
                                             {
                                                 new PlayerCondition(
-                                                    Type: PlayerCondition.TypeValue.Opponent
+                                                    PlayerCondition.ContextValue.Opponent
                                                 )
                                             }),
                                         Choice.HowValue.Choose,
@@ -2279,7 +2279,7 @@ namespace Cauldron.Core_Test
                                                 While: new(new EffectTiming(EndTurn: new(
                                                     OrPlayerCondition: new[]
                                                     {
-                                                        new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                                        new PlayerCondition(PlayerCondition.ContextValue.You)
                                                     })),
                                                     0, 0)
                                                 ),
@@ -2338,7 +2338,7 @@ namespace Cauldron.Core_Test
                                                             ActionContextCardsOfMoveCard.TypeValue.Moved
                                                             )))
                                             }))))),
-                                new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                new PlayerCondition(PlayerCondition.ContextValue.You)
                                 )),
                     }
                 ),
@@ -2401,7 +2401,7 @@ namespace Cauldron.Core_Test
                                     new Choice(new ChoiceSource(
                                         orPlayerConditions: new[]
                                         {
-                                            new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                            new PlayerCondition(PlayerCondition.ContextValue.You)
                                         })),
                                     new PlayerModifier(
                                         MaxMp: new NumValueModifier(
@@ -2511,7 +2511,7 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                                new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                             },
                                             orCardConditions: new[]
                                             {
@@ -2645,7 +2645,7 @@ namespace Cauldron.Core_Test
                             While: new(new EffectTiming(EndTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                    new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                 })),
                                 0, 3)),
                         new[]
@@ -2717,7 +2717,7 @@ namespace Cauldron.Core_Test
                                 DamageBefore: new(
                                     Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
                                     PlayerCondition: new PlayerCondition(
-                                        Type: PlayerCondition.TypeValue.You
+                                        PlayerCondition.ContextValue.You
                                     ),
                                     CardCondition: new CardCondition(
                                         TypeCondition: new CardTypeCondition(new[]{ CardType.Creature }),
@@ -2761,7 +2761,7 @@ namespace Cauldron.Core_Test
                             new(new(EndTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 }))),
                             If: new(
                                 new NumCondition(30, NumCondition.CompareValue.GreaterThan),
@@ -2781,7 +2781,7 @@ namespace Cauldron.Core_Test
                                 new Choice(new ChoiceSource(
                                     orPlayerConditions: new[]
                                     {
-                                        new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                        new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                     },
                                     orCardConditions: new[]
                                     {
@@ -2867,7 +2867,7 @@ namespace Cauldron.Core_Test
                             new EffectWhen(new EffectTiming(StartTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })))),
                         new[]
                         {
@@ -2929,7 +2929,7 @@ namespace Cauldron.Core_Test
                             new EffectWhen(new EffectTiming(StartTurn: new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })))),
                         new[]
                         {
@@ -2940,7 +2940,7 @@ namespace Cauldron.Core_Test
                                             orPlayerConditions: new[]
                                             {
                                                 new PlayerCondition(
-                                                    Type: PlayerCondition.TypeValue.You)
+                                                    PlayerCondition.ContextValue.You)
                                             }))))
                         }),
                 });
@@ -3203,7 +3203,7 @@ namespace Cauldron.Core_Test
                             new EffectAction(
                                 DrawCard: new(
                                     new NumValue(5),
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You))),
+                                    new PlayerCondition(PlayerCondition.ContextValue.You))),
                             new EffectAction(
                                 ModifyCounter: new(
                                     new Choice(
@@ -3265,8 +3265,35 @@ namespace Cauldron.Core_Test
                                     new Choice(new ChoiceSource(
                                         orPlayerConditions: new[]
                                         {
-                                            new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                            new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                         }))))
+                        }),
+                });
+
+        public static CardDef DashGoblin
+            => SampleCards.Creature(2, "特攻ゴブリン", 1, 1,
+                effectText: "このカードが場に出たとき、相手プレイヤーに1ダメージを与える。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(
+                            Zone: ZonePrettyName.YouField,
+                            When: new(new EffectTiming(MoveCard: new(
+                                new[]{
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                },
+                                To: ZonePrettyName.YouField
+                                )))),
+                        new[]
+                        {
+                            new EffectAction(
+                                Damage: new(
+                                    new NumValue(1),
+                                    new Choice(new ChoiceSource(
+                                        orPlayerConditions: new[]
+                                        {
+                                            new PlayerCondition(PlayerCondition.ContextValue.Opponent)
+                                        })))),
                         }),
                 });
     }

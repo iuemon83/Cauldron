@@ -21,12 +21,12 @@ namespace Cauldron.Shared.MessagePackObjects
                     PlayerCondition.ContextValue.EventSource => playerToMatch.Id == eventArgs.SourcePlayer.Id,
                     _ => true
                 }
-                && playerCondition.Type switch
+                && playerCondition.Context switch
                 {
-                    PlayerCondition.TypeValue.You => playerToMatch.Id == effectOwnerCard.OwnerId,
-                    PlayerCondition.TypeValue.Opponent => playerToMatch.Id != effectOwnerCard.OwnerId,
-                    PlayerCondition.TypeValue.Active => playerToMatch.Id == eventArgs.GameMaster.ActivePlayer.Id,
-                    PlayerCondition.TypeValue.NonActive => playerToMatch.Id != eventArgs.GameMaster.ActivePlayer.Id,
+                    PlayerCondition.ContextValue.You => playerToMatch.Id == effectOwnerCard.OwnerId,
+                    PlayerCondition.ContextValue.Opponent => playerToMatch.Id != effectOwnerCard.OwnerId,
+                    PlayerCondition.ContextValue.Active => playerToMatch.Id == eventArgs.GameMaster.ActivePlayer.Id,
+                    PlayerCondition.ContextValue.NonActive => playerToMatch.Id != eventArgs.GameMaster.ActivePlayer.Id,
                     _ => true
                 };
         }

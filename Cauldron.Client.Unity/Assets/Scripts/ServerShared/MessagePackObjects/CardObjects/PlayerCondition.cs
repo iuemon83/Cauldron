@@ -10,14 +10,6 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             [DisplayText("いずれか")]
             Any,
-            [DisplayText("イベントの発生源")]
-            EventSource
-        }
-
-        public enum TypeValue
-        {
-            [DisplayText("いずれか")]
-            Any,
             [DisplayText("あなた")]
             You,
             [DisplayText("相手")]
@@ -26,17 +18,16 @@ namespace Cauldron.Shared.MessagePackObjects
             Active,
             [DisplayText("ノンアクティブターンプレイヤー")]
             NonActive,
+            [DisplayText("イベントの発生源")]
+            EventSource
         }
 
         public PlayerCondition.ContextValue Context { get; }
-        public PlayerCondition.TypeValue Type { get; }
 
         public PlayerCondition(
-            PlayerCondition.ContextValue Context = ContextValue.Any,
-            PlayerCondition.TypeValue Type = TypeValue.Any)
+            PlayerCondition.ContextValue Context = ContextValue.Any)
         {
             this.Context = Context;
-            this.Type = Type;
         }
     }
 }

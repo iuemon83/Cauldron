@@ -64,7 +64,7 @@ namespace Cauldron.Core_Test
                             new(new(StartTurn : new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })))),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -107,7 +107,7 @@ namespace Cauldron.Core_Test
                             new(new(StartTurn : new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                    new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                 })))),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -195,7 +195,7 @@ namespace Cauldron.Core_Test
                             new(new(EndTurn : new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })))),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -241,7 +241,7 @@ namespace Cauldron.Core_Test
                             new(new(EndTurn : new(
                                 OrPlayerCondition: new[]
                                 {
-                                    new PlayerCondition(Type: PlayerCondition.TypeValue.Opponent)
+                                    new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                 })))),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -362,7 +362,7 @@ namespace Cauldron.Core_Test
                                     new Choice(
                                         new ChoiceSource(
                                             orPlayerConditions: new[]{
-                                                new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                                new PlayerCondition(PlayerCondition.ContextValue.You)
                                             })),
                                     new PlayerModifier(Hp: new NumValueModifier(
                                         NumValueModifier.OperatorValue.Add,
@@ -437,7 +437,7 @@ namespace Cauldron.Core_Test
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
-                                                new PlayerCondition(Type: PlayerCondition.TypeValue.You)
+                                                new PlayerCondition(PlayerCondition.ContextValue.You)
                                             })),
                                     new PlayerModifier(Hp: new NumValueModifier(
                                         NumValueModifier.OperatorValue.Add,
