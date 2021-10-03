@@ -872,6 +872,13 @@ namespace Cauldron.Core.Entities
 
             this.ActivePlayer.UseMp(playingCard.Cost);
 
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnPlay?.Invoke(p.Id,
+                    this.CreateGameContext(p.Id),
+                    new PlayCardNotifyMessage(playingCard.OwnerId, playingCard.CardDefId));
+            }
+
             switch (playingCard.Type)
             {
                 case CardType.Sorcery:
@@ -881,13 +888,6 @@ namespace Cauldron.Core.Entities
                 default:
                     await this.MoveCard(handCardId, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Field)));
                     break;
-            }
-
-            foreach (var p in this.playerRepository.AllPlayers)
-            {
-                this.EventListener?.OnPlay?.Invoke(p.Id,
-                    this.CreateGameContext(p.Id),
-                    new PlayCardNotifyMessage(playingCard.OwnerId, playingCard.CardDefId));
             }
 
             var effectArgs = await this.effectManager.DoEffectOnPlay(playingCard,
@@ -1073,7 +1073,9 @@ namespace Cauldron.Core.Entities
 
             this.logger.LogInformation($"ダメージ：{newEventArgs.DamageContext.Value} > {newEventArgs.DamageContext.GuardPlayer.Name}");
 
-            newEventArgs.DamageContext.GuardPlayer.Damage(newEventArgs.DamageContext.Value);
+            var newDamageContext = newEventArgs.DamageContext;
+
+            newDamageContext.GuardPlayer.Damage(newDamageContext.Value);
 
             // 各プレイヤーに通知
             foreach (var player in this.playerRepository.AllPlayers)
@@ -1081,8 +1083,10 @@ namespace Cauldron.Core.Entities
                 this.EventListener?.OnDamage?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
                     new DamageNotifyMessage(
-                        DamageNotifyMessage.ReasonValue.Attack,
-                        newEventArgs.DamageContext.Value,
+                        newDamageContext.IsBattle
+                            ? DamageNotifyMessage.ReasonValue.Attack
+                            : DamageNotifyMessage.ReasonValue.Effect,
+                        newDamageContext.Value,
                         SourceCardId: newEventArgs.DamageContext.DamageSourceCard.Id,
                         GuardPlayerId: newEventArgs.DamageContext.GuardPlayer.Id
                         ));
@@ -1162,7 +1166,7 @@ namespace Cauldron.Core.Entities
                     DamageSourceCard: newArgs.BattleContext.GuardCard,
                     GuardCard: newArgs.BattleContext.AttackCard,
                     Value: newArgs.BattleContext.GuardCard.Power,
-                    IsBattle: false
+                    IsBattle: true
                 );
                 await this.HitCreature(damageContext2);
             }
@@ -1202,7 +1206,9 @@ namespace Cauldron.Core.Entities
                 this.EventListener?.OnDamage?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
                     new DamageNotifyMessage(
-                        DamageNotifyMessage.ReasonValue.Attack,
+                        newDamageContext.IsBattle
+                            ? DamageNotifyMessage.ReasonValue.Attack
+                            : DamageNotifyMessage.ReasonValue.Effect,
                         newDamageContext.Value,
                         SourceCardId: newDamageContext.DamageSourceCard.Id,
                         GuardCardId: newDamageContext.GuardCard.Id

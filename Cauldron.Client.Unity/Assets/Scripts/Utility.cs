@@ -42,15 +42,20 @@ namespace Assets.Scripts
             return (ownerName, card.Name);
         }
 
-        public static (string ownerPlayerName, string cardName) GetCardName(GameContext gameContext, CardId cardId)
+        public static Card GetCard(GameContext gameContext, CardId cardId)
         {
             // 非公開領域に移動した場合は取れない
-            var card = gameContext.You.Hands
+            return gameContext.You.Hands
                 .Concat(gameContext.You.PublicPlayerInfo.Field)
                 .Concat(gameContext.You.PublicPlayerInfo.Cemetery)
                 .Concat(gameContext.Opponent.Field)
                 .Concat(gameContext.Opponent.Cemetery)
                 .FirstOrDefault(c => c.Id == cardId);
+        }
+
+        public static (string ownerPlayerName, string cardName) GetCardName(GameContext gameContext, CardId cardId)
+        {
+            var card = GetCard(gameContext, cardId);
 
             if (card == default)
             {

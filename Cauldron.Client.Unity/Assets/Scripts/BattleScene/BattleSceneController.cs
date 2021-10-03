@@ -53,6 +53,8 @@ public class BattleSceneController : MonoBehaviour
     private TextMeshProUGUI numPicksText = default;
     [SerializeField]
     private TextMeshProUGUI numPicksLimitText = default;
+    [SerializeField]
+    private GameObject pickUiGroup = default;
 
     private readonly List<PlayerId> pickedPlayerIdList = new List<PlayerId>();
     private readonly List<CardId> pickedCardIdList = new List<CardId>();
@@ -103,8 +105,6 @@ public class BattleSceneController : MonoBehaviour
     private async void Start()
     {
         Instance = this;
-
-        this.choiceCardButton.interactable = false;
 
         var holder = ConnectionHolder.Find();
 
@@ -288,11 +288,11 @@ public class BattleSceneController : MonoBehaviour
         this.ShowConfirmSurrenderDialog();
     }
 
-    private async UniTask DoAnswer(ChoiceAnswer answer)
+    private async UniTask<bool> DoAnswer(ChoiceAnswer answer)
     {
         if (!this.ValidChoiceAnwser(answer))
         {
-            return;
+            return false;
         }
 
         var result = await this.Client.AnswerChoice(this.askMessage.QuestionId, answer);
@@ -300,7 +300,7 @@ public class BattleSceneController : MonoBehaviour
         {
             Debug.Log($"result: {result}");
 
-            return;
+            return false;
         }
 
         // リセット
@@ -310,6 +310,8 @@ public class BattleSceneController : MonoBehaviour
         this.NumPicksLimit = 0;
 
         this.askMessage = null;
+
+        return true;
     }
 
     private void ShowChoiceDialog()
@@ -317,8 +319,11 @@ public class BattleSceneController : MonoBehaviour
         var dialog = Instantiate(this.choiceDialogController);
         dialog.Init(this.askMessage, async answer =>
         {
-            await this.DoAnswer(answer);
-            Destroy(dialog.gameObject);
+            var result = await this.DoAnswer(answer);
+            if (result)
+            {
+                Destroy(dialog.gameObject);
+            }
         });
 
         dialog.transform.SetParent(this.canvas.transform, false);
@@ -333,10 +338,17 @@ public class BattleSceneController : MonoBehaviour
 
         var answer = this.Answer;
 
-        await this.DoAnswer(answer);
-
-        // リセット
-        this.ResetAllMarks();
+        var result = await this.DoAnswer(answer);
+        if (result)
+        {
+            // リセット
+            this.pickUiGroup.SetActive(false);
+            this.ResetAllMarks();
+        }
+        else
+        {
+            this.choiceCardButton.interactable = true;
+        }
     }
 
     private ChoiceAnswer Answer => new ChoiceAnswer(
@@ -566,13 +578,16 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            var cardName = this.connectionHolder.CardPool.TryGetValue(message.CardDefId, out var carddef)
-                ? carddef.Name
-                : "";
+            if (!this.connectionHolder.CardPool.TryGetValue(message.CardDefId, out var carddef))
+            {
+                return;
+            }
 
             var ownerName = Utility.GetPlayerName(gameContext, message.PlayerId);
 
-            Debug.Log($"プレイ: {cardName}({ownerName})");
+            Debug.Log($"プレイ: {carddef.Name}({ownerName})");
+
+            await this.ShowCardDetail(carddef);
 
             //await this.UpdateGameContext(gameContext);
         });
@@ -836,7 +851,6 @@ public class BattleSceneController : MonoBehaviour
                     }
 
                 case DamageNotifyMessage.ReasonValue.Attack:
-                case DamageNotifyMessage.ReasonValue.Effect:
                     {
                         var (ownerPlayerName, cardName) = Utility.GetCardName(gameContext, message.SourceCardId);
                         if (message.GuardCardId == default)
@@ -848,6 +862,20 @@ public class BattleSceneController : MonoBehaviour
                         {
                             var (guardCardOwnerName, guardCardName) = Utility.GetCardName(gameContext, message.GuardCardId);
                             Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardCardName}({guardCardOwnerName}) {message.Damage}");
+                        }
+
+                        break;
+                    }
+                case DamageNotifyMessage.ReasonValue.Effect:
+                    {
+                        var card = Utility.GetCard(gameContext, message.SourceCardId);
+
+                        if (card != null)
+                        {
+                            var ownerName = Utility.GetPlayerName(gameContext, card.OwnerId);
+
+                            await this.ShowCardDetail(card);
+                            Debug.Log($"ダメージ: {card.Name}({ownerName}) {message.Damage}");
                         }
 
                         break;
@@ -913,14 +941,24 @@ public class BattleSceneController : MonoBehaviour
             }
         }
 
+        this.pickUiGroup.SetActive(true);
         this.choiceCardButton.interactable = true;
         this.NumPicks = 0;
         this.NumPicksLimit = this.askMessage.NumPicks;
     }
 
-    public void ShowCardDetail(Card card)
+    public async UniTask ShowCardDetail(Card card)
     {
         this.cardDetailController.SetCard(card);
+        await cardDetailController.transform.DOScale(1.1f, 0);
+        await cardDetailController.transform.DOScale(1f, 0.5f);
+    }
+
+    public async UniTask ShowCardDetail(CardDef cardDef)
+    {
+        this.cardDetailController.SetCardDef(cardDef);
+        await cardDetailController.transform.DOScale(1.1f, 0);
+        await cardDetailController.transform.DOScale(1f, 0.5f);
     }
 
     public void Pick(PlayerController playerController)

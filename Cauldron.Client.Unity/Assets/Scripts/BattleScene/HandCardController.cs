@@ -18,7 +18,7 @@ public class HandCardController : CardController, IPointerClickHandler, IPointer
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        BattleSceneController.Instance.ShowCardDetail(this.Card);
+        //BattleSceneController.Instance.ShowCardDetail(this.Card);
     }
 
     public async UniTask DestroyEffect()

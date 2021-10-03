@@ -47,7 +47,7 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        BattleSceneController.Instance.ShowCardDetail(this.Card);
+        //BattleSceneController.Instance.ShowCardDetail(this.Card);
     }
 
     public void VisibleAttackTargetIcon(bool value)
