@@ -52,7 +52,8 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public List<CardEffect> Effects { get; set; }
 
-        private readonly Dictionary<string, int> counter = new Dictionary<string, int>();
+        public Dictionary<string, int> CountersByName { get; set; }
+            = new Dictionary<string, int>();
 
         /// <summary>
         /// 攻撃可能となるまでのターン数
@@ -114,17 +115,17 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public void ModifyCounter(string name, int addValue)
         {
-            if (!this.counter.TryGetValue(name, out var num))
+            if (!this.CountersByName.TryGetValue(name, out var num))
             {
-                this.counter.Add(name, 0);
+                this.CountersByName.Add(name, 0);
             }
 
-            this.counter[name] = num + addValue;
+            this.CountersByName[name] = num + addValue;
         }
 
         public int GetCounter(string name)
         {
-            return this.counter.TryGetValue(name, out var num)
+            return this.CountersByName.TryGetValue(name, out var num)
                 ? num
                 : 0;
         }

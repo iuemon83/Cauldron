@@ -203,7 +203,8 @@ namespace Cauldron.Core.Entities
         public static bool IsPlayable(Player player, Card card)
         {
             // フィールドに出すカードはフィールドに空きがないとプレイできない
-            if (player.Field.Full)
+            if (card.Type != CardType.Sorcery
+                && player.Field.Full)
             {
                 return false;
             }

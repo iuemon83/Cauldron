@@ -1,24 +1,37 @@
+using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class HandCardController : CardController, IPointerClickHandler, IPointerEnterHandler
+public class HandCardController : CardController, IPointerClickHandler
 {
     [SerializeField]
     private Image destroyIcon = default;
     [SerializeField]
     private Image backgroundImage = default;
 
-    public async void OnPointerClick(PointerEventData eventData)
+    private Action<Card> openCardDetailView;
+
+    public void Init(Card card, Action<Card> openCardDetailView)
     {
-        await BattleSceneController.Instance.PlayFromHand(this);
+        this.Init(card);
+
+        this.openCardDetailView = openCardDetailView;
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public async void OnPointerClick(PointerEventData eventData)
     {
-        //BattleSceneController.Instance.ShowCardDetail(this.Card);
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            await BattleSceneController.Instance.PlayFromHand(this);
+        }
+        else
+        {
+            this.openCardDetailView?.Invoke(this.Card);
+        }
     }
 
     public async UniTask DestroyEffect()

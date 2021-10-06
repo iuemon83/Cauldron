@@ -1,11 +1,13 @@
+using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class FieldCardController : CardController, IPointerClickHandler, IPointerEnterHandler
+public class FieldCardController : CardController, IPointerClickHandler
 {
     [SerializeField]
     private GameObject selectedIcon = default;
@@ -18,7 +20,16 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
     [SerializeField]
     private Image destroyIcon = default;
 
+    private Action<Card> openCardDetailView;
+
     public bool IsAttackTarget => this.attackTargetIcon.activeSelf;
+
+    public void Init(Card card, Action<Card> openCardDetailView)
+    {
+        this.Init(card);
+
+        this.openCardDetailView = openCardDetailView;
+    }
 
     /// <summary>
     /// フィールドカードのクリックイベント
@@ -26,28 +37,30 @@ public class FieldCardController : CardController, IPointerClickHandler, IPointe
     /// <param name="eventData"></param>
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (this.IsPicked)
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            BattleSceneController.Instance.UnPick(this);
-        }
-        else if (this.IsPickCandidate)
-        {
-            BattleSceneController.Instance.Pick(this);
-        }
-        else if (this.IsAttackTarget)
-        {
-            BattleSceneController.Instance.AttackToCardIfSelectedAttackCard(this);
+            if (this.IsPicked)
+            {
+                BattleSceneController.Instance.UnPick(this);
+            }
+            else if (this.IsPickCandidate)
+            {
+                BattleSceneController.Instance.Pick(this);
+            }
+            else if (this.IsAttackTarget)
+            {
+                BattleSceneController.Instance.AttackToCardIfSelectedAttackCard(this);
+            }
+            else
+            {
+                // 自分のカード
+                BattleSceneController.Instance.ToggleAttackCard(this);
+            }
         }
         else
         {
-            // 自分のカード
-            BattleSceneController.Instance.ToggleAttackCard(this);
+            this.openCardDetailView?.Invoke(this.Card);
         }
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        //BattleSceneController.Instance.ShowCardDetail(this.Card);
     }
 
     public void VisibleAttackTargetIcon(bool value)

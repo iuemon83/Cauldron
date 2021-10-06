@@ -19,27 +19,32 @@ public class CardController : MonoBehaviour
     }
 
     [SerializeField]
-    protected TextMeshProUGUI CardNameText = default;
+    protected TextMeshProUGUI cardNameText = default;
 
     [SerializeField]
-    protected GameObject PowerSpace = default;
-    [SerializeField]
-    protected GameObject ToughnessSpace = default;
+    protected TextMeshProUGUI costText = default;
 
     [SerializeField]
-    protected TextMeshProUGUI CostText = default;
+    protected GameObject powerSpace = default;
     [SerializeField]
-    protected TextMeshProUGUI PowerText = default;
+    protected TextMeshProUGUI powerText = default;
     [SerializeField]
-    protected TextMeshProUGUI ToughnessText = default;
+    protected GameObject toughnessSpace = default;
+    [SerializeField]
+    protected TextMeshProUGUI toughnessText = default;
 
     [SerializeField]
-    protected Image CardImage = default;
+    protected GameObject[] counterSpaceList = new GameObject[0];
+    [SerializeField]
+    protected TextMeshProUGUI[] counterTextList = new TextMeshProUGUI[0];
 
     [SerializeField]
-    protected GameObject PickCandidateIcon = default;
+    protected Image cardImage = default;
+
     [SerializeField]
-    protected GameObject PickedIcon = default;
+    protected GameObject pickCandidateIcon = default;
+    [SerializeField]
+    protected GameObject pickedIcon = default;
     [SerializeField]
     private GameObject abilityView = default;
     [SerializeField]
@@ -51,8 +56,8 @@ public class CardController : MonoBehaviour
 
     public CardId CardId => this.Card.Id;
 
-    public bool IsPickCandidate => this.PickCandidateIcon.activeSelf || this.IsPicked;
-    public bool IsPicked => this.PickedIcon.activeSelf;
+    public bool IsPickCandidate => this.pickCandidateIcon.activeSelf || this.IsPicked;
+    public bool IsPicked => this.pickedIcon.activeSelf;
 
     public Card Card { get; private set; }
 
@@ -100,35 +105,50 @@ public class CardController : MonoBehaviour
     {
         this.Card = card;
 
-        this.CostText.text = this.Card.Cost.ToString();
+        this.costText.text = this.Card.Cost.ToString();
 
         switch (this.Card.Type)
         {
             case CardType.Creature:
-                this.PowerText.text = this.Card.Power.ToString();
-                this.PowerText.color = GetPowerToughnessTextColor(this.Card.BasePower, this.Card.Power);
-                this.ToughnessText.text = this.Card.Toughness.ToString();
-                this.ToughnessText.color = GetPowerToughnessTextColor(this.Card.BaseToughness, this.Card.Toughness);
-                this.PowerSpace.SetActive(true);
-                this.ToughnessSpace.SetActive(true);
+                this.powerText.text = this.Card.Power.ToString();
+                this.powerText.color = GetPowerToughnessTextColor(this.Card.BasePower, this.Card.Power);
+                this.toughnessText.text = this.Card.Toughness.ToString();
+                this.toughnessText.color = GetPowerToughnessTextColor(this.Card.BaseToughness, this.Card.Toughness);
+                this.powerSpace.SetActive(true);
+                this.toughnessSpace.SetActive(true);
                 break;
 
             default:
-                this.PowerSpace.SetActive(false);
-                this.ToughnessSpace.SetActive(false);
+                this.powerSpace.SetActive(false);
+                this.toughnessSpace.SetActive(false);
                 break;
+        }
+
+        var counterValues = this.Card.CountersByName.Values.ToArray();
+
+        for (var i = 0; i < this.counterSpaceList.Length; i++)
+        {
+            if (counterValues.Length > i)
+            {
+                this.counterSpaceList[i].SetActive(true);
+                this.counterTextList[i].text = counterValues[i].ToString();
+            }
+            else
+            {
+                this.counterSpaceList[i].SetActive(false);
+            }
         }
 
         var (success, cardImageSprite) = CardImageCache.GetOrInit(this.Card.Name);
         if (success)
         {
-            this.CardImage.sprite = cardImageSprite;
+            this.cardImage.sprite = cardImageSprite;
         }
         else
         {
             // âÊëúÇ™Ç»Ç¢èÍçáÇæÇØñºëOÇï\é¶Ç∑ÇÈ
-            this.CardNameText.text = this.Card.Name;
-            this.CardImage.enabled = false;
+            this.cardNameText.text = this.Card.Name;
+            this.cardImage.enabled = false;
         }
 
         this.UpdateAbilityIcon();
@@ -136,12 +156,12 @@ public class CardController : MonoBehaviour
 
     public void VisiblePickCandidateIcon(bool value)
     {
-        this.PickCandidateIcon.SetActive(value);
+        this.pickCandidateIcon.SetActive(value);
     }
 
     public void VisiblePickedIcon(bool value)
     {
-        this.PickedIcon.SetActive(value);
+        this.pickedIcon.SetActive(value);
     }
 
     public virtual void ResetAllIcon()

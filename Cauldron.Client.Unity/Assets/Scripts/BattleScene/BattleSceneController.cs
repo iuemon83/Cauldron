@@ -48,6 +48,12 @@ public class BattleSceneController : MonoBehaviour
     private CardDetailController cardDetailController = default;
 
     [SerializeField]
+    private GameObject cardsSpace = default;
+
+    [SerializeField]
+    private CardDetailViewController cardDetailViewController = default;
+
+    [SerializeField]
     private Button choiceCardButton = default;
     [SerializeField]
     private TextMeshProUGUI numPicksText = default;
@@ -453,13 +459,12 @@ public class BattleSceneController : MonoBehaviour
         {
             this.RemoveCardObjectByCardId(cardId);
 
-            controller = Instantiate(this.handCardPrefab);
+            controller = Instantiate(this.handCardPrefab, this.cardsSpace.transform);
             handCardObjectsByCardId.Add(cardId, controller);
         }
 
-        controller.Init(card);
+        controller.Init(card, this.OpenCardDetailView);
 
-        controller.transform.SetParent(this.canvas.transform, false);
         controller.transform.position = this.youHandSpaces[index].transform.position;
 
         return controller;
@@ -471,13 +476,12 @@ public class BattleSceneController : MonoBehaviour
         {
             this.RemoveCardObjectByCardId(card.Id);
 
-            cardController = Instantiate(this.fieldCardPrefab);
+            cardController = Instantiate(this.fieldCardPrefab, this.cardsSpace.transform);
             fieldCardControllersByCardId.Add(card.Id, cardController);
         }
 
-        cardController.Init(card);
+        cardController.Init(card, this.OpenCardDetailView);
 
-        cardController.transform.SetParent(this.canvas.transform, false);
         cardController.transform.position = playerId == this.YouId
             ? this.youFieldSpaces[index].transform.position
             : this.opponentFieldSpaces[index].transform.position;
@@ -947,18 +951,23 @@ public class BattleSceneController : MonoBehaviour
         this.NumPicksLimit = this.askMessage.NumPicks;
     }
 
-    public async UniTask ShowCardDetail(Card card)
+    private async UniTask ShowCardDetail(Card card)
     {
         this.cardDetailController.SetCard(card);
         await cardDetailController.transform.DOScale(1.1f, 0);
         await cardDetailController.transform.DOScale(1f, 0.5f);
     }
 
-    public async UniTask ShowCardDetail(CardDef cardDef)
+    private async UniTask ShowCardDetail(CardDef cardDef)
     {
         this.cardDetailController.SetCardDef(cardDef);
         await cardDetailController.transform.DOScale(1.1f, 0);
         await cardDetailController.transform.DOScale(1f, 0.5f);
+    }
+
+    private void OpenCardDetailView(Card card)
+    {
+        this.cardDetailViewController.Open(card);
     }
 
     public void Pick(PlayerController playerController)
