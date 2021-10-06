@@ -7,6 +7,37 @@ namespace Cauldron.Core_Test
     public class GameMaster_Test
     {
         [Fact]
+        public async Task StartTurn_Test()
+        {
+            var testCardDef = SampleCards.Goblin;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef });
+
+            var actual = await c.GameMaster.StartTurn();
+            Assert.Equal(GameMasterStatusCode.OK, actual);
+
+            actual = await c.GameMaster.StartTurn();
+            Assert.Equal(GameMasterStatusCode.AlreadyTurnStarted, actual);
+        }
+
+        [Fact]
+        public async Task EndTurn_Test()
+        {
+            var testCardDef = SampleCards.Goblin;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef });
+
+            var actual = await c.GameMaster.StartTurn();
+            Assert.Equal(GameMasterStatusCode.OK, actual);
+
+            actual = await c.GameMaster.EndTurn();
+            Assert.Equal(GameMasterStatusCode.OK, actual);
+
+            actual = await c.GameMaster.EndTurn();
+            Assert.Equal(GameMasterStatusCode.NotTurnStart, actual);
+        }
+
+        [Fact]
         public async Task PlayFromHand_MPが不足()
         {
             var testCardDef = SampleCards.Goblin;

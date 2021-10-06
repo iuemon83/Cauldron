@@ -10,6 +10,16 @@
         NotStart,
 
         /// <summary>
+        /// ターンがまだ開始していない
+        /// </summary>
+        NotTurnStart,
+
+        /// <summary>
+        /// ターンがすでに開始している
+        /// </summary>
+        AlreadyTurnStarted,
+
+        /// <summary>
         /// 不正なデッキ
         /// </summary>
         InvalidDeck,

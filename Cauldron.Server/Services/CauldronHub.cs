@@ -36,7 +36,7 @@ namespace Cauldron.Server.Services
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
             }
 
-            if (!gameMaster.IsStarted)
+            if (!gameMaster.IsGameStarted)
             {
                 return GameMasterStatusCode.NotStart;
             }

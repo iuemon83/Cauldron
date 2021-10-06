@@ -167,7 +167,9 @@ namespace Cauldron.Core.Entities
 
         public GameEventListener EventListener { get; }
 
-        public bool IsStarted { get; private set; }
+        public bool IsGameStarted { get; private set; }
+
+        public bool IsTurnStarted { get; private set; }
 
         public Player GetWinner()
         {
@@ -306,9 +308,9 @@ namespace Cauldron.Core.Entities
 
         public async ValueTask StartGame(PlayerId firstPlayerId)
         {
-            if (this.IsStarted) return;
+            if (this.IsGameStarted) return;
 
-            this.IsStarted = true;
+            this.IsGameStarted = true;
 
             try
             {
@@ -347,7 +349,7 @@ namespace Cauldron.Core.Entities
             }
             catch
             {
-                this.IsStarted = false;
+                this.IsGameStarted = false;
                 throw;
             }
         }
@@ -800,6 +802,13 @@ namespace Cauldron.Core.Entities
 
         public async ValueTask<GameMasterStatusCode> StartTurn()
         {
+            if (this.IsTurnStarted)
+            {
+                return GameMasterStatusCode.AlreadyTurnStarted;
+            }
+
+            this.IsTurnStarted = true;
+
             this.PlayerTurnCountById[this.ActivePlayer.Id]++;
 
             // 1ターン目はMP を増やさない
@@ -829,12 +838,16 @@ namespace Cauldron.Core.Entities
 
         public async ValueTask<GameMasterStatusCode> EndTurn()
         {
-            var endTurnPlayer = this.ActivePlayer;
+            if (!this.IsTurnStarted)
+            {
+                return GameMasterStatusCode.NotTurnStart;
+            }
 
-            this.logger.LogInformation($"ターンエンド：{endTurnPlayer.Name}");
+            this.logger.LogInformation($"ターンエンド：{this.ActivePlayer.Name}");
 
-            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnEndTurn, this, SourcePlayer: endTurnPlayer));
+            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnEndTurn, this, SourcePlayer: this.ActivePlayer));
 
+            this.IsTurnStarted = false;
             this.ActivePlayer = this.NextPlayer;
             this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
             this.EventListener?.OnStartTurn?.Invoke(this.ActivePlayer.Id, this.CreateGameContext(this.ActivePlayer.Id));
