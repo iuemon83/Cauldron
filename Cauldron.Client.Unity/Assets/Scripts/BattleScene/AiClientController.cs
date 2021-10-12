@@ -84,7 +84,11 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     {
     }
 
-    void ICauldronHubReceiver.OnBattle(GameContext gameContext, BattleNotifyMessage message)
+    void ICauldronHubReceiver.OnBattleStart(GameContext gameContext, BattleNotifyMessage message)
+    {
+    }
+
+    void ICauldronHubReceiver.OnBattleEnd(GameContext gameContext, BattleNotifyMessage message)
     {
     }
 

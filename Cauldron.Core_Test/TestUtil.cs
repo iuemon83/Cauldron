@@ -44,13 +44,14 @@ namespace Cauldron.Core_Test
             Action<PlayerId, GameContext, ModifyCardNotifyMessage> OnModifyCard = null,
             Action<PlayerId, GameContext, ModifyPlayerNotifyMessage> OnModifyPlayer = null,
             Action<PlayerId, GameContext, DamageNotifyMessage> OnDamage = null,
-            Action<PlayerId, GameContext, BattleNotifyMessage> OnBattle = null,
+            Action<PlayerId, GameContext, BattleNotifyMessage> OnBattleStart = null,
+            Action<PlayerId, GameContext, BattleNotifyMessage> OnBattleEnd = null,
             Action<PlayerId, GameContext, ModifyCounterNotifyMessage> OnModityCounter = null,
             Action<PlayerId, GameContext> OnEndGame = null,
             Func<PlayerId, ChoiceCandidates, int, ValueTask<ChoiceAnswer>> AskCardAction = null
             ) => new(
                 OnStartTurn, OnPlayCard, OnAddCard, OnExcludeCard, OnMoveCard, OnModifyCard, OnModifyPlayer,
-                OnBattle, OnDamage, OnModityCounter, OnEndGame, AskCardAction
+                OnBattleStart, OnBattleEnd, OnDamage, OnModityCounter, OnEndGame, AskCardAction
                 );
 
         public static EffectAction TestEffectAction => new(

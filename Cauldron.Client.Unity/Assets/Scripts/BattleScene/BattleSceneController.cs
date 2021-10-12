@@ -119,7 +119,8 @@ public class BattleSceneController : MonoBehaviour
             holder.Receiver.OnPlayCard.Subscribe((a) => this.OnPlayCard(a.gameContext, a.message)),
             holder.Receiver.OnAddCard.Subscribe((a) => this.OnAddCard(a.gameContext, a.message)),
             holder.Receiver.OnAsk.Subscribe((a) => this.OnAsk(a)),
-            holder.Receiver.OnBattle.Subscribe((a) => this.OnBattle(a.gameContext, a.message)),
+            holder.Receiver.OnBattleStart.Subscribe((a) => this.OnBattleStart(a.gameContext, a.message)),
+            holder.Receiver.OnBattleEnd.Subscribe((a) => this.OnBattleEnd(a.gameContext, a.message)),
             holder.Receiver.OnDamage.Subscribe((a) => this.OnDamage(a.gameContext, a.message)),
             holder.Receiver.OnModifyCard.Subscribe((a) => this.OnModifyCard(a.gameContext, a.message)),
             holder.Receiver.OnModifyPlayer.Subscribe((a) => this.OnModifyPlayer(a.gameContext, a.message)),
@@ -380,6 +381,8 @@ public class BattleSceneController : MonoBehaviour
             return;
         }
 
+        this.currentGameContext = gameContext;
+
         var you = gameContext.You;
         if (you != null)
         {
@@ -443,8 +446,6 @@ public class BattleSceneController : MonoBehaviour
             }
         }
 
-        this.currentGameContext = gameContext;
-
         if (gameContext.GameOver)
         {
             this.ShowEndGameDialog(gameContext.WinnerPlayerId);
@@ -485,6 +486,16 @@ public class BattleSceneController : MonoBehaviour
         cardController.transform.position = playerId == this.YouId
             ? this.youFieldSpaces[index].transform.position
             : this.opponentFieldSpaces[index].transform.position;
+
+        // 攻撃可能なカードの位置調整
+        if (this.currentGameContext.ActivePlayerId == card.OwnerId
+            && card.CanAttack)
+        {
+            cardController.transform.position = new Vector3(
+                cardController.transform.position.x,
+                cardController.transform.position.y - (playerId == this.YouId ? -10 : 10)
+                );
+        }
 
         return cardController;
     }
@@ -795,7 +806,7 @@ public class BattleSceneController : MonoBehaviour
         });
     }
 
-    void OnBattle(GameContext gameContext, BattleNotifyMessage message)
+    void OnBattleStart(GameContext gameContext, BattleNotifyMessage message)
     {
         Debug.Log($"OnBattle({this.Client.PlayerName})");
 
@@ -835,6 +846,16 @@ public class BattleSceneController : MonoBehaviour
                 }
             }
 
+            await this.UpdateGameContext(gameContext);
+        });
+    }
+
+    void OnBattleEnd(GameContext gameContext, BattleNotifyMessage message)
+    {
+        Debug.Log($"OnBattleEnd({this.Client.PlayerName})");
+
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
             await this.UpdateGameContext(gameContext);
         });
     }

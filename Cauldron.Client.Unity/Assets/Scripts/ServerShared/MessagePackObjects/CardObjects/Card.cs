@@ -75,6 +75,52 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public int NumTurnsInField { get; set; }
 
+        public bool HasAbility(CreatureAbility ability) => this.Abilities.Contains(ability);
+
+        /// <summary>
+        /// 指定したアビリティが有効になっている場合はtrue、そうでなければfalse
+        /// </summary>
+        /// <param name="card"></param>
+        /// <param name="ability"></param>
+        /// <returns></returns>
+        public bool EnableAbility(CreatureAbility ability)
+        {
+            if (this.Zone.ZoneName != ZoneName.Field)
+            {
+                return false;
+            }
+
+            if (this.HasAbility(CreatureAbility.Sealed))
+            {
+                return ability == CreatureAbility.Sealed;
+            }
+
+            switch (ability)
+            {
+                case CreatureAbility.Cover:
+                    return this.HasAbility(ability) && !this.HasAbility(CreatureAbility.Stealth);
+
+                default:
+                    return this.HasAbility(ability);
+            }
+        }
+
+        /// <summary>
+        /// 攻撃可能な状態か
+        /// </summary>
+        /// <param name="attackCard"></param>
+        /// <returns></returns>
+        public bool CanAttack =>
+            // クリーチャーでなければ攻撃できない
+            this.Type == CardType.Creature
+            // 召喚酔いでない
+            && this.NumTurnsToCanAttack <= this.NumTurnsInField
+            // 攻撃不能状態でない
+            && !this.EnableAbility(CreatureAbility.CantAttack)
+            // 1ターン中に攻撃可能な回数を超えていない
+            && this.NumAttacksLimitInTurn > this.NumAttacksInTurn
+            ;
+
         public Card() { }
 
         public Card(CardDef cardDef)

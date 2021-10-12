@@ -7,6 +7,8 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public PlayerId WinnerPlayerId { get; }
 
+        public PlayerId ActivePlayerId { get; }
+
         public PublicPlayerInfo Opponent { get; }
 
         public PrivatePlayerInfo You { get; }
@@ -17,6 +19,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public GameContext(
             PlayerId WinnerPlayerId,
+            PlayerId ActivePlayerId,
             PublicPlayerInfo Opponent,
             PrivatePlayerInfo You,
              RuleBook RuleBook,
@@ -24,6 +27,7 @@ namespace Cauldron.Shared.MessagePackObjects
             )
         {
             this.WinnerPlayerId = WinnerPlayerId;
+            this.ActivePlayerId = ActivePlayerId;
             this.Opponent = Opponent;
             this.You = You;
             this.RuleBook = RuleBook;

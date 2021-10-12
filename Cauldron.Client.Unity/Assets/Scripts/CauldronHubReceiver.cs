@@ -36,11 +36,17 @@ namespace Assets.Scripts
         void ICauldronHubReceiver.OnDamage(GameContext gameContext, DamageNotifyMessage message)
             => this.onDamage.OnNext((gameContext, message));
 
-        public IObservable<(GameContext gameContext, BattleNotifyMessage message)> OnBattle => onBattle;
-        private readonly Subject<(GameContext gameContext, BattleNotifyMessage message)> onBattle
+        public IObservable<(GameContext gameContext, BattleNotifyMessage message)> OnBattleStart => onBattleStart;
+        private readonly Subject<(GameContext gameContext, BattleNotifyMessage message)> onBattleStart
             = new Subject<(GameContext gameContext, BattleNotifyMessage message)>();
-        void ICauldronHubReceiver.OnBattle(GameContext gameContext, BattleNotifyMessage message)
-            => this.onBattle.OnNext((gameContext, message));
+        void ICauldronHubReceiver.OnBattleStart(GameContext gameContext, BattleNotifyMessage message)
+            => this.onBattleStart.OnNext((gameContext, message));
+
+        public IObservable<(GameContext gameContext, BattleNotifyMessage message)> OnBattleEnd => onBattleEnd;
+        private readonly Subject<(GameContext gameContext, BattleNotifyMessage message)> onBattleEnd
+            = new Subject<(GameContext gameContext, BattleNotifyMessage message)>();
+        void ICauldronHubReceiver.OnBattleEnd(GameContext gameContext, BattleNotifyMessage message)
+            => this.onBattleEnd.OnNext((gameContext, message));
 
         public IObservable<(GameContext gameContext, ModifyCardNotifyMessage message)> OnModifyCard => onModifyCard;
         private readonly Subject<(GameContext gameContext, ModifyCardNotifyMessage message)> onModifyCard

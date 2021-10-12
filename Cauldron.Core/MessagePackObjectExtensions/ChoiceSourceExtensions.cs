@@ -24,7 +24,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 cardList = cardList.Where(c =>
                 {
                     var isStealth = c.OwnerId != effectOwnerCard.OwnerId
-                        && GameMaster.EnableAbility(c, CreatureAbility.Stealth);
+                        && c.EnableAbility(CreatureAbility.Stealth);
 
                     return !isStealth;
                 });

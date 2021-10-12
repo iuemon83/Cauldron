@@ -17,7 +17,8 @@ namespace Cauldron.Shared.Services
         void OnModifyCounter(GameContext gameContext, ModifyCounterNotifyMessage message);
         void OnModifyPlayer(GameContext gameContext, ModifyPlayerNotifyMessage message);
         void OnDamage(GameContext gameContext, DamageNotifyMessage message);
-        void OnBattle(GameContext gameContext, BattleNotifyMessage message);
+        void OnBattleStart(GameContext gameContext, BattleNotifyMessage message);
+        void OnBattleEnd(GameContext gameContext, BattleNotifyMessage message);
 
         void OnAsk(AskMessage choiceCardsMessage);
     }

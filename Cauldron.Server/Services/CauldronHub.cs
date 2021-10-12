@@ -185,9 +185,14 @@ namespace Cauldron.Server.Services
                         this.BroadcastTo(this.room, playerId.Value).OnExcludeCard(gameContext, message);
                         this._logger.LogInformation($"OnExcludeCard: {playerId}");
                     },
-                    OnBattle: (playerId, gameContext, message) =>
+                    OnBattleStart: (playerId, gameContext, message) =>
                     {
-                        this.BroadcastTo(this.room, playerId.Value).OnBattle(gameContext, message);
+                        this.BroadcastTo(this.room, playerId.Value).OnBattleStart(gameContext, message);
+                        this._logger.LogInformation($"OnBattle: {playerId}");
+                    },
+                    OnBattleEnd: (playerId, gameContext, message) =>
+                    {
+                        this.BroadcastTo(this.room, playerId.Value).OnBattleEnd(gameContext, message);
                         this._logger.LogInformation($"OnBattle: {playerId}");
                     },
                     OnDamage: (playerId, gameContext, message) =>

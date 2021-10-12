@@ -2,6 +2,9 @@
 
 namespace Cauldron.Shared.MessagePackObjects
 {
+    /// <summary>
+    /// プレイヤーの公開情報
+    /// </summary>
     [MessagePackObject(true)]
     public class PublicPlayerInfo
     {

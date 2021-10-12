@@ -16,53 +16,6 @@ namespace Cauldron.Core.Entities
     public class GameMaster
     {
         /// <summary>
-        /// 指定したアビリティが有効になっている場合はtrue、そうでなければfalse
-        /// </summary>
-        /// <param name="card"></param>
-        /// <param name="ability"></param>
-        /// <returns></returns>
-        public static bool EnableAbility(Card card, CreatureAbility ability)
-        {
-            if (card.Zone.ZoneName != ZoneName.Field)
-            {
-                return false;
-            }
-
-            static bool HasAbility(Card card, CreatureAbility ability)
-                => card.Abilities.Contains(ability);
-
-            if (HasAbility(card, CreatureAbility.Sealed))
-            {
-                return ability == CreatureAbility.Sealed;
-            }
-
-            return ability switch
-            {
-                CreatureAbility.Cover => HasAbility(card, ability) && !HasAbility(card, CreatureAbility.Stealth),
-                _ => HasAbility(card, ability)
-            };
-        }
-
-        /// <summary>
-        /// 攻撃可能な状態か
-        /// </summary>
-        /// <param name="attackCard"></param>
-        /// <returns></returns>
-        public static bool CanAttack(Card attackCard)
-        {
-            return attackCard != null
-                // クリーチャーでなければ攻撃できない
-                && attackCard.Type == CardType.Creature
-                // 召喚酔いでない
-                && attackCard.NumTurnsToCanAttack <= attackCard.NumTurnsInField
-                // 攻撃不能状態でない
-                && !EnableAbility(attackCard, CreatureAbility.CantAttack)
-                // 1ターン中に攻撃可能な回数を超えていない
-                && attackCard.NumAttacksLimitInTurn > attackCard.NumAttacksInTurn
-                ;
-        }
-
-        /// <summary>
         /// 指定したカードが、指定したプレイヤーに攻撃可能か
         /// </summary>
         /// <param name="attackCard"></param>
@@ -71,11 +24,11 @@ namespace Cauldron.Core.Entities
         public static bool CanAttack(Card attackCard, Player guardPlayer)
         {
             var existsCover = guardPlayer.Field.AllCards
-                .Any(c => EnableAbility(c, CreatureAbility.Cover));
+                .Any(c => c.EnableAbility(CreatureAbility.Cover));
 
             return
                 // 攻撃可能なカード
-                CanAttack(attackCard)
+                attackCard.CanAttack
                 // 持ち主には攻撃できない
                 && attackCard.OwnerId != guardPlayer.Id
                 // カバーされていない
@@ -98,20 +51,20 @@ namespace Cauldron.Core.Entities
                     ? environment.You.PublicPlayerInfo
                     : environment.Opponent;
 
-                return guardPlayer.Field.Any(c => EnableAbility(c, CreatureAbility.Cover));
+                return guardPlayer.Field.Any(c => c.EnableAbility(CreatureAbility.Cover));
             }
 
             return
                 // 攻撃可能なカード
-                CanAttack(attackCard)
+                attackCard.CanAttack
                 // 自分自信のカードには攻撃できない
                 && attackCard.OwnerId != guardCard.OwnerId
                 // クリーチャー以外には攻撃できない
                 && guardCard.Type == CardType.Creature
                 // ステルス状態は攻撃対象にならない
-                && !EnableAbility(guardCard, CreatureAbility.Stealth)
+                && !guardCard.EnableAbility(CreatureAbility.Stealth)
                 // 自分がカバー or 他にカバーがいない
-                && (EnableAbility(guardCard, CreatureAbility.Cover)
+                && (guardCard.EnableAbility(CreatureAbility.Cover)
                     || !ExistsOtherCover(guardCard, environment))
                 ;
         }
@@ -771,6 +724,7 @@ namespace Cauldron.Core.Entities
 
             return new GameContext(
                 this.GetWinner()?.Id ?? default,
+                this.ActivePlayer?.Id ?? default,
                 this.GetOpponent(playerId).PublicPlayerInfo,
                 player.PrivatePlayerInfo,
                 this.RuleBook,
@@ -1038,13 +992,13 @@ namespace Cauldron.Core.Entities
             // 各プレイヤーに通知
             foreach (var p in this.playerRepository.AllPlayers)
             {
-                this.EventListener?.OnBattle?.Invoke(p.Id,
+                this.EventListener?.OnBattleStart?.Invoke(p.Id,
                     this.CreateGameContext(p.Id),
                     new BattleNotifyMessage(attackCard.Id, GuardPlayerId: damagePlayer.Id));
             }
 
             // 攻撃するとステルスを失う
-            if (EnableAbility(attackCard, CreatureAbility.Stealth))
+            if (attackCard.EnableAbility(CreatureAbility.Stealth))
             {
                 attackCard.Abilities.Remove(CreatureAbility.Stealth);
             }
@@ -1069,6 +1023,14 @@ namespace Cauldron.Core.Entities
             await this.HitPlayer(damageContext);
 
             attackCard.NumAttacksInTurn++;
+
+            // 各プレイヤーに通知
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnBattleEnd?.Invoke(p.Id,
+                    this.CreateGameContext(p.Id),
+                    new BattleNotifyMessage(attackCard.Id, GuardPlayerId: damagePlayer.Id));
+            }
 
             // 戦闘後のイベント
             await this.effectManager.DoEffect(newArgs with { GameEvent = GameEvent.OnAttack });
@@ -1145,13 +1107,13 @@ namespace Cauldron.Core.Entities
             // 各プレイヤーに通知
             foreach (var player in this.playerRepository.AllPlayers)
             {
-                this.EventListener?.OnBattle?.Invoke(player.Id,
+                this.EventListener?.OnBattleStart?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
                     new BattleNotifyMessage(attackCard.Id, GuardCardId: guardCard.Id));
             }
 
             // 攻撃するとステルスを失う
-            if (EnableAbility(attackCard, CreatureAbility.Stealth))
+            if (attackCard.EnableAbility(CreatureAbility.Stealth))
             {
                 attackCard.Abilities.Remove(CreatureAbility.Stealth);
             }
@@ -1186,6 +1148,14 @@ namespace Cauldron.Core.Entities
             }
 
             attackCard.NumAttacksInTurn++;
+
+            // 各プレイヤーに通知
+            foreach (var player in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnBattleEnd?.Invoke(player.Id,
+                    this.CreateGameContext(player.Id),
+                    new BattleNotifyMessage(attackCard.Id, GuardCardId: guardCard.Id));
+            }
 
             // 戦闘後のイベント
             await this.effectManager.DoEffect(newArgs with { GameEvent = GameEvent.OnAttack });
@@ -1233,7 +1203,7 @@ namespace Cauldron.Core.Entities
 
             var isDead = (
                 newDamageContext.Value > 0
-                    && EnableAbility(newDamageContext.DamageSourceCard, CreatureAbility.Deadly)
+                    && newDamageContext.DamageSourceCard.EnableAbility(CreatureAbility.Deadly)
                     )
                 || newDamageContext.GuardCard.Toughness <= 0;
 
