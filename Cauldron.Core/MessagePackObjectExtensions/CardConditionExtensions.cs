@@ -113,12 +113,16 @@ namespace Cauldron.Shared.MessagePackObjects
                 return value.Any(x => cardToMatch.Abilities.Contains(x));
             }
 
+            // await じゃないものを先
             return
                 ContextConditionIsMatch(_this.ContextCondition, cardToMatch, effectOwnerCard, effectEventArgs)
                 && OwnerConditionIsMatch(_this.OwnerCondition, cardToMatch, effectOwnerCard)
                 && (_this.CostCondition?.IsMatch(cardToMatch.Cost) ?? true)
                 && (_this.PowerCondition?.IsMatch(cardToMatch.Power) ?? true)
                 && (_this.ToughnessCondition?.IsMatch(cardToMatch.Toughness) ?? true)
+                && AbilitiesConditionIsMatch(_this.AbilityCondition, cardToMatch)
+                && (_this.CounterCondition?.IsMatch(cardToMatch) ?? true)
+                && (_this.AnnotationCondition?.IsMatch(cardToMatch.Annotations) ?? true)
                 && (await (_this.CardSetCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch)
                     ?? ValueTask.FromResult(true)))
                 && (await (_this.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Name)
@@ -126,8 +130,6 @@ namespace Cauldron.Shared.MessagePackObjects
                 && (_this.TypeCondition?.IsMatch(cardToMatch.Type) ?? true)
                 && (await (_this.ZoneCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardToMatch.Zone)
                     ?? ValueTask.FromResult(true)))
-                && AbilitiesConditionIsMatch(_this.AbilityCondition, cardToMatch)
-                && (_this.CounterCondition?.IsMatch(cardToMatch) ?? true)
                 ;
         }
     }

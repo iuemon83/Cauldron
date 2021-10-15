@@ -26,6 +26,8 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public string FlavorText { get; set; }
 
+        public List<string> Annotations { get; set; }
+
         public bool IsToken { get; set; }
 
         public CardType Type { get; set; }
@@ -133,11 +135,12 @@ namespace Cauldron.Shared.MessagePackObjects
             this.CardSetName = cardDef.CardSetName;
             this.Name = cardDef.Name;
             this.FlavorText = cardDef.FlavorText;
+            this.Annotations = cardDef.Annotations.ToList();
 
             this.BasePower = cardDef.Power;
             this.BaseToughness = cardDef.Toughness;
 
-            this.Abilities = new List<CreatureAbility>(cardDef.Abilities);
+            this.Abilities = cardDef.Abilities.ToList();
             this.EffectText = cardDef.EffectText;
             this.Effects = cardDef.Effects.ToList();
             this.NumTurnsToCanAttack = cardDef.NumTurnsToCanAttack.Value;

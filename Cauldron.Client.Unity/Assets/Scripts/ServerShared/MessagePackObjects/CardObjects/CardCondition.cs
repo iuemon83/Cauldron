@@ -89,6 +89,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public NumCondition ToughnessCondition { get; }
         public CardSetCondition CardSetCondition { get; }
         public TextCondition NameCondition { get; }
+        public CardAnnotationCondition AnnotationCondition { get; }
         public CardTypeCondition TypeCondition { get; }
         public ZoneCondition ZoneCondition { get; }
         public OwnerConditionValue OwnerCondition { get; }
@@ -103,6 +104,7 @@ namespace Cauldron.Shared.MessagePackObjects
             NumCondition ToughnessCondition = default,
             CardSetCondition CardSetCondition = default,
             TextCondition NameCondition = default,
+            CardAnnotationCondition AnnotationCondition = default,
             CardTypeCondition TypeCondition = default,
             ZoneCondition ZoneCondition = default,
             OwnerConditionValue OwnerCondition = OwnerConditionValue.Any,
@@ -117,6 +119,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.ToughnessCondition = ToughnessCondition;
             this.CardSetCondition = CardSetCondition;
             this.NameCondition = NameCondition;
+            this.AnnotationCondition = AnnotationCondition;
             this.TypeCondition = TypeCondition;
             this.ZoneCondition = ZoneCondition;
             this.OwnerCondition = OwnerCondition;

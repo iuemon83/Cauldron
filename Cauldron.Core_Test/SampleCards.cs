@@ -12,6 +12,7 @@ namespace Cauldron.Core_Test
         public static readonly string CardsetName = "Sample";
 
         public static CardDef Creature(int cost, string name, int power, int toughness,
+            IEnumerable<string> annotations = null,
             string flavorText = "",
             int? numTurnsToCanAttack = null, int? numAttacksInTurn = null, bool isToken = false,
             IEnumerable<CreatureAbility> abilities = null,
@@ -26,10 +27,11 @@ namespace Cauldron.Core_Test
                 FlavorText = flavorText,
                 Power = power,
                 Toughness = toughness,
+                Annotations = annotations?.ToArray() ?? Array.Empty<string>(),
                 NumTurnsToCanAttack = numTurnsToCanAttack,
                 NumAttacksLimitInTurn = numAttacksInTurn,
                 IsToken = isToken,
-                Abilities = abilities?.ToList() ?? new List<CreatureAbility>(),
+                Abilities = abilities?.ToArray() ?? Array.Empty<CreatureAbility>(),
                 EffectText = effectText,
                 Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
             };
@@ -2947,10 +2949,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef MagicObject
             => SampleCards.Creature(1, "魔力吸収体",
-                1, 1,
-                effectText: "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔法」カウンターを1つ置く。" +
-                "このカードに「魔法」カウンターが置かれるたびに、このカードを+1/+0する。" +
-                "このカードから「魔法」カウンターが取り除かれるたびに、このカードを-1/+0する。",
+                1, 1, annotations: new[] { ":魔道" },
+                effectText: "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔道」カウンターを1つ置く。" +
+                "このカードに「魔道」カウンターが置かれるたびに、このカードを+1/+0する。" +
+                "このカードから「魔道」カウンターが取り除かれるたびに、このカードを-1/+0する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -3030,9 +3032,9 @@ namespace Cauldron.Core_Test
 
         public static CardDef MagicMonster
             => SampleCards.Creature(5, "魔法生物",
-                3, 4,
-                effectText: "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。" +
-                "このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。",
+                3, 4, annotations: new[] { ":魔道" },
+                effectText: "あなたが魔法をプレイするたびに、このカードに「魔道」カウンターを1つ置く。" +
+                "このカードに「魔道」カウンターが1つ置かれるたびに、このカードのコスト-1。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -3091,7 +3093,7 @@ namespace Cauldron.Core_Test
         public static CardDef BeginnerSorcerer
             => SampleCards.Creature(2, "初級魔導士",
                 1, 2,
-                effectText: "このカードが場に出たとき、あなたの場のカード1枚を選択する。そのカードに「魔法」カウンターを2つ置く。",
+                effectText: "このカードが場に出たとき、あなたの場の「:魔道」を持つカード1枚を選択する。そのカードに「魔道」カウンターを2つ置く。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -3109,7 +3111,9 @@ namespace Cauldron.Core_Test
                                                     ZoneCondition: new(new ZoneValue(new[]
                                                     {
                                                         ZonePrettyName.YouField
-                                                    }))),
+                                                    })),
+                                                    AnnotationCondition: new(":魔道")
+                                                    ),
                                             }),
                                         Choice.HowValue.Choose,
                                         new NumValue(1)),
@@ -3122,12 +3126,12 @@ namespace Cauldron.Core_Test
 
         public static CardDef GreatSorcerer
             => SampleCards.Creature(9, "偉大な魔導士",
-                5, 5,
-                effectText: "あなたが魔法をプレイするたびに、このカードに「魔法」カウンターを1つ置く。" +
-                "このカードに「魔法」カウンターが1つ置かれるたびに、このカードのコスト-1。" +
+                5, 5, annotations: new[] { ":魔道" },
+                effectText: "あなたが魔法をプレイするたびに、このカードに「魔道」カウンターを1つ置く。" +
+                "このカードに「魔道」カウンターが1つ置かれるたびに、このカードのコスト-1。" +
                 "このカードを場に出したとき、あなたの手札をすべて除外する。" +
                 "その後、あなたは手札を5枚引く。" +
-                "その後、あなたの手札すべてに「魔法」カウンターを5つ置く。",
+                "その後、あなたの手札「:魔道」カードすべてに「魔道」カウンターを5つ置く。",
                 effects: new[]
                 {
                     // 魔法をプレイするたび、カウンターを置く。
@@ -3214,7 +3218,9 @@ namespace Cauldron.Core_Test
                                                     ZoneCondition: new(new ZoneValue(new[]
                                                     {
                                                         ZonePrettyName.YouHand
-                                                    })))
+                                                    })),
+                                                    AnnotationCondition: new(":魔道")
+                                                    )
                                             })),
                                     "魔法",
                                     new NumValueModifier(
@@ -3225,8 +3231,8 @@ namespace Cauldron.Core_Test
 
         public static CardDef UltraMagic
             => SampleCards.Sorcery(3, "大魔法",
-                effectText: "このカードが場に出たとき、あなたの場からすべての「魔法」カウンターを取り除く。" +
-                "その後、相手にXのダメージを与える。X=取り除いた「魔法」カウンターの数+1",
+                effectText: "このカードが場に出たとき、あなたの場からすべての「魔道」カウンターを取り除く。" +
+                "その後、相手にXのダメージを与える。X=取り除いた「魔道」カウンターの数+1",
                 effects: new[]
                 {
                     new CardEffect(

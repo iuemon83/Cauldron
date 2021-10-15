@@ -17,7 +17,7 @@ namespace Cauldron.Core_Test
             normalcardDef.NumTurnsToCanAttack = 0;
             var testCardDef = SampleCards.Goblin;
             testCardDef.Cost = 0;
-            testCardDef.Abilities.Add(CreatureAbility.Cover);
+            testCardDef.Abilities = new[] { CreatureAbility.Cover };
 
             var c = await TestUtil.InitTest(new[] { normalcardDef, testCardDef });
 
@@ -52,7 +52,7 @@ namespace Cauldron.Core_Test
             normalcardDef.NumTurnsToCanAttack = 0;
             var deadlyCardDef = SampleCards.Goblin;
             deadlyCardDef.Cost = 0;
-            deadlyCardDef.Abilities.Add(CreatureAbility.Deadly);
+            deadlyCardDef.Abilities = new[] { CreatureAbility.Deadly };
 
             var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef });
 
@@ -84,7 +84,7 @@ namespace Cauldron.Core_Test
             normalcardDef.NumTurnsToCanAttack = 0;
             var deadlyCardDef = SampleCards.Goblin;
             deadlyCardDef.Cost = 0;
-            deadlyCardDef.Abilities.Add(CreatureAbility.Deadly);
+            deadlyCardDef.Abilities = new[] { CreatureAbility.Deadly };
 
             var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef });
 
@@ -114,7 +114,7 @@ namespace Cauldron.Core_Test
             var stealthCardDef = SampleCards.Goblin;
             stealthCardDef.Cost = 0;
             stealthCardDef.Toughness = 10;
-            stealthCardDef.Abilities.Add(CreatureAbility.Stealth);
+            stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
             var normalcardDef = SampleCards.Goblin;
             normalcardDef.Cost = 0;
@@ -149,7 +149,7 @@ namespace Cauldron.Core_Test
             var stealthCardDef = SampleCards.Goblin;
             stealthCardDef.Cost = 0;
             stealthCardDef.Toughness = 10;
-            stealthCardDef.Abilities.Add(CreatureAbility.Stealth);
+            stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
             var choiceCarddef = SampleCards.SelectDamage;
             choiceCarddef.Cost = 0;
@@ -202,7 +202,7 @@ namespace Cauldron.Core_Test
             var stealthCardDef = SampleCards.Goblin;
             stealthCardDef.Cost = 0;
             stealthCardDef.Toughness = 10;
-            stealthCardDef.Abilities.Add(CreatureAbility.Stealth);
+            stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
             var choiceCarddef = SampleCards.SelectDamage;
             choiceCarddef.Cost = 0;
@@ -260,7 +260,7 @@ namespace Cauldron.Core_Test
             var stealthCardDef = SampleCards.Goblin;
             stealthCardDef.Cost = 0;
             stealthCardDef.Toughness = 10;
-            stealthCardDef.Abilities.Add(CreatureAbility.Stealth);
+            stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
             var randomChoiceCarddef = SampleCards.RandomDamage;
             randomChoiceCarddef.Cost = 0;
@@ -289,7 +289,7 @@ namespace Cauldron.Core_Test
             var stealthCardDef = SampleCards.Goblin;
             stealthCardDef.Cost = 0;
             stealthCardDef.Toughness = 10;
-            stealthCardDef.Abilities.Add(CreatureAbility.Stealth);
+            stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
             var normalcardDef = SampleCards.Goblin;
             normalcardDef.Cost = 0;

@@ -893,6 +893,16 @@ namespace Cauldron.Core.Entities
                 throw new InvalidOperationException("ask action is undefined");
             }
 
+            // 選択肢がゼロなら聞かずに終わり
+            if (choiceCandidates.Count == 0)
+            {
+                return new ChoiceResult(
+                    Array.Empty<PlayerId>(),
+                    Array.Empty<Card>(),
+                    Array.Empty<CardDef>()
+                    );
+            }
+
             // answer が正しければtrue, そうでなければfalse
             bool ValidAnswer(ChoiceAnswer answer)
             {

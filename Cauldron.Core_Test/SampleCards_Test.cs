@@ -1462,7 +1462,7 @@ namespace Cauldron.Core_Test
             var goblinDef = SampleCards.MechanicGoblin;
             goblinDef.Cost = 0;
             goblinDef.Toughness = 2;
-            goblinDef.Abilities.Add(CreatureAbility.Cover);
+            goblinDef.Abilities = new[] { CreatureAbility.Cover };
 
             var testCardDef = SampleCards.SimpleReborn;
             testCardDef.Cost = 0;
@@ -3260,7 +3260,7 @@ namespace Cauldron.Core_Test
 
             var coverCardDef = SampleCards.Goblin;
             coverCardDef.Cost = 0;
-            coverCardDef.Abilities.Add(CreatureAbility.Cover);
+            coverCardDef.Abilities = new[] { CreatureAbility.Cover };
 
             var noCoverCardDef = SampleCards.Goblin;
             noCoverCardDef.Cost = 0;
@@ -3415,6 +3415,7 @@ namespace Cauldron.Core_Test
             testCardDef.Cost = 0;
             var goblinDef = SampleCards.Goblin;
             goblinDef.Cost = 0;
+            goblinDef.Annotations = new[] { ":–‚“¹" };
 
             CardId[] expectedAskCardLsit = default;
 
