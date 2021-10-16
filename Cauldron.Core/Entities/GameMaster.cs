@@ -1251,7 +1251,6 @@ namespace Cauldron.Core.Entities
                 var randomPickedCardDefList = new List<CardDef>();
                 foreach (var pickedIndex in pickedIndexList)
                 {
-                    //TODO プレイヤー優先になってる
                     if (pickedIndex < choiceCandidates.PlayerIdList.Length)
                     {
                         randomPickedPlayerList.Add(choiceCandidates.PlayerIdList[pickedIndex]);
