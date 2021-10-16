@@ -77,7 +77,6 @@ public class EditDeckScene_ListNodeController : MonoBehaviour, IPointerEnterHand
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("enter pointer ! ");
         this.ShowDetailAction(this.Source);
     }
 }

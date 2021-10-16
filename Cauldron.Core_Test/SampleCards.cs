@@ -3129,7 +3129,7 @@ namespace Cauldron.Core_Test
                 5, 5, annotations: new[] { ":魔道" },
                 effectText: "あなたが魔法をプレイするたびに、このカードに「魔道」カウンターを1つ置く。" +
                 "このカードに「魔道」カウンターが1つ置かれるたびに、このカードのコスト-1。" +
-                "このカードを場に出したとき、あなたの手札をすべて除外する。" +
+                "このカードをプレイしたとき、あなたの手札をすべて除外する。" +
                 "その後、あなたは手札を5枚引く。" +
                 "その後、あなたの手札「:魔道」カードすべてに「魔道」カウンターを5つ置く。",
                 effects: new[]
@@ -3302,5 +3302,32 @@ namespace Cauldron.Core_Test
                                         })))),
                         }),
                 });
+
+        public static CardDef Investment
+            => Sorcery(1, "投資",
+                "1ターン後のターン終了時に、あなたはカードを2枚ドローする。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectCondition(
+                            When: new(new EffectTiming(EndTurn:new(
+                                new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                }))),
+                            While: new(new EffectTiming(EndTurn: new(
+                                new[]{
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                })),
+                                1, 1
+                                )),
+                        new[]
+                        {
+                            new EffectAction(DrawCard: new(
+                                new NumValue(2),
+                                new PlayerCondition(PlayerCondition.ContextValue.You)))
+                        })
+                });
+
     }
 }

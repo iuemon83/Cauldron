@@ -5144,7 +5144,7 @@
             "power": 5,
             "toughness": 5,
             "abilities": [],
-            "effectText": "あなたが魔法をプレイするたびに、このカードに「魔道」カウンターを1つ置く。このカードに「魔道」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードを場に出したとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札「:魔道」カードすべてに「魔道」カウンターを5つ置く。",
+            "effectText": "あなたが魔法をプレイするたびに、このカードに「魔道」カウンターを1つ置く。このカードに「魔道」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードをプレイしたとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札「:魔道」カードすべてに「魔道」カウンターを5つ置く。",
             "effects": [
                 {
                     "condition": {
@@ -5434,6 +5434,39 @@
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
                                 }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cost": 1,
+            "name": "投資",
+            "flavorText": "",
+            "annotations": [],
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effectText": "1ターン後のターン終了時に、あなたはカードを2枚ドローする。",
+            "effects": [
+                {
+                    "condition": {
+                        "zone": "none",
+                        "when": { "timing": { "endTurn": { "orPlayerCondition": [ { "context": "you" } ] } } },
+                        "while": {
+                            "timing": { "endTurn": { "orPlayerCondition": [ { "context": "you" } ] } },
+                            "skip": 1,
+                            "take": 1
+                        }
+                    },
+                    "actions": [
+                        {
+                            "drawCard": {
+                                "numCards": { "pureValue": 2 },
+                                "playerCondition": { "context": "you" }
                             }
                         }
                     ]

@@ -3531,5 +3531,48 @@ namespace Cauldron.Core_Test
                 Assert.Equal(0, goblin2.GetCounter("魔法"));
             });
         }
+
+        [Fact]
+        public async Task Investment()
+        {
+            var testCardDef = SampleCards.Investment;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, });
+
+            // 先攻
+            var beforeNumHands = 0;
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                beforeNumHands = c.Player1.Hands.Count;
+            });
+
+            // まだドローできない
+            Assert.Equal(beforeNumHands, c.Player1.Hands.Count);
+
+            await TestUtil.Turn(c.GameMaster, (g, pId) => { });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+                beforeNumHands = c.Player1.Hands.Count;
+            });
+
+            // ここでドローできる
+            Assert.Equal(beforeNumHands + 2, c.Player1.Hands.Count);
+
+            await TestUtil.Turn(c.GameMaster, (g, pId) => { });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+                beforeNumHands = c.Player1.Hands.Count;
+            });
+
+            // もうドローできない
+            Assert.Equal(beforeNumHands, c.Player1.Hands.Count);
+        }
     }
 }
