@@ -3324,30 +3324,30 @@ namespace Cauldron.Core_Test
                 var op = g.GetOpponent(pId);
 
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-                Assert.Equal(0, testcard.GetCounter("魔法"));
+                Assert.Equal(0, testcard.GetCounter("魔導"));
                 Assert.Equal(testcard.BasePower, testcard.Power);
 
                 // 魔法を使うとカウンターが1つ乗る。
                 await TestUtil.NewCardAndPlayFromHand(g, pId, sorceryDef.Id);
-                Assert.Equal(1, testcard.GetCounter("魔法"));
+                Assert.Equal(1, testcard.GetCounter("魔導"));
 
                 // カウンターが乗ったら+1/+0される
                 Assert.Equal(testcard.BasePower + 1, testcard.Power);
 
                 // カウンターが減ったら-1/+0される
-                await g.ModifyCounter(testcard, "魔法", -1);
+                await g.ModifyCounter(testcard, "魔導", -1);
                 Assert.Equal(testcard.BasePower, testcard.Power);
 
                 // カウンターが乗ったら+1/+0される
-                await g.ModifyCounter(testcard, "魔法", 1);
+                await g.ModifyCounter(testcard, "魔導", 1);
                 Assert.Equal(testcard.BasePower + 1, testcard.Power);
 
                 // 2つカウンターが乗ったら+2/+0される
-                await g.ModifyCounter(testcard, "魔法", 2);
+                await g.ModifyCounter(testcard, "魔導", 2);
                 Assert.Equal(testcard.BasePower + 3, testcard.Power);
 
                 // 2つカウンターが減ったら+2/+0される
-                await g.ModifyCounter(testcard, "魔法", -2);
+                await g.ModifyCounter(testcard, "魔導", -2);
                 Assert.Equal(testcard.BasePower + 1, testcard.Power);
 
                 return testcard;
@@ -3358,7 +3358,7 @@ namespace Cauldron.Core_Test
             {
                 // 相手が魔法を使ってもカウンターが乗る
                 await TestUtil.NewCardAndPlayFromHand(g, pId, sorceryDef.Id);
-                Assert.Equal(2, testcard.GetCounter("魔法"));
+                Assert.Equal(2, testcard.GetCounter("魔導"));
             });
         }
 
@@ -3378,22 +3378,22 @@ namespace Cauldron.Core_Test
                 var op = g.GetOpponent(pId);
 
                 var testcard = await g.GenerateNewCard(testCardDef.Id, new Zone(pId, ZoneName.Hand), null);
-                Assert.Equal(0, testcard.GetCounter("魔法"));
+                Assert.Equal(0, testcard.GetCounter("魔導"));
                 Assert.Equal(testcard.BasePower, testcard.Power);
 
                 // 魔法を使うとカウンターが1つ乗る。
                 await TestUtil.NewCardAndPlayFromHand(g, pId, sorceryDef.Id);
-                Assert.Equal(1, testcard.GetCounter("魔法"));
+                Assert.Equal(1, testcard.GetCounter("魔導"));
 
                 // カウンターが乗ったらコストが-1
                 Assert.Equal(testcard.BaseCost - 1, testcard.Cost);
 
                 // 魔法を使わなくてもカウンターが乗ったらコストが-1
-                await g.ModifyCounter(testcard, "魔法", 1);
+                await g.ModifyCounter(testcard, "魔導", 1);
                 Assert.Equal(testcard.BaseCost - 2, testcard.Cost);
 
                 // 2つカウンターが乗ったらコストが-2
-                await g.ModifyCounter(testcard, "魔法", 2);
+                await g.ModifyCounter(testcard, "魔導", 2);
                 Assert.Equal(testcard.BaseCost - 4, testcard.Cost);
 
                 return testcard;
@@ -3404,7 +3404,7 @@ namespace Cauldron.Core_Test
             {
                 // 相手が魔法を使った場合はカウンターが乗らない
                 await TestUtil.NewCardAndPlayFromHand(g, pId, sorceryDef.Id);
-                Assert.Equal(4, testcard.GetCounter("魔法"));
+                Assert.Equal(4, testcard.GetCounter("魔導"));
             });
         }
 
@@ -3415,7 +3415,7 @@ namespace Cauldron.Core_Test
             testCardDef.Cost = 0;
             var goblinDef = SampleCards.Goblin;
             goblinDef.Cost = 0;
-            goblinDef.Annotations = new[] { ":魔道" };
+            goblinDef.Annotations = new[] { ":魔導" };
 
             CardId[] expectedAskCardLsit = default;
 
@@ -3439,14 +3439,14 @@ namespace Cauldron.Core_Test
                 var op = g.GetOpponent(pId);
 
                 var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                Assert.Equal(0, goblin.GetCounter("魔法"));
+                Assert.Equal(0, goblin.GetCounter("魔導"));
 
                 expectedAskCardLsit = new[] { goblin.Id };
 
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // カウンターが乗っている
-                Assert.Equal(2, goblin.GetCounter("魔法"));
+                Assert.Equal(2, goblin.GetCounter("魔導"));
             });
         }
 
@@ -3479,7 +3479,7 @@ namespace Cauldron.Core_Test
                 Assert.Equal(5, p.Hands.Count);
 
                 // 新たな手札すべてにカウンターが5個置かれている
-                Assert.True(p.Hands.AllCards.All(c => c.GetCounter("魔法") == 5));
+                Assert.True(p.Hands.AllCards.All(c => c.GetCounter("魔導") == 5));
             });
         }
 
@@ -3508,7 +3508,7 @@ namespace Cauldron.Core_Test
                 // カウンターがないので相手に1ダメージ
                 Assert.Equal(beforeOpHp - 1, op.CurrentHp);
 
-                await g.ModifyCounter(goblin1, "魔法", 1);
+                await g.ModifyCounter(goblin1, "魔導", 1);
 
                 beforeOpHp = op.CurrentHp;
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -3516,10 +3516,10 @@ namespace Cauldron.Core_Test
                 // カウンターが1個なので相手に2ダメージ
                 Assert.Equal(beforeOpHp - 2, op.CurrentHp);
                 // カウンターがなくなっている
-                Assert.Equal(0, goblin1.GetCounter("魔法"));
+                Assert.Equal(0, goblin1.GetCounter("魔導"));
 
-                await g.ModifyCounter(goblin1, "魔法", 1);
-                await g.ModifyCounter(goblin2, "魔法", 1);
+                await g.ModifyCounter(goblin1, "魔導", 1);
+                await g.ModifyCounter(goblin2, "魔導", 1);
 
                 beforeOpHp = op.CurrentHp;
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -3527,8 +3527,8 @@ namespace Cauldron.Core_Test
                 // カウンターが2個なので相手に3ダメージ
                 Assert.Equal(beforeOpHp - 3, op.CurrentHp);
                 // カウンターがなくなっている
-                Assert.Equal(0, goblin1.GetCounter("魔法"));
-                Assert.Equal(0, goblin2.GetCounter("魔法"));
+                Assert.Equal(0, goblin1.GetCounter("魔導"));
+                Assert.Equal(0, goblin2.GetCounter("魔導"));
             });
         }
 

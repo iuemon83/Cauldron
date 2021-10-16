@@ -2,6 +2,7 @@ using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -34,9 +35,9 @@ public class CardController : MonoBehaviour
     protected TextMeshProUGUI toughnessText = default;
 
     [SerializeField]
-    protected GameObject[] counterSpaceList = new GameObject[0];
+    protected GameObject[] counterSpaceList = Array.Empty<GameObject>();
     [SerializeField]
-    protected TextMeshProUGUI[] counterTextList = new TextMeshProUGUI[0];
+    protected TextMeshProUGUI[] counterTextList = Array.Empty<TextMeshProUGUI>();
 
     [SerializeField]
     protected Image cardImage = default;

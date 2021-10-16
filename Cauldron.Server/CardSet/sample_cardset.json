@@ -4827,13 +4827,13 @@
             "cost": 1,
             "name": "魔力吸収体",
             "flavorText": "",
-            "annotations": [ ":魔道" ],
+            "annotations": [ ":魔導" ],
             "isToken": false,
             "type": "creature",
             "power": 1,
             "toughness": 1,
             "abilities": [],
-            "effectText": "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔道」カウンターを1つ置く。このカードに「魔道」カウンターが置かれるたびに、このカードを\u002B1/\u002B0する。このカードから「魔道」カウンターが取り除かれるたびに、このカードを-1/\u002B0する。",
+            "effectText": "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔導」カウンターを1つ置く。このカードに「魔導」カウンターが置かれるたびに、このカードを\u002B1/\u002B0する。このカードから「魔導」カウンターが取り除かれるたびに、このカードを-1/\u002B0する。",
             "effects": [
                 {
                     "condition": {
@@ -4874,7 +4874,7 @@
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
                                 },
-                                "counterName": "魔法",
+                                "counterName": "魔導",
                                 "numCountersModifier": {
                                     "operator": "add",
                                     "value": { "pureValue": 1 }
@@ -4895,7 +4895,7 @@
                                             "ownerCondition": "any"
                                         }
                                     ],
-                                    "countername": "魔法",
+                                    "countername": "魔導",
                                     "operator": "add"
                                 }
                             }
@@ -4940,7 +4940,7 @@
                                             "ownerCondition": "any"
                                         }
                                     ],
-                                    "countername": "魔法",
+                                    "countername": "魔導",
                                     "operator": "remove"
                                 }
                             }
@@ -4979,13 +4979,13 @@
             "cost": 5,
             "name": "魔法生物",
             "flavorText": "",
-            "annotations": [ ":魔道" ],
+            "annotations": [ ":魔導" ],
             "isToken": false,
             "type": "creature",
             "power": 3,
             "toughness": 4,
             "abilities": [],
-            "effectText": "あなたが魔法をプレイするたびに、このカードに「魔道」カウンターを1つ置く。このカードに「魔道」カウンターが1つ置かれるたびに、このカードのコスト-1。",
+            "effectText": "あなたが魔法をプレイするたびに、このカードに「魔導」カウンターを1つ置く。このカードに「魔導」カウンターが1つ置かれるたびに、このカードのコスト-1。",
             "effects": [
                 {
                     "condition": {
@@ -5026,7 +5026,7 @@
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
                                 },
-                                "counterName": "魔法",
+                                "counterName": "魔導",
                                 "numCountersModifier": {
                                     "operator": "add",
                                     "value": { "pureValue": 1 }
@@ -5047,7 +5047,7 @@
                                             "ownerCondition": "any"
                                         }
                                     ],
-                                    "countername": "魔法",
+                                    "countername": "魔導",
                                     "operator": "add"
                                 }
                             }
@@ -5092,7 +5092,7 @@
             "power": 1,
             "toughness": 2,
             "abilities": [],
-            "effectText": "このカードが場に出たとき、あなたの場の「:魔道」を持つカード1枚を選択する。そのカードに「魔道」カウンターを2つ置く。",
+            "effectText": "このカードが場に出たとき、あなたの場の「:魔導」を持つカード1枚を選択する。そのカードに「魔導」カウンターを2つ置く。",
             "effects": [
                 {
                     "condition": { "zone": "none" },
@@ -5108,7 +5108,7 @@
                                             {
                                                 "contextCondition": "others",
                                                 "annotationCondition": {
-                                                    "value": ":魔道",
+                                                    "value": ":魔導",
                                                     "not": false
                                                 },
                                                 "zoneCondition": {
@@ -5123,7 +5123,7 @@
                                     "how": "choose",
                                     "numPicks": { "pureValue": 1 }
                                 },
-                                "counterName": "魔法",
+                                "counterName": "魔導",
                                 "numCountersModifier": {
                                     "operator": "add",
                                     "value": { "pureValue": 2 }
@@ -5138,13 +5138,13 @@
             "cost": 9,
             "name": "偉大な魔導士",
             "flavorText": "",
-            "annotations": [ ":魔道" ],
+            "annotations": [ ":魔導" ],
             "isToken": false,
             "type": "creature",
             "power": 5,
             "toughness": 5,
             "abilities": [],
-            "effectText": "あなたが魔法をプレイするたびに、このカードに「魔道」カウンターを1つ置く。このカードに「魔道」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードをプレイしたとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札「:魔道」カードすべてに「魔道」カウンターを5つ置く。",
+            "effectText": "あなたが魔法をプレイするたびに、このカードに「魔導」カウンターを1つ置く。このカードに「魔導」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードをプレイしたとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札「:魔導」カードすべてに「魔導」カウンターを5つ置く。",
             "effects": [
                 {
                     "condition": {
@@ -5185,7 +5185,7 @@
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
                                 },
-                                "counterName": "魔法",
+                                "counterName": "魔導",
                                 "numCountersModifier": {
                                     "operator": "add",
                                     "value": { "pureValue": 1 }
@@ -5206,7 +5206,7 @@
                                             "ownerCondition": "any"
                                         }
                                     ],
-                                    "countername": "魔法",
+                                    "countername": "魔導",
                                     "operator": "add"
                                 }
                             }
@@ -5283,7 +5283,7 @@
                                             {
                                                 "contextCondition": "any",
                                                 "annotationCondition": {
-                                                    "value": ":魔道",
+                                                    "value": ":魔導",
                                                     "not": false
                                                 },
                                                 "zoneCondition": {
@@ -5298,7 +5298,7 @@
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
                                 },
-                                "counterName": "魔法",
+                                "counterName": "魔導",
                                 "numCountersModifier": {
                                     "operator": "add",
                                     "value": { "pureValue": 5 }
@@ -5319,7 +5319,7 @@
             "power": 0,
             "toughness": 0,
             "abilities": [],
-            "effectText": "このカードが場に出たとき、あなたの場からすべての「魔道」カウンターを取り除く。その後、相手にXのダメージを与える。X=取り除いた「魔道」カウンターの数\u002B1",
+            "effectText": "このカードが場に出たとき、あなたの場からすべての「魔導」カウンターを取り除く。その後、相手にXのダメージを与える。X=取り除いた「魔導」カウンターの数\u002B1",
             "effects": [
                 {
                     "condition": { "zone": "none" },
@@ -5346,7 +5346,7 @@
                                     "how": "all",
                                     "numPicks": { "pureValue": 1 }
                                 },
-                                "counterName": "魔法",
+                                "counterName": "魔導",
                                 "numCountersModifier": {
                                     "operator": "replace",
                                     "value": { "pureValue": 0 }
