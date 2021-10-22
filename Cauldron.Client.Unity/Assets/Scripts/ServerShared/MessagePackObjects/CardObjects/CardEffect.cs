@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -6,14 +7,17 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class CardEffect
     {
-        public EffectCondition Condition { get; }
+        public EffectConditionWrap Condition { get; }
 
         public IReadOnlyList<EffectAction> Actions { get; }
 
-        public CardEffect(EffectCondition condition, IReadOnlyList<EffectAction> actions)
+        public CardEffect(
+            EffectConditionWrap Condition,
+            IReadOnlyList<EffectAction> Actions
+            )
         {
-            this.Condition = condition;
-            this.Actions = actions;
+            this.Condition = Condition;
+            this.Actions = Actions ?? Array.Empty<EffectAction>();
         }
     }
 }

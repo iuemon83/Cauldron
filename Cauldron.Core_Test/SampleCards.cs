@@ -97,11 +97,12 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 AttackBefore: new(
                                     AttackCardCondition: new(
-                                        CardCondition.ContextConditionValue.This))))),
+                                        CardCondition.ContextConditionValue.This)))))),
                         new[]{
                             new EffectAction(
                                 Damage: new(
@@ -125,11 +126,12 @@ namespace Cauldron.Core_Test
                                             }))))
                         }),
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 AttackBefore: new(
                                     GuardCardCondition: new(
-                                        CardCondition.ContextConditionValue.This))))),
+                                        CardCondition.ContextConditionValue.This)))))),
                         new[]{
                             new EffectAction(
                                 Damage: new(
@@ -160,13 +162,14 @@ namespace Cauldron.Core_Test
                 effectText: "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
                 effects: new[] {
                     new CardEffect(
-                        new EffectCondition(
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 AttackAfter: new(
                                     GuardCardCondition: new(
                                         ContextCondition: CardCondition.ContextConditionValue.This
-                                    ))))),
+                                    )))))),
                         new[]
                         {
                             new EffectAction(
@@ -194,13 +197,14 @@ namespace Cauldron.Core_Test
                 effectText: "このカードが攻撃されたとき、攻撃したカードを相手のデッキの一番上に移動する。",
                 effects: new[] {
                     new CardEffect(
-                        new EffectCondition(
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 AttackAfter: new(
                                     GuardCardCondition: new(
                                         ContextCondition: CardCondition.ContextConditionValue.This
-                                    ))))),
+                                    )))))),
                         new[]
                         {
                             new EffectAction(
@@ -231,13 +235,14 @@ namespace Cauldron.Core_Test
                 effectText: "このカードの戦闘時に、このカードと戦闘相手を除外する。",
                 effects: new[] {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 AttackBefore: new(
                                     AttackCardCondition: new(
                                         CardCondition.ContextConditionValue.This),
                                     GuardCardCondition: new(
-                                        CardCondition.ContextConditionValue.Others))))),
+                                        CardCondition.ContextConditionValue.Others)))))),
                         new[]{
                             new EffectAction(
                                 ExcludeCard: new(
@@ -252,13 +257,14 @@ namespace Cauldron.Core_Test
                                             })))),
                         }),
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 AttackBefore: new(
                                     AttackCardCondition: new(
                                         CardCondition.ContextConditionValue.Others),
                                     GuardCardCondition: new(
-                                        CardCondition.ContextConditionValue.This))))),
+                                        CardCondition.ContextConditionValue.This)))))),
                         new[]{
                             new EffectAction(
                                 ExcludeCard: new(
@@ -286,14 +292,15 @@ namespace Cauldron.Core_Test
                 {
                     // 破壊時、からくりゴブリン１枚を手札に加える
                     new CardEffect(
-                        new EffectCondition(
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(
                             ZonePrettyName.YouCemetery,
                             new(new(Destroy: new (
                                 OrCardCondition: new[]
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 })))
-                        ),
+                        )),
                         new[]
                         {
                             new EffectAction(
@@ -325,7 +332,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]{
                             new EffectAction(
                                 AddCard: new(
@@ -353,7 +361,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouDeck,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouDeck,
                             new EffectWhen(new EffectTiming(
                                 Play: new(
                                     OrCardConditions: new[]
@@ -366,7 +375,7 @@ namespace Cauldron.Core_Test
                                             ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.YouField })),
                                             TypeCondition: new(new[]{ CardType.Creature })
                                         )
-                                    })))),
+                                    }))))),
                         new[]{
                             new EffectAction(
                                 MoveCard: new(
@@ -389,7 +398,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]{
                             new EffectAction(
                                 MoveCard: new(
@@ -417,7 +427,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 Play: new(
                                     OrCardConditions: new[]
@@ -441,7 +452,7 @@ namespace Cauldron.Core_Test
                                                         CardType.Creature
                                                     })
                                                 )
-                                            }))))))),
+                                            })))))))),
                         new[]{
                             new EffectAction(
                                 MoveCard: new(
@@ -468,7 +479,8 @@ namespace Cauldron.Core_Test
                 effectText: "このカードが場に出たとき、「分身ゴブリン」一体を場に出す。",
                 effects: new[] {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -492,7 +504,8 @@ namespace Cauldron.Core_Test
                 effectText: "このカードが場に出たとき、「多重分身ゴブリン」2体を場に出す。",
                 effects: new[] {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -518,7 +531,8 @@ namespace Cauldron.Core_Test
                 {
                     // カードを2枚引く
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -529,13 +543,15 @@ namespace Cauldron.Core_Test
                     ),
                     // このカードが手札から捨てられたなら、1枚引く
                     new CardEffect(
-                        new(ZonePrettyName.YouCemetery,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(
+                            ZonePrettyName.YouCemetery,
                             new(new(MoveCard: new(
                                 OrCardConditions: new[]
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
-                                ZonePrettyName.YouHand, ZonePrettyName.YouCemetery)))),
+                                ZonePrettyName.YouHand, ZonePrettyName.YouCemetery))))),
                         new[]
                         {
                             new EffectAction(
@@ -553,7 +569,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -582,7 +599,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -610,7 +628,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -647,13 +666,14 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouCemetery,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouCemetery,
                             new EffectWhen(new EffectTiming(
                                 Destroy: new(
                                     OrCardCondition: new[]
                                     {
                                         new CardCondition(CardCondition.ContextConditionValue.This)
-                                    })))),
+                                    }))))),
                         new[]
                         {
                             new EffectAction(AddCard: new(
@@ -684,7 +704,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]{
                             // 効果を付与したカードを破壊する
                             new EffectAction(DestroyCard: new(
@@ -728,7 +749,8 @@ namespace Cauldron.Core_Test
                 {
                     // 自分が受けるダメージを2軽減する
                     new CardEffect(
-                        new(
+                        new EffectConditionWrap(
+                            ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
@@ -737,7 +759,7 @@ namespace Cauldron.Core_Test
                                         ContextCondition: CardCondition.ContextConditionValue.This
                                     )))
                             )
-                        ),
+                        )),
                         new[]
                         {
                             new EffectAction(
@@ -751,7 +773,8 @@ namespace Cauldron.Core_Test
                     ),
                     // 自分の他のクリーチャーが戦闘で与えるダメージを1増加する
                     new CardEffect(
-                        new EffectCondition(
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageBefore: new(
@@ -763,7 +786,7 @@ namespace Cauldron.Core_Test
                                         ContextCondition: CardCondition.ContextConditionValue.Others
                                     )))
                             )
-                        ),
+                        )),
                         new[]
                         {
                             new EffectAction(
@@ -785,7 +808,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.None,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.None,
                             new EffectWhen(new EffectTiming(
                                 StartTurn: new(
                                     OrPlayerCondition: new[]
@@ -799,7 +823,7 @@ namespace Cauldron.Core_Test
                                         new PlayerCondition(PlayerCondition.ContextValue.You),
                                     })),
                                 0, 1)
-                            ),
+                            )),
                         new[]
                         {
                             new EffectAction(
@@ -826,13 +850,14 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 StartTurn: new(
                                     OrPlayerCondition: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
-                                    })))),
+                                    }))))),
                         new[]{
                             new EffectAction(
                                 ModifyCard: new(
@@ -856,7 +881,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]{
                             new EffectAction(
                                 DrawCard: new(
@@ -864,14 +890,15 @@ namespace Cauldron.Core_Test
                                     new PlayerCondition(PlayerCondition.ContextValue.You)))
                         }),
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageBefore: new(
                                     EffectTimingDamageBeforeEvent.TypeValue.NonBattle,
                                     CardCondition: new(
                                         TypeCondition: new(new[]{ CardType.Sorcery }),
                                         OwnerCondition: CardCondition.OwnerConditionValue.You
-                                    ))))),
+                                    )))))),
                         new[]{
                             new EffectAction(
                                 ModifyDamage: new(
@@ -889,7 +916,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -919,7 +947,8 @@ namespace Cauldron.Core_Test
                     // プレイ時：自分のクリーチャーすべてを+1/+0 する。
                     // 自分のターン開始時：自分のクリーチャーすべてを+1/+0 する。
                     new CardEffect(
-                        new(
+                        new EffectConditionWrap(
+                            ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new(new(
                                 Play: new (
@@ -930,7 +959,7 @@ namespace Cauldron.Core_Test
                                     OrPlayerCondition : new[] {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })
-                                ))),
+                                )))),
                         new[]
                         {
                             new EffectAction(
@@ -961,20 +990,21 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
-                            new EffectWhen(new EffectTiming(
-                                DamageBefore: new(
-                                    Source: EffectTimingDamageAfterEvent.SourceValue.Take,
-                                    CardCondition: new(
-                                        ContextCondition: CardCondition.ContextConditionValue.This)
-                                    ))),
-                            While: new(new EffectTiming(
-                                DamageBefore: new(
-                                    Source: EffectTimingDamageAfterEvent.SourceValue.Take,
-                                    CardCondition: new(
-                                        ContextCondition: CardCondition.ContextConditionValue.This)
-                                    )),
-                                0, 1)),
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
+                                new EffectWhen(new EffectTiming(
+                                    DamageBefore: new(
+                                        Source: EffectTimingDamageAfterEvent.SourceValue.Take,
+                                        CardCondition: new(
+                                            ContextCondition: CardCondition.ContextConditionValue.This)
+                                        ))),
+                                While: new(new EffectTiming(
+                                    DamageBefore: new(
+                                        Source: EffectTimingDamageAfterEvent.SourceValue.Take,
+                                        CardCondition: new(
+                                            ContextCondition: CardCondition.ContextConditionValue.This)
+                                        )),
+                                    0, 1))),
                         new[]{
                             new EffectAction(
                                 ModifyDamage: new(
@@ -992,13 +1022,14 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 StartTurn: new(
                                     OrPlayerCondition: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
-                                    })))),
+                                    }))))),
                         new[]{
                             new EffectAction(
                                 ModifyCard: new(
@@ -1022,7 +1053,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 Play: new(
                                     OrCardConditions: new[]
@@ -1033,7 +1065,7 @@ namespace Cauldron.Core_Test
                                             TypeCondition: new CardTypeCondition(
                                                 new[]{ CardType.Sorcery })
                                             )
-                                    })))),
+                                    }))))),
                         new[]
                         {
                             new EffectAction(
@@ -1068,7 +1100,8 @@ namespace Cauldron.Core_Test
                 {
                     // 手札をすべて捨てて、捨てた枚数パワーアップ
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]{
                             new EffectAction(SetVariable: new(
                                 "x",
@@ -1120,13 +1153,14 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouCemetery,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouCemetery,
                             new EffectWhen(new EffectTiming(
                                 Destroy: new(
                                     OrCardCondition: new[]
                                     {
                                         new CardCondition(CardCondition.ContextConditionValue.This)
-                                    })))),
+                                    }))))),
                         new[]{
                             new EffectAction(
                                 Damage: new(
@@ -1159,7 +1193,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]{
                             new EffectAction(
                                 AddCard: new(
@@ -1188,13 +1223,14 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageAfter: new(
                                     Source: EffectTimingDamageAfterEvent.SourceValue.Take,
                                     CardCondition: new(
                                         ContextCondition: CardCondition.ContextConditionValue.This)
-                                    )))),
+                                    ))))),
                         new[]{
                             new EffectAction(
                                 AddCard: new(
@@ -1227,13 +1263,14 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 EndTurn: new(
                                     OrPlayerCondition: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
-                                    })))),
+                                    }))))),
                         new[]
                         {
                             new EffectAction(
@@ -1275,7 +1312,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]{
                             new EffectAction(
                                 DestroyCard: new(
@@ -1329,7 +1367,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1349,7 +1388,8 @@ namespace Cauldron.Core_Test
                     ),
                     // ターン終了時あなたの最大MPを1減少する。
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.None,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.None,
                             new EffectWhen(new EffectTiming(
                                 EndTurn: new(
                                     OrPlayerCondition: new[]
@@ -1362,7 +1402,7 @@ namespace Cauldron.Core_Test
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                 }))
                                 , 0, 1)
-                            ),
+                            )),
                         new[]
                         {
                             new EffectAction(
@@ -1388,7 +1428,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1425,7 +1466,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1456,7 +1498,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1511,7 +1554,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1538,7 +1582,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1582,7 +1627,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1613,7 +1659,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1644,7 +1691,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(Damage: new(
@@ -1663,7 +1711,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(ModifyPlayer: new(
@@ -1684,7 +1733,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(AddCard: new(
@@ -1720,7 +1770,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1755,7 +1806,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1800,7 +1852,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1829,12 +1882,13 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 ExcludeCard: new(new[]
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.Others)
-                                })))),
+                                }))))),
                         new[]
                         {
                             new EffectAction(
@@ -1858,7 +1912,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1895,7 +1950,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1929,7 +1985,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -1991,13 +2048,14 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouHand,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(MoveCard: new(
                                 OrCardConditions: new[]
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
-                                ZonePrettyName.YouDeck, ZonePrettyName.YouHand)))),
+                                ZonePrettyName.YouDeck, ZonePrettyName.YouHand))))),
                         new[]
                         {
                             new EffectAction(MoveCard: new(
@@ -2012,12 +2070,13 @@ namespace Cauldron.Core_Test
                                 ZonePrettyName.YouField)),
                         }),
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(EndTurn: new(
                                 OrPlayerCondition: new[]
                                 {
                                     new PlayerCondition(PlayerCondition.ContextValue.You)
-                                })))),
+                                }))))),
                         new[]
                         {
                             new EffectAction(Damage: new(
@@ -2039,7 +2098,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(AddCard: new(
@@ -2065,7 +2125,8 @@ namespace Cauldron.Core_Test
                 effectText: "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
                 effects: new[] {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]{
                             new EffectAction(MoveCard: new(
                                 new Choice(new ChoiceSource(
@@ -2110,7 +2171,8 @@ namespace Cauldron.Core_Test
                 effectText: "あなたの手札に「ゴブリン」を3枚加える。",
                 effects: new[] {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2140,7 +2202,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2169,7 +2232,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2221,7 +2285,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2255,7 +2320,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]{
                             new EffectAction(
                                 AddEffect: new(
@@ -2272,7 +2338,8 @@ namespace Cauldron.Core_Test
                                     new[]
                                     {
                                         new CardEffect(
-                                            new EffectCondition(ZonePrettyName.YouField,
+                                            new EffectConditionWrap(
+                                                ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                                                 new EffectWhen(new EffectTiming(DamageBefore: new(
                                                     Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
                                                     CardCondition: new(
@@ -2284,7 +2351,7 @@ namespace Cauldron.Core_Test
                                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                                     })),
                                                     0, 0)
-                                                ),
+                                                )),
                                             new[]
                                             {
                                                 new EffectAction(
@@ -2306,7 +2373,8 @@ namespace Cauldron.Core_Test
             effects: new[]
             {
                 new CardEffect(
-                    new EffectCondition(),
+                    new EffectConditionWrap(
+                        ByPlay: new EffectConditionByPlaying()),
                     new[]
                     {
                         // 手札をすべて捨てる
@@ -2353,7 +2421,8 @@ namespace Cauldron.Core_Test
                 {
                     // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2395,7 +2464,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2423,7 +2493,8 @@ namespace Cauldron.Core_Test
                 effectText: "場のカード1枚を選択する。選択したカードを持ち主の手札に移動する。",
                 effects: new[] {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2448,7 +2519,8 @@ namespace Cauldron.Core_Test
                 effectText: "場のカード1枚を選択する。選択したカードを持ち主のデッキのランダムな位置に移動する。",
                 effects: new[] {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2475,7 +2547,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2503,7 +2576,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2533,7 +2607,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2580,7 +2655,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2613,7 +2689,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2635,7 +2712,8 @@ namespace Cauldron.Core_Test
                         }
                     ),
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.None,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.None,
                             new EffectWhen(new EffectTiming(
                                 MoveCard: new(
                                     OrCardConditions: new[]
@@ -2649,7 +2727,7 @@ namespace Cauldron.Core_Test
                                 {
                                     new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                 })),
-                                0, 3)),
+                                0, 3))),
                         new[]
                         {
                             new EffectAction(
@@ -2672,7 +2750,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new(
+                        new EffectConditionWrap(
+                            ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
@@ -2681,7 +2760,7 @@ namespace Cauldron.Core_Test
                                         TypeCondition: new(new[]{ CardType.Creature }),
                                         ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
                                         ContextCondition: CardCondition.ContextConditionValue.Others
-                                    ))))),
+                                    )))))),
                         new[]
                         {
                             new EffectAction(
@@ -2713,7 +2792,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new(
+                        new EffectConditionWrap(
+                            ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
@@ -2727,7 +2807,7 @@ namespace Cauldron.Core_Test
                                         ContextCondition: CardCondition.ContextConditionValue.Others
                                     )))
                             )
-                        ),
+                        )),
                         new[]
                         {
                             new EffectAction(
@@ -2759,7 +2839,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new(ZonePrettyName.YouField,
                             new(new(EndTurn: new(
                                 OrPlayerCondition: new[]
                                 {
@@ -2776,7 +2857,7 @@ namespace Cauldron.Core_Test
                                                 new CardCondition(
                                                     ZoneCondition: new(new(new[]{ ZonePrettyName.YouCemetery }))
                                                 )
-                                            }))))))),
+                                            })))))))),
                         new[]{
                             new EffectAction(Damage: new(
                                 new NumValue(6),
@@ -2804,7 +2885,8 @@ namespace Cauldron.Core_Test
                 {
                     // 使用時、すべての自分クリーチャーを+0/+1
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -2826,7 +2908,8 @@ namespace Cauldron.Core_Test
 
                     // 自分クリーチャーのプレイ時+0/+1
                     new CardEffect(
-                        new(
+                        new EffectConditionWrap(
+                            ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new(new(MoveCard: new(
                                 OrCardConditions: new[]
@@ -2835,7 +2918,7 @@ namespace Cauldron.Core_Test
                                 },
                                 ZonePrettyName.YouHand,
                                 ZonePrettyName.YouField)))
-                        ),
+                        )),
                         new[]
                         {
                             new EffectAction(
@@ -2865,12 +2948,13 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(StartTurn: new(
                                 OrPlayerCondition: new[]
                                 {
                                     new PlayerCondition(PlayerCondition.ContextValue.You)
-                                })))),
+                                }))))),
                         new[]
                         {
                             new EffectAction(
@@ -2885,7 +2969,8 @@ namespace Cauldron.Core_Test
                                             }))))
                         }),
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.None,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.None,
                             new EffectWhen(new EffectTiming(
                                 MoveCard: new(
                                     OrCardConditions: new[]
@@ -2893,7 +2978,7 @@ namespace Cauldron.Core_Test
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     },
                                     ZonePrettyName.YouField,
-                                    ZonePrettyName.YouCemetery)))),
+                                    ZonePrettyName.YouCemetery))))),
                         new[]
                         {
                             new EffectAction(
@@ -2927,12 +3012,13 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(StartTurn: new(
                                 OrPlayerCondition: new[]
                                 {
                                     new PlayerCondition(PlayerCondition.ContextValue.You)
-                                })))),
+                                }))))),
                         new[]
                         {
                             new EffectAction(
@@ -2956,7 +3042,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(Play: new(
                                 OrCardConditions: new[]
                                 {
@@ -2964,7 +3051,7 @@ namespace Cauldron.Core_Test
                                         CardCondition.ContextConditionValue.Others,
                                         TypeCondition: new(new[]{ CardType.Sorcery })
                                         )
-                                })))),
+                                }))))),
                         new[]
                         {
                             new EffectAction(
@@ -2982,7 +3069,8 @@ namespace Cauldron.Core_Test
                         }),
 
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 ModifyCounter: new(
                                     OrCardConditions: new[]
@@ -2990,7 +3078,7 @@ namespace Cauldron.Core_Test
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     },
                                     "魔導",
-                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Add)))),
+                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Add))))),
                         new[]
                         {
                             new EffectAction(
@@ -3006,7 +3094,8 @@ namespace Cauldron.Core_Test
                         }),
 
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouField,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 ModifyCounter: new(
                                     OrCardConditions: new[]
@@ -3014,7 +3103,7 @@ namespace Cauldron.Core_Test
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     },
                                     "魔導",
-                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Remove)))),
+                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Remove))))),
                         new[]
                         {
                             new EffectAction(
@@ -3038,7 +3127,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouHand,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(
                                 Play: new(
                                     OrCardConditions: new[]
@@ -3048,7 +3138,7 @@ namespace Cauldron.Core_Test
                                             OwnerCondition: CardCondition.OwnerConditionValue.You,
                                             TypeCondition: new(new[]{ CardType.Sorcery })
                                             )
-                                    })))),
+                                    }))))),
                         new[]
                         {
                             new EffectAction(
@@ -3066,7 +3156,8 @@ namespace Cauldron.Core_Test
                         }),
 
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouHand,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(
                                 ModifyCounter: new(
                                     OrCardConditions: new[]
@@ -3074,7 +3165,7 @@ namespace Cauldron.Core_Test
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     },
                                     "魔導",
-                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Add)))),
+                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Add))))),
                         new[]
                         {
                             new EffectAction(
@@ -3097,7 +3188,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -3136,7 +3228,8 @@ namespace Cauldron.Core_Test
                 {
                     // 魔法をプレイするたび、カウンターを置く。
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouHand,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(
                                 Play: new(
                                     OrCardConditions: new[]
@@ -3146,7 +3239,7 @@ namespace Cauldron.Core_Test
                                             OwnerCondition: CardCondition.OwnerConditionValue.You,
                                             TypeCondition: new(new[]{ CardType.Sorcery })
                                             )
-                                    })))),
+                                    }))))),
                         new[]
                         {
                             new EffectAction(
@@ -3165,7 +3258,8 @@ namespace Cauldron.Core_Test
 
                     // カウンターが置かれるたび、コスト-1
                     new CardEffect(
-                        new EffectCondition(ZonePrettyName.YouHand,
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(
                                 ModifyCounter: new(
                                     OrCardConditions: new[]
@@ -3173,7 +3267,7 @@ namespace Cauldron.Core_Test
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     },
                                     "魔導",
-                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Add)))),
+                                    EffectTimingModifyCounterOnCardEvent.OperatorValue.Add))))),
                         new[]
                         {
                             new EffectAction(
@@ -3190,7 +3284,8 @@ namespace Cauldron.Core_Test
 
                     // カードが場に出たとき
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -3236,7 +3331,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(),
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
@@ -3282,14 +3378,15 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(
                             Zone: ZonePrettyName.YouField,
                             When: new(new EffectTiming(MoveCard: new(
                                 new[]{
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
                                 To: ZonePrettyName.YouField
-                                )))),
+                                ))))),
                         new[]
                         {
                             new EffectAction(
@@ -3309,7 +3406,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectCondition(
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(
                             When: new(new EffectTiming(EndTurn:new(
                                 new[]
                                 {
@@ -3320,7 +3418,7 @@ namespace Cauldron.Core_Test
                                     new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })),
                                 1, 1
-                                )),
+                                ))),
                         new[]
                         {
                             new EffectAction(DrawCard: new(

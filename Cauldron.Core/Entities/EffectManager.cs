@@ -31,16 +31,18 @@ namespace Cauldron.Core.Entities
                 var isAnyZoneEffect = ef.ShouldRegisterEffect();
                 if (isAnyZoneEffect)
                 {
-                    this.RegisterEffect(ef, owner);
+                    this.RegisterEffectByEvent(ef, owner);
                 }
             }
         }
 
-        public void RegisterEffect(CardEffect cardEffect, Card owner)
+        public void RegisterEffectByEvent(CardEffect cardEffect, Card owner)
         {
-            var gameEvent = cardEffect.Condition.When.Timing.ToGameEvent();
-
-            this.anyZoneEffectsByGameEvent[gameEvent].Add((cardEffect, owner));
+            var gameEvent = cardEffect.Condition?.ByNotPlay?.When?.Timing?.ToGameEvent();
+            if (gameEvent is { } g)
+            {
+                this.anyZoneEffectsByGameEvent[g].Add((cardEffect, owner));
+            }
         }
 
         public async ValueTask<EffectEventArgs> DoEffectOnPlay(Card playedCard, EffectEventArgs effectEventArgs)

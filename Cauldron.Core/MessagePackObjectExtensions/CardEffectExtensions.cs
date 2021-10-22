@@ -9,7 +9,12 @@ namespace Cauldron.Shared.MessagePackObjects
         public static async ValueTask<(bool, EffectEventArgs)> DoIfMatchedAnyZone(this CardEffect _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
-            if (!await _this.Condition.IsMatchAnyZone(effectOwnerCard, args)) return (false, args);
+            if (_this.Condition?.ByNotPlay == default)
+            {
+                return (false, args);
+            }
+
+            if (!await _this.Condition.ByNotPlay.IsMatchAnyZone(effectOwnerCard, args)) return (false, args);
 
             var done = false;
             var newArgs = args;
@@ -27,7 +32,12 @@ namespace Cauldron.Shared.MessagePackObjects
         public static async ValueTask<(bool, EffectEventArgs)> DoIfMatchedOnPlay(this CardEffect _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
-            if (!await _this.Condition.IsMatchOnPlay(effectOwnerCard, args)) return (false, args);
+            if (_this.Condition?.ByPlay == default)
+            {
+                return (false, args);
+            }
+
+            if (!await _this.Condition.ByPlay.IsMatchOnPlay(effectOwnerCard, args)) return (false, args);
 
             var done = false;
             var newArgs = args;
@@ -45,7 +55,12 @@ namespace Cauldron.Shared.MessagePackObjects
         public static async ValueTask<(bool, EffectEventArgs)> DoIfMatched(this CardEffect _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
-            if (!await _this.Condition.IsMatch(effectOwnerCard, args)) return (false, args);
+            if (_this.Condition?.ByNotPlay == default)
+            {
+                return (false, args);
+            }
+
+            if (!await _this.Condition.ByNotPlay.IsMatch(effectOwnerCard, args)) return (false, args);
 
             var done = false;
             var newArgs = args;
@@ -62,9 +77,11 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public static bool ShouldRegisterEffect(this CardEffect _this)
         {
-            return _this.Condition.Zone == ZonePrettyName.None
-                && (_this.Condition.When != default
-                    || _this.Condition.While != default);
+            return
+                _this.Condition?.ByNotPlay != default
+                && _this.Condition?.ByNotPlay.Zone == ZonePrettyName.None
+                && (_this.Condition?.ByNotPlay.When != default
+                    || _this.Condition?.ByNotPlay.While != default);
         }
     }
 }

@@ -18,29 +18,30 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
-                        new(
-                            ZonePrettyName.YouField,
-                            new(new(Play: new(
-                                OrCardConditions: new[]
-                                {
-                                    new CardCondition(CardCondition.ContextConditionValue.This)
-                                }))),
-                            If: new(
-                                new NumCondition(2, NumCondition.CompareValue.GreaterThan),
-                                new NumValue(
-                                    NumValueCalculator: new(
-                                        ForCard: new(
-                                            NumValueCalculatorForCard.TypeValue.Count,
-                                            new Choice(
-                                                new ChoiceSource(
-                                                    orCardConditions: new[]{
-                                                        new CardCondition(
-                                                            ZoneCondition: new(new(new[]{ ZonePrettyName.YouField }))
-                                                        )
-                                                    })))
-                                        )
-                                ))
-                        ),
+                        new EffectConditionWrap(
+                            ByNotPlay: new EffectCondition(
+                                ZonePrettyName.YouField,
+                                new(new(Play: new(
+                                    OrCardConditions: new[]
+                                    {
+                                        new CardCondition(CardCondition.ContextConditionValue.This)
+                                    }))),
+                                If: new(
+                                    new NumCondition(2, NumCondition.CompareValue.GreaterThan),
+                                    new NumValue(
+                                        NumValueCalculator: new(
+                                            ForCard: new(
+                                                NumValueCalculatorForCard.TypeValue.Count,
+                                                new Choice(
+                                                    new ChoiceSource(
+                                                        orCardConditions: new[]{
+                                                            new CardCondition(
+                                                                ZoneCondition: new(new(new[]{ ZonePrettyName.YouField }))
+                                                            )
+                                                        })))
+                                            )
+                                    ))
+                            )),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
