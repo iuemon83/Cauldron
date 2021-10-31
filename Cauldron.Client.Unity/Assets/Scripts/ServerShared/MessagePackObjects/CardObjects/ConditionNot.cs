@@ -3,11 +3,11 @@
 namespace Cauldron.Shared.MessagePackObjects
 {
     [MessagePackObject(true)]
-    public class EffectIf
+    public class ConditionNot
     {
         public ConditionWrap Condition { get; }
 
-        public EffectIf(ConditionWrap Condition)
+        public ConditionNot(ConditionWrap Condition)
         {
             this.Condition = Condition;
         }

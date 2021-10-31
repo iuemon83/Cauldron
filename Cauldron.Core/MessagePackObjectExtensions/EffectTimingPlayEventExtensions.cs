@@ -16,7 +16,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             foreach (var cond in _this.OrCardConditions.Where(c => c != null))
             {
-                var isMatched = await cond.IsMatch(args.SourceCard, effectOwnerCard, args);
+                var isMatched = await cond.IsMatch(effectOwnerCard, args, args.SourceCard);
                 if (isMatched)
                 {
                     return true;

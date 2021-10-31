@@ -3574,5 +3574,129 @@ namespace Cauldron.Core_Test
             // もうドローできない
             Assert.Equal(beforeNumHands, c.Player1.Hands.Count);
         }
+
+        [Fact]
+        public async Task s()
+        {
+            var testCardDef = SampleCards.GoblinLover;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            goblinDef.Cost = 0;
+
+            var notGoblinDef = SampleCards.Goblin;
+            notGoblinDef.Name = "コブリン";
+            notGoblinDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, notGoblinDef });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 場にカードがないので修整されない
+                Assert.Equal(testcard.BasePower, testcard.Power);
+                Assert.Equal(testcard.BaseToughness, testcard.Toughness);
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, notGoblinDef.Id);
+                var testcard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 場にゴブリンと名のつかないカードしかないので修整されない
+                Assert.Equal(testcard2.BasePower, testcard2.Power);
+                Assert.Equal(testcard2.BaseToughness, testcard2.Toughness);
+
+                await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+                var testcard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 場にゴブリンと名のつくカードがあるので修整される
+                Assert.Equal(testcard3.BasePower + 1, testcard3.Power);
+                Assert.Equal(testcard3.BaseToughness + 1, testcard3.Toughness);
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 相手の場にゴブリンカードあっても修整されない
+                Assert.Equal(testcard.BasePower, testcard.Power);
+                Assert.Equal(testcard.BaseToughness, testcard.Toughness);
+            });
+        }
+
+        [Fact]
+        public async Task SealedGoblin()
+        {
+            var testCardDef = SampleCards.SealedGoblin;
+            var key1 = SampleCards.Key1;
+            var key2 = SampleCards.Key2;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, key1, key2 },
+                Enumerable.Repeat(testCardDef, 40)
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                // 手札に3枚そろってないので勝利しない
+                Assert.False(g.GameOver);
+
+                // 手札に3枚そろってないので勝利しない
+                await g.GenerateNewCard(key1.Id, new Zone(pId, ZoneName.Hand), null);
+                Assert.False(g.GameOver);
+
+                // 手札に3枚そろったのでゲームに勝利する
+                await g.GenerateNewCard(key1.Id, new Zone(pId, ZoneName.Hand), null);
+                await g.GenerateNewCard(key2.Id, new Zone(pId, ZoneName.Hand), null);
+                Assert.True(g.GameOver);
+                Assert.Equal(pId, g.GetWinner()?.Id);
+            });
+        }
+
+        [Fact]
+        public async Task Emergency()
+        {
+            var testCardDef = SampleCards.Emergency;
+            testCardDef.Cost = 0;
+
+            var goblinDef = SampleCards.Goblin;
+            var shieldGoblinDef = SampleCards.ShieldGoblin;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, goblinDef, shieldGoblinDef }
+                );
+
+            // 先攻
+            var goblin = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+
+                Assert.Empty(p.Field.AllCards);
+
+                // 相手の場にカードがないため、発動しない
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Empty(p.Field.AllCards);
+
+                return await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+
+                Assert.Empty(p.Field.AllCards);
+
+                // 相手の場にカードがあるため、発動する
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(2, p.Field.AllCards.Count);
+
+                // 自分の場にカードがあるため、発動しない
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(2, p.Field.AllCards.Count);
+            });
+        }
     }
 }

@@ -5,31 +5,32 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class CardDefCondition
     {
-        public NumCondition CostCondition { get; }
-        public NumCondition PowerCondition { get; }
-        public NumCondition ToughnessCondition { get; }
-        public CardSetCondition CardSetCondition { get; }
-        public TextCondition NameCondition { get; }
-        public CardTypeCondition TypeCondition { get; }
         public OutZoneCondition OutZoneCondition { get; }
 
+        public NumCompare CostCondition { get; }
+        public NumCompare PowerCondition { get; }
+        public NumCompare ToughnessCondition { get; }
+        public CardSetCondition CardSetCondition { get; }
+        public TextCompare NameCondition { get; }
+        public CardTypeCondition TypeCondition { get; }
+
         public CardDefCondition(
-            NumCondition CostCondition = default,
-            NumCondition PowerCondition = default,
-            NumCondition ToughnessCondition = default,
+            OutZoneCondition OutZoneCondition,
+            NumCompare CostCondition = default,
+            NumCompare PowerCondition = default,
+            NumCompare ToughnessCondition = default,
             CardSetCondition CardSetCondition = default,
-            TextCondition NameCondition = default,
-            CardTypeCondition TypeCondition = default,
-            OutZoneCondition OutZoneCondition = default
+            TextCompare NameCondition = default,
+            CardTypeCondition TypeCondition = default
             )
         {
+            this.OutZoneCondition = OutZoneCondition;
             this.CostCondition = CostCondition;
             this.PowerCondition = PowerCondition;
             this.ToughnessCondition = ToughnessCondition;
             this.CardSetCondition = CardSetCondition;
             this.NameCondition = NameCondition;
             this.TypeCondition = TypeCondition;
-            this.OutZoneCondition = OutZoneCondition;
         }
     }
 }

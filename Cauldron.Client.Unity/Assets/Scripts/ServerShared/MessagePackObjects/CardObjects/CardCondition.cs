@@ -28,6 +28,18 @@ namespace Cauldron.Shared.MessagePackObjects
             Others,
 
             /// <summary>
+            /// 自分と同じ種類のカード
+            /// </summary>
+            [DisplayText("同じ種類のカード")]
+            SameDefs,
+
+            /// <summary>
+            /// 自分とは別の種類のカード
+            /// </summary>
+            [DisplayText("別の種類のカード")]
+            OtherDefs,
+
+            /// <summary>
             /// イベントの発生元
             /// </summary>
             [DisplayText("イベントの発生源")]
@@ -84,11 +96,11 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public ContextConditionValue ContextCondition { get; }
         public ActionContextCards ActionContext { get; }
-        public NumCondition CostCondition { get; }
-        public NumCondition PowerCondition { get; }
-        public NumCondition ToughnessCondition { get; }
+        public NumCompare CostCondition { get; }
+        public NumCompare PowerCondition { get; }
+        public NumCompare ToughnessCondition { get; }
         public CardSetCondition CardSetCondition { get; }
-        public TextCondition NameCondition { get; }
+        public TextCompare NameCondition { get; }
         public CardAnnotationCondition AnnotationCondition { get; }
         public CardTypeCondition TypeCondition { get; }
         public ZoneCondition ZoneCondition { get; }
@@ -99,11 +111,11 @@ namespace Cauldron.Shared.MessagePackObjects
         public CardCondition(
             ContextConditionValue ContextCondition = ContextConditionValue.Any,
             ActionContextCards ActionContext = default,
-            NumCondition CostCondition = default,
-            NumCondition PowerCondition = default,
-            NumCondition ToughnessCondition = default,
+            NumCompare CostCondition = default,
+            NumCompare PowerCondition = default,
+            NumCompare ToughnessCondition = default,
             CardSetCondition CardSetCondition = default,
-            TextCondition NameCondition = default,
+            TextCompare NameCondition = default,
             CardAnnotationCondition AnnotationCondition = default,
             CardTypeCondition TypeCondition = default,
             ZoneCondition ZoneCondition = default,

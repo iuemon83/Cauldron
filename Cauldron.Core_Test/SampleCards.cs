@@ -314,7 +314,7 @@ namespace Cauldron.Core_Test
                                                     CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                     NameCondition: new(
                                                         new TextValue(KarakuriGoblin.Name),
-                                                        TextCondition.CompareValue.Equality
+                                                        TextCompare.CompareValue.Equality
                                                     )
                                                 ),
                                             })),
@@ -371,7 +371,7 @@ namespace Cauldron.Core_Test
                                             ContextCondition: CardCondition.ContextConditionValue.Others,
                                             NameCondition: new(
                                                 new TextValue("ゴブリン"),
-                                                TextCondition.CompareValue.Contains),
+                                                TextCompare.CompareValue.Contains),
                                             ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.YouField })),
                                             TypeCondition: new(new[]{ CardType.Creature })
                                         )
@@ -429,30 +429,33 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectConditionWrap(
                             ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
-                            new EffectWhen(new EffectTiming(
-                                Play: new(
-                                    OrCardConditions: new[]
-                                    {
-                                        new CardCondition(CardCondition.ContextConditionValue.This)
-                                    }))),
-                            If: new(
-                                new NumCondition(4, NumCondition.CompareValue.GreaterThan),
-                                new NumValue(NumValueCalculator: new(
-                                    ForCard: new(
-                                        NumValueCalculatorForCard.TypeValue.Count,
-                                        new Choice(
-                                            new ChoiceSource(orCardConditions: new[]{
-                                                new CardCondition(
-                                                    ZoneCondition: new(new ZoneValue(new[]
-                                                    {
-                                                        ZonePrettyName.OpponentField
-                                                    })),
-                                                    TypeCondition: new(new[]
-                                                    {
-                                                        CardType.Creature
-                                                    })
-                                                )
-                                            })))))))),
+                                new EffectWhen(new EffectTiming(
+                                    Play: new(
+                                        OrCardConditions: new[]
+                                        {
+                                            new CardCondition(CardCondition.ContextConditionValue.This)
+                                        }))),
+                            If: new(new ConditionWrap(NumCondition: new(
+                                    new NumValue(NumValueCalculator: new(
+                                        ForCard: new(
+                                            NumValueCalculatorForCard.TypeValue.Count,
+                                            new Choice(
+                                                new ChoiceSource(orCardConditions: new[]{
+                                                    new CardCondition(
+                                                        ZoneCondition: new(new ZoneValue(new[]
+                                                        {
+                                                            ZonePrettyName.OpponentField
+                                                        })),
+                                                        TypeCondition: new(new[]
+                                                        {
+                                                            CardType.Creature
+                                                        })
+                                                    )
+                                                }))))),
+                                    new NumCompare(
+                                        4,
+                                        NumCompare.CompareValue.GreaterThan)
+                                        ))))),
                         new[]{
                             new EffectAction(
                                 MoveCard: new(
@@ -683,8 +686,9 @@ namespace Cauldron.Core_Test
                                         new CardDefCondition(
                                             OutZoneCondition: new OutZoneCondition(
                                                 new[]{ OutZonePrettyName.CardPool }),
-                                            CostCondition: new NumCondition(2,
-                                                NumCondition.CompareValue.Equality),
+                                            CostCondition: new NumCompare(
+                                                2,
+                                                NumCompare.CompareValue.Equality),
                                             TypeCondition: new(new[]{ CardType.Creature })
                                         )
                                     }),
@@ -1077,9 +1081,9 @@ namespace Cauldron.Core_Test
                                                 new CardDefCondition(
                                                     OutZoneCondition: new(
                                                         new[]{ OutZonePrettyName.CardPool }),
-                                                    NameCondition: new TextCondition(
+                                                    NameCondition: new(
                                                         new TextValue(WarGoblin.Name),
-                                                        TextCondition.CompareValue.Equality))
+                                                        TextCompare.CompareValue.Equality))
                                             }
                                     )),
                                     new ZoneValue(
@@ -1207,7 +1211,7 @@ namespace Cauldron.Core_Test
                                                     CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                     NameCondition: new(
                                                         new TextValue(DoctorBomb.Name),
-                                                        TextCondition.CompareValue.Equality)
+                                                        TextCompare.CompareValue.Equality)
                                                 )
                                             })),
                                     new ZoneValue(new[]{ ZonePrettyName.YouField }),
@@ -1243,7 +1247,7 @@ namespace Cauldron.Core_Test
                                                     CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                     NameCondition: new(
                                                         new TextValue(Gnoll.Name),
-                                                        TextCondition.CompareValue.Equality)
+                                                        TextCompare.CompareValue.Equality)
                                                 )
                                             })),
                                     new ZoneValue(new[]{ ZonePrettyName.YouField }),
@@ -1296,12 +1300,14 @@ namespace Cauldron.Core_Test
                 });
 
         //TODO 未実装
+        // コストが0から元に戻る処理が無理
+        // 別の効果でベースのコストから変更されているとそれが消えてしまう
         //public static CardDef KingGoblin
-        //    => SampleCards.Creature(10, "ゴブリンの王", "偉大な存在", 8, 8,
+        //    => SampleCards.Creature(10, "ゴブリンの王", 8, 8,
+        //        effectText: "あなたの場にカードが4枚以上あるとき、このカードのコストは0になる。" +
+        //            "このカードのプレイ時、あなたの場にカードが4枚以上あるなら、あなたの場のカードをすべて破壊する。",
         //        effects: new[]
         //        {
-        //            // 場に4枚以上いるならコストがゼロになる
-        //            // 場に4枚以上いるなら、プレイ時に場のカードを全て破壊する
         //        });
 
         public static CardDef Death
@@ -1744,16 +1750,16 @@ namespace Cauldron.Core_Test
                                         new CardDefCondition(
                                             OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool }),
                                             CardSetCondition: new(CardSetCondition.TypeValue.This),
-                                            NameCondition: new TextCondition(
+                                            NameCondition: new(
                                                 new TextValue(Hit.Name),
-                                                TextCondition.CompareValue.Equality)
+                                                TextCompare.CompareValue.Equality)
                                         ),
                                         new CardDefCondition(
                                             OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool }),
                                             CardSetCondition: new(CardSetCondition.TypeValue.This),
-                                            NameCondition: new TextCondition(
+                                            NameCondition: new(
                                                 new TextValue(Heal.Name),
-                                                TextCondition.CompareValue.Equality)
+                                                TextCompare.CompareValue.Equality)
                                         ),
                                     }),
                                     how: Choice.HowValue.Choose,
@@ -2111,7 +2117,7 @@ namespace Cauldron.Core_Test
                                                 CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                 NameCondition: new(
                                                     new TextValue(Parasite.Name),
-                                                    TextCondition.CompareValue.Equality),
+                                                    TextCompare.CompareValue.Equality),
                                                 OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool })
                                             )
                                         })),
@@ -2186,7 +2192,7 @@ namespace Cauldron.Core_Test
                                                     CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                     NameCondition: new(
                                                         new TextValue(Goblin.Name),
-                                                        TextCondition.CompareValue.Equality
+                                                        TextCompare.CompareValue.Equality
                                                     )
                                                 )
                                             })),
@@ -2266,7 +2272,7 @@ namespace Cauldron.Core_Test
                                                     CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                     NameCondition: new(
                                                         new TextValue(SecondAttack.Name),
-                                                        TextCondition.CompareValue.Equality)
+                                                        TextCompare.CompareValue.Equality)
                                                 )
                                             }),
                                         Choice.HowValue.All,
@@ -2666,8 +2672,9 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    NameCondition: new(new TextValue("ゴブリン"),
-                                                        TextCondition.CompareValue.Contains),
+                                                    NameCondition: new(
+                                                        new TextValue("ゴブリン"),
+                                                        TextCompare.CompareValue.Contains),
                                                     TypeCondition: new(new[]{ CardType.Creature }),
                                                     ZoneCondition: new(new(new[]{ ZonePrettyName.YouField, ZonePrettyName.OpponentField }))
                                                 )
@@ -2700,8 +2707,8 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    PowerCondition: new NumCondition(
-                                                        4, NumCondition.CompareValue.GreaterThan),
+                                                    PowerCondition: new NumCompare(
+                                                        4, NumCompare.CompareValue.GreaterThan),
                                                     ZoneCondition: new(
                                                         new ZoneValue(new[]{
                                                             ZonePrettyName.OpponentField,
@@ -2841,13 +2848,12 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectConditionWrap(
                             ByNotPlay: new(ZonePrettyName.YouField,
-                            new(new(EndTurn: new(
-                                OrPlayerCondition: new[]
-                                {
-                                    new PlayerCondition(PlayerCondition.ContextValue.You)
-                                }))),
-                            If: new(
-                                new NumCondition(30, NumCondition.CompareValue.GreaterThan),
+                                new(new(EndTurn: new(
+                                    OrPlayerCondition: new[]
+                                    {
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
+                                    }))),
+                            If: new(new ConditionWrap(NumCondition: new(
                                 new NumValue(NumValueCalculator: new(
                                     ForCard: new(
                                         NumValueCalculatorForCard.TypeValue.Count,
@@ -2857,7 +2863,10 @@ namespace Cauldron.Core_Test
                                                 new CardCondition(
                                                     ZoneCondition: new(new(new[]{ ZonePrettyName.YouCemetery }))
                                                 )
-                                            })))))))),
+                                            }))))),
+                                new NumCompare(
+                                    30, NumCompare.CompareValue.GreaterThan)
+                                    ))))),
                         new[]{
                             new EffectAction(Damage: new(
                                 new NumValue(6),
@@ -2990,7 +2999,7 @@ namespace Cauldron.Core_Test
                                                 new CardDefCondition(
                                                     NameCondition: new(
                                                         new TextValue(VictoryStatue.Name),
-                                                        TextCondition.CompareValue.Equality),
+                                                        TextCompare.CompareValue.Equality),
                                                     OutZoneCondition: new(
                                                         new[]
                                                         {
@@ -3380,13 +3389,13 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectConditionWrap(
                             ByNotPlay: new EffectCondition(
-                            Zone: ZonePrettyName.YouField,
-                            When: new(new EffectTiming(MoveCard: new(
-                                new[]{
-                                    new CardCondition(CardCondition.ContextConditionValue.This)
-                                },
-                                To: ZonePrettyName.YouField
-                                ))))),
+                                Zone: ZonePrettyName.YouField,
+                                When: new(new EffectTiming(MoveCard: new(
+                                    new[]{
+                                        new CardCondition(CardCondition.ContextConditionValue.This)
+                                    },
+                                    To: ZonePrettyName.YouField
+                                    ))))),
                         new[]
                         {
                             new EffectAction(
@@ -3427,5 +3436,187 @@ namespace Cauldron.Core_Test
                         })
                 });
 
+        public static CardDef GoblinLover
+            => Creature(1, "ゴブリン好き", 1, 1,
+                effectText: "このカードのプレイ時、あなたの場にほかの「ゴブリン」と名の付くカードがあるとき、このカードを+1/+1する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByPlay: new(
+                                If: new(new ConditionWrap(NumCondition: new(
+                                        new NumValue(NumValueCalculator: new(ForCard: new(
+                                            NumValueCalculatorForCard.TypeValue.Count,
+                                            new Choice(new ChoiceSource(
+                                                orCardConditions: new[]{
+                                                    new CardCondition(
+                                                        CardCondition.ContextConditionValue.OtherDefs,
+                                                        NameCondition: new(
+                                                            new TextValue("ゴブリン"),
+                                                            TextCompare.CompareValue.Contains),
+                                                        ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.YouField }))
+                                                        )
+                                                }))
+                                            ))),
+                                        new NumCompare(
+                                            1,
+                                            NumCompare.CompareValue.GreaterThan)
+                                        )))
+                                )),
+                        new[]
+                        {
+                            new EffectAction(ModifyCard: new(
+                                new Choice(new ChoiceSource(
+                                    orCardConditions: new[]
+                                    {
+                                        new CardCondition(CardCondition.ContextConditionValue.This)
+                                    })),
+                                Power: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(1)),
+                                Toughness: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(1))
+                                ))
+                        })
+                });
+
+        public static CardDef Key1
+            => Sorcery(1, "封印の鍵1",
+                effectText: "このカードと「封印の鍵1」「封印の鍵2」があなたの手札にそろったとき、あなたはゲームに勝利する。",
+                effects: Array.Empty<CardEffect>()
+                );
+
+        public static CardDef Key2
+            => Sorcery(1, "封印の鍵2",
+                effectText: "このカードと「封印の鍵1」「封印の鍵2」があなたの手札にそろったとき、あなたはゲームに勝利する。",
+                effects: Array.Empty<CardEffect>()
+                );
+
+        public static CardDef SealedGoblin
+            => Creature(1, "封印されしゴブリン", 1, 1,
+                effectText: "このカードと「封印の鍵1」「封印の鍵2」があなたの手札にそろったとき、あなたはゲームに勝利する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByNotPlay: new(
+                                Zone: ZonePrettyName.YouHand,
+                                If: new(new ConditionWrap(ConditionAnd: new(new[]
+                                {
+                                    new ConditionWrap(NumCondition: new(
+                                            new NumValue(NumValueCalculator: new(ForCard: new(
+                                                NumValueCalculatorForCard.TypeValue.Count,
+                                                new Choice(new ChoiceSource(
+                                                    orCardConditions: new[]{
+                                                        new CardCondition(
+                                                            NameCondition: new(
+                                                                new TextValue("封印の鍵1"),
+                                                                TextCompare.CompareValue.Equality),
+                                                            ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.YouHand }))
+                                                            )
+                                                    }))
+                                                ))),
+                                            new NumCompare(
+                                                1,
+                                                NumCompare.CompareValue.GreaterThan)
+                                            )),
+                                    new ConditionWrap(NumCondition: new(
+                                            new NumValue(NumValueCalculator: new(ForCard: new(
+                                                NumValueCalculatorForCard.TypeValue.Count,
+                                                new Choice(new ChoiceSource(
+                                                    orCardConditions: new[]{
+                                                        new CardCondition(
+                                                            NameCondition: new(
+                                                                new TextValue("封印の鍵2"),
+                                                                TextCompare.CompareValue.Equality),
+                                                            ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.YouHand }))
+                                                            )
+                                                    }))
+                                                ))),
+                                            new NumCompare(
+                                                1,
+                                                NumCompare.CompareValue.GreaterThan)
+                                            ))
+                                })))
+                                )),
+                        new[]
+                        {
+                            new EffectAction(Win: new(
+                                new Choice(new ChoiceSource(
+                                    orPlayerConditions: new[]
+                                    {
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
+                                    }))))
+                        })
+                });
+
+        public static CardDef Emergency
+            => Sorcery(3, "緊急出動",
+                effectText: "相手の場にクリーチャーが1枚以上あり、あなたの場にクリーチャーが0枚のとき、あなたの場に「盾持ちゴブリン」2枚を追加する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByPlay: new(
+                                If: new(new ConditionWrap(ConditionAnd: new(new[]
+                                {
+                                    new ConditionWrap(NumCondition: new(
+                                            new NumValue(NumValueCalculator: new(ForCard: new(
+                                                NumValueCalculatorForCard.TypeValue.Count,
+                                                new Choice(new ChoiceSource(
+                                                    orCardConditions: new[]{
+                                                        new CardCondition(
+                                                            ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.YouField })),
+                                                            TypeCondition: new(new[]{ CardType.Creature })
+                                                            )
+                                                    }))
+                                                ))),
+                                            new NumCompare(
+                                                0,
+                                                NumCompare.CompareValue.Equality)
+                                            )),
+                                    new ConditionWrap(NumCondition: new(
+                                            new NumValue(NumValueCalculator: new(ForCard: new(
+                                                NumValueCalculatorForCard.TypeValue.Count,
+                                                new Choice(new ChoiceSource(
+                                                    orCardConditions: new[]{
+                                                        new CardCondition(
+                                                            ZoneCondition: new(new ZoneValue(new[]{ ZonePrettyName.OpponentField })),
+                                                            TypeCondition: new(new[]{ CardType.Creature })
+                                                            )
+                                                    }))
+                                                ))),
+                                            new NumCompare(
+                                                1,
+                                                NumCompare.CompareValue.GreaterThan)
+                                            )),
+                                })))
+                                )),
+                        new[]
+                        {
+                            new EffectAction(AddCard: new(
+                                new Choice(new ChoiceSource(
+                                    OrCardDefConditions: new[]
+                                    {
+                                        new CardDefCondition(
+                                            new(new[]{ OutZonePrettyName.CardPool }),
+                                            NameCondition: new(
+                                                new TextValue(ShieldGoblin.Name),
+                                                TextCompare.CompareValue.Equality))
+                                    })),
+                                new ZoneValue(new[]{ ZonePrettyName.YouField }),
+                                NumOfAddCards: 2
+                                ))
+                        })
+                });
+
+        //TODO プレイヤーの条件が指定できない
+        //public static CardDef HealOrDamage
+        //    => Sorcery(3, "回復かダメージ",
+        //        effectText: "あなたのHPが5以下なら、あなたのHPを+5する。そうでないなら、相手プレイヤーに3のダメージを与える。",
+        //        effects: new[]
+        //        {
+        //        });
     }
 }

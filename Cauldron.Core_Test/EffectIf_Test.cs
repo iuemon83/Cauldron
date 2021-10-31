@@ -26,8 +26,7 @@ namespace Cauldron.Core_Test
                                     {
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     }))),
-                                If: new(
-                                    new NumCondition(2, NumCondition.CompareValue.GreaterThan),
+                                If: new(new ConditionWrap(NumCondition: new(
                                     new NumValue(
                                         NumValueCalculator: new(
                                             ForCard: new(
@@ -39,8 +38,11 @@ namespace Cauldron.Core_Test
                                                                 ZoneCondition: new(new(new[]{ ZonePrettyName.YouField }))
                                                             )
                                                         })))
-                                            )
-                                    ))
+                                            )),
+                                    new NumCompare(
+                                        2,
+                                        NumCompare.CompareValue.GreaterThan)
+                                        )))
                             )),
                         new[]{ TestUtil.TestEffectAction }
                     )
@@ -50,17 +52,17 @@ namespace Cauldron.Core_Test
 
             // 先攻
             await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                var beforeHp = c.Player1.CurrentHp;
+                {
+                    var beforeHp = c.Player1.CurrentHp;
 
                 // 場のカードが1枚なので発動しない
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-                Assert.Equal(beforeHp, c.Player1.CurrentHp);
+                    Assert.Equal(beforeHp, c.Player1.CurrentHp);
 
                 // 場のカードが2枚なので発動する
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-                Assert.Equal(beforeHp - 1, c.Player1.CurrentHp);
-            });
+                    Assert.Equal(beforeHp - 1, c.Player1.CurrentHp);
+                });
         }
     }
 }

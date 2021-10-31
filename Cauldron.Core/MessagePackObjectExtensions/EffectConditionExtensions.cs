@@ -9,7 +9,7 @@ namespace Cauldron.Shared.MessagePackObjects
             Card effectOwnerCard, EffectEventArgs eventArgs)
         {
             return (await (_this.While?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)))
-                && await _this.When.IsMatch(effectOwnerCard, eventArgs)
+                && (await (_this.When?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)))
                 && (await (_this.If?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)));
         }
 
@@ -26,7 +26,7 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             return _this.IsMatchedZone(effectOwnerCard, eventArgs)
                 && (await (_this.While?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)))
-                && await _this.When.IsMatch(effectOwnerCard, eventArgs)
+                && (await (_this.When?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)))
                 && (await (_this.If?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)));
         }
 

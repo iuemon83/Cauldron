@@ -1,20 +1,17 @@
-﻿using System;
+﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared.MessagePackObjects.Value;
+using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
     public static class NumConditionExtensions
     {
-        public static bool IsMatch(this NumCondition numCondition, int checkValue)
+        public static async ValueTask<bool> IsMatch(this NumCondition _this,
+            Card effectOwnerCard, EffectEventArgs eventArgs)
         {
-            var result = numCondition.Compare switch
-            {
-                NumCondition.CompareValue.Equality => checkValue == numCondition.Value,
-                NumCondition.CompareValue.LessThan => checkValue <= numCondition.Value,
-                NumCondition.CompareValue.GreaterThan => checkValue >= numCondition.Value,
-                _ => throw new InvalidOperationException($"{nameof(numCondition.Compare)}: {numCondition.Compare}")
-            };
+            var x = await _this.Value.Calculate(effectOwnerCard, eventArgs);
 
-            return result ^ numCondition.Not;
+            return _this.Compare.IsMatch(x);
         }
     }
 }

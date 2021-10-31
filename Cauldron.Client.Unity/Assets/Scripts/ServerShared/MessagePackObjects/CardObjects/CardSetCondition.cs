@@ -16,9 +16,9 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public TypeValue Type { get; } = TypeValue.This;
 
-        public TextCondition ValueCondition { get; }
+        public TextCompare ValueCondition { get; }
 
-        public CardSetCondition(TypeValue Type, TextCondition ValueCondition = null)
+        public CardSetCondition(TypeValue Type, TextCompare ValueCondition = null)
         {
             this.Type = Type;
             this.ValueCondition = ValueCondition;

@@ -1483,5 +1483,11 @@ namespace Cauldron.Core.Entities
 
             return (true, GameMasterStatusCode.OK);
         }
+
+        public bool Exists(PlayerCondition playerExistsCondition, Card effectOwnerCard, EffectEventArgs eventArgs)
+        {
+            return this.playerRepository.AllPlayers
+                .Any(p => playerExistsCondition.IsMatch(effectOwnerCard, eventArgs, p));
+        }
     }
 }

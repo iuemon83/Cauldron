@@ -16,7 +16,7 @@ namespace Cauldron.Shared.MessagePackObjects
             var mathedCards = new List<Card>();
             foreach (var card in source)
             {
-                var isMathed = await cardCondition.IsMatch(card, effectOwnerCard, eventArgs);
+                var isMathed = await cardCondition.IsMatch(effectOwnerCard, eventArgs, card);
 
                 if (isMathed)
                 {
@@ -41,7 +41,7 @@ namespace Cauldron.Shared.MessagePackObjects
         }
 
         public static async ValueTask<bool> IsMatch(this CardCondition _this,
-            Card cardToMatch, Card effectOwnerCard, EffectEventArgs effectEventArgs)
+            Card effectOwnerCard, EffectEventArgs effectEventArgs, Card cardToMatch)
         {
             static bool ContextConditionIsMatch(CardCondition.ContextConditionValue value,
                 Card cardToMatch, Card effectOwnerCard, EffectEventArgs effectEventArgs)
@@ -80,6 +80,8 @@ namespace Cauldron.Shared.MessagePackObjects
                 {
                     CardCondition.ContextConditionValue.This => cardToMatch.Id == effectOwnerCard.Id,
                     CardCondition.ContextConditionValue.Others => cardToMatch.Id != effectOwnerCard.Id,
+                    CardCondition.ContextConditionValue.SameDefs => cardToMatch.CardDefId == effectOwnerCard.CardDefId,
+                    CardCondition.ContextConditionValue.OtherDefs => cardToMatch.CardDefId != effectOwnerCard.CardDefId,
                     CardCondition.ContextConditionValue.EventSource => cardToMatch.Id == effectEventArgs.SourceCard.Id,
                     CardCondition.ContextConditionValue.DamageFrom =>
                         cardToMatch.Id == effectEventArgs.DamageContext?.DamageSourceCard?.Id,

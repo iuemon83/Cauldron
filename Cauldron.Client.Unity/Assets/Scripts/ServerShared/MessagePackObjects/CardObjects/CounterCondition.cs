@@ -7,9 +7,9 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public string CounterName { get; }
 
-        public NumCondition NumCountersCondition { get; }
+        public NumCompare NumCountersCondition { get; }
 
-        public CounterCondition(string CounterName, NumCondition NumCountersCondition)
+        public CounterCondition(string CounterName, NumCompare NumCountersCondition)
         {
             this.CounterName = CounterName;
             this.NumCountersCondition = NumCountersCondition;

@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+﻿using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -6,29 +6,21 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class NumCondition
     {
-        public enum CompareValue
-        {
-            [DisplayText("等しい")]
-            Equality,
-            [DisplayText("以下")]
-            LessThan,
-            [DisplayText("以上")]
-            GreaterThan,
-        }
+        public NumValue Value { get; }
 
-        public int Value { get; }
-        public NumCondition.CompareValue Compare { get; }
+        public NumCompare Compare { get; }
+
         public bool Not { get; }
 
         public NumCondition(
-            int Value,
-            NumCondition.CompareValue Compare,
-            bool not = false
+            NumValue Value,
+            NumCompare Compare,
+            bool Not = false
             )
         {
             this.Value = Value;
             this.Compare = Compare;
-            this.Not = not;
+            this.Not = Not;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Cauldron.Shared.MessagePackObjects
             // カードの条件に合致するか
             foreach (var con in _this.OrCardConditions.Where(c => c != null))
             {
-                var isCardMatched = await con.IsMatch(args.SourceCard, effectOwnerCard, args);
+                var isCardMatched = await con.IsMatch(effectOwnerCard, args, args.SourceCard);
                 if (isCardMatched)
                 {
                     return true;

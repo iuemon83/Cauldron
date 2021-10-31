@@ -1,24 +1,17 @@
 ﻿using Cauldron.Core.Entities.Effect;
 using Cauldron.Shared.MessagePackObjects.Value;
-using System;
 using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
     public static class TextConditionExtensions
     {
-        public static async ValueTask<bool> IsMatch(this TextCondition textCondition, Card effectOwnerCard, EffectEventArgs effectEventArgs, string checkValue)
+        public static async ValueTask<bool> IsMatch(this TextCondition _this,
+            Card effectOwnerCard, EffectEventArgs eventArgs)
         {
-            var value = await textCondition.Value.Calculate(effectOwnerCard, effectEventArgs);
+            var x = await _this.Value.Calculate(effectOwnerCard, eventArgs);
 
-            var result = textCondition.Compare switch
-            {
-                TextCondition.CompareValue.Equality => checkValue == value,
-                TextCondition.CompareValue.Contains => checkValue.Contains(value),
-                _ => throw new InvalidOperationException($"不正な入力値です: {textCondition.Compare}")
-            };
-
-            return textCondition.Not ? !result : result;
+            return await _this.Compare.IsMatch(effectOwnerCard, eventArgs, x);
         }
     }
 }

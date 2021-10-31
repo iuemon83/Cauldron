@@ -181,9 +181,9 @@ namespace Cauldron.Core_Test
                     {
                         new CardDefCondition(
                             OutZoneCondition: new(new[] { OutZonePrettyName.CardPool }),
-                            NameCondition: new TextCondition(
+                            NameCondition: new TextCompare(
                                 new TextValue(fairy.FullName),
-                                TextCondition.CompareValue.Equality
+                                TextCompare.CompareValue.Equality
                             ))
                     }));
 
@@ -266,7 +266,7 @@ namespace Cauldron.Core_Test
                             OutZoneCondition: new(new[] { OutZonePrettyName.CardPool }),
                             NameCondition: new(
                                 new TextValue(fairy.FullName),
-                                TextCondition.CompareValue.Equality
+                                TextCompare.CompareValue.Equality
                             ))
                     }),
                 numPicks: new NumValue(2));
