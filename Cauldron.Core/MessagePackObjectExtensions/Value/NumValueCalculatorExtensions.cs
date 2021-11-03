@@ -13,6 +13,11 @@ namespace Cauldron.Shared.MessagePackObjects.Value
                 return _this.Random.Calculate();
             }
 
+            if (_this.ForPlayer != null)
+            {
+                return await _this.ForPlayer.Calculate(effectOwnerCard, effectEventArgs);
+            }
+
             if (_this.ForCard != null)
             {
                 return await _this.ForCard.Calculate(effectOwnerCard, effectEventArgs);

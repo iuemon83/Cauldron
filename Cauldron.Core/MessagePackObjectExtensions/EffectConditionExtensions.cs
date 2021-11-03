@@ -13,7 +13,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 && (await (_this.If?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)));
         }
 
-        public static async ValueTask<bool> IsMatchOnPlay(this EffectCondition _this,
+        public static async ValueTask<bool> IsMatchByPlaying(this EffectCondition _this,
             Card effectOwnerCard, EffectEventArgs eventArgs)
         {
             return _this.Zone == ZonePrettyName.None

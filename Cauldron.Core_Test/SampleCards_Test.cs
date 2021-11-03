@@ -3698,5 +3698,42 @@ namespace Cauldron.Core_Test
                 Assert.Equal(2, p.Field.AllCards.Count);
             });
         }
+
+        [Fact]
+        public async Task HealOrDamage()
+        {
+            var testCardDef = SampleCards.HealOrDamage;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, }
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var p = g.Get(pId);
+                var op = g.GetOpponent(pId);
+
+                // 自分のHPが5以上なので、相手にダメージ
+                Assert.Equal(10, op.CurrentHp);
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(10 - 3, op.CurrentHp);
+                // 自分は回復しない
+                Assert.Equal(10, p.CurrentHp);
+
+                // 自分のHPが5以下なので、自分が回復
+                await g.HitPlayer(new Core.Entities.Effect.DamageContext(
+                    default,
+                    5,
+                    GuardPlayer: p,
+                    IsBattle: false));
+                Assert.Equal(5, p.CurrentHp);
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(10, p.CurrentHp);
+                // 相手にダメージなし
+                Assert.Equal(10 - 3, op.CurrentHp);
+            });
+        }
     }
 }

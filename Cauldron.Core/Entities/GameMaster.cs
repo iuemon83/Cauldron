@@ -858,7 +858,7 @@ namespace Cauldron.Core.Entities
                     break;
             }
 
-            var effectArgs = await this.effectManager.DoEffectOnPlay(playingCard,
+            var effectArgs = await this.effectManager.DoEffectByPlaying(playingCard,
                 new EffectEventArgs(GameEvent.OnPlay, this, SourceCard: playingCard));
 
             this.effectManager.RegisterEffectIfNeeded(playingCard);

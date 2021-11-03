@@ -5940,6 +5940,137 @@
                     ]
                 }
             ]
+        },
+        {
+            "cost": 3,
+            "name": "回復かダメージ",
+            "flavorText": "",
+            "annotations": [],
+            "isToken": false,
+            "type": "sorcery",
+            "power": 0,
+            "toughness": 0,
+            "abilities": [],
+            "effectText": "あなたのHPが5以下なら、あなたのHPを\u002B5する。そうでないなら、相手プレイヤーに3のダメージを与える。",
+            "effects": [
+                {
+                    "condition": {
+                        "byPlay": {
+                            "zone": "none",
+                            "if": {
+                                "condition": {
+                                    "numCondition": {
+                                        "value": {
+                                            "numValueCalculator": {
+                                                "forPlayer": {
+                                                    "type": "playerCurrentHp",
+                                                    "playersChoice": {
+                                                        "source": {
+                                                            "how": "all",
+                                                            "numPicks": { "pureValue": 1 },
+                                                            "orPlayerConditions": [ { "context": "you" } ],
+                                                            "orCardConditions": [],
+                                                            "orCardDefConditions": []
+                                                        },
+                                                        "how": "all",
+                                                        "numPicks": { "pureValue": 1 }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "compare": {
+                                            "value": 5,
+                                            "compare": "lessThan"
+                                        },
+                                        "not": false
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "modifyPlayer": {
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [ { "context": "you" } ],
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                },
+                                "playerModifier": {
+                                    "hp": {
+                                        "operator": "add",
+                                        "value": { "pureValue": 5 }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "condition": {
+                        "byPlay": {
+                            "zone": "none",
+                            "if": {
+                                "condition": {
+                                    "conditionNot": {
+                                        "condition": {
+                                            "numCondition": {
+                                                "value": {
+                                                    "numValueCalculator": {
+                                                        "forPlayer": {
+                                                            "type": "playerCurrentHp",
+                                                            "playersChoice": {
+                                                                "source": {
+                                                                    "how": "all",
+                                                                    "numPicks": { "pureValue": 1 },
+                                                                    "orPlayerConditions": [ { "context": "you" } ],
+                                                                    "orCardConditions": [],
+                                                                    "orCardDefConditions": []
+                                                                },
+                                                                "how": "all",
+                                                                "numPicks": { "pureValue": 1 }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "compare": {
+                                                    "value": 5,
+                                                    "compare": "lessThan"
+                                                },
+                                                "not": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "damage": {
+                                "value": { "pureValue": 3 },
+                                "choice": {
+                                    "source": {
+                                        "how": "all",
+                                        "numPicks": { "pureValue": 1 },
+                                        "orPlayerConditions": [ { "context": "opponent" } ],
+                                        "orCardConditions": [],
+                                        "orCardDefConditions": []
+                                    },
+                                    "how": "all",
+                                    "numPicks": { "pureValue": 1 }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

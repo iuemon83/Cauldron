@@ -29,16 +29,21 @@ namespace Cauldron.Shared.MessagePackObjects
             return (done, newArgs);
         }
 
-        public static async ValueTask<(bool, EffectEventArgs)> DoIfMatchedOnPlay(this CardEffect _this,
+
+        public static async ValueTask<bool> IsMatchedByPlaying(this CardEffect _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
             if (_this.Condition?.ByPlay == default)
             {
-                return (false, args);
+                return false;
             }
 
-            if (!await _this.Condition.ByPlay.IsMatchOnPlay(effectOwnerCard, args)) return (false, args);
+            return await _this.Condition.ByPlay.IsMatchByPlaying(effectOwnerCard, args);
+        }
 
+        public static async ValueTask<(bool, EffectEventArgs)> DoActionByPlaying(this CardEffect _this,
+            Card effectOwnerCard, EffectEventArgs args)
+        {
             var done = false;
             var newArgs = args;
             foreach (var action in _this.Actions)

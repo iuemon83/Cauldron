@@ -45,12 +45,23 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public async ValueTask<EffectEventArgs> DoEffectOnPlay(Card playedCard, EffectEventArgs effectEventArgs)
+        public async ValueTask<EffectEventArgs> DoEffectByPlaying(Card playedCard, EffectEventArgs effectEventArgs)
         {
-            var newEffectEventArgs = effectEventArgs;
+            // プレイしたときの条件で判断する
+            var matchedEffectList = new List<CardEffect>(playedCard.Effects.Count);
             foreach (var ef in playedCard.Effects)
             {
-                var (done, args) = await ef.DoIfMatchedOnPlay(playedCard, newEffectEventArgs);
+                var isMatched = await ef.IsMatchedByPlaying(playedCard, effectEventArgs);
+                if (isMatched)
+                {
+                    matchedEffectList.Add(ef);
+                }
+            }
+
+            var newEffectEventArgs = effectEventArgs;
+            foreach (var ef in matchedEffectList)
+            {
+                var (done, args) = await ef.DoActionByPlaying(playedCard, newEffectEventArgs);
 
                 if (done)
                 {

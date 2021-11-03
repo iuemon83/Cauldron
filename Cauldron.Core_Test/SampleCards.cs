@@ -3611,12 +3611,66 @@ namespace Cauldron.Core_Test
                         })
                 });
 
-        //TODO プレイヤーの条件が指定できない
-        //public static CardDef HealOrDamage
-        //    => Sorcery(3, "回復かダメージ",
-        //        effectText: "あなたのHPが5以下なら、あなたのHPを+5する。そうでないなら、相手プレイヤーに3のダメージを与える。",
-        //        effects: new[]
-        //        {
-        //        });
+        public static CardDef HealOrDamage
+            => Sorcery(3, "回復かダメージ",
+                effectText: "あなたのHPが5以下なら、あなたのHPを+5する。そうでないなら、相手プレイヤーに3のダメージを与える。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByPlay: new(
+                                If: new(new ConditionWrap(NumCondition: new(
+                                    new NumValue(NumValueCalculator: new(ForPlayer: new(
+                                        NumValueCalculatorForPlayer.TypeValue.PlayerCurrentHp,
+                                        new Choice(new ChoiceSource(
+                                            orPlayerConditions: new[]{
+                                                new PlayerCondition(PlayerCondition.ContextValue.You)
+                                            }))))),
+                                    new NumCompare(
+                                        5,
+                                        NumCompare.CompareValue.LessThan)
+                                    ))))),
+                        new[]
+                        {
+                            new EffectAction(ModifyPlayer: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orPlayerConditions: new[]
+                                        {
+                                            new PlayerCondition(PlayerCondition.ContextValue.You)
+                                        })),
+                                new PlayerModifier(
+                                    Hp: new NumValueModifier(
+                                        NumValueModifier.OperatorValue.Add,
+                                        new NumValue(5)))
+                                ))
+                        }),
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByPlay: new(
+                                If: new(new ConditionWrap(ConditionNot: new(
+                                    new ConditionWrap(NumCondition: new(
+                                    new NumValue(NumValueCalculator: new(ForPlayer: new(
+                                        NumValueCalculatorForPlayer.TypeValue.PlayerCurrentHp,
+                                        new Choice(new ChoiceSource(
+                                            orPlayerConditions: new[]{
+                                                new PlayerCondition(PlayerCondition.ContextValue.You)
+                                            }))))),
+                                    new NumCompare(
+                                        5,
+                                        NumCompare.CompareValue.LessThan)
+                                    ))))))),
+                        new[]
+                        {
+                            new EffectAction(Damage: new(
+                                new NumValue(3),
+                                new Choice(new ChoiceSource(
+                                    orPlayerConditions: new[]
+                                    {
+                                        new PlayerCondition(PlayerCondition.ContextValue.Opponent)
+                                    }))
+                                ))
+                        })
+                });
     }
 }
