@@ -12,13 +12,17 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public EffectCondition ByNotPlay { get; }
 
+        public EffectConditionAsReserve Reserve { get; }
+
         public EffectConditionWrap(
             EffectConditionByPlaying ByPlay = default,
-            EffectCondition ByNotPlay = default
+            EffectCondition ByNotPlay = default,
+            EffectConditionAsReserve Reserve = default
             )
         {
             this.ByPlay = ByPlay;
             this.ByNotPlay = ByNotPlay;
+            this.Reserve = Reserve;
         }
     }
 }

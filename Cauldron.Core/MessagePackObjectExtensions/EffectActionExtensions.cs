@@ -30,6 +30,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 (c,e) => _this.MoveCard?.Execute(c,e),
                 (c,e) => _this.SetVariable?.Execute(c,e),
                 (c,e) => _this.Win?.Execute(c,e),
+                (c,e) => _this.ReserveEffect?.Execute(c,e),
             };
 
             var result = effectEventArgs;

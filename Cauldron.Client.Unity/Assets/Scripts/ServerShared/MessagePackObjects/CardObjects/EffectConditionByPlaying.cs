@@ -9,10 +9,8 @@ namespace Cauldron.Shared.MessagePackObjects
     public class EffectConditionByPlaying : EffectCondition
     {
         public EffectConditionByPlaying(
-            EffectWhen When = null,
-            EffectWhile While = null,
             EffectIf If = null
             )
-            : base(ZonePrettyName.None, When, While, If) { }
+            : base(ZonePrettyName.None, default, default, If) { }
     }
 }

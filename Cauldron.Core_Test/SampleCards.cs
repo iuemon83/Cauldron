@@ -294,12 +294,12 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectConditionWrap(
                             ByNotPlay: new EffectCondition(
-                            ZonePrettyName.YouCemetery,
-                            new(new(Destroy: new (
-                                OrCardCondition: new[]
-                                {
-                                    new CardCondition(CardCondition.ContextConditionValue.This)
-                                })))
+                                ZonePrettyName.YouCemetery,
+                                new(new(Destroy: new (
+                                    OrCardCondition: new[]
+                                    {
+                                        new CardCondition(CardCondition.ContextConditionValue.This)
+                                    })))
                         )),
                         new[]
                         {
@@ -812,37 +812,46 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(ZonePrettyName.None,
-                            new EffectWhen(new EffectTiming(
-                                StartTurn: new(
-                                    OrPlayerCondition: new[]
-                                    {
-                                        new PlayerCondition(PlayerCondition.ContextValue.You),
-                                    }))),
-                            While: new(new(
-                                StartTurn: new(
-                                    OrPlayerCondition: new[]
-                                    {
-                                        new PlayerCondition(PlayerCondition.ContextValue.You),
-                                    })),
-                                0, 1)
-                            )),
+                        new EffectConditionWrap(ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
                             new EffectAction(
-                                ModifyPlayer: new(
-                                    new Choice(new ChoiceSource(
-                                        orPlayerConditions: new[]
+                                ReserveEffect: new(new[]
+                                {
+                                    new CardEffect(
+                                        new EffectConditionWrap(
+                                            Reserve: new(
+                                                When: new(new EffectTiming(
+                                                    StartTurn: new(
+                                                        OrPlayerCondition: new[]
+                                                        {
+                                                            new PlayerCondition(PlayerCondition.ContextValue.You),
+                                                        }))),
+                                                While: new(new(
+                                                    StartTurn: new(
+                                                        OrPlayerCondition: new[]
+                                                        {
+                                                            new PlayerCondition(PlayerCondition.ContextValue.You),
+                                                        })),
+                                                    0, 1)
+                                                )),
+                                        new[]
                                         {
-                                            new PlayerCondition(PlayerCondition.ContextValue.You)
-                                        })),
-                                    new PlayerModifier(
-                                        Mp: new NumValueModifier(
-                                            NumValueModifier.OperatorValue.Sub,
-                                            new NumValue(2))
-                                        ))
-                            )
+                                            new EffectAction(
+                                                ModifyPlayer: new(
+                                                    new Choice(new ChoiceSource(
+                                                        orPlayerConditions: new[]
+                                                        {
+                                                            new PlayerCondition(PlayerCondition.ContextValue.You)
+                                                        })),
+                                                    new PlayerModifier(
+                                                        Mp: new NumValueModifier(
+                                                            NumValueModifier.OperatorValue.Sub,
+                                                            new NumValue(2))
+                                                        ))
+                                            )
+                                        })
+                                }))
                         }
                     )
                 });
@@ -951,8 +960,7 @@ namespace Cauldron.Core_Test
                     // プレイ時：自分のクリーチャーすべてを+1/+0 する。
                     // 自分のターン開始時：自分のクリーチャーすべてを+1/+0 する。
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new(
+                        new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new(new(
                                 Play: new (
@@ -986,29 +994,29 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-        public static CardDef Psycho
-            => SampleCards.Creature(5, "サイコ",
+        public static CardDef DoubleShield
+            => SampleCards.Creature(5, "二重の盾持ちゴブリン",
                 3, 4,
                 abilities: new[] { CreatureAbility.Cover },
                 effectText: "このクリーチャーがダメージを受けるとき、1度だけそのダメージを0にする。",
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
-                                new EffectWhen(new EffectTiming(
-                                    DamageBefore: new(
-                                        Source: EffectTimingDamageAfterEvent.SourceValue.Take,
-                                        CardCondition: new(
-                                            ContextCondition: CardCondition.ContextConditionValue.This)
-                                        ))),
-                                While: new(new EffectTiming(
-                                    DamageBefore: new(
-                                        Source: EffectTimingDamageAfterEvent.SourceValue.Take,
-                                        CardCondition: new(
-                                            ContextCondition: CardCondition.ContextConditionValue.This)
-                                        )),
-                                    0, 1))),
+                        new EffectConditionWrap(ByNotPlay: new EffectCondition(
+                            ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                DamageBefore: new(
+                                    Source: EffectTimingDamageAfterEvent.SourceValue.Take,
+                                    CardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This)
+                                    ))),
+                            While: new(new EffectTiming(
+                                DamageBefore: new(
+                                    Source: EffectTimingDamageAfterEvent.SourceValue.Take,
+                                    CardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This)
+                                    )),
+                                0, 1))),
                         new[]{
                             new EffectAction(
                                 ModifyDamage: new(
@@ -1394,36 +1402,43 @@ namespace Cauldron.Core_Test
                     ),
                     // ターン終了時あなたの最大MPを1減少する。
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(ZonePrettyName.None,
-                            new EffectWhen(new EffectTiming(
-                                EndTurn: new(
-                                    OrPlayerCondition: new[]
-                                    {
-                                        new PlayerCondition(PlayerCondition.ContextValue.You)
-                                    }))),
-                            While: new(new EffectTiming(EndTurn: new(
-                                OrPlayerCondition: new[]
-                                {
-                                        new PlayerCondition(PlayerCondition.ContextValue.You)
-                                }))
-                                , 0, 1)
-                            )),
+                        new EffectConditionWrap(ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
-                            new EffectAction(
-                                ModifyPlayer: new(
-                                    new Choice(new ChoiceSource(
-                                        orPlayerConditions: new[]
+                            new EffectAction(ReserveEffect: new(
+                                new[]
+                                {
+                                    new CardEffect(
+                                        new EffectConditionWrap(Reserve: new(
+                                            new EffectWhen(new EffectTiming(
+                                                EndTurn: new(
+                                                    OrPlayerCondition: new[]
+                                                    {
+                                                        new PlayerCondition(PlayerCondition.ContextValue.You)
+                                                    }))),
+                                            While: new(new EffectTiming(EndTurn: new(
+                                                OrPlayerCondition: new[]
+                                                {
+                                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                                }))
+                                                , 0, 1)
+                                            )),
+                                        new[]
                                         {
-                                            new PlayerCondition(PlayerCondition.ContextValue.You)
-                                        })),
-                                    new PlayerModifier(
-                                        MaxMp: new NumValueModifier(
-                                            NumValueModifier.OperatorValue.Sub,
-                                            new NumValue(1))
-                                        ))
-                            )
+                                            new EffectAction(ModifyPlayer: new(
+                                                new Choice(new ChoiceSource(
+                                                    orPlayerConditions: new[]
+                                                    {
+                                                        new PlayerCondition(PlayerCondition.ContextValue.You)
+                                                    })),
+                                                new PlayerModifier(
+                                                    MaxMp: new NumValueModifier(
+                                                        NumValueModifier.OperatorValue.Sub,
+                                                        new NumValue(1))
+                                                    ))
+                                            )
+                                        })
+                                }))
                         }
                     )
                 });
@@ -2344,8 +2359,8 @@ namespace Cauldron.Core_Test
                                     new[]
                                     {
                                         new CardEffect(
-                                            new EffectConditionWrap(
-                                                ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
+                                            new EffectConditionWrap(ByNotPlay: new EffectCondition(
+                                                ZonePrettyName.YouField,
                                                 new EffectWhen(new EffectTiming(DamageBefore: new(
                                                     Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
                                                     CardCondition: new(
@@ -2356,7 +2371,7 @@ namespace Cauldron.Core_Test
                                                     {
                                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                                     })),
-                                                    0, 0)
+                                                    0, 1)
                                                 )),
                                             new[]
                                             {
@@ -2692,63 +2707,67 @@ namespace Cauldron.Core_Test
         public static CardDef Virus
             => SampleCards.Sorcery(5, "ウイルス",
                 effectText: "相手の場と相手の手札にあるパワー4以上のクリーチャーをすべて墓地に移動する。" +
-                "3回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
+                "2回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByPlay: new EffectConditionByPlaying()),
+                        new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
-                            new EffectAction(
-                                DestroyCard: new(
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition(
-                                                    PowerCondition: new NumCompare(
-                                                        4, NumCompare.CompareValue.GreaterThan),
-                                                    ZoneCondition: new(
-                                                        new ZoneValue(new[]{
-                                                            ZonePrettyName.OpponentField,
-                                                            ZonePrettyName.OpponentHand
-                                                            })))
-                                            })))
-                            )
+                            new EffectAction(DestroyCard: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                PowerCondition: new NumCompare(
+                                                    4, NumCompare.CompareValue.GreaterThan),
+                                                ZoneCondition: new(
+                                                    new ZoneValue(new[]{
+                                                        ZonePrettyName.OpponentField,
+                                                        ZonePrettyName.OpponentHand
+                                                        })))
+                                        })))
+                            ),
+                            new EffectAction(ReserveEffect: new(
+                                new[]
+                                {
+                                    new CardEffect(
+                                        new EffectConditionWrap(Reserve: new(
+                                            new EffectWhen(new EffectTiming(
+                                                MoveCard: new(
+                                                    OrCardConditions: new[]
+                                                    {
+                                                        new CardCondition(
+                                                            PowerCondition: new NumCompare(
+                                                                4, NumCompare.CompareValue.GreaterThan))
+                                                    },
+                                                    ZonePrettyName.OpponentDeck,
+                                                    ZonePrettyName.OpponentHand))),
+                                            While: new(new EffectTiming(EndTurn: new(
+                                                OrPlayerCondition: new[]
+                                                {
+                                                    new PlayerCondition(PlayerCondition.ContextValue.Opponent)
+                                                })),
+                                                0, 2))),
+                                        new[]
+                                        {
+                                            new EffectAction(MoveCard: new(
+                                                new Choice(
+                                                    new ChoiceSource(
+                                                        orCardConditions: new[]
+                                                        {
+                                                            new CardCondition(
+                                                                CardCondition.ContextConditionValue.EventSource)
+                                                        })),
+                                                ZonePrettyName.YouCemetery
+                                                )
+                                            )
+                                        }
+                                    )
+                                }))
                         }
                     ),
-                    new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(ZonePrettyName.None,
-                            new EffectWhen(new EffectTiming(
-                                MoveCard: new(
-                                    OrCardConditions: new[]
-                                    {
-                                        new CardCondition(CardCondition.ContextConditionValue.Others),
-                                    },
-                                    ZonePrettyName.OpponentDeck,
-                                    ZonePrettyName.OpponentHand))),
-                            While: new(new EffectTiming(EndTurn: new(
-                                OrPlayerCondition: new[]
-                                {
-                                    new PlayerCondition(PlayerCondition.ContextValue.Opponent)
-                                })),
-                                0, 3))),
-                        new[]
-                        {
-                            new EffectAction(
-                                DestroyCard: new(
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition(
-                                                    CardCondition.ContextConditionValue.EventSource)
-                                            })))
-                            )
-                        }
-                    )
                 });
 
         public static CardDef OldShield
@@ -2958,12 +2977,13 @@ namespace Cauldron.Core_Test
                 {
                     new CardEffect(
                         new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(ZonePrettyName.YouField,
-                            new EffectWhen(new EffectTiming(StartTurn: new(
-                                OrPlayerCondition: new[]
-                                {
-                                    new PlayerCondition(PlayerCondition.ContextValue.You)
-                                }))))),
+                            ByNotPlay: new EffectCondition(
+                                ZonePrettyName.YouField,
+                                new EffectWhen(new EffectTiming(StartTurn: new(
+                                    OrPlayerCondition: new[]
+                                    {
+                                        new PlayerCondition(PlayerCondition.ContextValue.You)
+                                    }))))),
                         new[]
                         {
                             new EffectAction(
@@ -2979,15 +2999,16 @@ namespace Cauldron.Core_Test
                         }),
                     new CardEffect(
                         new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(ZonePrettyName.None,
-                            new EffectWhen(new EffectTiming(
-                                MoveCard: new(
-                                    OrCardConditions: new[]
-                                    {
-                                        new CardCondition(CardCondition.ContextConditionValue.This)
-                                    },
-                                    ZonePrettyName.YouField,
-                                    ZonePrettyName.YouCemetery))))),
+                            ByNotPlay: new EffectCondition(
+                                ZonePrettyName.YouCemetery,
+                                new EffectWhen(new EffectTiming(
+                                    MoveCard: new(
+                                        OrCardConditions: new[]
+                                        {
+                                            new CardCondition(CardCondition.ContextConditionValue.This)
+                                        },
+                                        ZonePrettyName.YouField,
+                                        ZonePrettyName.YouCemetery))))),
                         new[]
                         {
                             new EffectAction(
@@ -3415,8 +3436,8 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
+                        new EffectConditionWrap(ByNotPlay: new EffectCondition(
+                            ZonePrettyName.YouCemetery,
                             When: new(new EffectTiming(EndTurn:new(
                                 new[]
                                 {
@@ -3483,13 +3504,13 @@ namespace Cauldron.Core_Test
 
         public static CardDef Key1
             => Sorcery(1, "封印の鍵1",
-                effectText: "このカードと「封印の鍵1」「封印の鍵2」があなたの手札にそろったとき、あなたはゲームに勝利する。",
+                effectText: "",
                 effects: Array.Empty<CardEffect>()
                 );
 
         public static CardDef Key2
             => Sorcery(1, "封印の鍵2",
-                effectText: "このカードと「封印の鍵1」「封印の鍵2」があなたの手札にそろったとき、あなたはゲームに勝利する。",
+                effectText: "",
                 effects: Array.Empty<CardEffect>()
                 );
 

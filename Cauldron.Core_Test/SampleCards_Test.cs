@@ -2522,7 +2522,7 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task WarStatue()
+        public async Task VictoryRoad()
         {
             var testCardDef = SampleCards.VictoryRoad;
             testCardDef.Cost = 0;
@@ -2553,7 +2553,44 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task VictoryRoad()
+        public async Task VictoryRoad_Bounce()
+        {
+            var testCardDef = SampleCards.VictoryRoad;
+            testCardDef.Cost = 0;
+
+            var tokenCardDef = SampleCards.VictoryStatue;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef, tokenCardDef });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // バウンスしてもう一度出す
+                await g.MoveCard(testCard.Id, new Core.Entities.Effect.MoveCardContext(
+                    new Zone(pId, ZoneName.Field),
+                    new Zone(pId, ZoneName.Hand)));
+
+                await g.PlayFromHand(pId, testCard.Id);
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+            });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+                // 1枚しか出ない
+                Assert.Single(c.Player1.Field.AllCards);
+                Assert.Equal(tokenCardDef.Id, c.Player1.Field.AllCards[0].CardDefId);
+            });
+        }
+
+        [Fact]
+        public async Task VictoryStatue()
         {
             var testCardDef = SampleCards.VictoryStatue;
             testCardDef.Cost = 0;
@@ -2653,9 +2690,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task Psycho_攻撃によるダメージ()
+        public async Task DoubleShield_攻撃によるダメージ()
         {
-            var testCardDef = SampleCards.Psycho;
+            var testCardDef = SampleCards.DoubleShield;
             testCardDef.Cost = 0;
 
             var goblinDef = SampleCards.Goblin;
@@ -2687,9 +2724,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task Psycho_攻撃以外によるダメージ()
+        public async Task DoubleShield_攻撃以外によるダメージ()
         {
-            var testCardDef = SampleCards.Psycho;
+            var testCardDef = SampleCards.DoubleShield;
             testCardDef.Cost = 0;
 
             var spellDef = SampleCards.SelectDamage;
@@ -2870,10 +2907,51 @@ namespace Cauldron.Core_Test
                 Assert.Equal(goblinDefp3.Id, c.Player1.Field.AllCards[0].CardDefId);
             });
 
+            // 次にドローするカードをパワー4以上にする
+            var nextDrawCard = await c.GameMaster.GenerateNewCard(
+                goblinDefp4.Id,
+                new Zone(c.Player1.Id, ZoneName.Deck),
+                new InsertCardPosition(InsertCardPosition.PositionTypeValue.Top));
+
             // 先攻2
             await TestUtil.Turn(c.GameMaster, (g, pId) =>
             {
-                // ドローしたカードのパワーが4以上なら破壊する
+                // ドローしたカードのパワーが4以上なので破壊する
+                Assert.Equal(ZoneName.Cemetery, nextDrawCard.Zone.ZoneName);
+            });
+            // 後攻2
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+            });
+
+            // 次にドローするカードをパワー3にする
+            var nextDrawCard2 = await c.GameMaster.GenerateNewCard(
+                goblinDefp3.Id,
+                new Zone(c.Player1.Id, ZoneName.Deck),
+                new InsertCardPosition(InsertCardPosition.PositionTypeValue.Top));
+
+            // 先攻3
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+                // ドローしたカードのパワーが3なので破壊しない
+                Assert.Equal(ZoneName.Hand, nextDrawCard2.Zone.ZoneName);
+            });
+            // 後攻3
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+            });
+
+            // 次にドローするカードをパワー4以上にする
+            var nextDrawCard3 = await c.GameMaster.GenerateNewCard(
+                goblinDefp4.Id,
+                new Zone(c.Player1.Id, ZoneName.Deck),
+                new InsertCardPosition(InsertCardPosition.PositionTypeValue.Top));
+
+            // 先攻4
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+                // ターン経過したのでもう破壊されない
+                Assert.Equal(ZoneName.Hand, nextDrawCard3.Zone.ZoneName);
             });
         }
 

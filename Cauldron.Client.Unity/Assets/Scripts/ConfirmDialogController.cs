@@ -12,14 +12,14 @@ public class ConfirmDialogController : MonoBehaviour
     }
 
     [SerializeField]
-    private Text titleText;
+    private Text titleText = default;
     [SerializeField]
-    private Text messageText;
+    private Text messageText = default;
 
     [SerializeField]
-    private Button okButton;
+    private Button okButton = default;
     [SerializeField]
-    private Button cancelButton;
+    private Button cancelButton = default;
 
     public Action OnOkButtonClickAction { get; private set; }
     public Action OnCancelButtonClickAction { get; private set; }

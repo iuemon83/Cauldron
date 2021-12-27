@@ -33,5 +33,8 @@ namespace Cauldron.Shared
 
         [DisplayText("一時領域")]
         Temporary,
+
+        [DisplayText("いずれか")]
+        Any,
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,7 +13,9 @@ namespace Cauldron.Core.Entities
     {
         private readonly ILogger logger;
 
-        private readonly Dictionary<GameEvent, List<(CardEffect Effect, Card Owner)>> anyZoneEffectsByGameEvent = new();
+        private readonly Dictionary<GameEvent, List<(CardEffect Effect, Card Owner)>> reservedEffectsByGameEvent = new();
+
+        private readonly Dictionary<GameEvent, Dictionary<(Card, EffectWhile), int>> effectWhileCounter = new();
 
         public EffectManager(ILogger logger)
         {
@@ -20,29 +23,100 @@ namespace Cauldron.Core.Entities
 
             foreach (var gameEvent in Enum.GetValues<GameEvent>())
             {
-                this.anyZoneEffectsByGameEvent.Add(gameEvent, new());
+                this.reservedEffectsByGameEvent.Add(gameEvent, new());
+                this.effectWhileCounter.Add(gameEvent, new());
             }
         }
 
-        public void RegisterEffectIfNeeded(Card owner)
+        public bool IsMatchedWhile(EffectWhile effectWhile, Card owner)
         {
-            foreach (var ef in owner.Effects)
+            var gameEvent = effectWhile?.Timing?.ToGameEvent();
+            if (gameEvent is { } g)
             {
-                var isAnyZoneEffect = ef.ShouldRegisterEffect();
-                if (isAnyZoneEffect)
+                var key = (owner, effectWhile);
+                if (!this.effectWhileCounter[g].ContainsKey(key))
                 {
-                    this.RegisterEffectByEvent(ef, owner);
+                    return false;
+                }
+
+                return (effectWhile.Skip == 0 || this.effectWhileCounter[g][key] >= effectWhile.Skip)
+                    && this.effectWhileCounter[g][key] < effectWhile.Take + effectWhile.Skip;
+            }
+
+            return false;
+        }
+
+        public async void EndGameEvent(GameEvent gameEvent, EffectEventArgs effectEventArgs)
+        {
+            foreach (var key in this.effectWhileCounter[gameEvent].Keys)
+            {
+                var (o, w) = key;
+                if (await w.Timing.IsMatch(o, effectEventArgs))
+                {
+                    this.effectWhileCounter[gameEvent][key]++;
                 }
             }
         }
 
-        public void RegisterEffectByEvent(CardEffect cardEffect, Card owner)
+        public void OnMoveCard(Card owner)
         {
-            var gameEvent = cardEffect.Condition?.ByNotPlay?.When?.Timing?.ToGameEvent();
-            if (gameEvent is { } g)
+            this.RegisterOrRemoveEffectWhile(owner);
+        }
+
+        /// <summary>
+        /// 効果が発動する領域に移動したらwhileを登録する
+        /// </summary>
+        /// <param name="owner"></param>
+        public void RegisterOrRemoveEffectWhile(Card owner)
+        {
+            foreach (var ef in owner.Effects)
             {
-                this.anyZoneEffectsByGameEvent[g].Add((cardEffect, owner));
+                this.RegisterOrRemoveEffectWhile(ef, owner);
             }
+        }
+
+        public void RegisterOrRemoveEffectWhile(CardEffect cardEffect, Card owner)
+        {
+            var condition = cardEffect.Condition?.ByNotPlay
+                ?? cardEffect.Condition?.Reserve;
+            if (condition == null)
+            {
+                return;
+            }
+
+            var w = condition.While;
+            var whileGameEvent = w?.Timing?.ToGameEvent();
+
+            if (whileGameEvent is GameEvent g)
+            {
+                var key = (owner, w);
+                if (condition.Zone == ZonePrettyName.Any
+                    || condition.Zone == owner.Zone.AsZonePrettyName(owner))
+                {
+                    this.effectWhileCounter[g].TryAdd(key, 0);
+                }
+                else
+                {
+                    this.effectWhileCounter[g].Remove(key);
+                }
+            }
+        }
+
+        public void ReserveAnyZoneEffect(CardEffect cardEffect, Card owner)
+        {
+            var reserveCondition = cardEffect.Condition?.Reserve;
+            if (reserveCondition == null)
+            {
+                return;
+            }
+
+            var whenGameEvent = reserveCondition.When?.Timing?.ToGameEvent();
+            if (whenGameEvent is GameEvent g)
+            {
+                this.reservedEffectsByGameEvent[g].Add((cardEffect, owner));
+            }
+
+            this.RegisterOrRemoveEffectWhile(cardEffect, owner);
         }
 
         public async ValueTask<EffectEventArgs> DoEffectByPlaying(Card playedCard, EffectEventArgs effectEventArgs)
@@ -88,17 +162,15 @@ namespace Cauldron.Core.Entities
             var newEffectEventArgs = effectEventArgs;
 
             // anyZoneEffect
-            foreach (var (ev, effectList) in this.anyZoneEffectsByGameEvent)
+            // whileのカウントがあるので、whenのイベント以外でも呼ばないといけない
+            foreach (var (ef, owner) in this.reservedEffectsByGameEvent[effectEventArgs.GameEvent])
             {
-                foreach (var (ef, owner) in effectList)
-                {
-                    var (done, args) = await ef.DoIfMatchedAnyZone(owner, newEffectEventArgs);
+                var (done, args) = await ef.DoReservedEffectIfMatched(owner, newEffectEventArgs);
 
-                    if (done)
-                    {
-                        newEffectEventArgs = args;
-                        this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {owner.Name}");
-                    }
+                if (done)
+                {
+                    newEffectEventArgs = args;
+                    this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {owner.Name}");
                 }
             }
 

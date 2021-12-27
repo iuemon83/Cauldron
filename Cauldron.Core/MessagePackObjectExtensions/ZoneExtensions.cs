@@ -22,6 +22,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 ZoneName.Field => zoneMessage.PlayerId == card.OwnerId ? ZonePrettyName.YouField : ZonePrettyName.OpponentField,
                 ZoneName.Cemetery => zoneMessage.PlayerId == card.OwnerId ? ZonePrettyName.YouCemetery : ZonePrettyName.OpponentCemetery,
                 ZoneName.Deck => zoneMessage.PlayerId == card.OwnerId ? ZonePrettyName.YouDeck : ZonePrettyName.OpponentDeck,
+                ZoneName.Temporary => ZonePrettyName.Temporary,
                 _ => throw new InvalidOperationException()
             };
         }

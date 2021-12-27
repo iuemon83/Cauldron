@@ -33,7 +33,7 @@ namespace Cauldron.Core_Test
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })),
-                                    0, 0)
+                                    0, 1)
                             )),
                         new[]{
                             new EffectAction(

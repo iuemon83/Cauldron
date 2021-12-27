@@ -195,6 +195,11 @@ namespace Cauldron.Core.Entities
             return (GameMasterStatusCode.OK, (playerIdList, cardIdList));
         }
 
+        public bool IsMatchedWhile(EffectWhile effectWhile, Card owner)
+        {
+            return this.effectManager.IsMatchedWhile(effectWhile, owner);
+        }
+
         public GameMaster(GameMasterOptions options)
         {
             this.RuleBook = options.RuleBook;
@@ -333,7 +338,7 @@ namespace Cauldron.Core.Entities
 
             await this.MoveCard(cardToDestroy.Id, moveContext);
 
-            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDestroy, this, SourceCard: cardToDestroy));
+            await this.FireEvent(new EffectEventArgs(GameEvent.OnDestroy, this, SourceCard: cardToDestroy));
 
             return true;
         }
@@ -428,7 +433,7 @@ namespace Cauldron.Core.Entities
 
                     // event
                     // デッキから直接墓地
-                    await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
+                    await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
                           MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Cemetery))));
                 }
                 else if (isDrawed)
@@ -448,8 +453,8 @@ namespace Cauldron.Core.Entities
                                 0));
                     }
 
-                    await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
-                    await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
+                    await this.FireEvent(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
+                    await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
                           MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
                 }
             }
@@ -548,7 +553,7 @@ namespace Cauldron.Core.Entities
                         );
                 }
 
-                await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnExclude, this,
+                await this.FireEvent(new EffectEventArgs(GameEvent.OnExclude, this,
                     SourceCard: cardToExclude));
             }
 
@@ -703,7 +708,8 @@ namespace Cauldron.Core.Entities
             }
 
             // カードの移動イベント
-            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: card, MoveCardContext: moveCardContext));
+            this.effectManager.OnMoveCard(card);
+            await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: card, MoveCardContext: moveCardContext));
 
             // 移動先が場で、対象のカードが死亡していれば破壊する
             if (moveCardContext.To.ZoneName == ZoneName.Field
@@ -783,7 +789,7 @@ namespace Cauldron.Core.Entities
             this.logger.LogInformation(
                  $"フィールド: {string.Join(",", this.ActivePlayer.Field.AllCards.Select(c => c.Name))}");
 
-            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnStartTurn, this, SourcePlayer: this.ActivePlayer));
+            await this.FireEvent(new EffectEventArgs(GameEvent.OnStartTurn, this, SourcePlayer: this.ActivePlayer));
 
             await this.Draw(this.ActivePlayer.Id, 1);
 
@@ -799,7 +805,7 @@ namespace Cauldron.Core.Entities
 
             this.logger.LogInformation($"ターンエンド：{this.ActivePlayer.Name}");
 
-            await this.effectManager.DoEffect(new EffectEventArgs(GameEvent.OnEndTurn, this, SourcePlayer: this.ActivePlayer));
+            await this.FireEvent(new EffectEventArgs(GameEvent.OnEndTurn, this, SourcePlayer: this.ActivePlayer));
 
             this.IsTurnStarted = false;
             this.ActivePlayer = this.NextPlayer;
@@ -861,8 +867,7 @@ namespace Cauldron.Core.Entities
             var effectArgs = await this.effectManager.DoEffectByPlaying(playingCard,
                 new EffectEventArgs(GameEvent.OnPlay, this, SourceCard: playingCard));
 
-            this.effectManager.RegisterEffectIfNeeded(playingCard);
-            await this.effectManager.DoEffect(effectArgs);
+            await this.FireEvent(effectArgs);
 
             switch (playingCard.Type)
             {
@@ -1014,7 +1019,7 @@ namespace Cauldron.Core.Entities
             }
 
             // 戦闘前のイベント
-            var newArgs = await this.effectManager.DoEffect(
+            var newArgs = await this.FireEvent(
                 new EffectEventArgs(GameEvent.OnAttackBefore, this, SourceCard: attackCard,
                     BattleContext: new(attackCard, null, damagePlayer)));
 
@@ -1043,7 +1048,7 @@ namespace Cauldron.Core.Entities
             }
 
             // 戦闘後のイベント
-            await this.effectManager.DoEffect(newArgs with { GameEvent = GameEvent.OnAttack });
+            await this.FireEvent(newArgs with { GameEvent = GameEvent.OnAttack });
 
             return GameMasterStatusCode.OK;
         }
@@ -1055,7 +1060,7 @@ namespace Cauldron.Core.Entities
                 this,
                 DamageContext: damageContext
             );
-            var newEventArgs = await this.effectManager.DoEffect(eventArgs);
+            var newEventArgs = await this.FireEvent(eventArgs);
 
             this.logger.LogInformation($"ダメージ：{newEventArgs.DamageContext.Value} > {newEventArgs.DamageContext.GuardPlayer.Name}");
 
@@ -1078,7 +1083,7 @@ namespace Cauldron.Core.Entities
                         ));
             }
 
-            await this.effectManager.DoEffect(newEventArgs with { GameEvent = GameEvent.OnDamage });
+            await this.FireEvent(newEventArgs with { GameEvent = GameEvent.OnDamage });
         }
 
         public async ValueTask<GameMasterStatusCode> AttackToCreature(PlayerId playerId, CardId attackCardId, CardId guardCardId)
@@ -1129,7 +1134,7 @@ namespace Cauldron.Core.Entities
             }
 
             // 戦闘前のイベント
-            var newArgs = await this.effectManager.DoEffect(
+            var newArgs = await this.FireEvent(
                 new EffectEventArgs(GameEvent.OnAttackBefore, this, SourceCard: attackCard,
                     BattleContext: new(attackCard, guardCard, null)));
 
@@ -1168,7 +1173,7 @@ namespace Cauldron.Core.Entities
             }
 
             // 戦闘後のイベント
-            await this.effectManager.DoEffect(newArgs with { GameEvent = GameEvent.OnAttack });
+            await this.FireEvent(newArgs with { GameEvent = GameEvent.OnAttack });
 
             return GameMasterStatusCode.OK;
         }
@@ -1176,7 +1181,7 @@ namespace Cauldron.Core.Entities
         public async ValueTask HitCreature(DamageContext damageContext)
         {
             var eventArgs = new EffectEventArgs(GameEvent.OnDamageBefore, this, DamageContext: damageContext);
-            var newEventArgs = await this.effectManager.DoEffect(eventArgs);
+            var newEventArgs = await this.FireEvent(eventArgs);
 
             var newDamageContext = newEventArgs.DamageContext;
 
@@ -1209,7 +1214,7 @@ namespace Cauldron.Core.Entities
                         ));
             }
 
-            await this.effectManager.DoEffect(newEventArgs with { GameEvent = GameEvent.OnDamage });
+            await this.FireEvent(newEventArgs with { GameEvent = GameEvent.OnDamage });
 
             var isDead = (
                 newDamageContext.Value > 0
@@ -1307,6 +1312,11 @@ namespace Cauldron.Core.Entities
         {
             card.Effects.AddRange(effectToAdd);
 
+            foreach (var ef in effectToAdd)
+            {
+                this.effectManager.RegisterOrRemoveEffectWhile(ef, card);
+            }
+
             return GameMasterStatusCode.OK;
         }
 
@@ -1341,7 +1351,7 @@ namespace Cauldron.Core.Entities
             var abs = Math.Abs(numCounters);
             for (var i = 0; i < abs; i++)
             {
-                await this.effectManager.DoEffect(new EffectEventArgs(
+                await this.FireEvent(new EffectEventArgs(
                     GameEvent.OnModifyCounter, this,
                     SourcePlayer: targetPlayer,
                     ModifyCounterContext: new(
@@ -1381,7 +1391,7 @@ namespace Cauldron.Core.Entities
             var abs = Math.Abs(numCounters);
             for (var i = 0; i < abs; i++)
             {
-                await this.effectManager.DoEffect(new EffectEventArgs(
+                await this.FireEvent(new EffectEventArgs(
                     GameEvent.OnModifyCounter, this,
                     SourceCard: targetCard,
                     ModifyCounterContext: new(
@@ -1488,6 +1498,24 @@ namespace Cauldron.Core.Entities
         {
             return this.playerRepository.AllPlayers
                 .Any(p => playerExistsCondition.IsMatch(effectOwnerCard, eventArgs, p));
+        }
+
+        public void ReserveEffect(Card owner, IEnumerable<CardEffect> EffectsToReserve)
+        {
+            foreach (var ef in EffectsToReserve)
+            {
+                this.effectManager.ReserveAnyZoneEffect(ef, owner);
+            }
+        }
+
+        private async ValueTask<EffectEventArgs> FireEvent(EffectEventArgs effectEventArgs)
+        {
+            var newEventArgs = await this.effectManager.DoEffect(effectEventArgs);
+
+            // ↑でダメージが0になると、damagebeforeイベントにマッチしなくなる！！！！！！！！！
+            this.effectManager.EndGameEvent(effectEventArgs.GameEvent, effectEventArgs);
+
+            return newEventArgs;
         }
     }
 }

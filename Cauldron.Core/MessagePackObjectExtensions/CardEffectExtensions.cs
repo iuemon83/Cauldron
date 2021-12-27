@@ -6,15 +6,30 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class CardEffectExtensions
     {
-        public static async ValueTask<(bool, EffectEventArgs)> DoIfMatchedAnyZone(this CardEffect _this,
+        public static bool IsByNotPlay(this CardEffect _this)
+        {
+            var condition = _this.Condition?.ByNotPlay;
+            if(condition == default)
+            {
+                return false;
+            }
+
+            return condition.Zone != ZonePrettyName.None
+                && condition.When != default;
+        }
+
+        public static async ValueTask<(bool, EffectEventArgs)> DoReservedEffectIfMatched(this CardEffect _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
-            if (_this.Condition?.ByNotPlay == default)
+            var condition = _this.Condition?.ByNotPlay
+                ?? _this.Condition?.Reserve;
+
+            if (condition == null)
             {
                 return (false, args);
             }
 
-            if (!await _this.Condition.ByNotPlay.IsMatchAnyZone(effectOwnerCard, args)) return (false, args);
+            if (!await condition.IsMatch(effectOwnerCard, args)) return (false, args);
 
             var done = false;
             var newArgs = args;
@@ -29,7 +44,6 @@ namespace Cauldron.Shared.MessagePackObjects
             return (done, newArgs);
         }
 
-
         public static async ValueTask<bool> IsMatchedByPlaying(this CardEffect _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
@@ -38,7 +52,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 return false;
             }
 
-            return await _this.Condition.ByPlay.IsMatchByPlaying(effectOwnerCard, args);
+            return await _this.Condition.ByPlay.IsMatch(effectOwnerCard, args);
         }
 
         public static async ValueTask<(bool, EffectEventArgs)> DoActionByPlaying(this CardEffect _this,
@@ -78,15 +92,6 @@ namespace Cauldron.Shared.MessagePackObjects
             }
 
             return (done, newArgs);
-        }
-
-        public static bool ShouldRegisterEffect(this CardEffect _this)
-        {
-            return
-                _this.Condition?.ByNotPlay != default
-                && _this.Condition?.ByNotPlay.Zone == ZonePrettyName.None
-                && (_this.Condition?.ByNotPlay.When != default
-                    || _this.Condition?.ByNotPlay.While != default);
         }
     }
 }
