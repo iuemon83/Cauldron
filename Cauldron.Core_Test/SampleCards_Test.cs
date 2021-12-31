@@ -3807,5 +3807,52 @@ namespace Cauldron.Core_Test
                 Assert.Equal(10 - 3, op.CurrentHp);
             });
         }
+
+        [Fact]
+        public async Task RevengeGoblin()
+        {
+            var testCardDef = SampleCards.RevengeGoblin;
+            testCardDef.Cost = 0;
+
+            var spellDef = SampleCards.SelectDamage;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, spellDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var op = g.GetOpponent(pId);
+
+                var test = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // カードを破壊する
+                c.TestAnswer.ChoiceCardIdList = new[] { test.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, spellDef.Id);
+
+                // まだ0ダメージ
+                Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp, op.CurrentHp);
+            });
+
+            // ターン終了したので、相手に1ダメージ
+            Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp - 1, c.Player2.CurrentHp);
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+            });
+
+            // 1度だけなのでもう発動しない
+            Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp - 1, c.Player2.CurrentHp);
+
+            // 先攻2
+            await TestUtil.Turn(c.GameMaster, (g, pId) =>
+            {
+            });
+
+            // 1度だけなのでもう発動しない
+            Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp - 1, c.Player2.CurrentHp);
+        }
     }
 }

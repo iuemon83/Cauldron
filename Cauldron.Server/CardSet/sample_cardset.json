@@ -6104,6 +6104,78 @@
           ]
         }
       ]
+    },
+    {
+      "cost": 1,
+      "name": "仕返しゴブリン",
+      "flavorText": "",
+      "annotations": [],
+      "isToken": false,
+      "type": "creature",
+      "power": 1,
+      "toughness": 1,
+      "abilities": [],
+      "effectText": "このカードが破壊されたターンの終了時に、相手に1ダメージを与える。",
+      "effects": [
+        {
+          "condition": {
+            "byNotPlay": {
+              "zone": "youCemetery",
+              "when": {
+                "timing": {
+                  "destroy": {
+                    "orCardCondition": [
+                      {
+                        "contextCondition": "this",
+                        "ownerCondition": "any"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "actions": [
+            {
+              "reserveEffect": {
+                "effectsToReserve": [
+                  {
+                    "condition": {
+                      "reserve": {
+                        "zone": "any",
+                        "when": { "timing": { "endTurn": { "orPlayerCondition": [ { "context": "active" } ] } } },
+                        "while": {
+                          "timing": { "endTurn": { "orPlayerCondition": [ { "context": "active" } ] } },
+                          "skip": 0,
+                          "take": 1
+                        }
+                      }
+                    },
+                    "actions": [
+                      {
+                        "damage": {
+                          "value": { "pureValue": 1 },
+                          "choice": {
+                            "source": {
+                              "how": "all",
+                              "numPicks": { "pureValue": 1 },
+                              "orPlayerConditions": [ { "context": "opponent" } ],
+                              "orCardConditions": [],
+                              "orCardDefConditions": []
+                            },
+                            "how": "all",
+                            "numPicks": { "pureValue": 1 }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -3684,5 +3684,50 @@ namespace Cauldron.Core_Test
                                 ))
                         })
                 });
+
+        public static CardDef RevengeGoblin
+            => SampleCards.Creature(1, "仕返しゴブリン", 1, 1,
+                effectText: "このカードが破壊されたターンの終了時に、相手に1ダメージを与える。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouCemetery,
+                            When: new(new EffectTiming(Destroy: new(
+                                new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                }))))),
+                        new[]
+                        {
+                            new EffectAction(ReserveEffect: new(
+                                new[]
+                                {
+                                    new CardEffect(
+                                        new EffectConditionWrap(Reserve: new(
+                                            new EffectWhen(new EffectTiming(EndTurn: new(
+                                                new[]
+                                                {
+                                                    new PlayerCondition(PlayerCondition.ContextValue.Active)
+                                                }))),
+                                            While:new(new EffectTiming(EndTurn: new(
+                                                new[]
+                                                {
+                                                    new PlayerCondition(PlayerCondition.ContextValue.Active)
+                                                })),
+                                                0, 1))),
+                                        new[]
+                                        {
+                                            new EffectAction(Damage: new(
+                                                new NumValue(1),
+                                                new Choice(
+                                                    new ChoiceSource(orPlayerConditions: new[]
+                                                    {
+                                                        new PlayerCondition(PlayerCondition.ContextValue.Opponent)
+                                                    }))))
+                                        })
+                                }))
+                        }),
+                });
     }
 }
