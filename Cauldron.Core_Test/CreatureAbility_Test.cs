@@ -4,11 +4,19 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Cauldron.Core_Test
 {
     public class CreatureAbility_Test
     {
+        private readonly ITestOutputHelper output;
+
+        public CreatureAbility_Test(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
         [Fact]
         public async Task Cover()
         {
@@ -46,15 +54,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Deadly_攻撃する()
         {
-            var normalcardDef = SampleCards.Goblin;
-            normalcardDef.Cost = 0;
-            normalcardDef.Toughness = 10;
-            normalcardDef.NumTurnsToCanAttack = 0;
-            var deadlyCardDef = SampleCards.Goblin;
-            deadlyCardDef.Cost = 0;
-            deadlyCardDef.Abilities = new[] { CreatureAbility.Deadly };
+            var normalcardDef = SampleCards.Creature(0, "t", 0, 10);
+            var deadlyCardDef = SampleCards.Creature(0, "t2", 0, 1,
+                abilities: new[] { CreatureAbility.Deadly });
 
-            var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef });
+            var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef }, this.output);
 
             var normal = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
@@ -78,15 +82,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Deadly_攻撃される()
         {
-            var normalcardDef = SampleCards.Goblin;
-            normalcardDef.Cost = 0;
-            normalcardDef.Toughness = 10;
-            normalcardDef.NumTurnsToCanAttack = 0;
-            var deadlyCardDef = SampleCards.Goblin;
-            deadlyCardDef.Cost = 0;
-            deadlyCardDef.Abilities = new[] { CreatureAbility.Deadly };
+            var normalcardDef = SampleCards.Creature(0, "t", 0, 10);
+            var deadlyCardDef = SampleCards.Creature(0, "t2", 0, 1,
+                abilities: new[] { CreatureAbility.Deadly });
 
-            var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef });
+            var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef }, this.output);
 
             var deadlyCard = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {

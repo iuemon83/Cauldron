@@ -18,23 +18,22 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(
-                                    DamageBefore: new(
-                                        Source: EffectTimingDamageBeforeEvent.SourceValue.DamageSource,
-                                        CardCondition: new(
-                                            ContextCondition: CardCondition.ContextConditionValue.This,
-                                            ZoneCondition: new(new(new[]{ ZonePrettyName.YouField }))
-                                        )))),
-                                While: new(new(EndTurn: new(
-                                    OrPlayerCondition: new[]
-                                    {
-                                        new PlayerCondition(PlayerCondition.ContextValue.You)
-                                    })),
-                                    0, 1)
-                            )),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(
+                                DamageBefore: new(
+                                    Source: EffectTimingDamageBeforeEvent.SourceValue.DamageSource,
+                                    CardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This,
+                                        ZoneCondition: new(new(new[]{ ZonePrettyName.YouField }))
+                                    )))),
+                            While: new(new(EndTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                })),
+                                0, 1)
+                        )),
                         new[]{
                             new EffectAction(
                                 ModifyPlayer: new(
@@ -93,21 +92,20 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(StartTurn: new(
-                                    OrPlayerCondition: new[]
-                                    {
-                                        new PlayerCondition(PlayerCondition.ContextValue.You)
-                                    }))),
-                                While: new(new(StartTurn: new(
-                                    OrPlayerCondition: new[]
-                                    {
-                                        new PlayerCondition(PlayerCondition.ContextValue.You)
-                                    })),
-                                    0, 1)
-                            )),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(StartTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                }))),
+                            While: new(new(StartTurn: new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                })),
+                                0, 1)
+                        )),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });

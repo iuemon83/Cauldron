@@ -8,7 +8,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public static async ValueTask<bool> IsMatch(this EffectCondition _this, Card effectOwnerCard, EffectEventArgs eventArgs)
         {
             return _this.Zone.IsMatchedZone(effectOwnerCard, eventArgs)
-                && (await (_this.While?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)))
+                && (_this.While?.IsMatch(effectOwnerCard, eventArgs) ?? true)
                 && (await (_this.When?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)))
                 && (await (_this.If?.IsMatch(effectOwnerCard, eventArgs) ?? ValueTask.FromResult(true)));
         }

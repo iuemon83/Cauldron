@@ -115,6 +115,8 @@ namespace Cauldron.Shared.MessagePackObjects
         public bool CanAttack =>
             // クリーチャーでなければ攻撃できない
             this.Type == CardType.Creature
+            // 場にいなければ攻撃できない
+            && this.Zone.ZoneName == ZoneName.Field
             // 召喚酔いでない
             && this.NumTurnsToCanAttack <= this.NumTurnsInField
             // 攻撃不能状態でない

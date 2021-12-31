@@ -49,6 +49,12 @@ namespace Cauldron.Shared.MessagePackObjects
                 foreach (var cd in Enumerable.Repeat(cardDef, _this.NumOfAddCards))
                 {
                     var card = await effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, _this.InsertCardPosition);
+                    if (card == null)
+                    {
+                        // カードの生成に失敗
+                        return (false, effectEventArgs);
+                    }
+
                     addedCards.Add(card);
                 }
             }

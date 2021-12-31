@@ -67,7 +67,7 @@ namespace Cauldron.Core.Entities
         /// 効果が発動する領域に移動したらwhileを登録する
         /// </summary>
         /// <param name="owner"></param>
-        public void RegisterOrRemoveEffectWhile(Card owner)
+        private void RegisterOrRemoveEffectWhile(Card owner)
         {
             foreach (var ef in owner.Effects)
             {
@@ -78,7 +78,7 @@ namespace Cauldron.Core.Entities
         public void RegisterOrRemoveEffectWhile(CardEffect cardEffect, Card owner)
         {
             var condition = cardEffect.Condition?.ByNotPlay
-                ?? cardEffect.Condition?.Reserve;
+                ?? (EffectCondition)cardEffect.Condition?.Reserve;
             if (condition == null)
             {
                 return;
@@ -141,6 +141,8 @@ namespace Cauldron.Core.Entities
                 {
                     newEffectEventArgs = args;
                     this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {playedCard.Name}");
+
+                    await effectEventArgs.GameMaster.DestroyDeadCards();
                 }
             }
 
@@ -162,7 +164,6 @@ namespace Cauldron.Core.Entities
             var newEffectEventArgs = effectEventArgs;
 
             // anyZoneEffect
-            // whileのカウントがあるので、whenのイベント以外でも呼ばないといけない
             foreach (var (ef, owner) in this.reservedEffectsByGameEvent[effectEventArgs.GameEvent])
             {
                 var (done, args) = await ef.DoReservedEffectIfMatched(owner, newEffectEventArgs);
@@ -171,6 +172,8 @@ namespace Cauldron.Core.Entities
                 {
                     newEffectEventArgs = args;
                     this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {owner.Name}");
+
+                    await effectEventArgs.GameMaster.DestroyDeadCards();
                 }
             }
 
@@ -186,6 +189,8 @@ namespace Cauldron.Core.Entities
                     {
                         newEffectEventArgs = args;
                         this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {card.Name}");
+
+                        await effectEventArgs.GameMaster.DestroyDeadCards();
                     }
                 }
             }
@@ -204,6 +209,8 @@ namespace Cauldron.Core.Entities
                         {
                             newEffectEventArgs = args;
                             this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {card.Name}");
+
+                            await effectEventArgs.GameMaster.DestroyDeadCards();
                         }
                     }
                 }

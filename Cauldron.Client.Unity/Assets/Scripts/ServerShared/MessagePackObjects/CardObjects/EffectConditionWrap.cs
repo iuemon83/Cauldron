@@ -10,13 +10,13 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public EffectConditionByPlaying ByPlay { get; }
 
-        public EffectCondition ByNotPlay { get; }
+        public EffectConditionAsNotPlay ByNotPlay { get; }
 
         public EffectConditionAsReserve Reserve { get; }
 
         public EffectConditionWrap(
             EffectConditionByPlaying ByPlay = default,
-            EffectCondition ByNotPlay = default,
+            EffectConditionAsNotPlay ByNotPlay = default,
             EffectConditionAsReserve Reserve = default
             )
         {

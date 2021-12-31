@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Cauldron.Core_Test
 {
@@ -54,6 +55,34 @@ namespace Cauldron.Core_Test
                 OnBattleStart, OnBattleEnd, OnDamage, OnModityCounter, OnEndGame, AskCardAction
                 );
 
+        public static (TestAnswer, Func<PlayerId, ChoiceCandidates, int, ValueTask<ChoiceAnswer>>) TestAskCardAction()
+        {
+            var testAnswer = new TestAnswer();
+
+            var func = (PlayerId p, ChoiceCandidates c, int i) =>
+            {
+                if (testAnswer.ExpectedPlayerIdList != null)
+                {
+                    AssertCollection(testAnswer.ExpectedPlayerIdList, c.PlayerIdList);
+                }
+                if (testAnswer.ExpectedCardIdList != null)
+                {
+                    AssertCollection(testAnswer.ExpectedCardIdList, c.CardList.Select(c => c.Id).ToArray());
+                }
+                if (testAnswer.ExpectedCardDefIdList != null)
+                {
+                    AssertCollection(testAnswer.ExpectedCardDefIdList, c.CardDefList.Select(c => c.Id).ToArray());
+                }
+
+                return ValueTask.FromResult(new ChoiceAnswer(
+                    testAnswer.ChoicePlayerIdList,
+                    testAnswer.ChoiceCardIdList,
+                    testAnswer.ChoiceCardDefIdList));
+            };
+
+            return (testAnswer, func);
+        }
+
         public static EffectAction TestEffectAction => new(
             Damage: new(
                 new NumValue(1),
@@ -71,7 +100,7 @@ namespace Cauldron.Core_Test
         public static async ValueTask AssertGameAction(Func<ValueTask<GameMasterStatusCode>> phase)
         {
             var statusCode = await phase();
-            Assert.True(statusCode == GameMasterStatusCode.OK, statusCode.ToString());
+            Assert.Equal(GameMasterStatusCode.OK, statusCode);
         }
 
         public static void AssertCollection<T>(IReadOnlyList<T> expected, IReadOnlyList<T> actual)
@@ -95,18 +124,6 @@ namespace Cauldron.Core_Test
 
         public static void AssertChoiceResult(ChoiceCandidates expected, ChoiceCandidates actual)
         {
-            //TestUtil.AssertCollection(
-            //    expected.PlayerIdList,
-            //    actual.PlayerIdList);
-
-            //TestUtil.AssertCollection(
-            //    expected.CardDefList.Select(c => c.Id).ToArray(),
-            //    actual.CardDefList.Select(c => c.Id).ToArray());
-
-            //TestUtil.AssertCollection(
-            //    expected.CardList.Select(c => c.Id).ToArray(),
-            //    actual.CardList.Select(c => c.Id).ToArray());
-
             var actualResult = new ChoiceResult(
                 actual.PlayerIdList,
                 actual.CardList,
@@ -115,7 +132,6 @@ namespace Cauldron.Core_Test
 
             TestUtil.AssertChoiceResult(expected, actualResult,
                 expected.PlayerIdList.Length
-                //+ expected.CardDefList.Count
                 + expected.CardList.Length);
         }
 
@@ -123,12 +139,12 @@ namespace Cauldron.Core_Test
         {
             // ぜんぶ候補に含まれている
             Assert.True(actual.PlayerIdList.All(a => candidatesExpected.PlayerIdList.Contains(a)));
-            //Assert.True(actual.CardDefList.All(a => candidatesExpected.CardDefList.Select(ec => ec.Id).Contains(a.Id)));
+            Assert.True(actual.CardDefList.All(a => candidatesExpected.CardDefList.Select(ec => ec.Id).Contains(a.Id)));
             Assert.True(actual.CardList.All(a => candidatesExpected.CardList.Select(ec => ec.Id).Contains(a.Id)));
 
             // 選ばれた数が正しい
             var actualChoiceCount = actual.PlayerIdList.Length
-                //+ actual.CardDefList.Count
+                + actual.CardDefList.Length
                 + actual.CardList.Length;
             Assert.Equal(numOfAny, actualChoiceCount);
         }
@@ -137,19 +153,18 @@ namespace Cauldron.Core_Test
         {
             // ぜんぶ候補に含まれている
             Assert.True(actual.PlayerIdList.All(a => candidatesExpected.PlayerIdList.Contains(a)));
-            //Assert.True(actual.CardDefList.All(a => candidatesExpected.CardDefList.Select(ec => ec.Id).Contains(a.Id)));
+            Assert.True(actual.CardDefList.All(a => candidatesExpected.CardDefList.Select(ec => ec.Id).Contains(a.Id)));
             Assert.True(actual.CardList.All(a => candidatesExpected.CardList.Select(ec => ec.Id).Contains(a.Id)));
 
             // 選ばれた数が正しい
             var actualChoiceCount = actual.PlayerIdList.Length
-                //+ actual.CardDefList.Count
+                + actual.CardDefList.Length
                 + actual.CardList.Length;
         }
 
         public static async ValueTask<Card> NewCardAndPlayFromHand(GameMaster testGameMaster, PlayerId playerId, CardDefId cardDefId)
         {
             var newCard = await testGameMaster.GenerateNewCard(cardDefId, new Zone(playerId, ZoneName.Hand), null);
-            //testGameMaster.AddHand(testGameMaster.ActivePlayer, newCard);
             await TestUtil.AssertGameAction(async () => await testGameMaster.PlayFromHand(playerId, newCard.Id));
 
             return newCard;
@@ -188,20 +203,31 @@ namespace Cauldron.Core_Test
                 choiceCandidates.CardDefList.Select(c => c.Id).ToArray()));
         }
 
-        public record TestContext(GameMaster GameMaster, Player Player1, Player Player2, CardRepository CardRepository);
+        public record TestContext(GameMaster GameMaster, Player Player1, Player Player2, CardRepository CardRepository, TestAnswer TestAnswer);
 
-        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool)
-            => await InitTest(cardpool, Enumerable.Repeat(cardpool.First(c => !c.IsToken), 40), TestUtil.GameMasterOptions());
+        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, ITestOutputHelper output = null)
+            => await InitTest(cardpool, Enumerable.Repeat(cardpool.First(c => !c.IsToken), 40), TestUtil.GameMasterOptions(), output);
 
-        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck)
-            => await InitTest(cardpool, deck, TestUtil.GameMasterOptions());
+        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck, ITestOutputHelper output = null)
+            => await InitTest(cardpool, deck, TestUtil.GameMasterOptions(), output);
 
-        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, GameMasterOptions options)
-            => await InitTest(cardpool, Enumerable.Repeat(cardpool.First(c => !c.IsToken), 40), options);
+        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, GameMasterOptions options, ITestOutputHelper output = null)
+            => await InitTest(cardpool, Enumerable.Repeat(cardpool.First(c => !c.IsToken), 40), options, output);
 
-        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck, GameMasterOptions options)
+        public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck, GameMasterOptions options, ITestOutputHelper output)
         {
             options.CardRepository.SetCardPool(new CardPool(new[] { new CardSet(SampleCards.CardsetName, cardpool.ToArray()) }));
+
+            TestAnswer testAnswer = null;
+            if (options.EventListener.AskCardAction == null)
+            {
+                var x = TestAskCardAction();
+
+                testAnswer = x.Item1;
+                options = options with { EventListener = options.EventListener with { AskCardAction = x.Item2 } };
+            }
+
+            options = options with { Logger = new TestLogger(output) };
 
             var testGameMaster = new GameMaster(options);
             var deckCardDefIdList = deck.Select(c => c.Id);
@@ -214,7 +240,7 @@ namespace Cauldron.Core_Test
             var (_, player1) = testGameMaster.playerRepository.TryGet(player1Id);
             var (_, player2) = testGameMaster.playerRepository.TryGet(player2Id);
 
-            return new(testGameMaster, player1, player2, options.CardRepository);
+            return new(testGameMaster, player1, player2, options.CardRepository, testAnswer);
         }
     }
 }

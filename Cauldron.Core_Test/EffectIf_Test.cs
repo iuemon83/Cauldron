@@ -19,7 +19,7 @@ namespace Cauldron.Core_Test
                 effects: new[]{
                     new CardEffect(
                         new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
+                            ByNotPlay: new(
                                 ZonePrettyName.YouField,
                                 new(new(Play: new(
                                     OrCardConditions: new[]
@@ -55,12 +55,12 @@ namespace Cauldron.Core_Test
                 {
                     var beforeHp = c.Player1.CurrentHp;
 
-                // 場のカードが1枚なので発動しない
-                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                    // 場のカードが1枚なので発動しない
+                    await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
                     Assert.Equal(beforeHp, c.Player1.CurrentHp);
 
-                // 場のカードが2枚なので発動する
-                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                    // 場のカードが2枚なので発動する
+                    await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
                     Assert.Equal(beforeHp - 1, c.Player1.CurrentHp);
                 });
         }

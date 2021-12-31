@@ -9,7 +9,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public static bool IsByNotPlay(this CardEffect _this)
         {
             var condition = _this.Condition?.ByNotPlay;
-            if(condition == default)
+            if (condition == default)
             {
                 return false;
             }
@@ -22,7 +22,7 @@ namespace Cauldron.Shared.MessagePackObjects
             Card effectOwnerCard, EffectEventArgs args)
         {
             var condition = _this.Condition?.ByNotPlay
-                ?? _this.Condition?.Reserve;
+                ?? (EffectCondition)_this.Condition?.Reserve;
 
             if (condition == null)
             {

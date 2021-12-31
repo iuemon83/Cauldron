@@ -61,6 +61,8 @@ namespace Cauldron.Core.Entities
                 && attackCard.OwnerId != guardCard.OwnerId
                 // クリーチャー以外には攻撃できない
                 && guardCard.Type == CardType.Creature
+                // 相手が場にいなければ攻撃できない
+                && guardCard.Zone.ZoneName == ZoneName.Field
                 // ステルス状態は攻撃対象にならない
                 && !guardCard.EnableAbility(CreatureAbility.Stealth)
                 // 自分がカバー or 他にカバーがいない
@@ -348,8 +350,6 @@ namespace Cauldron.Core.Entities
             var newCost = await (effectActionModifyCard.Cost?.Modify(effectOwnerCard, effectEventArgs, card.Cost)
                     ?? ValueTask.FromResult(card.Cost));
 
-            //this.logger.LogInformation($"修整：{card}({this.PlayersById[card.OwnerId].Name})-[{newCost}, {newPower},{newToughness}]");
-
             card.CostBuff = newCost - card.BaseCost;
 
             if (card.Type == CardType.Creature)
@@ -370,11 +370,6 @@ namespace Cauldron.Core.Entities
             this.EventListener?.OnModifyCard?.Invoke(card.OwnerId,
                 this.CreateGameContext(card.OwnerId),
                 new ModifyCardNotifyMessage(card.Id));
-
-            if (card.Type == CardType.Creature && card.Toughness <= 0)
-            {
-                await this.DestroyCard(card);
-            }
         }
 
         public async ValueTask<(GameMasterStatusCode, IReadOnlyList<Card>)> Draw(PlayerId playerId, int numCards)
@@ -465,6 +460,12 @@ namespace Cauldron.Core.Entities
         public async ValueTask<Card> GenerateNewCard(CardDefId cardDefId, Zone zone, InsertCardPosition insertCardPosition)
         {
             var card = this.cardRepository.CreateNew(cardDefId);
+            if (card == null)
+            {
+                this.logger.LogError($"カードの生成に失敗しました。card def id={cardDefId}");
+                return null;
+            }
+
             card.OwnerId = zone.PlayerId;
 
             var moveContext = new MoveCardContext(
@@ -710,14 +711,6 @@ namespace Cauldron.Core.Entities
             // カードの移動イベント
             this.effectManager.OnMoveCard(card);
             await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: card, MoveCardContext: moveCardContext));
-
-            // 移動先が場で、対象のカードが死亡していれば破壊する
-            if (moveCardContext.To.ZoneName == ZoneName.Field
-                && IsDead(card))
-            {
-                await this.DestroyCard(card);
-                return;
-            }
         }
 
         public GameContext CreateGameContext(PlayerId playerId)
@@ -878,6 +871,8 @@ namespace Cauldron.Core.Entities
                 default:
                     break;
             }
+
+            await this.DestroyDeadCards();
 
             return GameMasterStatusCode.OK;
         }
@@ -1127,22 +1122,13 @@ namespace Cauldron.Core.Entities
                     new BattleNotifyMessage(attackCard.Id, GuardCardId: guardCard.Id));
             }
 
-            // 攻撃するとステルスを失う
-            if (attackCard.EnableAbility(CreatureAbility.Stealth))
-            {
-                attackCard.Abilities.Remove(CreatureAbility.Stealth);
-            }
-
             // 戦闘前のイベント
             var newArgs = await this.FireEvent(
                 new EffectEventArgs(GameEvent.OnAttackBefore, this, SourceCard: attackCard,
                     BattleContext: new(attackCard, guardCard, null)));
 
-            // どちらかが場から離れていたらダメージ計算しない
-            if (newArgs.BattleContext.AttackCard.Zone.ZoneName == ZoneName.Field
-                && newArgs.BattleContext.GuardCard.Zone.ZoneName == ZoneName.Field)
+            if (CanAttack(attackCard, guardCard, this.CreateGameContext(playerId)))
             {
-
                 // お互いにダメージを受ける
                 var damageContext = new DamageContext(
                     DamageSourceCard: newArgs.BattleContext.AttackCard,
@@ -1162,6 +1148,12 @@ namespace Cauldron.Core.Entities
                 await this.HitCreature(damageContext2);
             }
 
+            // 攻撃するとステルスを失う
+            if (attackCard.EnableAbility(CreatureAbility.Stealth))
+            {
+                attackCard.Abilities.Remove(CreatureAbility.Stealth);
+            }
+
             attackCard.NumAttacksInTurn++;
 
             // 各プレイヤーに通知
@@ -1170,6 +1162,21 @@ namespace Cauldron.Core.Entities
                 this.EventListener?.OnBattleEnd?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
                     new BattleNotifyMessage(attackCard.Id, GuardCardId: guardCard.Id));
+            }
+
+            await this.DestroyDeadCards();
+
+            // 相手が必殺ならダメージに関係なく破壊する
+            if (newArgs.BattleContext.AttackCard.EnableAbility(CreatureAbility.Deadly)
+                && newArgs.BattleContext.GuardCard.Zone.ZoneName == ZoneName.Field)
+            {
+                await this.DestroyCard(newArgs.BattleContext.GuardCard);
+            }
+
+            if (newArgs.BattleContext.GuardCard.EnableAbility(CreatureAbility.Deadly)
+                && newArgs.BattleContext.AttackCard.Zone.ZoneName == ZoneName.Field)
+            {
+                await this.DestroyCard(newArgs.BattleContext.AttackCard);
             }
 
             // 戦闘後のイベント
@@ -1215,17 +1222,6 @@ namespace Cauldron.Core.Entities
             }
 
             await this.FireEvent(newEventArgs with { GameEvent = GameEvent.OnDamage });
-
-            var isDead = (
-                newDamageContext.Value > 0
-                    && newDamageContext.DamageSourceCard.EnableAbility(CreatureAbility.Deadly)
-                    )
-                || newDamageContext.GuardCard.Toughness <= 0;
-
-            if (isDead)
-            {
-                await this.DestroyCard(newDamageContext.GuardCard);
-            }
         }
 
         public async ValueTask<ChoiceResult> Choice(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
@@ -1505,6 +1501,20 @@ namespace Cauldron.Core.Entities
             foreach (var ef in EffectsToReserve)
             {
                 this.effectManager.ReserveAnyZoneEffect(ef, owner);
+            }
+        }
+
+        public async ValueTask DestroyDeadCards()
+        {
+            // フィールドカードの破壊判定
+            var deadCards = this.playerRepository
+                .AllPlayers.SelectMany(p => p.Field.AllCards)
+                .Where(c => IsDead(c))
+                .ToArray();
+
+            foreach (var c in deadCards)
+            {
+                await this.DestroyCard(c);
             }
         }
 

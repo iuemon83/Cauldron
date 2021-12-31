@@ -9,7 +9,7 @@ namespace Cauldron.Core.Entities
     {
         private readonly static JsonSerializerOptions jsonSerializerOptions = new()
         {
-            IgnoreNullValues = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = false,
             PropertyNameCaseInsensitive = true,

@@ -17,8 +17,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
+                        new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(StartTurn: new()))
                         )),
@@ -62,14 +61,13 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(StartTurn : new(
-                                    OrPlayerCondition: new[]
-                                    {
-                                        new PlayerCondition(PlayerCondition.ContextValue.You)
-                                    }))))),
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            new(new(StartTurn : new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                }))))),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
@@ -107,14 +105,13 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(StartTurn : new(
-                                    OrPlayerCondition: new[]
-                                    {
-                                        new PlayerCondition(PlayerCondition.ContextValue.Opponent)
-                                    }))))),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(StartTurn : new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.Opponent)
+                                }))))),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
@@ -154,11 +151,10 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(EndTurn: new()))
-                            )),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(EndTurn: new()))
+                        )),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
@@ -199,14 +195,13 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(EndTurn : new(
-                                    OrPlayerCondition: new[]
-                                    {
-                                        new PlayerCondition(PlayerCondition.ContextValue.You)
-                                    }))))),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(EndTurn : new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                }))))),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
@@ -247,14 +242,13 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(EndTurn : new(
-                                    OrPlayerCondition: new[]
-                                    {
-                                        new PlayerCondition(PlayerCondition.ContextValue.Opponent)
-                                    }))))),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(EndTurn : new(
+                                OrPlayerCondition: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.Opponent)
+                                }))))),
                         new[]{ TestUtil.TestEffectAction }
                     )
                 });
@@ -327,14 +321,13 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(Play : new(
-                                    OrCardConditions: new[]
-                                    {
-                                        new CardCondition(CardCondition.ContextConditionValue.Others)
-                                    }))))),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(Play : new(
+                                OrCardConditions: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.Others)
+                                }))))),
                         new[]{  TestUtil.TestEffectAction }
                     )
                 });
@@ -366,12 +359,11 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5, numTurnsToCanAttack: 0,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(DamageBefore : new(
-                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Any,
-                                    CardCondition : new CardCondition()))))),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(DamageBefore : new(
+                                Source: EffectTimingDamageBeforeEvent.SourceValue.Any,
+                                CardCondition : new CardCondition()))))),
                         new[]{
                             new EffectAction(
                                 ModifyPlayer: new(
@@ -440,14 +432,13 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5, numTurnsToCanAttack: 0,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(DamageBefore : new (
-                                    Source: EffectTimingDamageBeforeEvent.SourceValue.DamageSource,
-                                    CardCondition : new CardCondition(
-                                        ContextCondition: CardCondition.ContextConditionValue.This
-                                        )))))),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(DamageBefore : new (
+                                Source: EffectTimingDamageBeforeEvent.SourceValue.DamageSource,
+                                CardCondition : new CardCondition(
+                                    ContextCondition: CardCondition.ContextConditionValue.This
+                                    )))))),
                         new[]{
                             new EffectAction(
                                 ModifyPlayer: new(
@@ -514,14 +505,13 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5, numTurnsToCanAttack: 0,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(DamageBefore : new(
-                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
-                                    CardCondition : new CardCondition(
-                                        ContextCondition: CardCondition.ContextConditionValue.Others
-                                        )))))),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(DamageBefore : new(
+                                Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
+                                CardCondition : new CardCondition(
+                                    ContextCondition: CardCondition.ContextConditionValue.Others
+                                    )))))),
                         new[]{ TestUtil.TestEffectAction}
                     )
                 });
@@ -576,16 +566,15 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new EffectCondition(
-                                ZonePrettyName.YouField,
-                                new(new(DamageBefore: new(
-                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
-                                    CardCondition: new CardCondition(
-                                        ContextCondition: CardCondition.ContextConditionValue.This
-                                    )
-                                )))
-                            )),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouField,
+                            new(new(DamageBefore: new(
+                                Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
+                                CardCondition: new CardCondition(
+                                    ContextCondition: CardCondition.ContextConditionValue.This
+                                )
+                            )))
+                        )),
                         new[]{ TestUtil.TestEffectAction}
                     )
                 });
