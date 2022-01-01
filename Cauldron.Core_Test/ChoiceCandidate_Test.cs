@@ -7,16 +7,23 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Cauldron.Core_Test
 {
     public class ChoiceCandidate_Test
     {
+        private readonly ITestOutputHelper output;
+
+        public ChoiceCandidate_Test(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
         [Fact]
         public async Task ランダムな自分クリーチャー1体()
         {
             var goblinDef = SampleCards.Creature(0, "ゴブリン", 1, 2);
-            goblinDef.NumTurnsToCanAttack = 0;
 
             var testChoice = new Choice(
                 new ChoiceSource(
@@ -47,9 +54,7 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef },
-                TestUtil.GameMasterOptions(
-                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
+            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef }, this.output);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, goblinCard2, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
@@ -127,9 +132,7 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
-                TestUtil.GameMasterOptions(
-                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef }, this.output);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, goblinCard2, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
@@ -191,14 +194,13 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new(
-                                ZonePrettyName.YouField,
-                                new(new(Destroy: new(
-                                    OrCardCondition: new[]
-                                    {
-                                        new CardCondition(CardCondition.ContextConditionValue.This)
-                                    })))
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            new(new(Destroy: new(
+                                OrCardCondition: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                })))
                             )),
                         new[]
                         {
@@ -212,9 +214,7 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var c = await TestUtil.InitTest(new[] { goblin, fairy, testCardDef },
-                TestUtil.GameMasterOptions(
-                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
+            var c = await TestUtil.InitTest(new[] { goblin, fairy, testCardDef }, this.output);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
@@ -296,9 +296,7 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var c = await TestUtil.InitTest(new[] { goblin, fairy, testCardDef },
-                TestUtil.GameMasterOptions(
-                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
+            var c = await TestUtil.InitTest(new[] { goblin, fairy, testCardDef }, this.output);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
@@ -373,9 +371,7 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
-                TestUtil.GameMasterOptions(
-                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef }, this.output);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
@@ -450,9 +446,7 @@ namespace Cauldron.Core_Test
                 }
                 );
 
-            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
-                TestUtil.GameMasterOptions(
-                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef }, this.output);
 
             // ゴブリン出してから効果クリーチャーを出す
             var (goblinCard, testCard) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
@@ -534,9 +528,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Artifact(0, "test", "test", false);
 
             // 以下テスト
-            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
-                TestUtil.GameMasterOptions(
-                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef }, this.output);
 
             // 先行
             // ゴブリン2体出す
@@ -603,9 +595,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1);
 
             // 以下テスト
-            var c = await TestUtil.InitTest(new[] { goblin, testCardDef },
-                TestUtil.GameMasterOptions(
-                    EventListener: TestUtil.GameEventListener(AskCardAction: TestUtil.TestPick)));
+            var c = await TestUtil.InitTest(new[] { goblin, testCardDef }, this.output);
 
             // 先行
             // ゴブリン2体出す

@@ -165,6 +165,11 @@ namespace Cauldron.Core_Test
         public static async ValueTask<Card> NewCardAndPlayFromHand(GameMaster testGameMaster, PlayerId playerId, CardDefId cardDefId)
         {
             var newCard = await testGameMaster.GenerateNewCard(cardDefId, new Zone(playerId, ZoneName.Hand), null);
+            if (newCard == null)
+            {
+                throw new Exception("カードの生成に失敗");
+            }
+
             await TestUtil.AssertGameAction(async () => await testGameMaster.PlayFromHand(playerId, newCard.Id));
 
             return newCard;
@@ -191,16 +196,6 @@ namespace Cauldron.Core_Test
             await gameMaster.EndTurn();
 
             return cards;
-        }
-
-#pragma warning disable IDE0060 // 未使用のパラメーターを削除します
-        public static ValueTask<ChoiceAnswer> TestPick(PlayerId _, ChoiceCandidates choiceCandidates, int __)
-#pragma warning restore IDE0060 // 未使用のパラメーターを削除します
-        {
-            return ValueTask.FromResult(new ChoiceAnswer(
-                choiceCandidates.PlayerIdList,
-                choiceCandidates.CardList.Select(c => c.Id).ToArray(),
-                choiceCandidates.CardDefList.Select(c => c.Id).ToArray()));
         }
 
         public record TestContext(GameMaster GameMaster, Player Player1, Player Player2, CardRepository CardRepository, TestAnswer TestAnswer);
