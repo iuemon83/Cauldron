@@ -1,15 +1,22 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cauldron.Shared.MessagePackObjects
+namespace Cauldron.Core.MessagePackObjectExtensions
 {
-    public static class EffectActionDrawCardExtensions
+    public class EffectActionDrawCardExecuter : IEffectActionExecuter
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionDrawCard _this,
-            Card effectOwnerCard, EffectEventArgs args)
+        private readonly EffectActionDrawCard _this;
+
+        public EffectActionDrawCardExecuter(EffectActionDrawCard _this)
+        {
+            this._this = _this;
+        }
+
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             // 対象のプレイヤー一覧
             // 順序はアクティブプレイヤー優先

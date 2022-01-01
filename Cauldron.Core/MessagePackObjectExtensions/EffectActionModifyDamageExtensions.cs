@@ -1,14 +1,21 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 using System;
 using System.Threading.Tasks;
 
-namespace Cauldron.Shared.MessagePackObjects
+namespace Cauldron.Core.MessagePackObjectExtensions
 {
-    public static class EffectActionModifyDamageExtensions
+    public class EffectActionModifyDamageExecuter : IEffectActionExecuter
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionModifyDamage _this,
-            Card effectOwnerCard, EffectEventArgs args)
+        private readonly EffectActionModifyDamage _this;
+
+        public EffectActionModifyDamageExecuter(EffectActionModifyDamage _this)
+        {
+            this._this = _this;
+        }
+
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             var done = false;
 

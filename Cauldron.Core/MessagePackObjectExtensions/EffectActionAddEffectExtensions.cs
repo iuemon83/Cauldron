@@ -1,12 +1,19 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared.MessagePackObjects;
 using System.Threading.Tasks;
 
-namespace Cauldron.Shared.MessagePackObjects
+namespace Cauldron.Core.MessagePackObjectExtensions
 {
-    public static class EffectActionAddEffectExtensions
+    public class EffectActionAddEffectExecuter : IEffectActionExecuter
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionAddEffect _this,
-            Card effectOwnerCard, EffectEventArgs args)
+        private readonly EffectActionAddEffect _this;
+
+        public EffectActionAddEffectExecuter(EffectActionAddEffect _this)
+        {
+            this._this = _this;
+        }
+
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.CardsChoice, args);
             var targets = choiceResult.CardList;

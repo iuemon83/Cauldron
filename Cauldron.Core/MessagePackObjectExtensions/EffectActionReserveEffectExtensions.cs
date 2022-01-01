@@ -1,12 +1,19 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared.MessagePackObjects;
 using System.Threading.Tasks;
 
-namespace Cauldron.Shared.MessagePackObjects
+namespace Cauldron.Core.MessagePackObjectExtensions
 {
-    public static class EffectActionReserveEffectExtensions
+    public class EffectActionReserveEffectExecuter : IEffectActionExecuter
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionReserveEffect _this,
-            Card effectOwnerCard, EffectEventArgs args)
+        private readonly EffectActionReserveEffect _this;
+
+        public EffectActionReserveEffectExecuter(EffectActionReserveEffect _this)
+        {
+            this._this = _this;
+        }
+
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             args.GameMaster.ReserveEffect(effectOwnerCard, _this.EffectsToReserve);
 

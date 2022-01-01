@@ -1,14 +1,21 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared.MessagePackObjects;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cauldron.Shared.MessagePackObjects
+namespace Cauldron.Core.MessagePackObjectExtensions
 {
-    public static class EffectActionDestroyCardExtensions
+    public class EffectActionDestroyCardExecuter : IEffectActionExecuter
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionDestroyCard _this,
-            Card effectOwnerCard, EffectEventArgs args)
+        private readonly EffectActionDestroyCard _this;
+
+        public EffectActionDestroyCardExecuter(EffectActionDestroyCard _this)
+        {
+            this._this = _this;
+        }
+
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.Choice, args);
 

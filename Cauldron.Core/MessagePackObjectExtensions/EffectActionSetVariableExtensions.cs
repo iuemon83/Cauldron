@@ -1,13 +1,20 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 using System.Threading.Tasks;
 
-namespace Cauldron.Shared.MessagePackObjects
+namespace Cauldron.Core.MessagePackObjectExtensions
 {
-    public static class EffectActionSetVariableExtensions
+    public class EffectActionSetVariableExecuter : IEffectActionExecuter
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionSetVariable _this,
-            Card effectOwnerCard, EffectEventArgs args)
+        private readonly EffectActionSetVariable _this;
+
+        public EffectActionSetVariableExecuter(EffectActionSetVariable _this)
+        {
+            this._this = _this;
+        }
+
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             if (_this.NumValue != null)
             {

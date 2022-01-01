@@ -1,5 +1,7 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Core.MessagePackObjectExtensions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -15,32 +17,31 @@ namespace Cauldron.Shared.MessagePackObjects
             Card ownerCard, EffectEventArgs effectEventArgs)
         {
             //TODO この順番もけっこう重要
-            var actions = new Func<Card, EffectEventArgs, ValueTask<(bool, EffectEventArgs)>?>[]
+            var actions = new IEffectActionExecuter[]
             {
-                (c,e) => _this.AddCard?.Execute(c,e),
-                (c,e) => _this.AddEffect?.Execute(c,e),
-                (c,e) => _this.Damage?.Execute(c,e),
-                (c,e) => _this.DestroyCard?.Execute(c,e),
-                (c,e) => _this.DrawCard?.Execute(c,e),
-                (c,e) => _this.ExcludeCard?.Execute(c,e),
-                (c,e) => _this.ModifyCard?.Execute(c,e),
-                (c,e) => _this.ModifyCounter?.Execute(c,e),
-                (c,e) => _this.ModifyDamage?.Execute(c,e),
-                (c,e) => _this.ModifyPlayer?.Execute(c,e),
-                (c,e) => _this.MoveCard?.Execute(c,e),
-                (c,e) => _this.SetVariable?.Execute(c,e),
-                (c,e) => _this.Win?.Execute(c,e),
-                (c,e) => _this.ReserveEffect?.Execute(c,e),
-            };
+                _this.AddCard == null ? null: new EffectActionAddCardExecuter(_this.AddCard),
+                _this.AddEffect == null ? null: new EffectActionAddEffectExecuter(_this.AddEffect),
+                _this.Damage == null ? null: new EffectActionDamageExecuter(_this.Damage),
+                _this.DestroyCard == null ? null: new EffectActionDestroyCardExecuter(_this.DestroyCard),
+                _this.DrawCard == null ? null: new EffectActionDrawCardExecuter(_this.DrawCard),
+                _this.ExcludeCard == null ? null: new EffectActionExcludeCardExecuter(_this.ExcludeCard),
+                _this.ModifyCard == null ? null: new EffectActionModifyCardExecuter(_this.ModifyCard),
+                _this.ModifyCounter == null ? null: new EffectActionModifyCounterExecuter(_this.ModifyCounter),
+                _this.ModifyDamage == null ? null: new EffectActionModifyDamageExecuter(_this.ModifyDamage),
+                _this.ModifyPlayer == null ? null: new EffectActionModifyPlayerExecuter(_this.ModifyPlayer),
+                _this.MoveCard == null ? null: new EffectActionMoveCardExecuter(_this.MoveCard),
+                _this.SetVariable == null ? null: new EffectActionSetVariableExecuter(_this.SetVariable),
+                _this.Win == null ? null: new EffectActionWinExecuter(_this.Win),
+                _this.ReserveEffect == null ? null: new EffectActionReserveEffectExecuter(_this.ReserveEffect),
+            }
+            .Where(x => x != null)
+            .ToArray();
 
             var result = effectEventArgs;
             var done = false;
             foreach (var action in actions)
             {
-                var task = action(ownerCard, result);
-                if (task == null) continue;
-
-                var (done2, result2) = await task.Value;
+                var (done2, result2) = await action.Execute(ownerCard, result);
 
                 done = done || done2;
                 result = result2;

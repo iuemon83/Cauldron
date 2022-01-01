@@ -1,14 +1,21 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 using System;
 using System.Threading.Tasks;
 
-namespace Cauldron.Shared.MessagePackObjects
+namespace Cauldron.Core.MessagePackObjectExtensions
 {
-    public static class EffectActionModifyCounterExtensions
+    public class EffectActionModifyCounterExecuter : IEffectActionExecuter
     {
-        public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectActionModifyCounter _this,
-            Card effectOwnerCard, EffectEventArgs args)
+        private readonly EffectActionModifyCounter _this;
+
+        public EffectActionModifyCounterExecuter(EffectActionModifyCounter _this)
+        {
+            this._this = _this;
+        }
+
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             if (_this.NumCountersModifier == null)
             {
