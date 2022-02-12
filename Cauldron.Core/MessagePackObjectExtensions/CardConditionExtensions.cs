@@ -46,6 +46,33 @@ namespace Cauldron.Shared.MessagePackObjects
             static bool ContextConditionIsMatch(CardCondition.ContextConditionValue value,
                 Card cardToMatch, Card effectOwnerCard, EffectEventArgs effectEventArgs)
             {
+                return value switch
+                {
+                    CardCondition.ContextConditionValue.This => cardToMatch.Id == effectOwnerCard.Id,
+                    CardCondition.ContextConditionValue.Others => cardToMatch.Id != effectOwnerCard.Id,
+                    CardCondition.ContextConditionValue.SameDefs => cardToMatch.CardDefId == effectOwnerCard.CardDefId,
+                    CardCondition.ContextConditionValue.OtherDefs => cardToMatch.CardDefId != effectOwnerCard.CardDefId,
+                    CardCondition.ContextConditionValue.EventSource => cardToMatch.Id == effectEventArgs.SourceCard.Id,
+                    _ => true
+                };
+            }
+
+            static bool DamageEventContextConditionIsMatch(
+                CardCondition.DamageEventContextConditionValue value, Card cardToMatch, EffectEventArgs effectEventArgs)
+            {
+                return value switch
+                {
+                    CardCondition.DamageEventContextConditionValue.DamageFrom =>
+                        cardToMatch.Id == effectEventArgs.DamageContext?.DamageSourceCard?.Id,
+                    CardCondition.DamageEventContextConditionValue.DamageTo =>
+                        cardToMatch.Id == effectEventArgs.DamageContext?.GuardCard?.Id,
+                    _ => true
+                };
+            }
+
+            static bool BattleEventContextConditionIsMatch(
+                CardCondition.BattleEventContextConditionValue value, Card cardToMatch, EffectEventArgs effectEventArgs)
+            {
                 static bool IsMatchesAttackCard(EffectEventArgs effectEventArgs, Card cardToMatch)
                 {
                     if (effectEventArgs.DamageContext != null)
@@ -78,17 +105,8 @@ namespace Cauldron.Shared.MessagePackObjects
 
                 return value switch
                 {
-                    CardCondition.ContextConditionValue.This => cardToMatch.Id == effectOwnerCard.Id,
-                    CardCondition.ContextConditionValue.Others => cardToMatch.Id != effectOwnerCard.Id,
-                    CardCondition.ContextConditionValue.SameDefs => cardToMatch.CardDefId == effectOwnerCard.CardDefId,
-                    CardCondition.ContextConditionValue.OtherDefs => cardToMatch.CardDefId != effectOwnerCard.CardDefId,
-                    CardCondition.ContextConditionValue.EventSource => cardToMatch.Id == effectEventArgs.SourceCard.Id,
-                    CardCondition.ContextConditionValue.DamageFrom =>
-                        cardToMatch.Id == effectEventArgs.DamageContext?.DamageSourceCard?.Id,
-                    CardCondition.ContextConditionValue.DamageTo =>
-                        cardToMatch.Id == effectEventArgs.DamageContext?.GuardCard?.Id,
-                    CardCondition.ContextConditionValue.Attack => IsMatchesAttackCard(effectEventArgs, cardToMatch),
-                    CardCondition.ContextConditionValue.Guard => IsMatchesGuardCard(effectEventArgs, cardToMatch),
+                    CardCondition.BattleEventContextConditionValue.Attack => IsMatchesAttackCard(effectEventArgs, cardToMatch),
+                    CardCondition.BattleEventContextConditionValue.Guard => IsMatchesGuardCard(effectEventArgs, cardToMatch),
                     _ => true
                 };
             }
@@ -118,6 +136,8 @@ namespace Cauldron.Shared.MessagePackObjects
             // await じゃないものを先
             return
                 ContextConditionIsMatch(_this.ContextCondition, cardToMatch, effectOwnerCard, effectEventArgs)
+                && DamageEventContextConditionIsMatch(_this.DamageEventContextCondition, cardToMatch, effectEventArgs)
+                && BattleEventContextConditionIsMatch(_this.BattleEventContextCondition, cardToMatch, effectEventArgs)
                 && OwnerConditionIsMatch(_this.OwnerCondition, cardToMatch, effectOwnerCard)
                 && (_this.CostCondition?.IsMatch(cardToMatch.Cost) ?? true)
                 && (_this.PowerCondition?.IsMatch(cardToMatch.Power) ?? true)

@@ -122,7 +122,7 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    CardCondition.ContextConditionValue.Guard)
+                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Guard)
                                             }))))
                         }),
                     new CardEffect(
@@ -152,7 +152,7 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    CardCondition.ContextConditionValue.Attack)
+                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Attack)
                                             }))))
                         })
                 });
@@ -179,7 +179,7 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    ContextCondition: CardCondition.ContextConditionValue.Attack,
+                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Attack,
                                                     ZoneCondition: new(
                                                         new ZoneValue(new[]{
                                                             ZonePrettyName.OpponentField,
@@ -213,7 +213,7 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    ContextCondition: CardCondition.ContextConditionValue.Attack,
+                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Attack,
                                                     ZoneCondition: new(
                                                         new ZoneValue(new[]{
                                                             ZonePrettyName.OpponentField,
@@ -250,7 +250,7 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    CardCondition.ContextConditionValue.Guard),
+                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Guard),
                                                 new CardCondition(
                                                     CardCondition.ContextConditionValue.This)
                                             })))),
@@ -272,7 +272,7 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
-                                                    CardCondition.ContextConditionValue.Attack),
+                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Attack),
                                                 new CardCondition(
                                                     CardCondition.ContextConditionValue.This)
                                             })))),

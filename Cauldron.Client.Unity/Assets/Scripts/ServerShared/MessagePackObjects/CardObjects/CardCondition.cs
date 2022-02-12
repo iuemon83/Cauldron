@@ -44,6 +44,18 @@ namespace Cauldron.Shared.MessagePackObjects
             /// </summary>
             [DisplayText("イベントの発生源")]
             EventSource,
+        }
+
+        /// <summary>
+        /// 戦闘イベントに関連する条件
+        /// </summary>
+        public enum BattleEventContextConditionValue
+        {
+            /// <summary>
+            /// いずれか
+            /// </summary>
+            [DisplayText("いずれか")]
+            Any,
 
             /// <summary>
             /// 攻撃クリーチャー
@@ -56,6 +68,18 @@ namespace Cauldron.Shared.MessagePackObjects
             /// </summary>
             [DisplayText("防御クリーチャー")]
             Guard,
+        }
+
+        /// <summary>
+        /// ダメージイベントに関連する条件
+        /// </summary>
+        public enum DamageEventContextConditionValue
+        {
+            /// <summary>
+            /// いずれか
+            /// </summary>
+            [DisplayText("いずれか")]
+            Any,
 
             /// <summary>
             /// ダメージの発生源
@@ -70,6 +94,9 @@ namespace Cauldron.Shared.MessagePackObjects
             DamageTo,
         }
 
+        /// <summary>
+        /// 所有者に関する条件
+        /// </summary>
         public enum OwnerConditionValue
         {
             /// <summary>
@@ -91,10 +118,9 @@ namespace Cauldron.Shared.MessagePackObjects
             Opponent
         }
 
-        /// <summary>
-        /// 自分自身かそれ以外か
-        /// </summary>
         public ContextConditionValue ContextCondition { get; }
+        public BattleEventContextConditionValue BattleEventContextCondition { get; }
+        public DamageEventContextConditionValue DamageEventContextCondition { get; }
         public ActionContextCards ActionContext { get; }
         public NumCompare CostCondition { get; }
         public NumCompare PowerCondition { get; }
@@ -110,6 +136,8 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public CardCondition(
             ContextConditionValue ContextCondition = ContextConditionValue.Any,
+            BattleEventContextConditionValue BattleEventContextCondition = BattleEventContextConditionValue.Any,
+            DamageEventContextConditionValue DamageEventContextCondition = DamageEventContextConditionValue.Any,
             ActionContextCards ActionContext = default,
             NumCompare CostCondition = default,
             NumCompare PowerCondition = default,
@@ -125,6 +153,8 @@ namespace Cauldron.Shared.MessagePackObjects
             )
         {
             this.ContextCondition = ContextCondition;
+            this.BattleEventContextCondition = BattleEventContextCondition;
+            this.DamageEventContextCondition = DamageEventContextCondition;
             this.ActionContext = ActionContext;
             this.CostCondition = CostCondition;
             this.PowerCondition = PowerCondition;
