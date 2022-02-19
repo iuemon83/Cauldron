@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 using System;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -8,7 +10,7 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public PlayerCondition[] OrPlayerCondition { get; }
 
-        public EffectTimingEndTurnEvent(PlayerCondition[] OrPlayerCondition = null)
+        public EffectTimingEndTurnEvent(PlayerCondition[]? OrPlayerCondition = null)
         {
             this.OrPlayerCondition = OrPlayerCondition ?? Array.Empty<PlayerCondition>();
         }

@@ -1,4 +1,6 @@
-﻿using Cauldron.Shared.MessagePackObjects.Value;
+﻿#nullable enable
+
+using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -6,16 +8,16 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class PlayerModifier
     {
-        public NumValueModifier MaxHp { get; }
-        public NumValueModifier Hp { get; }
-        public NumValueModifier MaxMp { get; }
-        public NumValueModifier Mp { get; }
+        public NumValueModifier? MaxHp { get; }
+        public NumValueModifier? Hp { get; }
+        public NumValueModifier? MaxMp { get; }
+        public NumValueModifier? Mp { get; }
 
         public PlayerModifier(
-            NumValueModifier MaxHp = null,
-            NumValueModifier Hp = null,
-            NumValueModifier MaxMp = null,
-            NumValueModifier Mp = null
+            NumValueModifier? MaxHp = null,
+            NumValueModifier? Hp = null,
+            NumValueModifier? MaxMp = null,
+            NumValueModifier? Mp = null
             )
         {
             this.MaxHp = MaxHp;

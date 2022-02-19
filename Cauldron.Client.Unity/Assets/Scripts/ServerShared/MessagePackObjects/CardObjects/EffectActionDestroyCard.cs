@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -9,9 +11,9 @@ namespace Cauldron.Shared.MessagePackObjects
     public class EffectActionDestroyCard
     {
         public Choice Choice { get; }
-        public string Name { get; }
+        public string? Name { get; }
 
-        public EffectActionDestroyCard(Choice choice, string name = null)
+        public EffectActionDestroyCard(Choice choice, string? name = null)
         {
             this.Choice = choice;
             this.Name = name;

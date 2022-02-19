@@ -13,7 +13,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             {
                 if (zoneValue.ZoneValueCalculator == null)
                 {
-                    return null;
+                    return Array.Empty<ZonePrettyName>();
                 }
 
                 var zones = await zoneValue.ZoneValueCalculator.Calculate(effectOwnerCard, effectEventArgs);

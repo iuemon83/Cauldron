@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -7,10 +9,10 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public Choice Choice { get; }
         public PlayerModifier PlayerModifier { get; }
-        public string Name { get; } = null;
+        public string? Name { get; } = null;
 
         public EffectActionModifyPlayer(Choice Choice, PlayerModifier PlayerModifier,
-            string Name = null)
+            string? Name = null)
         {
             this.Choice = Choice;
             this.PlayerModifier = PlayerModifier;

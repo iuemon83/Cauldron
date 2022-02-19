@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+﻿#nullable enable
+
+using Assets.Scripts.ServerShared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
 
@@ -41,7 +43,7 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public NumValue NumPicks { get; }
 
-        public Choice(ChoiceSource source, HowValue how = HowValue.All, NumValue numPicks = null)
+        public Choice(ChoiceSource source, HowValue how = HowValue.All, NumValue? numPicks = null)
         {
             this.Source = source;
             this.How = how;

@@ -18,7 +18,7 @@
                 ZonePrettyName.YouDeck => (true, new Zone(effectOwnerId, ZoneName.Deck)),
                 ZonePrettyName.OpponentDeck => (true, new Zone(opponentId, ZoneName.Deck)),
                 ZonePrettyName.OwnerDeck => (true, new Zone(cardOwnerId, ZoneName.Deck)),
-                _ => (false, default)
+                _ => (false, new Zone(default, default))
             };
         }
     }

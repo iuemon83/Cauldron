@@ -2,10 +2,6 @@
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cauldron.Core.Entities
 {
@@ -37,7 +33,7 @@ namespace Cauldron.Core.Entities
         public int UsedMp { get; private set; }
         public int CurrentMp => Math.Max(0, this.MaxMp - this.UsedMp);
 
-        private Dictionary<string, int> counter = new();
+        private readonly Dictionary<string, int> counter = new();
 
         public Player(PlayerId id, string name, RuleBook ruleBook, IReadOnlyList<Card> deck, bool isFirst)
         {
@@ -66,7 +62,7 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public (bool, Card) Draw()
+        public (bool, Card?) Draw()
         {
             var (success, newCard) = this.Deck.TryDraw();
             if (success)

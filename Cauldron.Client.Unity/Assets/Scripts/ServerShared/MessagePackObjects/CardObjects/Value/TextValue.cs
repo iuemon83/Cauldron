@@ -1,16 +1,18 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects.Value
 {
     [MessagePackObject(true)]
     public class TextValue
     {
-        public string PureValue { get; }
-        public TextValueCalculator TextValueCalculator { get; }
+        public string? PureValue { get; }
+        public TextValueCalculator? TextValueCalculator { get; }
 
         public TextValue(
-            string PureValue = null,
-            TextValueCalculator TextValueCalculator = null
+            string? PureValue = null,
+            TextValueCalculator? TextValueCalculator = null
             )
         {
             this.PureValue = PureValue;

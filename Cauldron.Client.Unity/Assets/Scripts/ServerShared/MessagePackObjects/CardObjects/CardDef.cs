@@ -8,6 +8,8 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class CardDef
     {
+        public static CardDef Empty => new CardDef();
+
         [JsonIgnore]
         public CardDefId Id { get; }
 
@@ -35,7 +37,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public IReadOnlyList<CreatureAbility> Abilities { get; set; } = Array.Empty<CreatureAbility>();
 
-        public string EffectText { get; set; }
+        public string EffectText { get; set; } = "";
 
         public IReadOnlyList<CardEffect> Effects { get; set; } = Array.Empty<CardEffect>();
 
@@ -53,6 +55,7 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             this.Id = CardDefId.NewId();
         }
+
         public CardDef(
             CardDefId Id,
             int Cost,

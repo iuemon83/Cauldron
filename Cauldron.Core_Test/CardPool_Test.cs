@@ -13,14 +13,8 @@ namespace Cauldron.Core_Test
             {
                 new CardSet("cardset", new[]
                 {
-                    new CardDef()
-                    {
-                        Name = "carddef"
-                    },
-                    new CardDef()
-                    {
-                        Name = "carddef2"
-                    }
+                    TestUtil.CardDef("carddef"),
+                    TestUtil.CardDef("carddef2"),
                 })
             });
 
@@ -30,31 +24,19 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public void IsValid_valid2()
+        public void IsValid_異なるカードセット内に同名のカード()
         {
             var cardpool = new CardPool(new[]
             {
                 new CardSet("cardset", new[]
                 {
-                    new CardDef()
-                    {
-                        Name = "carddef"
-                    },
-                    new CardDef()
-                    {
-                        Name = "carddef2"
-                    }
+                    TestUtil.CardDef("carddef"),
+                    TestUtil.CardDef("carddef2"),
                 }),
                 new CardSet("cardset2", new[]
                 {
-                    new CardDef()
-                    {
-                        Name = "carddef"
-                    },
-                    new CardDef()
-                    {
-                        Name = "carddef2"
-                    }
+                    TestUtil.CardDef("carddef"),
+                    TestUtil.CardDef("carddef2"),
                 })
             });
 
@@ -80,25 +62,13 @@ namespace Cauldron.Core_Test
             {
                 new CardSet("cardset", new[]
                 {
-                    new CardDef()
-                    {
-                        Name = "carddef"
-                    },
-                    new CardDef()
-                    {
-                        Name = "carddef"
-                    }
+                    TestUtil.CardDef("carddef"),
+                    TestUtil.CardDef("carddef"),
                 }),
                 new CardSet("cardset2", new[]
                 {
-                    new CardDef()
-                    {
-                        Name = "carddef"
-                    },
-                    new CardDef()
-                    {
-                        Name = "carddef2"
-                    }
+                    TestUtil.CardDef("carddef"),
+                    TestUtil.CardDef("carddef2"),
                 })
             });
 
@@ -114,25 +84,13 @@ namespace Cauldron.Core_Test
             {
                 new CardSet("cardset", new[]
                 {
-                    new CardDef()
-                    {
-                        Name = "carddef"
-                    },
-                    new CardDef()
-                    {
-                        Name = "carddef2"
-                    }
+                    TestUtil.CardDef("carddef"),
+                    TestUtil.CardDef("carddef2"),
                 }),
                 new CardSet("cardset", new[]
                 {
-                    new CardDef()
-                    {
-                        Name = "carddef"
-                    },
-                    new CardDef()
-                    {
-                        Name = "carddef2"
-                    }
+                    TestUtil.CardDef("carddef"),
+                    TestUtil.CardDef("carddef2"),
                 })
             });
 

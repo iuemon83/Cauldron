@@ -1,4 +1,6 @@
-﻿using Cauldron.Shared.MessagePackObjects.Value;
+﻿#nullable enable
+
+using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -8,9 +10,9 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public NumValue NumCards { get; }
         public PlayerCondition PlayerCondition { get; }
-        public string Name { get; }
+        public string? Name { get; }
         public EffectActionDrawCard(NumValue NumCards, PlayerCondition PlayerCondition,
-            string Name = null)
+            string? Name = null)
         {
             this.NumCards = NumCards;
             this.PlayerCondition = PlayerCondition;

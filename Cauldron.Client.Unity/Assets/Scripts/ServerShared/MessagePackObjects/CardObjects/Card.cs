@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +10,8 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class Card
     {
+        public static Card Empty => new Card(CardDef.Empty);
+
         public CardId Id { get; set; }
 
         public PlayerId OwnerId { get; set; }
@@ -97,14 +101,11 @@ namespace Cauldron.Shared.MessagePackObjects
                 return ability == CreatureAbility.Sealed;
             }
 
-            switch (ability)
+            return ability switch
             {
-                case CreatureAbility.Cover:
-                    return this.HasAbility(ability) && !this.HasAbility(CreatureAbility.Stealth);
-
-                default:
-                    return this.HasAbility(ability);
-            }
+                CreatureAbility.Cover => this.HasAbility(ability) && !this.HasAbility(CreatureAbility.Stealth),
+                _ => this.HasAbility(ability),
+            };
         }
 
         /// <summary>
@@ -125,7 +126,44 @@ namespace Cauldron.Shared.MessagePackObjects
             && this.NumAttacksLimitInTurn > this.NumAttacksInTurn
             ;
 
-        public Card() { }
+        public Card(
+            CardId Id,
+            CardDefId CardDefId,
+            int BaseCost,
+            bool IsToken,
+            CardType Type,
+            string CardSetName,
+            string Name,
+            string FlavorText,
+            IReadOnlyList<string> Annotations,
+            int BasePower,
+            int BaseToughness,
+            IReadOnlyList<CreatureAbility> Abilities,
+            string EffectText,
+            IReadOnlyList<CardEffect> Effects,
+            int NumTurnsToCanAttack,
+            int NumAttacksLimitInTurn
+            )
+        {
+            this.Id = Id;
+            this.CardDefId = CardDefId;
+            this.BaseCost = BaseCost;
+            this.IsToken = IsToken;
+            this.Type = Type;
+            this.CardSetName = CardSetName;
+            this.Name = Name;
+            this.FlavorText = FlavorText;
+            this.Annotations = Annotations.ToList();
+            this.BasePower = BasePower;
+            this.BaseToughness = BaseToughness;
+            this.Abilities = Abilities.ToList();
+            this.EffectText = EffectText;
+            this.Effects = Effects.ToList();
+            this.NumTurnsToCanAttack = NumTurnsToCanAttack;
+            this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;
+
+            this.Zone = Zone.Empty;
+        }
 
         public Card(CardDef cardDef)
         {
@@ -145,23 +183,20 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Abilities = cardDef.Abilities.ToList();
             this.EffectText = cardDef.EffectText;
             this.Effects = cardDef.Effects.ToList();
-            this.NumTurnsToCanAttack = cardDef.NumTurnsToCanAttack.Value;
-            this.NumAttacksLimitInTurn = cardDef.NumAttacksLimitInTurn.Value;
+            this.NumTurnsToCanAttack = cardDef.NumTurnsToCanAttack ?? default;
+            this.NumAttacksLimitInTurn = cardDef.NumAttacksLimitInTurn ?? default;
+
+            this.Zone = Zone.Empty;
         }
 
         public override string ToString()
         {
-            switch (this.Type)
+            return this.Type switch
             {
-                case CardType.Artifact:
-                    return $"{this.Name}[{this.Cost}]";
-
-                case CardType.Sorcery:
-                    return $"{this.Name}[{this.Cost}]";
-
-                default:
-                    return $"{this.Name}[{this.Cost},{this.Power},{this.Toughness}]";
-            }
+                CardType.Artifact => $"{this.Name}[{this.Cost}]",
+                CardType.Sorcery => $"{this.Name}[{this.Cost}]",
+                _ => $"{this.Name}[{this.Cost},{this.Power},{this.Toughness}]",
+            };
         }
 
         public void ModifyCounter(string name, int addValue)

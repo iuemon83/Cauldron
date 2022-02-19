@@ -19,7 +19,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
         public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             var (exists, owner) = effectEventArgs.GameMaster.playerRepository.TryGet(effectOwnerCard.OwnerId);
-            if (!exists)
+            if (!exists || owner == null)
             {
                 return (false, effectEventArgs);
             }

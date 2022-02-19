@@ -9,7 +9,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public static async ValueTask<bool> IsMatch(this EffectTimingMoveCardEvent _this,
             Card ownerCard, EffectEventArgs args)
         {
-            if (args.SourceCard == null)
+            if (args.SourceCard == null || args.MoveCardContext == null)
             {
                 return false;
             }
@@ -25,21 +25,6 @@ namespace Cauldron.Shared.MessagePackObjects
             }
 
             var opponentId = args.GameMaster.GetOpponent(ownerCard.OwnerId).Id;
-
-            //var (fromSuccess, fromZone) = _this.From.TryGetZone(
-            //    ownerCard.OwnerId,
-            //    opponentId,
-            //    args.SourceCard.OwnerId);
-            //var (toSuccess, toZone) = _this.To.TryGetZone(
-            //    ownerCard.OwnerId,
-            //    opponentId,
-            //    args.SourceCard.OwnerId);
-
-            //return matchSource
-            //    && fromSuccess
-            //    && toSuccess
-            //    && fromZone == args.MoveCardContext.From
-            //    && toZone == args.MoveCardContext.To;
 
             return matchSource
                 && IsMatchZone(_this.From, args.MoveCardContext.From,

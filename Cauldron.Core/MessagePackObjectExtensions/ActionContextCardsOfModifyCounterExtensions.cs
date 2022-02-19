@@ -1,6 +1,4 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using System;
-using System.Collections.Generic;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -10,7 +8,7 @@ namespace Cauldron.Shared.MessagePackObjects
             Card effectOwnerCard, EffectEventArgs args)
         {
             return args.GameMaster.TryGetActionContext(effectOwnerCard.Id, _this.ActionName, out var value)
-                ? value?.ModifyCounter?.GetCards(_this.Type)
+                ? value?.ModifyCounter?.GetCards(_this.Type) ?? Array.Empty<Card>()
                 : Array.Empty<Card>();
         }
     }

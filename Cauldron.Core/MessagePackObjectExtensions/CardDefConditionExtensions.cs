@@ -32,11 +32,11 @@ namespace Cauldron.Shared.MessagePackObjects
                 {
                     OutZonePrettyName.CardPool => await GetMatchedFromPool(),
                     OutZonePrettyName.YouExcluded =>
-                        effectEventArgs.GameMaster.Get(effectOwnerCard.OwnerId).Excludes,
+                        effectEventArgs.GameMaster.Get(effectOwnerCard.OwnerId)?.Excludes ?? Enumerable.Empty<CardDef>(),
                     OutZonePrettyName.OpponentExcluded =>
                         effectEventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Excludes,
                     OutZonePrettyName.OwnerExcluded =>
-                        effectEventArgs.GameMaster.Get(effectOwnerCard.OwnerId).Excludes,
+                        effectEventArgs.GameMaster.Get(effectOwnerCard.OwnerId)?.Excludes ?? Enumerable.Empty<CardDef>(),
                     _ => Array.Empty<CardDef>(),
                 });
 

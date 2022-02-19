@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -10,17 +12,17 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public ZonePrettyName Zone { get; }
 
-        public EffectWhen When { get; }
+        public EffectWhen? When { get; }
 
-        public EffectWhile While { get; }
+        public EffectWhile? While { get; }
 
-        public EffectIf If { get; }
+        public EffectIf? If { get; }
 
         public EffectCondition(
             ZonePrettyName Zone = ZonePrettyName.None,
-            EffectWhen When = null,
-            EffectWhile While = null,
-            EffectIf If = null
+            EffectWhen? When = null,
+            EffectWhile? While = null,
+            EffectIf? If = null
             )
         {
             this.Zone = Zone;

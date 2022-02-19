@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -7,21 +9,21 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public OutZoneCondition OutZoneCondition { get; }
 
-        public NumCompare CostCondition { get; }
-        public NumCompare PowerCondition { get; }
-        public NumCompare ToughnessCondition { get; }
-        public CardSetCondition CardSetCondition { get; }
-        public TextCompare NameCondition { get; }
-        public CardTypeCondition TypeCondition { get; }
+        public NumCompare? CostCondition { get; }
+        public NumCompare? PowerCondition { get; }
+        public NumCompare? ToughnessCondition { get; }
+        public CardSetCondition? CardSetCondition { get; }
+        public TextCompare? NameCondition { get; }
+        public CardTypeCondition? TypeCondition { get; }
 
         public CardDefCondition(
             OutZoneCondition OutZoneCondition,
-            NumCompare CostCondition = default,
-            NumCompare PowerCondition = default,
-            NumCompare ToughnessCondition = default,
-            CardSetCondition CardSetCondition = default,
-            TextCompare NameCondition = default,
-            CardTypeCondition TypeCondition = default
+            NumCompare? CostCondition = default,
+            NumCompare? PowerCondition = default,
+            NumCompare? ToughnessCondition = default,
+            CardSetCondition? CardSetCondition = default,
+            TextCompare? NameCondition = default,
+            CardTypeCondition? TypeCondition = default
             )
         {
             this.OutZoneCondition = OutZoneCondition;

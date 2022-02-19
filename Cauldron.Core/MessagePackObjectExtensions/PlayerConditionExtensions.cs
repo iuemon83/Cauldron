@@ -18,7 +18,7 @@ namespace Cauldron.Shared.MessagePackObjects
             return
                 playerCondition.Context switch
                 {
-                    PlayerCondition.ContextValue.EventSource => playerToMatch.Id == eventArgs.SourcePlayer.Id,
+                    PlayerCondition.ContextValue.EventSource => playerToMatch.Id == eventArgs.SourcePlayer?.Id,
                     _ => true
                 }
                 && playerCondition.Context switch

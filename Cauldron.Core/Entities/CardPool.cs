@@ -18,7 +18,7 @@ namespace Cauldron.Core.Entities
         private static CardSet ReadFromFile(string jsonFilePath)
         {
             var jsonString = File.ReadAllText(jsonFilePath);
-            return JsonConverter.Deserialize<CardSet>(jsonString);
+            return JsonConverter.Deserialize<CardSet>(jsonString) ?? new CardSet("", Array.Empty<CardDef>());
         }
 
         public readonly CardSet[] cardSets;

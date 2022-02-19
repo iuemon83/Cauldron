@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -10,8 +12,8 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public EffectConditionAsReserve(
             EffectWhen When,
-            EffectWhile While = null,
-            EffectIf If = null
+            EffectWhile? While = null,
+            EffectIf? If = null
             )
             : base(ZonePrettyName.Any, When, While, If) { }
     }

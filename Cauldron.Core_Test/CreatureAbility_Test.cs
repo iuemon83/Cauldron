@@ -23,6 +23,7 @@ namespace Cauldron.Core_Test
             var normalcardDef = SampleCards.Goblin;
             normalcardDef.Cost = 0;
             normalcardDef.NumTurnsToCanAttack = 0;
+
             var testCardDef = SampleCards.Goblin;
             testCardDef.Cost = 0;
             testCardDef.Abilities = new[] { CreatureAbility.Cover };

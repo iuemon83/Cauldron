@@ -21,8 +21,8 @@ namespace Cauldron.Shared.MessagePackObjects
         public static async ValueTask<(bool, EffectEventArgs)> DoReservedEffectIfMatched(this CardEffect _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
-            var condition = _this.Condition?.ByNotPlay
-                ?? (EffectCondition)_this.Condition?.Reserve;
+            var condition = _this.Condition.ByNotPlay
+                ?? (EffectCondition?)_this.Condition.Reserve;
 
             if (condition == null)
             {

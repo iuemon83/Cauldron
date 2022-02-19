@@ -13,7 +13,7 @@ namespace Cauldron.Core.Entities
 
         public IReadOnlyList<Player> Alives => this.PlayersById.Values.Where(p => p.CurrentHp > 0).ToArray();
 
-        public (bool exists, Player value) TryGet(PlayerId id)
+        public (bool exists, Player? value) TryGet(PlayerId id)
         {
             return this.PlayersById.TryGetValue(id, out var value)
                 ? (true, value)

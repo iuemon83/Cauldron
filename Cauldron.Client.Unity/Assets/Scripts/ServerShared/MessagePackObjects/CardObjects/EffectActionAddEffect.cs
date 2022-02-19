@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 using System.Collections.Generic;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -11,9 +13,9 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public Choice CardsChoice { get; }
         public IEnumerable<CardEffect> EffectToAdd { get; }
-        public string Name { get; } = null;
+        public string? Name { get; } = null;
 
-        public EffectActionAddEffect(Choice CardsChoice, IEnumerable<CardEffect> EffectToAdd, string Name = null)
+        public EffectActionAddEffect(Choice CardsChoice, IEnumerable<CardEffect> EffectToAdd, string? Name = null)
         {
             this.CardsChoice = CardsChoice;
             this.EffectToAdd = EffectToAdd;

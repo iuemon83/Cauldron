@@ -38,7 +38,7 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public Card CreateNew(CardDefId cardDefId)
+        public Card? CreateNew(CardDefId cardDefId)
         {
             if (!this.CardDefListById.TryGetValue(cardDefId, out var cardDef))
             {
@@ -54,7 +54,7 @@ namespace Cauldron.Core.Entities
         public (bool, Card) TryGetById(CardId cardId)
         {
             var exists = this.CardsById.TryGetValue(cardId, out var card);
-            return (exists, card);
+            return (exists, card ?? Card.Empty);
         }
 
         public (bool, Card) TryGetById(CardId cardId, Zone zone)
@@ -71,7 +71,7 @@ namespace Cauldron.Core.Entities
         public (bool, CardDef) TryGetCardDefById(CardDefId carddefId)
         {
             var exists = this.CardDefListById.TryGetValue(carddefId, out var card);
-            return (exists, card);
+            return (exists, card ?? CardDef.Empty);
         }
 
         public bool Remove(Card cardToExclude)

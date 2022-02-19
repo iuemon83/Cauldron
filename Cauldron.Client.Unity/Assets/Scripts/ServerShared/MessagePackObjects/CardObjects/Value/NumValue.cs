@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects.Value
 {
@@ -6,15 +8,15 @@ namespace Cauldron.Shared.MessagePackObjects.Value
     public class NumValue
     {
         public int? PureValue { get; }
-        public NumValueCalculator NumValueCalculator { get; }
-        public NumVariable NumVariable { get; }
-        public NumValueModifier NumValueModifier { get; }
+        public NumValueCalculator? NumValueCalculator { get; }
+        public NumVariable? NumVariable { get; }
+        public NumValueModifier? NumValueModifier { get; }
 
         public NumValue(
             int? PureValue = null,
-            NumValueCalculator NumValueCalculator = null,
-            NumVariable NumVariable = null,
-            NumValueModifier NumValueModifier = null)
+            NumValueCalculator? NumValueCalculator = null,
+            NumVariable? NumVariable = null,
+            NumValueModifier? NumValueModifier = null)
         {
             this.PureValue = PureValue;
             this.NumValueCalculator = NumValueCalculator;

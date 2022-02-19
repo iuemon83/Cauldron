@@ -52,7 +52,7 @@ namespace Cauldron.Shared.MessagePackObjects
                     CardCondition.ContextConditionValue.Others => cardToMatch.Id != effectOwnerCard.Id,
                     CardCondition.ContextConditionValue.SameDefs => cardToMatch.CardDefId == effectOwnerCard.CardDefId,
                     CardCondition.ContextConditionValue.OtherDefs => cardToMatch.CardDefId != effectOwnerCard.CardDefId,
-                    CardCondition.ContextConditionValue.EventSource => cardToMatch.Id == effectEventArgs.SourceCard.Id,
+                    CardCondition.ContextConditionValue.EventSource => cardToMatch.Id == effectEventArgs.SourceCard?.Id,
                     _ => true
                 };
             }
@@ -123,7 +123,7 @@ namespace Cauldron.Shared.MessagePackObjects
             }
 
             static bool AbilitiesConditionIsMatch(
-                IReadOnlyCollection<CreatureAbility> value, Card cardToMatch)
+                IReadOnlyCollection<CreatureAbility>? value, Card cardToMatch)
             {
                 if (value == default)
                 {

@@ -1,7 +1,4 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects.Value
 {
@@ -39,7 +36,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
                     .Choice(effectOwnerCard, _this.PlayersChoice, effectEventArgs);
 
                 return picked.PlayerIdList
-                    .Sum(pid => effectEventArgs.GameMaster.Get(pid).CurrentHp);
+                    .Sum(pid => effectEventArgs.GameMaster.Get(pid)?.CurrentHp ?? 0);
             }
 
             static async ValueTask<int> CalcPlayerCurrentMp(NumValueCalculatorForPlayer _this,
@@ -49,7 +46,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
                     .Choice(effectOwnerCard, _this.PlayersChoice, effectEventArgs);
 
                 return picked.PlayerIdList
-                    .Sum(pid => effectEventArgs.GameMaster.Get(pid).CurrentMp);
+                    .Sum(pid => effectEventArgs.GameMaster.Get(pid)?.CurrentMp ?? 0);
             }
         }
     }

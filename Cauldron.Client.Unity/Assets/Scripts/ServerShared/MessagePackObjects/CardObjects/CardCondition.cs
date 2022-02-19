@@ -1,5 +1,8 @@
-﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+﻿#nullable enable
+
+using Assets.Scripts.ServerShared.MessagePackObjects;
 using MessagePack;
+using System;
 using System.Collections.Generic;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -121,35 +124,35 @@ namespace Cauldron.Shared.MessagePackObjects
         public ContextConditionValue ContextCondition { get; }
         public BattleEventContextConditionValue BattleEventContextCondition { get; }
         public DamageEventContextConditionValue DamageEventContextCondition { get; }
-        public ActionContextCards ActionContext { get; }
-        public NumCompare CostCondition { get; }
-        public NumCompare PowerCondition { get; }
-        public NumCompare ToughnessCondition { get; }
-        public CardSetCondition CardSetCondition { get; }
-        public TextCompare NameCondition { get; }
-        public CardAnnotationCondition AnnotationCondition { get; }
-        public CardTypeCondition TypeCondition { get; }
-        public ZoneCondition ZoneCondition { get; }
+        public ActionContextCards? ActionContext { get; }
+        public NumCompare? CostCondition { get; }
+        public NumCompare? PowerCondition { get; }
+        public NumCompare? ToughnessCondition { get; }
+        public CardSetCondition? CardSetCondition { get; }
+        public TextCompare? NameCondition { get; }
+        public CardAnnotationCondition? AnnotationCondition { get; }
+        public CardTypeCondition? TypeCondition { get; }
+        public ZoneCondition? ZoneCondition { get; }
         public OwnerConditionValue OwnerCondition { get; }
-        public IReadOnlyCollection<CreatureAbility> AbilityCondition { get; }
-        public CounterCondition CounterCondition { get; }
+        public IReadOnlyCollection<CreatureAbility>? AbilityCondition { get; }
+        public CounterCondition? CounterCondition { get; }
 
         public CardCondition(
             ContextConditionValue ContextCondition = ContextConditionValue.Any,
             BattleEventContextConditionValue BattleEventContextCondition = BattleEventContextConditionValue.Any,
             DamageEventContextConditionValue DamageEventContextCondition = DamageEventContextConditionValue.Any,
-            ActionContextCards ActionContext = default,
-            NumCompare CostCondition = default,
-            NumCompare PowerCondition = default,
-            NumCompare ToughnessCondition = default,
-            CardSetCondition CardSetCondition = default,
-            TextCompare NameCondition = default,
-            CardAnnotationCondition AnnotationCondition = default,
-            CardTypeCondition TypeCondition = default,
-            ZoneCondition ZoneCondition = default,
+            ActionContextCards? ActionContext = default,
+            NumCompare? CostCondition = default,
+            NumCompare? PowerCondition = default,
+            NumCompare? ToughnessCondition = default,
+            CardSetCondition? CardSetCondition = default,
+            TextCompare? NameCondition = default,
+            CardAnnotationCondition? AnnotationCondition = default,
+            CardTypeCondition? TypeCondition = default,
+            ZoneCondition? ZoneCondition = default,
             OwnerConditionValue OwnerCondition = OwnerConditionValue.Any,
-            IReadOnlyCollection<CreatureAbility> AbilityCondition = default,
-            CounterCondition CounterCondition = default
+            IReadOnlyCollection<CreatureAbility>? AbilityCondition = default,
+            CounterCondition? CounterCondition = default
             )
         {
             this.ContextCondition = ContextCondition;

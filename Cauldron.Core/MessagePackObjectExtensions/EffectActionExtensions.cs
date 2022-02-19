@@ -17,7 +17,7 @@ namespace Cauldron.Shared.MessagePackObjects
             Card ownerCard, EffectEventArgs effectEventArgs)
         {
             //TODO この順番もけっこう重要
-            var actions = new IEffectActionExecuter[]
+            var actions = new IEffectActionExecuter?[]
             {
                 _this.AddCard == null ? null: new EffectActionAddCardExecuter(_this.AddCard),
                 _this.AddEffect == null ? null: new EffectActionAddEffectExecuter(_this.AddEffect),
@@ -34,7 +34,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 _this.Win == null ? null: new EffectActionWinExecuter(_this.Win),
                 _this.ReserveEffect == null ? null: new EffectActionReserveEffectExecuter(_this.ReserveEffect),
             }
-            .Where(x => x != null)
+            .OfType<IEffectActionExecuter>()
             .ToArray();
 
             var result = effectEventArgs;

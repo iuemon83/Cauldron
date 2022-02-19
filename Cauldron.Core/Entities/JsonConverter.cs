@@ -18,7 +18,7 @@ namespace Cauldron.Core.Entities
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
         };
 
-        public static T Deserialize<T>(string jsonText)
+        public static T? Deserialize<T>(string jsonText)
         {
             return JsonSerializer.Deserialize<T>(jsonText, jsonSerializerOptions);
         }

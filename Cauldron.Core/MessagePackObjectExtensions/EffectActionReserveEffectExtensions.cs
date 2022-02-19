@@ -13,11 +13,11 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             this._this = _this;
         }
 
-        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
+        public ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             args.GameMaster.ReserveEffect(effectOwnerCard, _this.EffectsToReserve);
 
-            return (true, args);
+            return new ValueTask<(bool, EffectEventArgs)>((true, args));
         }
     }
 }

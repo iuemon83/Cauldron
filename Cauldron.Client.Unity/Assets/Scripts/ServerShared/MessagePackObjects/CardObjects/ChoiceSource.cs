@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+﻿#nullable enable
+
+using Assets.Scripts.ServerShared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
 using System;
@@ -50,10 +52,10 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public CardDefCondition[] OrCardDefConditions { get; }
 
-        public ChoiceSource(HowValue how = HowValue.All, NumValue numPicks = null,
-            PlayerCondition[] orPlayerConditions = null,
-            CardCondition[] orCardConditions = null,
-            CardDefCondition[] OrCardDefConditions = null
+        public ChoiceSource(HowValue how = HowValue.All, NumValue? numPicks = null,
+            PlayerCondition[]? orPlayerConditions = null,
+            CardCondition[]? orCardConditions = null,
+            CardDefCondition[]? OrCardDefConditions = null
             )
         {
             this.How = how;

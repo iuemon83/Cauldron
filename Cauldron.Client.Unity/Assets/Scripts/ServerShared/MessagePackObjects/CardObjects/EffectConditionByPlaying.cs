@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -9,7 +11,7 @@ namespace Cauldron.Shared.MessagePackObjects
     public class EffectConditionByPlaying : EffectCondition
     {
         public EffectConditionByPlaying(
-            EffectIf If = null
+            EffectIf? If = null
             )
             : base(ZonePrettyName.None, default, default, If) { }
     }

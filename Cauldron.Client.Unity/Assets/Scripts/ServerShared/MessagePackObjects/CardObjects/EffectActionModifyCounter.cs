@@ -1,4 +1,6 @@
-﻿using Cauldron.Shared.MessagePackObjects.Value;
+﻿#nullable enable
+
+using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -12,10 +14,10 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public NumValueModifier NumCountersModifier { get; }
 
-        public string Name { get; }
+        public string? Name { get; }
 
         public EffectActionModifyCounter(Choice TargetsChoice, string CounterName,
-            NumValueModifier NumCountersModifier, string Name = null)
+            NumValueModifier NumCountersModifier, string? Name = null)
         {
             this.TargetsChoice = TargetsChoice;
             this.CounterName = CounterName;

@@ -34,10 +34,10 @@ namespace Cauldron.Shared.MessagePackObjects
             {
                 return effectTimingDamageBeforeEvent.Source switch
                 {
-                    EffectTimingDamageBeforeEvent.SourceValue.Any => eventArgs.DamageContext.GuardPlayer != null
+                    EffectTimingDamageBeforeEvent.SourceValue.Any => eventArgs.DamageContext?.GuardPlayer != null
                         && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer)
                             ?? false),
-                    EffectTimingDamageBeforeEvent.SourceValue.Take => eventArgs.DamageContext.GuardPlayer != null
+                    EffectTimingDamageBeforeEvent.SourceValue.Take => eventArgs.DamageContext?.GuardPlayer != null
                         && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer)
                             ?? false),
                     _ => false
@@ -48,7 +48,7 @@ namespace Cauldron.Shared.MessagePackObjects
             {
                 async ValueTask<bool> IsMatchDamageSource()
                 {
-                    var damageSource = eventArgs.DamageContext.DamageSourceCard;
+                    var damageSource = eventArgs.DamageContext?.DamageSourceCard;
                     if (damageSource == null
                         || effectTimingDamageBeforeEvent.CardCondition == null)
                     {
@@ -60,7 +60,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
                 async ValueTask<bool> IsMatchTake()
                 {
-                    var guard = eventArgs.DamageContext.GuardCard;
+                    var guard = eventArgs.DamageContext?.GuardCard;
                     if (guard == null
                         || effectTimingDamageBeforeEvent.CardCondition == null)
                     {

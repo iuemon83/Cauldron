@@ -30,7 +30,7 @@ namespace Cauldron.Core.Entities
 
         public bool IsMatchedWhile(EffectWhile effectWhile, Card owner)
         {
-            var gameEvent = effectWhile?.Timing?.ToGameEvent();
+            var gameEvent = effectWhile.Timing?.ToGameEvent();
             if (gameEvent is { } g)
             {
                 var key = (owner, effectWhile);
@@ -77,8 +77,8 @@ namespace Cauldron.Core.Entities
 
         public void RegisterOrRemoveEffectWhile(CardEffect cardEffect, Card owner)
         {
-            var condition = cardEffect.Condition?.ByNotPlay
-                ?? (EffectCondition)cardEffect.Condition?.Reserve;
+            var condition = cardEffect.Condition.ByNotPlay
+                ?? (EffectCondition?)cardEffect.Condition.Reserve;
             if (condition == null)
             {
                 return;
@@ -87,7 +87,7 @@ namespace Cauldron.Core.Entities
             var w = condition.While;
             var whileGameEvent = w?.Timing?.ToGameEvent();
 
-            if (whileGameEvent is GameEvent g)
+            if (w != null && whileGameEvent is GameEvent g)
             {
                 var key = (owner, w);
                 if (condition.Zone == ZonePrettyName.Any

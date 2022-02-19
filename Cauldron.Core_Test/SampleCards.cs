@@ -19,54 +19,55 @@ namespace Cauldron.Core_Test
             string effectText = "",
             IEnumerable<CardEffect> effects = null)
         {
-            return new CardDef()
-            {
-                Cost = cost,
-                Type = CardType.Creature,
-                Name = name,
-                FlavorText = flavorText,
-                Power = power,
-                Toughness = toughness,
-                Annotations = annotations?.ToArray() ?? Array.Empty<string>(),
-                NumTurnsToCanAttack = numTurnsToCanAttack,
-                NumAttacksLimitInTurn = numAttacksInTurn,
-                IsToken = isToken,
-                Abilities = abilities?.ToArray() ?? Array.Empty<CreatureAbility>(),
-                EffectText = effectText,
-                Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
-            };
+            var t = CardDef.Empty;
+            t.Cost = cost;
+            t.Name = name;
+            t.Power = power;
+            t.Toughness = toughness;
+            t.Annotations = annotations?.ToArray() ?? Array.Empty<string>();
+            t.FlavorText = flavorText;
+            t.NumTurnsToCanAttack = numTurnsToCanAttack;
+            t.NumAttacksLimitInTurn = numAttacksInTurn;
+            t.IsToken = isToken;
+            t.Abilities = abilities?.ToArray() ?? Array.Empty<CreatureAbility>();
+            t.EffectText = effectText;
+            t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
+
+            t.Type = CardType.Creature;
+
+            return t;
         }
 
         public static CardDef Artifact(int cost, string name, string effectText, bool isToken = false,
             string flavorText = "",
             IEnumerable<CardEffect> effects = null)
         {
-            return new CardDef()
-            {
-                Cost = cost,
-                IsToken = isToken,
-                Type = CardType.Artifact,
-                Name = name,
-                FlavorText = flavorText,
-                EffectText = effectText,
-                Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
-            };
+            var t = CardDef.Empty;
+            t.Cost = cost;
+            t.IsToken = isToken;
+            t.Type = CardType.Artifact;
+            t.Name = name;
+            t.FlavorText = flavorText;
+            t.EffectText = effectText;
+            t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
+
+            return t;
         }
 
         public static CardDef Sorcery(int cost, string name, string effectText, bool isToken = false,
             string flavorText = "",
             IEnumerable<CardEffect> effects = null)
         {
-            return new CardDef()
-            {
-                Cost = cost,
-                IsToken = isToken,
-                Type = CardType.Sorcery,
-                Name = name,
-                FlavorText = flavorText,
-                EffectText = effectText,
-                Effects = effects?.ToArray() ?? Array.Empty<CardEffect>()
-            };
+            var t = CardDef.Empty;
+            t.Cost = cost;
+            t.IsToken = isToken;
+            t.Type = CardType.Sorcery;
+            t.Name = name;
+            t.FlavorText = flavorText;
+            t.EffectText = effectText;
+            t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
+
+            return t;
         }
 
         public static CardDef KarakuriGoblin

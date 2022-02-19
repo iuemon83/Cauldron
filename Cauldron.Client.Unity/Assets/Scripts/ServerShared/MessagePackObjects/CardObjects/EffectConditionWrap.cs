@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -8,16 +10,16 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectConditionWrap
     {
-        public EffectConditionByPlaying ByPlay { get; }
+        public EffectConditionByPlaying? ByPlay { get; }
 
-        public EffectConditionAsNotPlay ByNotPlay { get; }
+        public EffectConditionAsNotPlay? ByNotPlay { get; }
 
-        public EffectConditionAsReserve Reserve { get; }
+        public EffectConditionAsReserve? Reserve { get; }
 
         public EffectConditionWrap(
-            EffectConditionByPlaying ByPlay = default,
-            EffectConditionAsNotPlay ByNotPlay = default,
-            EffectConditionAsReserve Reserve = default
+            EffectConditionByPlaying? ByPlay = default,
+            EffectConditionAsNotPlay? ByNotPlay = default,
+            EffectConditionAsReserve? Reserve = default
             )
         {
             this.ByPlay = ByPlay;

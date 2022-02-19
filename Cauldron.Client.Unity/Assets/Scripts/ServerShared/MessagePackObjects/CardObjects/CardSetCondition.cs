@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+﻿#nullable enable
+
+using Assets.Scripts.ServerShared.MessagePackObjects;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -16,9 +18,9 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public TypeValue Type { get; } = TypeValue.This;
 
-        public TextCompare ValueCondition { get; }
+        public TextCompare? ValueCondition { get; }
 
-        public CardSetCondition(TypeValue Type, TextCompare ValueCondition = null)
+        public CardSetCondition(TypeValue Type, TextCompare? ValueCondition = null)
         {
             this.Type = Type;
             this.ValueCondition = ValueCondition;

@@ -71,7 +71,7 @@ namespace Cauldron.Core.Entities
                 ;
         }
 
-        public static int CalcIndex(InsertCardPosition insertCardPosition, int min, int max)
+        public static int CalcIndex(InsertCardPosition? insertCardPosition, int min, int max)
         {
             if (insertCardPosition == null)
             {
@@ -104,11 +104,15 @@ namespace Cauldron.Core.Entities
 
         public readonly PlayerRepository playerRepository = new();
 
-        public Player ActivePlayer { get; set; }
+        // ゲーム中はnullにならないので...
+        public Player ActivePlayer { get; set; } = null!;
 
-        public Player NextPlayer { get; set; }
+        // ゲーム中はnullにならないので...
+        public Player NextPlayer { get; set; } = null!;
 
-        public IEnumerable<Player> NonActivePlayers => this.playerRepository.Opponents(this.ActivePlayer.Id);
+        public IEnumerable<Player> NonActivePlayers => this.ActivePlayer != null
+            ? this.playerRepository.Opponents(this.ActivePlayer.Id)
+            : Array.Empty<Player>();
 
         public bool GameOver => this.playerRepository.AllPlayers.Any(player => player.CurrentHp <= 0);
 
@@ -128,6 +132,11 @@ namespace Cauldron.Core.Entities
 
         public Player GetWinner()
         {
+            if (this.ActivePlayer == null)
+            {
+                throw new InvalidOperationException("ActivePlayer is null");
+            }
+
             // 引き分けならターンのプレイヤーの負け
             var alives = this.playerRepository.Alives;
             return alives.Count == 0
@@ -135,7 +144,7 @@ namespace Cauldron.Core.Entities
                 : alives[0];
         }
 
-        public Player Get(PlayerId playerId) => this.playerRepository.TryGet(playerId).value;
+        public Player? Get(PlayerId playerId) => this.playerRepository.TryGet(playerId).value;
 
         public Player GetOpponent(PlayerId playerId) => this.playerRepository.Opponents(playerId)[0];
 
@@ -144,9 +153,9 @@ namespace Cauldron.Core.Entities
         public (GameMasterStatusCode, CardId[]) ListPlayableCardId(PlayerId playerId)
         {
             var (exists, player) = this.playerRepository.TryGet(playerId);
-            if (!exists)
+            if (!exists || player == null)
             {
-                return (GameMasterStatusCode.PlayerNotExists, default);
+                return (GameMasterStatusCode.PlayerNotExists, Array.Empty<CardId>());
             }
 
             var playableCardIdList = player.Hands.AllCards
@@ -283,7 +292,10 @@ namespace Cauldron.Core.Entities
                 {
                     var ifFirst = playerDef.Id == firstPlayerId;
 
-                    var deckCards = playerDef.DeckIdList.Select(id => this.cardRepository.CreateNew(id)).ToArray();
+                    var deckCards = playerDef.DeckIdList
+                        .Select(id => this.cardRepository.CreateNew(id))
+                        .OfType<Card>()
+                        .ToArray();
 
                     var player = this.playerRepository.CreateNew(playerDef, this.RuleBook, deckCards, ifFirst);
 
@@ -293,6 +305,11 @@ namespace Cauldron.Core.Entities
                     {
                         this.ActivePlayer = player;
                     }
+                }
+
+                if (this.ActivePlayer == null)
+                {
+                    throw new InvalidOperationException($"player not exists. id={firstPlayerId}");
                 }
 
                 this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
@@ -321,18 +338,18 @@ namespace Cauldron.Core.Entities
         public async ValueTask<bool> DestroyCard(Card cardToDestroy)
         {
             var (exists, player) = this.playerRepository.TryGet(cardToDestroy.OwnerId);
-            if (!exists)
+            if (!exists || player == null)
             {
                 throw new InvalidOperationException($"player not exists. id={cardToDestroy.OwnerId}");
             }
 
             if (cardToDestroy.Zone.ZoneName != ZoneName.Field)
             {
-                this.logger.LogWarning($"destroy card should be in the field. zone={cardToDestroy.Zone.ZoneName}");
+                this.logger.LogWarning("destroy card should be in the field. zone={a}", cardToDestroy.Zone.ZoneName);
                 return false;
             }
 
-            this.logger.LogInformation($"破壊：{cardToDestroy}({player.Name})");
+            this.logger.LogInformation("破壊：{card}({playername})", cardToDestroy, player.Name);
 
             var moveContext = new MoveCardContext(
                 new(cardToDestroy.OwnerId, ZoneName.Field),
@@ -375,94 +392,101 @@ namespace Cauldron.Core.Entities
         public async ValueTask<(GameMasterStatusCode, IReadOnlyList<Card>)> Draw(PlayerId playerId, int numCards)
         {
             var (exists, player) = this.playerRepository.TryGet(playerId);
-            if (!exists)
+            if (!exists || player == null)
             {
-                return (GameMasterStatusCode.PlayerNotExists, default);
+                return (GameMasterStatusCode.PlayerNotExists, Array.Empty<Card>());
             }
 
             var drawnCards = new List<Card>();
             foreach (var _ in Enumerable.Range(0, numCards))
             {
                 var (success, drawCard) = player.Draw();
-                var isDrawed = success;
-                var isDiscarded = !success && drawCard != default;
-                var deckIsEmpty = !success && drawCard == default;
 
                 if (drawCard != default)
                 {
                     drawnCards.Add(drawCard);
                 }
 
-                if (deckIsEmpty)
-                {
-                    this.logger.LogInformation($"デッキが0: {player.Name}");
+                var isDrawed = success;
+                var isDiscarded = !success && drawCard != default;
+                var deckIsEmpty = !success && drawCard == default;
 
-                    // notify
-                    foreach (var p in this.playerRepository.AllPlayers)
+                if (drawCard == default)
+                {
+                    if (deckIsEmpty)
                     {
-                        this.EventListener?.OnDamage?.Invoke(p.Id,
-                            this.CreateGameContext(p.Id),
-                            new DamageNotifyMessage(
-                                DamageNotifyMessage.ReasonValue.DrawDeath,
-                                1,
-                                GuardPlayerId: playerId));
+                        this.logger.LogInformation("デッキが0: {playername}", player.Name);
+
+                        // notify
+                        foreach (var p in this.playerRepository.AllPlayers)
+                        {
+                            this.EventListener?.OnDamage?.Invoke(p.Id,
+                                this.CreateGameContext(p.Id),
+                                new DamageNotifyMessage(
+                                    DamageNotifyMessage.ReasonValue.DrawDeath,
+                                    1,
+                                    GuardPlayerId: playerId));
+                        }
                     }
                 }
-                else if (isDiscarded)
+                else
                 {
-                    this.logger.LogInformation($"手札が一杯で墓地へ: {player.Name}: {drawCard.Name}");
-
-                    // notify
-                    foreach (var p in this.playerRepository.AllPlayers)
+                    if (isDiscarded)
                     {
-                        this.EventListener?.OnMoveCard?.Invoke(p.Id,
-                            this.CreateGameContext(p.Id),
-                            new MoveCardNotifyMessage(
-                                drawCard.Id,
-                                new Zone(
-                                    playerId,
-                                    ZoneName.Cemetery
-                                ),
-                                0));
+                        this.logger.LogInformation("手札が一杯で墓地へ: {playername}: {cardname}", player.Name, drawCard.Name);
+
+                        // notify
+                        foreach (var p in this.playerRepository.AllPlayers)
+                        {
+                            this.EventListener?.OnMoveCard?.Invoke(p.Id,
+                                this.CreateGameContext(p.Id),
+                                new MoveCardNotifyMessage(
+                                    drawCard.Id,
+                                    new Zone(
+                                        playerId,
+                                        ZoneName.Cemetery
+                                    ),
+                                    0));
+                        }
+
+                        // event
+                        // デッキから直接墓地
+                        await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
+                              MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Cemetery))));
                     }
-
-                    // event
-                    // デッキから直接墓地
-                    await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
-                          MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Cemetery))));
-                }
-                else if (isDrawed)
-                {
-                    this.logger.LogInformation($"ドロー: {player.Name}: {drawCard.Name}");
-
-                    foreach (var p in this.playerRepository.AllPlayers)
+                    else if (isDrawed)
                     {
-                        this.EventListener?.OnMoveCard?.Invoke(p.Id,
-                            this.CreateGameContext(p.Id),
-                            new MoveCardNotifyMessage(
-                                drawCard.Id,
-                                new Zone(
-                                    playerId,
-                                    ZoneName.Hand
-                                ),
-                                0));
-                    }
+                        this.logger.LogInformation("ドロー: {playername}: {cardname}", player.Name, drawCard.Name);
 
-                    await this.FireEvent(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
-                    await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
-                          MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
+                        foreach (var p in this.playerRepository.AllPlayers)
+                        {
+                            this.EventListener?.OnMoveCard?.Invoke(p.Id,
+                                this.CreateGameContext(p.Id),
+                                new MoveCardNotifyMessage(
+                                    drawCard.Id,
+                                    new Zone(
+                                        playerId,
+                                        ZoneName.Hand
+                                    ),
+                                    0));
+                        }
+
+                        await this.FireEvent(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
+                        await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
+                              MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
+                    }
                 }
             }
 
             return (GameMasterStatusCode.OK, drawnCards);
         }
 
-        public async ValueTask<Card> GenerateNewCard(CardDefId cardDefId, Zone zone, InsertCardPosition insertCardPosition)
+        public async ValueTask<Card?> GenerateNewCard(CardDefId cardDefId, Zone zone, InsertCardPosition? insertCardPosition)
         {
             var card = this.cardRepository.CreateNew(cardDefId);
             if (card == null)
             {
-                this.logger.LogError($"カードの生成に失敗しました。card def id={cardDefId}");
+                this.logger.LogError("カードの生成に失敗しました。card def id={cardDefId}", cardDefId);
                 return null;
             }
 
@@ -481,14 +505,14 @@ namespace Cauldron.Core.Entities
         public async ValueTask<bool> ExcludeCard(Card cardToExclude)
         {
             var excluded = false;
-            Player player = default;
+            Player? player = default;
             switch (cardToExclude.Zone.ZoneName)
             {
                 case ZoneName.Field:
                     {
                         bool exists;
                         (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
-                        if (exists)
+                        if (exists && player != null)
                         {
                             player.Field.Remove(cardToExclude);
                             excluded = true;
@@ -499,7 +523,7 @@ namespace Cauldron.Core.Entities
                     {
                         bool exists;
                         (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
-                        if (exists)
+                        if (exists && player != null)
                         {
                             player.Hands.Remove(cardToExclude);
                             excluded = true;
@@ -510,7 +534,7 @@ namespace Cauldron.Core.Entities
                     {
                         bool exists;
                         (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
-                        if (exists)
+                        if (exists && player != null)
                         {
                             player.Deck.Remove(cardToExclude);
                             excluded = true;
@@ -521,7 +545,7 @@ namespace Cauldron.Core.Entities
                     {
                         bool exists;
                         (exists, player) = this.playerRepository.TryGet(cardToExclude.Zone.PlayerId);
-                        if (exists)
+                        if (exists && player != null)
                         {
                             player.Cemetery.Remove(cardToExclude);
                             excluded = true;
@@ -532,7 +556,7 @@ namespace Cauldron.Core.Entities
                     break;
             }
 
-            if (excluded)
+            if (excluded && player != null)
             {
                 cardToExclude.Zone = new(cardToExclude.OwnerId, ZoneName.Excluded);
                 this.cardRepository.Remove(cardToExclude);
@@ -543,7 +567,7 @@ namespace Cauldron.Core.Entities
                     player.Excludes.Add(def);
                 }
 
-                this.logger.LogInformation($"Exclude: {cardToExclude}");
+                this.logger.LogInformation("Exclude: {cardToExclude}", cardToExclude);
 
                 foreach (var p in this.playerRepository.AllPlayers)
                 {
@@ -570,13 +594,13 @@ namespace Cauldron.Core.Entities
             }
 
             var (fromPlayerExists, fromPlayer) = this.playerRepository.TryGet(moveCardContext.From.PlayerId);
-            if (!fromPlayerExists)
+            if (!fromPlayerExists || fromPlayer == null)
             {
                 throw new InvalidOperationException($"player not exists. id={moveCardContext.From.PlayerId}");
             }
 
             var (toPlayerExists, toPlayer) = this.playerRepository.TryGet(moveCardContext.To.PlayerId);
-            if (!toPlayerExists)
+            if (!toPlayerExists || toPlayer == null)
             {
                 throw new InvalidOperationException($"player not exists. id={moveCardContext.To.PlayerId}");
             }
@@ -660,7 +684,11 @@ namespace Cauldron.Core.Entities
             card.OwnerId = toPlayer.Id;
 
             this.logger
-                .LogInformation($"move card. card: {card.Name}, from: {moveCardContext.From.ZoneName}, to: {moveCardContext.To.ZoneName}");
+                .LogInformation("move card. card: {cardname}, from: {from}, to: {to}",
+                    card.Name,
+                    moveCardContext.From.ZoneName,
+                    moveCardContext.To.ZoneName
+                    );
 
             var isAdd = moveCardContext.From.ZoneName == ZoneName.CardPool;
 
@@ -716,7 +744,7 @@ namespace Cauldron.Core.Entities
         public GameContext CreateGameContext(PlayerId playerId)
         {
             var (exists, player) = this.playerRepository.TryGet(playerId);
-            if (!exists)
+            if (!exists || player == null)
             {
                 throw new InvalidOperationException($"player not exists. id={playerId}");
             }
@@ -760,6 +788,11 @@ namespace Cauldron.Core.Entities
                 return GameMasterStatusCode.AlreadyTurnStarted;
             }
 
+            if (this.ActivePlayer == null)
+            {
+                throw new InvalidOperationException("Active Player is null");
+            }
+
             this.IsTurnStarted = true;
 
             this.PlayerTurnCountById[this.ActivePlayer.Id]++;
@@ -778,9 +811,16 @@ namespace Cauldron.Core.Entities
             }
 
             this.logger.LogInformation(
-                 $"ターン開始: {this.ActivePlayer.Name}-[HP:{this.ActivePlayer.CurrentHp}/{this.ActivePlayer.MaxHp}][MP:{this.ActivePlayer.MaxMp}][ターン:{this.PlayerTurnCountById[this.ActivePlayer.Id]}({this.AllTurnCount})]----------------------------");
+                 "ターン開始: {playername}-[HP:{currenthp}/{maxhp}][MP:{maxmp}][ターン:{turn}({allturn})]------------------",
+                 this.ActivePlayer.Name,
+                 this.ActivePlayer.CurrentHp,
+                 this.ActivePlayer.MaxHp,
+                 this.ActivePlayer.MaxMp,
+                 this.PlayerTurnCountById[this.ActivePlayer.Id],
+                 this.AllTurnCount
+                 );
             this.logger.LogInformation(
-                 $"フィールド: {string.Join(",", this.ActivePlayer.Field.AllCards.Select(c => c.Name))}");
+                 "フィールド: {cardnames}", string.Join(",", this.ActivePlayer.Field.AllCards.Select(c => c.Name)));
 
             await this.FireEvent(new EffectEventArgs(GameEvent.OnStartTurn, this, SourcePlayer: this.ActivePlayer));
 
@@ -796,7 +836,12 @@ namespace Cauldron.Core.Entities
                 return GameMasterStatusCode.NotTurnStart;
             }
 
-            this.logger.LogInformation($"ターンエンド：{this.ActivePlayer.Name}");
+            if (this.ActivePlayer == null)
+            {
+                throw new InvalidOperationException("Active Player is null");
+            }
+
+            this.logger.LogInformation("ターンエンド：{playername}", this.ActivePlayer.Name);
 
             await this.FireEvent(new EffectEventArgs(GameEvent.OnEndTurn, this, SourcePlayer: this.ActivePlayer));
 
@@ -817,7 +862,7 @@ namespace Cauldron.Core.Entities
         public async ValueTask<GameMasterStatusCode> PlayFromHand(PlayerId playerId, CardId handCardId)
         {
             var (exists, player) = this.playerRepository.TryGet(playerId);
-            if (!exists)
+            if (!exists || player == null)
             {
                 return GameMasterStatusCode.PlayerNotExists;
             }
@@ -829,7 +874,7 @@ namespace Cauldron.Core.Entities
                 return GameMasterStatusCode.CardNotExists;
             }
 
-            this.logger.LogInformation($"プレイ：{playingCard}({player.Name})");
+            this.logger.LogInformation("プレイ：{playingCard}({playername})", playingCard, player.Name);
 
             // プレイ不能
             if (!IsPlayable(player, playingCard))
@@ -937,13 +982,14 @@ namespace Cauldron.Core.Entities
 
             ChoiceAnswer answer = await Task.Run(async () =>
             {
-                ChoiceAnswer tmpAnswer = default;
-                do
+                while (true)
                 {
-                    tmpAnswer = await askAction(playerId, choiceCandidates, choiceNum);
-                } while (!ValidAnswer(tmpAnswer));
-
-                return tmpAnswer;
+                    var tmpAnswer = await askAction(playerId, choiceCandidates, choiceNum);
+                    if (ValidAnswer(tmpAnswer))
+                    {
+                        return tmpAnswer;
+                    }
+                }
             });
 
             var cards = answer.CardIdList
@@ -975,7 +1021,7 @@ namespace Cauldron.Core.Entities
         public async ValueTask<GameMasterStatusCode> AttackToPlayer(PlayerId playerId, CardId attackCardId, PlayerId damagePlayerId)
         {
             var (exists, player) = this.playerRepository.TryGet(playerId);
-            if (!exists)
+            if (!exists || player == null)
             {
                 return GameMasterStatusCode.PlayerNotExists;
             }
@@ -987,12 +1033,13 @@ namespace Cauldron.Core.Entities
             }
 
             var (damagePlayerExists, damagePlayer) = this.playerRepository.TryGet(damagePlayerId);
-            if (!damagePlayerExists)
+            if (!damagePlayerExists || damagePlayer == null)
             {
                 return GameMasterStatusCode.PlayerNotExists;
             }
 
-            this.logger.LogInformation($"アタック（プレイヤー）：{attackCard}({player.Name}) > {damagePlayer.Name}");
+            this.logger.LogInformation("アタック（プレイヤー）：{card}({playername}) > {playername}",
+                attackCard, player.Name, damagePlayer.Name);
 
             if (!CanAttack(attackCard, damagePlayer))
             {
@@ -1019,7 +1066,7 @@ namespace Cauldron.Core.Entities
                     BattleContext: new(attackCard, null, damagePlayer)));
 
             // 攻撃カードが場から離れていたら戦闘しない
-            if (newArgs.BattleContext.AttackCard.Zone.ZoneName != ZoneName.Field)
+            if (newArgs.BattleContext?.AttackCard.Zone.ZoneName != ZoneName.Field)
             {
                 return GameMasterStatusCode.OK;
             }
@@ -1057,9 +1104,21 @@ namespace Cauldron.Core.Entities
             );
             var newEventArgs = await this.FireEvent(eventArgs);
 
-            this.logger.LogInformation($"ダメージ：{newEventArgs.DamageContext.Value} > {newEventArgs.DamageContext.GuardPlayer.Name}");
+            this.logger.LogInformation("ダメージ：{value} > {playername}",
+                newEventArgs.DamageContext?.Value,
+                newEventArgs.DamageContext?.GuardPlayer?.Name
+                );
 
             var newDamageContext = newEventArgs.DamageContext;
+            if (newDamageContext == null)
+            {
+                throw new InvalidOperationException("DamageContext is null");
+            }
+
+            if (newDamageContext.GuardPlayer == null)
+            {
+                return;
+            }
 
             newDamageContext.GuardPlayer.Damage(newDamageContext.Value);
 
@@ -1073,8 +1132,8 @@ namespace Cauldron.Core.Entities
                             ? DamageNotifyMessage.ReasonValue.Attack
                             : DamageNotifyMessage.ReasonValue.Effect,
                         newDamageContext.Value,
-                        SourceCardId: newEventArgs.DamageContext.DamageSourceCard.Id,
-                        GuardPlayerId: newEventArgs.DamageContext.GuardPlayer.Id
+                        SourceCardId: newDamageContext.DamageSourceCard.Id,
+                        GuardPlayerId: newDamageContext.GuardPlayer.Id
                         ));
             }
 
@@ -1096,18 +1155,19 @@ namespace Cauldron.Core.Entities
             }
 
             var (attackPlayerExists, attackPlayer) = this.playerRepository.TryGet(attackCard.OwnerId);
-            if (!attackPlayerExists)
+            if (!attackPlayerExists || attackPlayer == null)
             {
                 return GameMasterStatusCode.PlayerNotExists;
             }
 
             var (guardPlayerExists, guardPlayer) = this.playerRepository.TryGet(guardCard.OwnerId);
-            if (!guardPlayerExists)
+            if (!guardPlayerExists || guardPlayer == null)
             {
                 return GameMasterStatusCode.PlayerNotExists;
             }
 
-            this.logger.LogInformation($"アタック（クリーチャー）：{attackCard}({attackPlayer.Name}) > {guardCard}({guardPlayer.Name})");
+            this.logger.LogInformation("アタック（クリーチャー）：{card}({playername}) > {card}({playername})",
+                attackCard, attackPlayer.Name, guardCard, guardPlayer.Name);
 
             if (!CanAttack(attackCard, guardCard, this.CreateGameContext(playerId)))
             {
@@ -1126,6 +1186,11 @@ namespace Cauldron.Core.Entities
             var newArgs = await this.FireEvent(
                 new EffectEventArgs(GameEvent.OnAttackBefore, this, SourceCard: attackCard,
                     BattleContext: new(attackCard, guardCard, null)));
+
+            if (newArgs.BattleContext == null || newArgs.BattleContext.GuardCard == null)
+            {
+                return GameMasterStatusCode.OK;
+            }
 
             if (CanAttack(attackCard, guardCard, this.CreateGameContext(playerId)))
             {
@@ -1192,17 +1257,15 @@ namespace Cauldron.Core.Entities
 
             var newDamageContext = newEventArgs.DamageContext;
 
-            if (newDamageContext.GuardCard.Type != CardType.Creature)
+            if (newDamageContext?.GuardCard?.Type != CardType.Creature)
             {
-                throw new Exception($"指定されたカードはクリーチャーではありません。: {newDamageContext.GuardCard.Name}");
+                throw new Exception($"指定されたカードはクリーチャーではありません。: {newDamageContext?.GuardCard?.Name}");
             }
 
-            {
-                var (exists, player) = this.playerRepository.TryGet(newDamageContext.GuardCard.OwnerId);
-                var playerName = exists ? player.Name : "";
-                this.logger.LogInformation(
-                    $"ダメージ：{newDamageContext.Value} > {newDamageContext.GuardCard}({playerName})");
-            }
+            var (exists, guardCardOwnerplayer) = this.playerRepository.TryGet(newDamageContext.GuardCard.OwnerId);
+            var playerName = exists && guardCardOwnerplayer != null ? guardCardOwnerplayer.Name : "";
+            this.logger.LogInformation("ダメージ：{value} > {card}({playername})",
+                newDamageContext.Value, newDamageContext.GuardCard, playerName);
 
             newDamageContext.GuardCard.Damage(newDamageContext.Value);
 
@@ -1289,7 +1352,7 @@ namespace Cauldron.Core.Entities
         public async ValueTask ModifyPlayer(ModifyPlayerContext modifyPlayerContext, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             var (exists, player) = this.playerRepository.TryGet(modifyPlayerContext.PlayerId);
-            if (!exists)
+            if (!exists || player == null)
             {
                 return;
             }
@@ -1321,15 +1384,16 @@ namespace Cauldron.Core.Entities
             this.logger.LogInformation($"start set counter.");
 
             var (exists, targetPlayer) = this.playerRepository.TryGet(targetPlayerId);
-            if (!exists)
+            if (!exists || targetPlayer == null)
             {
-                this.logger.LogError($"player not exists. player id={targetPlayerId}");
+                this.logger.LogError("player not exists. player id={targetPlayerId}", targetPlayerId);
                 return;
             }
 
             targetPlayer.ModifyCounter(counterName, numCounters);
 
-            this.logger.LogInformation($"set counter. player={targetPlayer.Name}, counter={counterName}:{numCounters}");
+            this.logger.LogInformation("set counter. player={playername}, counter={counterName}:{numCounters}",
+                targetPlayer.Name, counterName, numCounters);
 
             foreach (var p in this.playerRepository.AllPlayers)
             {
@@ -1363,7 +1427,8 @@ namespace Cauldron.Core.Entities
 
             targetCard.ModifyCounter(counterName, numCounters);
 
-            this.logger.LogInformation($"set counter. card={targetCard}, counter={counterName}:{numCounters}");
+            this.logger.LogInformation("set counter. card={targetCard}, counter={counterName}:{numCounters}",
+                targetCard, counterName, numCounters);
 
             foreach (var p in this.playerRepository.AllPlayers)
             {
@@ -1399,7 +1464,7 @@ namespace Cauldron.Core.Entities
         private readonly Dictionary<(CardId, string), (int Num, string Text)> variablesByName = new();
 
         public void SetVariable(CardId cardId, string name, int value)
-            => this.SetVariable(cardId, name, (value, default));
+            => this.SetVariable(cardId, name, (value, ""));
 
         public void SetVariable(CardId cardId, string name, string value)
             => this.SetVariable(cardId, name, (default, value));
@@ -1437,7 +1502,7 @@ namespace Cauldron.Core.Entities
                 return true;
             }
 
-            value = default;
+            value = "";
             return false;
         }
 
@@ -1457,7 +1522,7 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public bool TryGetActionContext(CardId cardId, string name, out ActionContext value)
+        public bool TryGetActionContext(CardId cardId, string name, out ActionContext? value)
         {
             if (this.actionContextsByActionName.TryGetValue((cardId, name), out value))
             {

@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+﻿#nullable enable
+
+using Assets.Scripts.ServerShared.MessagePackObjects;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -50,14 +52,14 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public EffectTimingDamageBeforeEvent.TypeValue Type { get; }
         public EffectTimingDamageBeforeEvent.SourceValue Source { get; }
-        public PlayerCondition PlayerCondition { get; }
-        public CardCondition CardCondition { get; }
+        public PlayerCondition? PlayerCondition { get; }
+        public CardCondition? CardCondition { get; }
 
         public EffectTimingDamageBeforeEvent(
             EffectTimingDamageBeforeEvent.TypeValue Type = TypeValue.Any,
             EffectTimingDamageBeforeEvent.SourceValue Source = SourceValue.Any,
-            PlayerCondition PlayerCondition = null,
-            CardCondition CardCondition = null
+            PlayerCondition? PlayerCondition = null,
+            CardCondition? CardCondition = null
             )
         {
             this.Type = Type;

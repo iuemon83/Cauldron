@@ -3428,7 +3428,7 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task s()
+        public async Task GoblinLover()
         {
             var testCardDef = SampleCards.GoblinLover;
             testCardDef.Cost = 0;

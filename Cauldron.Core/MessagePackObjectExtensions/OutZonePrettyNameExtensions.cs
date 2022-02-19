@@ -2,7 +2,7 @@
 {
     public static class OutZonePrettyNameExtensions
     {
-        public static (bool Success, Zone Zone) TryGetZone(this OutZonePrettyName _this, PlayerId effectOwnerId, PlayerId opponentId, PlayerId cardOwnerId)
+        public static (bool Success, Zone? Zone) TryGetZone(this OutZonePrettyName _this, PlayerId effectOwnerId, PlayerId opponentId, PlayerId cardOwnerId)
         {
             return _this switch
             {

@@ -1,5 +1,6 @@
-﻿using Cauldron.Core.Entities.Effect;
-using System.Threading.Tasks;
+﻿#nullable enable
+
+using Cauldron.Core.Entities.Effect;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -16,7 +17,7 @@ namespace Cauldron.Shared.MessagePackObjects
             return await IsMatchedAttackCardCondition(_this.AttackCardCondition, effectOwnerCard, eventArgs)
                 && await IsMatchedGuardCardCondition(_this.GuardCardCondition, effectOwnerCard, eventArgs);
 
-            static async ValueTask<bool> IsMatchedAttackCardCondition(CardCondition attackCardCondition,
+            static async ValueTask<bool> IsMatchedAttackCardCondition(CardCondition? attackCardCondition,
                 Card effectOwnerCard, EffectEventArgs eventArgs)
             {
                 if (attackCardCondition == null)
@@ -24,11 +25,11 @@ namespace Cauldron.Shared.MessagePackObjects
                     return true;
                 }
 
-                return eventArgs.BattleContext.AttackCard != null
+                return eventArgs.BattleContext?.AttackCard != null
                     && await attackCardCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.BattleContext.AttackCard);
             }
 
-            static async ValueTask<bool> IsMatchedGuardCardCondition(CardCondition guardCardCondition,
+            static async ValueTask<bool> IsMatchedGuardCardCondition(CardCondition? guardCardCondition,
                 Card effectOwnerCard, EffectEventArgs eventArgs)
             {
                 if (guardCardCondition == null)
@@ -36,7 +37,7 @@ namespace Cauldron.Shared.MessagePackObjects
                     return true;
                 }
 
-                return eventArgs.BattleContext.GuardCard != null
+                return eventArgs.BattleContext?.GuardCard != null
                     && await guardCardCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.BattleContext.GuardCard);
             }
         }

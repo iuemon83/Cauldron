@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -8,8 +10,8 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectTimingDamageAfterEvent(
             EffectTimingDamageBeforeEvent.TypeValue Type = TypeValue.Any,
             EffectTimingDamageBeforeEvent.SourceValue Source = SourceValue.Any,
-            PlayerCondition PlayerCondition = null,
-            CardCondition CardCondition = null
+            PlayerCondition? PlayerCondition = null,
+            CardCondition? CardCondition = null
             )
             : base(Type, Source, PlayerCondition, CardCondition)
         {

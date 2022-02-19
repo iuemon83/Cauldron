@@ -10,7 +10,7 @@ namespace Cauldron.Core
 
         public static int RandomValue(int min, int max) => RandomUtil.Random.Next(min, max + 1);
 
-        public static T RandomPick<T>(IReadOnlyList<T> source) => source.Any() ? source[RandomUtil.Random.Next(source.Count)] : default;
+        public static T? RandomPick<T>(IReadOnlyList<T> source) => source.Any() ? source[RandomUtil.Random.Next(source.Count)] : default;
         public static IEnumerable<T> RandomPick<T>(IReadOnlyList<T> source, int picksNum)
         {
             if (source.Count <= picksNum) return source;

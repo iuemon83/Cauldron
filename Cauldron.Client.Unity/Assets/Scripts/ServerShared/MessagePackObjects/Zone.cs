@@ -1,4 +1,5 @@
-﻿
+﻿#nullable enable
+
 using MessagePack;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class Zone : IEquatable<Zone>
     {
+        public static Zone Empty => new Zone(default, ZoneName.None);
+
         public PlayerId PlayerId { get; }
 
         public ZoneName ZoneName { get; }
@@ -23,7 +26,7 @@ namespace Cauldron.Shared.MessagePackObjects
             return Equals(obj as Zone);
         }
 
-        public bool Equals(Zone other)
+        public bool Equals(Zone? other)
         {
             return other != null &&
                    PlayerId.Equals(other.PlayerId) &&
@@ -38,12 +41,12 @@ namespace Cauldron.Shared.MessagePackObjects
             return hashCode;
         }
 
-        public static bool operator ==(Zone left, Zone right)
+        public static bool operator ==(Zone? left, Zone? right)
         {
-            return EqualityComparer<Zone>.Default.Equals(left, right);
+            return EqualityComparer<Zone?>.Default.Equals(left, right);
         }
 
-        public static bool operator !=(Zone left, Zone right)
+        public static bool operator !=(Zone? left, Zone? right)
         {
             return !(left == right);
         }

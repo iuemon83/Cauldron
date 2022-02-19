@@ -27,7 +27,7 @@ namespace Cauldron.Core.Entities
 
         public (bool, Card) TryDraw()
         {
-            if (!this.cards.Any()) return (false, default);
+            if (!this.cards.Any()) return (false, Card.Empty);
 
             if (!this.cards.TryDequeue(out var card))
             {

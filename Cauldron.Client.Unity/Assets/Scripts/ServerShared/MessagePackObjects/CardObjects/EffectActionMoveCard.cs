@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -7,12 +9,12 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public Choice CardsChoice { get; }
         public ZonePrettyName To { get; }
-        public InsertCardPosition InsertCardPosition { get; }
-        public string Name { get; } = null;
+        public InsertCardPosition? InsertCardPosition { get; }
+        public string? Name { get; } = null;
 
         public EffectActionMoveCard(Choice CardsChoice, ZonePrettyName To,
-            InsertCardPosition InsertCardPosition = null,
-            string Name = null)
+            InsertCardPosition? InsertCardPosition = null,
+            string? Name = null)
         {
             this.CardsChoice = CardsChoice;
             this.To = To;

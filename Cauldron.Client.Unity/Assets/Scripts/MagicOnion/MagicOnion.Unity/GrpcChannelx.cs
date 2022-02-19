@@ -271,7 +271,9 @@ namespace MagicOnion
         }
 
 #if MAGICONION_UNITASK_SUPPORT
+#pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
         private static async void Forget(UniTask t)
+#pragma warning restore CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
             => t.Forget();
 #endif
 

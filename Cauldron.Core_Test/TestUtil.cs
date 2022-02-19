@@ -24,6 +24,14 @@ namespace Cauldron.Core_Test
             DefaultNumAttacksLimitInTurn: 1
             );
 
+        public static CardDef CardDef(string name)
+        {
+            var t = Shared.MessagePackObjects.CardDef.Empty;
+            t.Name = name;
+
+            return t;
+        }
+
         public static GameMasterOptions GameMasterOptions(
             RuleBook ruleBook = null,
             CardRepository cardRepository = null,
