@@ -165,9 +165,9 @@ namespace Cauldron.Server.Services
 
             var options = new GameMasterOptions(ruleBook, cardRepository, this._logger,
                 new GameEventListener(
-                    OnStartTurn: (playerId, gameContext) =>
+                    OnStartTurn: (playerId, gameContext, message) =>
                     {
-                        this.Broadcast(this.room).OnStartTurn(gameContext, playerId);
+                        this.BroadcastTo(this.room, playerId.Value).OnStartTurn(gameContext, message);
                         this._logger.LogInformation($"OnStartTurn: {playerId}");
                     },
                     OnPlay: (playerId, gameContext, message) =>

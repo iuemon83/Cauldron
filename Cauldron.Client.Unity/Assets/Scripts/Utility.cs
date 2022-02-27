@@ -19,7 +19,7 @@ namespace Assets.Scripts
                 : gameContext.Opponent.Name;
         }
 
-        public static (string ownerPlayerName, string cardName) GetCardName(GameContext gameContext, Zone zone, CardId cardId)
+        public static (string ownerPlayerName, Card card) GetCard(GameContext gameContext, Zone zone, CardId cardId)
         {
             var zonePlayer = gameContext.You.PublicPlayerInfo.Id == zone.PlayerId
                 ? gameContext.You.PublicPlayerInfo
@@ -35,11 +35,11 @@ namespace Assets.Scripts
                 _ => null
             };
 
-            if (card == null) return ("", "");
+            if (card == null) return ("", default);
 
             var ownerName = GetPlayerName(gameContext, card.OwnerId);
 
-            return (ownerName, card.Name);
+            return (ownerName, card);
         }
 
         public static Card GetCard(GameContext gameContext, CardId cardId)
@@ -50,21 +50,28 @@ namespace Assets.Scripts
                 .Concat(gameContext.You.PublicPlayerInfo.Cemetery)
                 .Concat(gameContext.Opponent.Field)
                 .Concat(gameContext.Opponent.Cemetery)
+                .Concat(gameContext.TemporaryCards)
                 .FirstOrDefault(c => c.Id == cardId);
         }
 
-        public static (string ownerPlayerName, string cardName) GetCardName(GameContext gameContext, CardId cardId)
+        public static (string ownerPlayerName, Card card) GetCardAndOwner(GameContext gameContext, CardId cardId)
         {
             var card = GetCard(gameContext, cardId);
 
             if (card == default)
             {
-                return ("", "");
+                return ("", default);
             }
 
             var ownerName = GetPlayerName(gameContext, card.OwnerId);
 
-            return (ownerName, card.Name);
+            return (ownerName, card);
+        }
+
+        public static (string ownerPlayerName, string cardName) GetCardName(GameContext gameContext, Zone zone, CardId cardId)
+        {
+            var (p, c) = GetCard(gameContext, zone, cardId);
+            return (p, c?.Name ?? "");
         }
 
         public static async UniTask LoadAsyncScene(SceneNames sceneName)

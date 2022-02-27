@@ -231,7 +231,7 @@ namespace Cauldron.Core_Test
 
         public static CardDef DDShieldGoblin
             => SampleCards.Creature(2, "異次元の盾持ちゴブリン",
-                1, 2, abilities: new[] { CreatureAbility.Cover },
+                1, 1, abilities: new[] { CreatureAbility.Cover },
                 effectText: "このカードの戦闘時に、このカードと戦闘相手を除外する。",
                 effects: new[] {
                     new CardEffect(
@@ -526,9 +526,9 @@ namespace Cauldron.Core_Test
                         })
                 });
 
-        public static CardDef GoblinsGreed
-            => SampleCards.Sorcery(2, "ゴブリンの強欲",
-                effectText: "あなたはカードを2枚ドローする。このカードが手札から捨てられたとき、あなたはカードを1枚ドローする。",
+        public static CardDef Greed
+            => SampleCards.Sorcery(2, "強欲",
+                effectText: "あなたはカードを2枚ドローする。このカードを手札から捨てるとき、あなたはカードを1枚ドローする。",
                 effects: new[]
                 {
                     // カードを2枚引く
@@ -746,7 +746,7 @@ namespace Cauldron.Core_Test
         public static CardDef BraveGoblin
             => SampleCards.Creature(4, "ゴブリンの勇者",
                 2, 2,
-                effectText: "自分が受けるダメージを2軽減する。自分の場の他のクリーチャーカードが戦闘で与えるダメージを1増加する。",
+                effectText: "自分が受けるダメージを2軽減する。自分の場の他のゴブリンクリーチャーが戦闘で与えるダメージを1増加する。",
                 effects: new[]
                 {
                     // 自分が受けるダメージを2軽減する
@@ -773,7 +773,7 @@ namespace Cauldron.Core_Test
                                 ))
                         }
                     ),
-                    // 自分の他のクリーチャーが戦闘で与えるダメージを1増加する
+                    // 自分の他のゴブリンクリーチャーが戦闘で与えるダメージを1増加する
                     new CardEffect(
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
@@ -782,6 +782,9 @@ namespace Cauldron.Core_Test
                                     EffectTimingDamageBeforeEvent.TypeValue.Battle,
                                     Source: EffectTimingDamageBeforeEvent.SourceValue.DamageSource,
                                     CardCondition: new CardCondition(
+                                        NameCondition: new(
+                                            new TextValue("ゴブリン"),
+                                            TextCompare.CompareValue.Contains),
                                         ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
                                         TypeCondition: new CardTypeCondition(new[]{ CardType.Creature }),
                                         ContextCondition: CardCondition.ContextConditionValue.Others
@@ -951,7 +954,7 @@ namespace Cauldron.Core_Test
         public static CardDef LeaderGoblin
             => SampleCards.Creature(5, "ゴブリンリーダー",
                 1, 5,
-                effectText: "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのクリーチャーのパワーを1増加する。",
+                effectText: "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのゴブリンクリーチャーのパワーを1増加する。",
                 effects: new[]
                 {
                     // プレイ時：自分のクリーチャーすべてを+1/+0 する。
@@ -978,6 +981,9 @@ namespace Cauldron.Core_Test
                                             orCardConditions: new[]
                                             {
                                                 new CardCondition(
+                                                    NameCondition: new(
+                                                        new TextValue("ゴブリン"),
+                                                        TextCompare.CompareValue.Contains),
                                                     ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
                                                     TypeCondition: new (new[]{ CardType.Creature }),
                                                     ContextCondition: CardCondition.ContextConditionValue.Others
@@ -1820,7 +1826,7 @@ namespace Cauldron.Core_Test
         public static CardDef BreakCover
             => SampleCards.Sorcery(1, "盾砕き",
                 effectText: "相手の場の「カバー」アビリティを持つすべてのクリーチャーから、「カバー」アビリティを削除する。" +
-                "その後それらのクリーチャーに1ダメージを与える。",
+                    "その後それらのクリーチャーに1ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -1866,7 +1872,7 @@ namespace Cauldron.Core_Test
 
         public static CardDef Exclude
             => SampleCards.Sorcery(5, "除外",
-                effectText: "場にあるカード一つを選択する。それを「除外」する。",
+                effectText: "場にあるカード一つを選択する。それを除外する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -2058,11 +2064,95 @@ namespace Cauldron.Core_Test
                         }),
                 });
 
+        public static CardDef DDDraw
+            => SampleCards.Sorcery(1, "異次元ドロー",
+                effectText: "あなたのデッキからランダムに3枚除外する。その後、あなたは1枚ドローする。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
+                        new[]
+                        {
+                            new EffectAction(
+                                ExcludeCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]
+                                                        {
+                                                            ZonePrettyName.YouDeck
+                                                        })))
+                                            }),
+                                        Choice.HowValue.Random,
+                                        new NumValue(3)),
+                                    "exclude")),
+                            new EffectAction(
+                                DrawCard: new(
+                                    new NumValue(1),
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                    ))
+                        }),
+                });
+
+        public static CardDef ExcludHand
+            => SampleCards.Sorcery(1, "異次元への追放",
+                effectText: "あなたは残りHPの半分のダメージを受ける。その後、相手の手札をランダムに1枚選択し、それを除外する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
+                        new[]
+                        {
+                            new EffectAction(
+                                Damage: new(
+                                    new NumValue(
+                                        NumValueCalculator: new(ForPlayer: new(
+                                            NumValueCalculatorForPlayer.TypeValue.PlayerCurrentHp,
+                                            new Choice(
+                                                new ChoiceSource(
+                                                    orPlayerConditions: new[]
+                                                    {
+                                                        new PlayerCondition(PlayerCondition.ContextValue.You)
+                                                    })))),
+                                        NumValueModifier: new(
+                                            NumValueModifier.OperatorValue.Div,
+                                            new NumValue(2))),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orPlayerConditions: new[]
+                                            {
+                                                new PlayerCondition(PlayerCondition.ContextValue.You),
+                                            })))
+                                ),
+                            new EffectAction(
+                                ExcludeCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]
+                                                        {
+                                                            ZonePrettyName.OpponentHand
+                                                        })))
+                                            }),
+                                        Choice.HowValue.Random,
+                                        new NumValue(1)),
+                                    "exclude")),
+                        }),
+                });
+
         public static CardDef Parasite
             => SampleCards.Creature(1, "寄生虫",
                 1, 1, isToken: true,
                 effectText: "このカードがデッキから手札に移動したとき、このカードをあなたの場に出す。" +
-                "このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
+                    "このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
                 effects: new[]
                 {
                     new CardEffect(

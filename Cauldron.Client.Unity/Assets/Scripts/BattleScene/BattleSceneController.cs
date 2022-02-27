@@ -14,6 +14,9 @@ using UnityEngine.UI;
 
 public class BattleSceneController : MonoBehaviour
 {
+    public static readonly Color YouColor = new Color(0, 0, 255, 0.5f);
+    public static readonly Color OpponentColor = new Color(255, 0, 0, 0.5f);
+
     public static BattleSceneController Instance;
 
     public PlayerId YouId => this.youPlayerController.PlayerId;
@@ -26,9 +29,11 @@ public class BattleSceneController : MonoBehaviour
     [SerializeField]
     private Canvas canvas = default;
     [SerializeField]
-    private ConfirmDialogController confirmDialogController = default;
+    private ConfirmDialogController confirmDialogPrefab = default;
     [SerializeField]
-    private ChoiceDialogController choiceDialogController = default;
+    private ChoiceDialogController choiceDialogPrefab = default;
+    [SerializeField]
+    private ActionLogViewController actionLogViewController = default;
 
     [SerializeField]
     private GameObject[] youHandSpaces = default;
@@ -127,11 +132,13 @@ public class BattleSceneController : MonoBehaviour
             holder.Receiver.OnModifyCounter.Subscribe((a) => this.OnModifyCounter(a.gameContext, a.message)),
             holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.message)),
             holder.Receiver.OnExcludeCard.Subscribe((a) => this.OnExcludeCard(a.gameContext, a.message)),
-            holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.playerId)),
+            holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.message)),
             holder.Receiver.OnEndGame.Subscribe(this.OnEndGame),
         });
 
         this.connectionHolder = ConnectionHolder.Find();
+
+        this.youPlayerController.Set(this.Client.PlayerId);
 
         await this.Client.ReadyGame();
     }
@@ -323,7 +330,7 @@ public class BattleSceneController : MonoBehaviour
 
     private void ShowChoiceDialog()
     {
-        var dialog = Instantiate(this.choiceDialogController);
+        var dialog = Instantiate(this.choiceDialogPrefab);
         dialog.Init(this.askMessage, async answer =>
         {
             var result = await this.DoAnswer(answer);
@@ -334,6 +341,21 @@ public class BattleSceneController : MonoBehaviour
         });
 
         dialog.transform.SetParent(this.canvas.transform, false);
+    }
+
+    private void ToggleActionLogView()
+    {
+        this.actionLogViewController.ToggleDisplay();
+    }
+
+    public void OnActionLogViewButtonClick()
+    {
+        this.ToggleActionLogView();
+    }
+
+    private async UniTask AddActionLog(ActionLog actionLog)
+    {
+        await this.actionLogViewController.AddLog(actionLog);
     }
 
     /// <summary>
@@ -530,7 +552,7 @@ public class BattleSceneController : MonoBehaviour
         var message = winnerPlayerId == this.youPlayerController.PlayerId
             ? "あなたの勝ち!"
             : "あなたの負け...";
-        var dialog = Instantiate(this.confirmDialogController);
+        var dialog = Instantiate(this.confirmDialogPrefab);
         dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
             onOkAction: async () =>
             {
@@ -544,7 +566,7 @@ public class BattleSceneController : MonoBehaviour
     {
         var title = "降参";
         var message = "降参しますか？";
-        var dialog = Instantiate(this.confirmDialogController);
+        var dialog = Instantiate(this.confirmDialogPrefab);
         dialog.Init(title, message, ConfirmDialogController.DialogType.Confirm,
             onOkAction: async () =>
             {
@@ -553,22 +575,24 @@ public class BattleSceneController : MonoBehaviour
         dialog.transform.SetParent(this.canvas.transform, false);
     }
 
-    void OnStartTurn(GameContext gameContext, PlayerId playerId)
+    void OnStartTurn(GameContext gameContext, StartTurnNotifyMessage message)
     {
         Debug.Log($"OnStartTurn({this.Client.PlayerName})");
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            Debug.Log($"ターン開始: {this.Client.PlayerName}");
-
-            if (this.youPlayerController.PlayerId == playerId)
+            if (this.youPlayerController.PlayerId == message.PlayerId)
             {
+                await this.AddActionLog(new ActionLog("ターン開始", gameContext.You.PublicPlayerInfo));
+
                 this.youPlayerController.SetActiveTurn(true);
                 this.opponentPlayerController.SetActiveTurn(false);
                 await this.Client.StartTurn();
             }
             else
             {
+                await this.AddActionLog(new ActionLog("ターン開始", gameContext.Opponent));
+
                 this.youPlayerController.SetActiveTurn(false);
                 this.opponentPlayerController.SetActiveTurn(true);
             }
@@ -581,8 +605,6 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            Debug.Log($"ゲーム終了: {this.Client.PlayerName}");
-
             await this.UpdateGameContext(gameContext);
         });
     }
@@ -602,6 +624,9 @@ public class BattleSceneController : MonoBehaviour
 
             Debug.Log($"プレイ: {carddef.Name}({ownerName})");
 
+            //TODO carddefじゃなくてcardは取れない？
+            //await this.AddActionLog(new ActionLog($"プレイ: {carddef.Name}({ownerName})", card));
+
             await this.ShowCardDetail(carddef);
 
             //await this.UpdateGameContext(gameContext);
@@ -614,11 +639,12 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            var (ownerName, cardName) = Utility.GetCardName(gameContext,
+            var (ownerName, card) = Utility.GetCard(gameContext,
                 message.ToZone,
                 message.CardId);
             var playerName = Utility.GetPlayerName(gameContext, message.ToZone.PlayerId);
-            Debug.Log($"追加: {cardName}({ownerName}) to {message.ToZone.ZoneName}({playerName})");
+
+            await this.AddActionLog(new ActionLog("追加", card));
 
             await this.UpdateGameContext(gameContext);
         });
@@ -630,16 +656,16 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            var (ownerName, cardName) = Utility.GetCardName(this.currentGameContext, message.CardId);
+            var ownerName = Utility.GetPlayerName(gameContext, message.Card.OwnerId);
 
-            Debug.Log($"除外: {cardName}({ownerName})");
+            await this.AddActionLog(new ActionLog($"{message.FromZone.ZoneName}→除外", message.Card));
 
-            if (this.fieldCardControllersByCardId.TryGetValue(message.CardId, out var fieldCardController)
+            if (this.fieldCardControllersByCardId.TryGetValue(message.Card.Id, out var fieldCardController)
                 && fieldCardController.Card.Type != CardType.Sorcery)
             {
                 await fieldCardController.ExcludeEffect();
             }
-            else if (this.handCardObjectsByCardId.TryGetValue(message.CardId, out var handCardController))
+            else if (this.handCardObjectsByCardId.TryGetValue(message.Card.Id, out var handCardController))
             {
                 await handCardController.ExcludeEffect();
             }
@@ -654,12 +680,12 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            var (ownerName, cardName) = Utility.GetCardName(gameContext, message.ToZone, message.CardId);
+            var ownerName = Utility.GetPlayerName(gameContext, message.Card.OwnerId);
             var playerName = Utility.GetPlayerName(gameContext, message.ToZone.PlayerId);
 
-            Debug.Log($"移動: {cardName}({ownerName}) to {message.ToZone.ZoneName}({playerName})");
+            await this.AddActionLog(new ActionLog($"移動 {message.FromZone.ZoneName}→{message.ToZone.ZoneName}", message.Card));
 
-            var cardId = message.CardId;
+            var cardId = message.Card.Id;
             var targetPlayer = message.ToZone.PlayerId == this.YouId
                 ? this.youPlayerController
                 : this.opponentPlayerController;
@@ -706,11 +732,7 @@ public class BattleSceneController : MonoBehaviour
 
                 case ZoneName.Field:
                     {
-                        var card = message.ToZone.PlayerId == this.YouId
-                            ? gameContext.You.PublicPlayerInfo.Field.First(c => c.Id == cardId)
-                            : gameContext.Opponent.Field.First(c => c.Id == cardId);
-
-                        var fieldCard = this.GetOrCreateFieldCardObject(card, message.ToZone.PlayerId, message.Index);
+                        var fieldCard = this.GetOrCreateFieldCardObject(message.Card, message.ToZone.PlayerId, message.Index);
                         await fieldCard.transform.DOScale(1.2f, 0);
                         await fieldCard.transform.DOScale(1f, 0.3f);
                         break;
@@ -733,8 +755,9 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            var (ownerName, cardName) = Utility.GetCardName(gameContext, message.CardId);
-            Debug.Log($"修整: {cardName}({ownerName})");
+            var ownerName = Utility.GetPlayerName(gameContext, message.Card.OwnerId);
+
+            await this.AddActionLog(new ActionLog("修整", message.Card));
 
             await this.UpdateGameContext(gameContext);
         });
@@ -746,8 +769,11 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            var playerName = Utility.GetPlayerName(gameContext, message.PlayerId);
-            Debug.Log($"修整: {playerName}");
+            var playerInfo = message.PlayerId == this.YouId
+                    ? gameContext.You.PublicPlayerInfo
+                    : gameContext.Opponent;
+
+            await this.AddActionLog(new ActionLog("修整", playerInfo));
 
             static async UniTask HealOrDamageEffect(PlayerController playerController, int oldHp, int newHp)
             {
@@ -791,15 +817,20 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            if (message.TargetCardId != default)
+            if (message.TargetCard != default)
             {
-                var (ownerName, cardName) = Utility.GetCardName(gameContext, message.TargetCardId);
-                Debug.Log($"カウンター: {message.CounterName}({message.NumCounters}) > {cardName}({ownerName})");
+                var ownerName = Utility.GetPlayerName(gameContext, message.TargetCard.OwnerId);
+
+                await this.AddActionLog(new ActionLog($"カウンター {message.CounterName}({message.NumCounters})", message.TargetCard));
             }
             else if (message.TargetPlayerId != default)
             {
                 var playerName = Utility.GetPlayerName(gameContext, message.TargetPlayerId);
-                Debug.Log($"カウンター: {message.CounterName}({message.NumCounters}) > {playerName}");
+                var playerInfo = message.TargetPlayerId == this.YouId
+                    ? gameContext.You.PublicPlayerInfo
+                    : gameContext.Opponent;
+
+                await this.AddActionLog(new ActionLog($"カウンター {message.CounterName}({message.NumCounters})", playerInfo));
             }
 
             await this.UpdateGameContext(gameContext);
@@ -812,36 +843,38 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            var (ownerPlayerName, attackCardName) = Utility.GetCardName(gameContext, message.AttackCardId);
+            var (ownerPlayerName, attackCard) = Utility.GetCardAndOwner(gameContext, message.AttackCardId);
             if (message.GuardCardId == default)
             {
                 var guardPlayerName = Utility.GetPlayerName(gameContext, message.GuardPlayerId);
-                Debug.Log($"戦闘: {attackCardName}({ownerPlayerName}) > {guardPlayerName}");
+
+                await this.AddActionLog(new ActionLog($"戦闘 {guardPlayerName}", attackCard));
             }
             else
             {
-                var (guardCardOwnerName, guardCardName) = Utility.GetCardName(gameContext, message.GuardCardId);
-                Debug.Log($"戦闘: {attackCardName}({ownerPlayerName}) > {guardCardName}({guardCardOwnerName})");
+                var (guardCardOwnerName, guardCard) = Utility.GetCardAndOwner(gameContext, message.GuardCardId);
+
+                await this.AddActionLog(new ActionLog($"戦闘 {guardCard.Name}", attackCard));
             }
 
-            if (fieldCardControllersByCardId.TryGetValue(message.AttackCardId, out var attackCard))
+            if (fieldCardControllersByCardId.TryGetValue(message.AttackCardId, out var attackCardController))
             {
                 if (message.GuardCardId == default)
                 {
                     if (this.youPlayerController.PlayerId == message.GuardPlayerId)
                     {
-                        await attackCard.AttackEffect(this.youPlayerController);
+                        await attackCardController.AttackEffect(this.youPlayerController);
                     }
                     else
                     {
-                        await attackCard.AttackEffect(this.opponentPlayerController);
+                        await attackCardController.AttackEffect(this.opponentPlayerController);
                     }
                 }
                 else
                 {
                     if (fieldCardControllersByCardId.TryGetValue(message.GuardCardId, out var guardCard))
                     {
-                        await attackCard.AttackEffect(guardCard);
+                        await attackCardController.AttackEffect(guardCard);
                     }
                 }
             }
@@ -870,37 +903,31 @@ public class BattleSceneController : MonoBehaviour
             {
                 case DamageNotifyMessage.ReasonValue.DrawDeath:
                     {
-                        var guardPlayerName = Utility.GetPlayerName(gameContext, message.GuardPlayerId);
-                        Debug.Log($"ダメージ: [{message.Reason}] {guardPlayerName} {message.Damage}");
+                        var guardPlayerInfo = message.GuardPlayerId == this.YouId
+                            ? gameContext.You.PublicPlayerInfo
+                            : gameContext.Opponent;
+
+                        await this.AddActionLog(new ActionLog($"ダメージ {message.Damage}", guardPlayerInfo));
+
                         break;
                     }
 
                 case DamageNotifyMessage.ReasonValue.Attack:
+                case DamageNotifyMessage.ReasonValue.Effect:
                     {
-                        var (ownerPlayerName, cardName) = Utility.GetCardName(gameContext, message.SourceCardId);
                         if (message.GuardCardId == default)
                         {
-                            var guardPlayerName = Utility.GetPlayerName(gameContext, message.GuardPlayerId);
-                            Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardPlayerName} {message.Damage}");
+                            var guardPlayerInfo = message.GuardPlayerId == this.YouId
+                                ? gameContext.You.PublicPlayerInfo
+                                : gameContext.Opponent;
+
+                            await this.AddActionLog(new ActionLog($"ダメージ {message.Damage}", guardPlayerInfo));
                         }
                         else
                         {
-                            var (guardCardOwnerName, guardCardName) = Utility.GetCardName(gameContext, message.GuardCardId);
-                            Debug.Log($"ダメージ: {cardName}({ownerPlayerName}) > {guardCardName}({guardCardOwnerName}) {message.Damage}");
-                        }
+                            var (guardCardOwnerName, guardCard) = Utility.GetCardAndOwner(gameContext, message.GuardCardId);
 
-                        break;
-                    }
-                case DamageNotifyMessage.ReasonValue.Effect:
-                    {
-                        var card = Utility.GetCard(gameContext, message.SourceCardId);
-
-                        if (card != null)
-                        {
-                            var ownerName = Utility.GetPlayerName(gameContext, card.OwnerId);
-
-                            await this.ShowCardDetail(card);
-                            Debug.Log($"ダメージ: {card.Name}({ownerName}) {message.Damage}");
+                            await this.AddActionLog(new ActionLog($"ダメージ {message.Damage}", guardCard));
                         }
 
                         break;

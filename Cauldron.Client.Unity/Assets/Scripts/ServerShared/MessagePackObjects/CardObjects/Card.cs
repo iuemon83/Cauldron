@@ -215,5 +215,30 @@ namespace Cauldron.Shared.MessagePackObjects
                 ? num
                 : 0;
         }
+
+        public Card AsHidden()
+        {
+            return new Card(
+                default,
+                default,
+                default,
+                default,
+                default,
+                "",
+                "非公開",
+                "",
+                Array.Empty<string>(),
+                default,
+                default,
+                Array.Empty<CreatureAbility>(),
+                "",
+                Array.Empty<CardEffect>(),
+                default,
+                default
+                )
+            {
+                Zone = this.Zone
+            };
+        }
     }
 }

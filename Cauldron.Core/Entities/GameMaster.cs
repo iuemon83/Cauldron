@@ -3,12 +3,8 @@ using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("Cauldron_Test")]
 namespace Cauldron.Core.Entities
@@ -129,6 +125,8 @@ namespace Cauldron.Core.Entities
         public bool IsGameStarted { get; private set; }
 
         public bool IsTurnStarted { get; private set; }
+
+        private readonly List<Card> temporaryCards = new List<Card>();
 
         public Player GetWinner()
         {
@@ -322,7 +320,13 @@ namespace Cauldron.Core.Entities
                     await this.Draw(player.Id, this.RuleBook.InitialNumHands);
                 }
 
-                this.EventListener?.OnStartTurn?.Invoke(this.ActivePlayer.Id, this.CreateGameContext(this.ActivePlayer.Id));
+                foreach (var p in this.playerRepository.AllPlayers)
+                {
+                    this.EventListener?.OnStartTurn?.Invoke(p.Id,
+                        this.CreateGameContext(p.Id),
+                        new StartTurnNotifyMessage(this.ActivePlayer.Id)
+                        );
+                }
             }
             catch
             {
@@ -383,10 +387,16 @@ namespace Cauldron.Core.Entities
                 card.Abilities = newAbilities.ToList();
             }
 
-            // カードの持ち主には無条件に通知する
-            this.EventListener?.OnModifyCard?.Invoke(card.OwnerId,
-                this.CreateGameContext(card.OwnerId),
-                new ModifyCardNotifyMessage(card.Id));
+            // notify
+            var isPublic = card.Zone.IsPublic();
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnModifyCard?.Invoke(p.Id,
+                    this.CreateGameContext(p.Id),
+                    new ModifyCardNotifyMessage(
+                        (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden()
+                        ));
+            }
         }
 
         public async ValueTask<(GameMasterStatusCode, IReadOnlyList<Card>)> Draw(PlayerId playerId, int numCards)
@@ -441,7 +451,11 @@ namespace Cauldron.Core.Entities
                             this.EventListener?.OnMoveCard?.Invoke(p.Id,
                                 this.CreateGameContext(p.Id),
                                 new MoveCardNotifyMessage(
-                                    drawCard.Id,
+                                    p.Id == drawCard.OwnerId ? drawCard : drawCard.AsHidden(),
+                                    new Zone(
+                                        playerId,
+                                        ZoneName.Deck
+                                    ),
                                     new Zone(
                                         playerId,
                                         ZoneName.Cemetery
@@ -463,7 +477,11 @@ namespace Cauldron.Core.Entities
                             this.EventListener?.OnMoveCard?.Invoke(p.Id,
                                 this.CreateGameContext(p.Id),
                                 new MoveCardNotifyMessage(
-                                    drawCard.Id,
+                                    p.Id == drawCard.OwnerId ? drawCard : drawCard.AsHidden(),
+                                    new Zone(
+                                        playerId,
+                                        ZoneName.Deck
+                                    ),
                                     new Zone(
                                         playerId,
                                         ZoneName.Hand
@@ -558,6 +576,7 @@ namespace Cauldron.Core.Entities
 
             if (excluded && player != null)
             {
+                var fromZone = cardToExclude.Zone;
                 cardToExclude.Zone = new(cardToExclude.OwnerId, ZoneName.Excluded);
                 this.cardRepository.Remove(cardToExclude);
 
@@ -569,12 +588,16 @@ namespace Cauldron.Core.Entities
 
                 this.logger.LogInformation("Exclude: {cardToExclude}", cardToExclude);
 
+                var isPublic = cardToExclude.Zone.IsPublic();
                 foreach (var p in this.playerRepository.AllPlayers)
                 {
                     this.EventListener.OnExcludeCard?.Invoke(p.Id,
                         this.CreateGameContext(p.Id),
                         new ExcludeCardNotifyMessage(
-                            cardToExclude.Id)
+                            (isPublic || cardToExclude.OwnerId == p.Id)
+                                ? cardToExclude : cardToExclude.AsHidden(),
+                            fromZone
+                            )
                         );
                 }
 
@@ -628,6 +651,7 @@ namespace Cauldron.Core.Entities
                     break;
 
                 case ZoneName.Temporary:
+                    this.temporaryCards.Remove(card);
                     break;
 
                 default:
@@ -674,6 +698,7 @@ namespace Cauldron.Core.Entities
                     break;
 
                 case ZoneName.Temporary:
+                    this.temporaryCards.Add(card);
                     break;
 
                 default:
@@ -694,46 +719,35 @@ namespace Cauldron.Core.Entities
 
             if (isAdd)
             {
-                // カードの持ち主には無条件に通知する
-                this.EventListener?.OnAddCard?.Invoke(card.OwnerId,
-                    this.CreateGameContext(card.OwnerId),
-                    new AddCardNotifyMessage(
-                        card.Id,
-                        moveCardContext.To));
-
                 var isPublic = moveCardContext.To.IsPublic();
 
-                // カードの持ち主以外への通知は
-                // 移動後の領域が公開領域の場合のみ
-                this.EventListener?.OnAddCard?.Invoke(this.GetOpponent(card.OwnerId).Id,
-                    this.CreateGameContext(this.GetOpponent(card.OwnerId).Id),
-                    new AddCardNotifyMessage(
-                        isPublic ? card.Id : default,
-                        moveCardContext.To));
+                foreach (var p in this.playerRepository.AllPlayers)
+                {
+                    this.EventListener?.OnAddCard?.Invoke(p.Id,
+                        this.CreateGameContext(p.Id),
+                        new AddCardNotifyMessage(
+                            (p.Id == card.OwnerId || isPublic) ? card.Id : default,
+                            moveCardContext.To));
+                }
             }
             else
             {
-                // カードの持ち主には無条件に通知する
-                this.EventListener?.OnMoveCard?.Invoke(card.OwnerId,
-                    this.CreateGameContext(card.OwnerId),
-                    new MoveCardNotifyMessage(
-                        card.Id,
-                        moveCardContext.To,
-                        toIndex
-                        ));
-
                 var isPublic = moveCardContext.From.IsPublic()
                     || moveCardContext.To.IsPublic();
 
-                // カードの持ち主以外への通知は
-                // 移動元か移動後どちらかの領域が公開領域の場合のみ
-                this.EventListener?.OnMoveCard?.Invoke(this.GetOpponent(card.OwnerId).Id,
-                    this.CreateGameContext(this.GetOpponent(card.OwnerId).Id),
-                    new MoveCardNotifyMessage(
-                        isPublic ? card.Id : default,
-                        moveCardContext.To,
-                        isPublic ? toIndex : -1
-                        ));
+                foreach (var p in this.playerRepository.AllPlayers)
+                {
+                    // カードの持ち主以外への通知は
+                    // 移動元か移動後どちらかの領域が公開領域の場合のみ
+                    this.EventListener?.OnMoveCard?.Invoke(p.Id,
+                        this.CreateGameContext(p.Id),
+                        new MoveCardNotifyMessage(
+                            (p.Id == card.OwnerId || isPublic) ? card : card.AsHidden(),
+                            moveCardContext.From,
+                            moveCardContext.To,
+                            isPublic ? toIndex : -1
+                            ));
+                }
             }
 
             // カードの移動イベント
@@ -752,6 +766,7 @@ namespace Cauldron.Core.Entities
             return new GameContext(
                 this.GetWinner()?.Id ?? default,
                 this.ActivePlayer?.Id ?? default,
+                this.temporaryCards.ToArray(),
                 this.GetOpponent(playerId).PublicPlayerInfo,
                 player.PrivatePlayerInfo,
                 this.RuleBook,
@@ -848,7 +863,14 @@ namespace Cauldron.Core.Entities
             this.IsTurnStarted = false;
             this.ActivePlayer = this.NextPlayer;
             this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
-            this.EventListener?.OnStartTurn?.Invoke(this.ActivePlayer.Id, this.CreateGameContext(this.ActivePlayer.Id));
+
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnStartTurn?.Invoke(p.Id,
+                    this.CreateGameContext(p.Id),
+                    new StartTurnNotifyMessage(this.ActivePlayer.Id)
+                    );
+            }
 
             return GameMasterStatusCode.OK;
         }
@@ -1051,7 +1073,9 @@ namespace Cauldron.Core.Entities
             {
                 this.EventListener?.OnBattleStart?.Invoke(p.Id,
                     this.CreateGameContext(p.Id),
-                    new BattleNotifyMessage(attackCard.Id, GuardPlayerId: damagePlayer.Id));
+                    new BattleNotifyMessage(
+                        attackCard.Id,
+                        GuardPlayerId: damagePlayer.Id));
             }
 
             // 攻撃するとステルスを失う
@@ -1430,19 +1454,20 @@ namespace Cauldron.Core.Entities
             this.logger.LogInformation("set counter. card={targetCard}, counter={counterName}:{numCounters}",
                 targetCard, counterName, numCounters);
 
+            var isPublic = targetCard.Zone.IsPublic();
             foreach (var p in this.playerRepository.AllPlayers)
             {
                 // 非公開領域なら、カードの持ち主以外にはカードを知らせない
-                var targetCardId = !targetCard.Zone.IsPublic() && p.Id != targetCard.OwnerId
-                    ? default
-                    : targetCard.Id;
+                var card = isPublic || p.Id == targetCard.OwnerId
+                    ? targetCard
+                    : targetCard.AsHidden();
 
                 this.EventListener?.OnModityCounter?.Invoke(
                     p.Id,
                     this.CreateGameContext(p.Id),
                     new ModifyCounterNotifyMessage(
                         counterName, numCounters,
-                        TargetCardId: targetCardId));
+                        TargetCard: card));
             }
 
             var addOrRemove = numCounters > 0

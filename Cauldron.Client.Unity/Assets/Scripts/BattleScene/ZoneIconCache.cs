@@ -15,6 +15,8 @@ class ZoneIconCache
         = new Lazy<Sprite>(() => Resources.Load<Sprite>("Images/deck_icon"), true);
     public static Lazy<Sprite> CemeteryIcon { get; }
         = new Lazy<Sprite>(() => Resources.Load<Sprite>("Images/cemetery_icon"), true);
+    public static Lazy<Sprite> ExcludeIcon { get; }
+        = new Lazy<Sprite>(() => Resources.Load<Sprite>("Images/exclude_card_icon"), true);
 
     private static readonly Dictionary<ZoneName, Sprite> dic = new Dictionary<ZoneName, Sprite>();
 
@@ -30,6 +32,7 @@ class ZoneIconCache
                 ZoneName.Hand => HandIcon.Value,
                 ZoneName.Deck => DeckIcon.Value,
                 ZoneName.Cemetery => CemeteryIcon.Value,
+                ZoneName.Excluded => ExcludeIcon.Value,
                 _ => null
             };
 

@@ -64,6 +64,11 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    public void Set(PlayerId playerId)
+    {
+        this.PlayerId = playerId;
+    }
+
     public void Set(PublicPlayerInfo publicPlayerInfo)
     {
         this.PlayerId = publicPlayerInfo.Id;

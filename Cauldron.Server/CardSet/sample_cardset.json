@@ -368,7 +368,7 @@
       "isToken": false,
       "type": "creature",
       "power": 1,
-      "toughness": 2,
+      "toughness": 1,
       "abilities": [ "cover" ],
       "effectText": "このカードの戦闘時に、このカードと戦闘相手を除外する。",
       "effects": [
@@ -932,7 +932,7 @@
     },
     {
       "cost": 2,
-      "name": "ゴブリンの強欲",
+      "name": "強欲",
       "flavorText": "",
       "annotations": [],
       "isToken": false,
@@ -940,7 +940,7 @@
       "power": 0,
       "toughness": 0,
       "abilities": [],
-      "effectText": "あなたはカードを2枚ドローする。このカードが手札から捨てられたとき、あなたはカードを1枚ドローする。",
+      "effectText": "あなたはカードを2枚ドローする。このカードを手札から捨てるとき、あなたはカードを1枚ドローする。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -1284,7 +1284,7 @@
       "power": 2,
       "toughness": 2,
       "abilities": [],
-      "effectText": "自分が受けるダメージを2軽減する。自分の場の他のクリーチャーカードが戦闘で与えるダメージを1増加する。",
+      "effectText": "自分が受けるダメージを2軽減する。自分の場の他のゴブリンクリーチャーが戦闘で与えるダメージを1増加する。",
       "effects": [
         {
           "condition": {
@@ -1330,6 +1330,10 @@
                       "contextCondition": "others",
                       "battleEventContextCondition": "any",
                       "damageEventContextCondition": "any",
+                      "nameCondition": {
+                        "value": { "pureValue": "ゴブリン" },
+                        "compare": "contains"
+                      },
                       "typeCondition": {
                         "value": [ "creature" ],
                         "not": false
@@ -1589,7 +1593,7 @@
       "power": 1,
       "toughness": 5,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのクリーチャーのパワーを1増加する。",
+      "effectText": "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのゴブリンクリーチャーのパワーを1増加する。",
       "effects": [
         {
           "condition": {
@@ -1629,6 +1633,10 @@
                         "contextCondition": "others",
                         "battleEventContextCondition": "any",
                         "damageEventContextCondition": "any",
+                        "nameCondition": {
+                          "value": { "pureValue": "ゴブリン" },
+                          "compare": "contains"
+                        },
                         "typeCondition": {
                           "value": [ "creature" ],
                           "not": false
@@ -3125,7 +3133,7 @@
       "power": 0,
       "toughness": 0,
       "abilities": [],
-      "effectText": "場にあるカード一つを選択する。それを「除外」する。",
+      "effectText": "場にあるカード一つを選択する。それを除外する。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -3435,6 +3443,141 @@
                     }
                   }
                 }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cost": 1,
+      "name": "異次元ドロー",
+      "flavorText": "",
+      "annotations": [],
+      "isToken": false,
+      "type": "sorcery",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effectText": "あなたのデッキからランダムに3枚除外する。その後、あなたは1枚ドローする。",
+      "effects": [
+        {
+          "condition": { "byPlay": { "zone": "none" } },
+          "actions": [
+            {
+              "excludeCard": {
+                "choice": {
+                  "source": {
+                    "how": "all",
+                    "numPicks": { "pureValue": 1 },
+                    "orPlayerConditions": [],
+                    "orCardConditions": [
+                      {
+                        "contextCondition": "any",
+                        "battleEventContextCondition": "any",
+                        "damageEventContextCondition": "any",
+                        "zoneCondition": {
+                          "value": { "pureValue": [ "youDeck" ] },
+                          "not": false
+                        },
+                        "ownerCondition": "any"
+                      }
+                    ],
+                    "orCardDefConditions": []
+                  },
+                  "how": "random",
+                  "numPicks": { "pureValue": 3 }
+                },
+                "name": "exclude"
+              }
+            },
+            {
+              "drawCard": {
+                "numCards": { "pureValue": 1 },
+                "playerCondition": { "context": "you" }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cost": 1,
+      "name": "異次元への追放",
+      "flavorText": "",
+      "annotations": [],
+      "isToken": false,
+      "type": "sorcery",
+      "power": 0,
+      "toughness": 0,
+      "abilities": [],
+      "effectText": "あなたは残りHPの半分のダメージを受ける。その後、相手の手札をランダムに1枚選択し、それを除外する。",
+      "effects": [
+        {
+          "condition": { "byPlay": { "zone": "none" } },
+          "actions": [
+            {
+              "damage": {
+                "value": {
+                  "numValueCalculator": {
+                    "forPlayer": {
+                      "type": "playerCurrentHp",
+                      "playersChoice": {
+                        "source": {
+                          "how": "all",
+                          "numPicks": { "pureValue": 1 },
+                          "orPlayerConditions": [ { "context": "you" } ],
+                          "orCardConditions": [],
+                          "orCardDefConditions": []
+                        },
+                        "how": "all",
+                        "numPicks": { "pureValue": 1 }
+                      }
+                    }
+                  },
+                  "numValueModifier": {
+                    "operator": "div",
+                    "value": { "pureValue": 2 }
+                  }
+                },
+                "choice": {
+                  "source": {
+                    "how": "all",
+                    "numPicks": { "pureValue": 1 },
+                    "orPlayerConditions": [ { "context": "you" } ],
+                    "orCardConditions": [],
+                    "orCardDefConditions": []
+                  },
+                  "how": "all",
+                  "numPicks": { "pureValue": 1 }
+                }
+              }
+            },
+            {
+              "excludeCard": {
+                "choice": {
+                  "source": {
+                    "how": "all",
+                    "numPicks": { "pureValue": 1 },
+                    "orPlayerConditions": [],
+                    "orCardConditions": [
+                      {
+                        "contextCondition": "any",
+                        "battleEventContextCondition": "any",
+                        "damageEventContextCondition": "any",
+                        "zoneCondition": {
+                          "value": { "pureValue": [ "opponentHand" ] },
+                          "not": false
+                        },
+                        "ownerCondition": "any"
+                      }
+                    ],
+                    "orCardDefConditions": []
+                  },
+                  "how": "random",
+                  "numPicks": { "pureValue": 1 }
+                },
+                "name": "exclude"
               }
             }
           ]

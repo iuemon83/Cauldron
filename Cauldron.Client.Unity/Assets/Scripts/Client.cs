@@ -43,7 +43,7 @@ public class Client
     public GameId GameId { get; private set; }
     public readonly string PlayerName;
 
-    private PlayerId PlayerId;
+    public PlayerId PlayerId { get; private set; }
     private GameContext currentContext;
 
     private Action<string> LogInfo { get; set; }

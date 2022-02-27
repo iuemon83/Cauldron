@@ -11,18 +11,18 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public PlayerId TargetPlayerId { get; }
 
-        public CardId TargetCardId { get; }
+        public Card TargetCard { get; }
 
         public ModifyCounterNotifyMessage(
             string CounterName,
             int NumCounters,
             PlayerId TargetPlayerId = default,
-            CardId TargetCardId = default)
+            Card TargetCard = default)
         {
             this.CounterName = CounterName;
             this.NumCounters = NumCounters;
             this.TargetPlayerId = TargetPlayerId;
-            this.TargetCardId = TargetCardId;
+            this.TargetCard = TargetCard;
         }
     }
 }

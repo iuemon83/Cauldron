@@ -697,9 +697,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task GoblinsGreed()
+        public async Task Greed()
         {
-            var testCardDef = SampleCards.GoblinsGreed;
+            var testCardDef = SampleCards.Greed;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -721,9 +721,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task GoblinsGreed_ŽèŽD‚©‚çŽÌ‚Ä‚é()
+        public async Task Greed_ŽèŽD‚©‚çŽÌ‚Ä‚é()
         {
-            var testCardDef = SampleCards.GoblinsGreed;
+            var testCardDef = SampleCards.Greed;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });

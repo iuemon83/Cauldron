@@ -10,6 +10,7 @@ namespace Cauldron.Shared.MessagePackObjects
             ZoneName.Cemetery,
             ZoneName.CardPool,
             ZoneName.Excluded,
+            ZoneName.Temporary,
         };
 
         public static bool IsPublic(this Zone zoneMessage) => PublicZoneNames.Contains(zoneMessage.ZoneName);

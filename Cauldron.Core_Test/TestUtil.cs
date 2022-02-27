@@ -45,7 +45,7 @@ namespace Cauldron.Core_Test
                 );
 
         public static GameEventListener GameEventListener(
-            Action<PlayerId, GameContext> OnStartTurn = null,
+            Action<PlayerId, GameContext, StartTurnNotifyMessage> OnStartTurn = null,
             Action<PlayerId, GameContext, PlayCardNotifyMessage> OnPlayCard = null,
             Action<PlayerId, GameContext, AddCardNotifyMessage> OnAddCard = null,
             Action<PlayerId, GameContext, ExcludeCardNotifyMessage> OnExcludeCard = null,

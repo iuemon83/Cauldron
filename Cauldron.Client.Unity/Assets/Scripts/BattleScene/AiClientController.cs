@@ -25,9 +25,9 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
         await this.client.Ready(deck);
     }
 
-    async void ICauldronHubReceiver.OnStartTurn(GameContext gameContext, PlayerId playerId)
+    async void ICauldronHubReceiver.OnStartTurn(GameContext gameContext, StartTurnNotifyMessage message)
     {
-        if (this.client.PlayerId == playerId)
+        if (this.client.PlayerId == message.PlayerId)
         {
             // 自分のターン
             Debug.Log("ターン開始: " + this.playerName);
