@@ -13,9 +13,14 @@ namespace Cauldron.Shared.MessagePackObjects
         public static async ValueTask<CardDef[]> ListMatchedCardDefs(this CardDefCondition _this,
             Card effectOwnerCard, EffectEventArgs effectEventArgs, CardRepository cardRepository)
         {
-            async ValueTask<IEnumerable<CardDef>> GetMatchedFromPool()
+            async ValueTask<IEnumerable<CardDef>> GetMatchedList(IEnumerable<CardDef>? list)
             {
-                var carddefAndIsMatchTasks = cardRepository.CardPool
+                if (list == null)
+                {
+                    return Enumerable.Empty<CardDef>();
+                }
+
+                var carddefAndIsMatchTasks = list
                     .Select(async cdef => (
                         Carddef: cdef,
                         IsMatch: await _this.IsMatch(cdef, effectOwnerCard, effectEventArgs)));
@@ -30,13 +35,13 @@ namespace Cauldron.Shared.MessagePackObjects
             var carddefsTasks = _this.OutZoneCondition.Value
                 .Select(async zoneType => zoneType switch
                 {
-                    OutZonePrettyName.CardPool => await GetMatchedFromPool(),
-                    OutZonePrettyName.YouExcluded =>
-                        effectEventArgs.GameMaster.Get(effectOwnerCard.OwnerId)?.Excludes ?? Enumerable.Empty<CardDef>(),
-                    OutZonePrettyName.OpponentExcluded =>
-                        effectEventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Excludes,
-                    OutZonePrettyName.OwnerExcluded =>
-                        effectEventArgs.GameMaster.Get(effectOwnerCard.OwnerId)?.Excludes ?? Enumerable.Empty<CardDef>(),
+                    OutZonePrettyName.CardPool => await GetMatchedList(cardRepository.CardPool),
+                    OutZonePrettyName.YouExcluded => await GetMatchedList(
+                        effectEventArgs.GameMaster.Get(effectOwnerCard.OwnerId)?.Excludes),
+                    OutZonePrettyName.OpponentExcluded => await GetMatchedList(
+                        effectEventArgs.GameMaster.GetOpponent(effectOwnerCard.OwnerId).Excludes),
+                    OutZonePrettyName.OwnerExcluded => await GetMatchedList(
+                        effectEventArgs.GameMaster.Get(effectOwnerCard.OwnerId)?.Excludes),
                     _ => Array.Empty<CardDef>(),
                 });
 
