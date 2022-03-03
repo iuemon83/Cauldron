@@ -343,16 +343,6 @@ public class BattleSceneController : MonoBehaviour
         dialog.transform.SetParent(this.canvas.transform, false);
     }
 
-    private void ToggleActionLogView()
-    {
-        this.actionLogViewController.ToggleDisplay();
-    }
-
-    public void OnActionLogViewButtonClick()
-    {
-        this.ToggleActionLogView();
-    }
-
     private async UniTask AddActionLog(ActionLog actionLog)
     {
         await this.actionLogViewController.AddLog(actionLog);

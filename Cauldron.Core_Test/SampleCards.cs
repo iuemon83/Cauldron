@@ -158,128 +158,6 @@ namespace Cauldron.Core_Test
                         })
                 });
 
-        public static CardDef MagicShieldGoblin
-            => SampleCards.Creature(2, "魔法の盾持ちゴブリン",
-                1, 2, abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
-                effects: new[] {
-                    new CardEffect(
-                        new EffectConditionWrap(ByNotPlay: new(
-                            ZonePrettyName.YouField,
-                            new EffectWhen(new EffectTiming(
-                                AttackAfter: new(
-                                    GuardCardCondition: new(
-                                        ContextCondition: CardCondition.ContextConditionValue.This
-                                    )))))),
-                        new[]
-                        {
-                            new EffectAction(
-                                MoveCard: new(
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition(
-                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Attack,
-                                                    ZoneCondition: new(
-                                                        new ZoneValue(new[]{
-                                                            ZonePrettyName.OpponentField,
-                                                            ZonePrettyName.YouField,
-                                                        }))
-                                                )
-                                            })),
-                                    ZonePrettyName.OwnerHand))
-                        })
-                });
-
-        public static CardDef SuperMagicShieldGoblin
-            => SampleCards.Creature(2, "強魔法の盾持ちゴブリン",
-                1, 2, abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードが攻撃されたとき、攻撃したカードを相手のデッキの一番上に移動する。",
-                effects: new[] {
-                    new CardEffect(
-                        new EffectConditionWrap(ByNotPlay: new(
-                            ZonePrettyName.YouField,
-                            new EffectWhen(new EffectTiming(
-                                AttackAfter: new(
-                                    GuardCardCondition: new(
-                                        ContextCondition: CardCondition.ContextConditionValue.This
-                                    )))))),
-                        new[]
-                        {
-                            new EffectAction(
-                                MoveCard: new(
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition(
-                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Attack,
-                                                    ZoneCondition: new(
-                                                        new ZoneValue(new[]{
-                                                            ZonePrettyName.OpponentField,
-                                                            ZonePrettyName.YouField,
-                                                        }))
-                                                )
-                                            })),
-                                    ZonePrettyName.OpponentDeck,
-                                    new InsertCardPosition(
-                                        InsertCardPosition.PositionTypeValue.Top,
-                                        1)))
-                        })
-                });
-
-        public static CardDef DDShieldGoblin
-            => SampleCards.Creature(2, "異次元の盾持ちゴブリン",
-                1, 1, abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードの戦闘時に、このカードと戦闘相手を除外する。",
-                effects: new[] {
-                    new CardEffect(
-                        new EffectConditionWrap(ByNotPlay: new(
-                            ZonePrettyName.YouField,
-                            new EffectWhen(new EffectTiming(
-                                AttackBefore: new(
-                                    AttackCardCondition: new(
-                                        CardCondition.ContextConditionValue.This),
-                                    GuardCardCondition: new(
-                                        CardCondition.ContextConditionValue.Others)))))),
-                        new[]{
-                            new EffectAction(
-                                ExcludeCard: new(
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition(
-                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Guard),
-                                                new CardCondition(
-                                                    CardCondition.ContextConditionValue.This)
-                                            })))),
-                        }),
-                    new CardEffect(
-                        new EffectConditionWrap(ByNotPlay: new(
-                            ZonePrettyName.YouField,
-                            new EffectWhen(new EffectTiming(
-                                AttackBefore: new(
-                                    AttackCardCondition: new(
-                                        CardCondition.ContextConditionValue.Others),
-                                    GuardCardCondition: new(
-                                        CardCondition.ContextConditionValue.This)))))),
-                        new[]{
-                            new EffectAction(
-                                ExcludeCard: new(
-                                    new Choice(
-                                        new ChoiceSource(
-                                            orCardConditions: new[]
-                                            {
-                                                new CardCondition(
-                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Attack),
-                                                new CardCondition(
-                                                    CardCondition.ContextConditionValue.This)
-                                            })))),
-                        })
-                });
-
         public static CardDef DeadlyGoblin
             => SampleCards.Creature(3, "暗殺ゴブリン", 1, 1, flavorText: "暗殺者",
                 abilities: new[] { CreatureAbility.Stealth, CreatureAbility.Deadly });
@@ -327,7 +205,7 @@ namespace Cauldron.Core_Test
         public static CardDef MagicBook
             => SampleCards.Creature(1, "魔法の本",
                 1, 1,
-                effectText: "このカードが場に出たとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
+                effectText: "このカードをプレイしたとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -393,7 +271,7 @@ namespace Cauldron.Core_Test
         public static CardDef GoblinsPet
             => SampleCards.Creature(2, "ゴブリンのペット",
                 2, 6, abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードが場に出たとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
+                effectText: "このカードをプレイしたとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -422,7 +300,7 @@ namespace Cauldron.Core_Test
         public static CardDef MindController
             => SampleCards.Creature(3, "催眠術師",
                 3, 3,
-                effectText: "このカードが場に出たとき、敵のフィールドにクリーチャーが4体以上いるなら、ランダムに1体を選択し、それをあなたの場に移動する。",
+                effectText: "このカードをプレイしたとき、敵のフィールドにクリーチャーが4体以上いるなら、ランダムに1体を選択し、それをあなたの場に移動する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -478,7 +356,7 @@ namespace Cauldron.Core_Test
         public static CardDef NinjaGoblin
             => SampleCards.Creature(3, "分身ゴブリン",
                 1, 2,
-                effectText: "このカードが場に出たとき、「分身ゴブリン」一体を場に出す。",
+                effectText: "このカードをプレイしたとき、「分身ゴブリン」一体を場に出す。",
                 effects: new[] {
                     new CardEffect(
                         new EffectConditionWrap(
@@ -503,7 +381,7 @@ namespace Cauldron.Core_Test
         public static CardDef SuperNinjaGoblin
             => SampleCards.Creature(3, "多重分身ゴブリン",
                 1, 1,
-                effectText: "このカードが場に出たとき、「多重分身ゴブリン」2体を場に出す。",
+                effectText: "このカードをプレイしたとき、「多重分身ゴブリン」2体を場に出す。",
                 effects: new[] {
                     new CardEffect(
                         new EffectConditionWrap(
@@ -566,7 +444,7 @@ namespace Cauldron.Core_Test
         public static CardDef ShamanGoblin
             => SampleCards.Creature(3, "呪術師ゴブリン",
                 1, 1,
-                effectText: "このカードが場に出たとき、相手の場にあるランダムなクリーチャーカード1枚を破壊する。",
+                effectText: "このカードをプレイしたとき、相手の場にあるランダムなクリーチャーカード1枚を破壊する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -593,10 +471,10 @@ namespace Cauldron.Core_Test
                     )
                 });
 
-        public static CardDef HealGoblin
-            => SampleCards.Creature(3, "優しいゴブリン",
+        public static CardDef HealerGoblin
+            => SampleCards.Creature(3, "ゴブリンの衛生兵",
                 1, 2,
-                effectText: "このカードが場に出たとき、あなたのHPを2回復する。",
+                effectText: "このカードをプレイしたとき、あなたのHPを2回復する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -701,8 +579,8 @@ namespace Cauldron.Core_Test
         public static CardDef MadScientist
             => SampleCards.Creature(4, "マッドサイエンティスト",
                 3, 3,
-                effectText: "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。" +
-                "その後、破壊したカードのコピーをもとの場に出す。",
+                effectText: "このカードをプレイしたとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。" +
+                    "その後、破壊したカードのコピーをもとの場に出す。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -890,7 +768,8 @@ namespace Cauldron.Core_Test
         public static CardDef MagicDragon
             => SampleCards.Creature(5, "マジックドラゴン",
                 4, 4,
-                effectText: "このカードが場に出たとき、あなたはカードを1枚ドローする。このカードが場にある限り、あなたがプレイした魔法カードによるダメージを+1する。",
+                effectText: "このカードをプレイしたとき、あなたはカードを1枚ドローする。" +
+                    "このカードが場にある限り、あなたがプレイした魔法カードによるダメージを+1する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -925,7 +804,7 @@ namespace Cauldron.Core_Test
         public static CardDef GiantGoblin
             => SampleCards.Creature(5, "ゴブリンの巨人",
                 3, 7, abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードが場に出たとき、自分の場にある他のクリチャーカードに3ダメージを与える。",
+                effectText: "このカードをプレイしたとき、自分の場にある他のクリチャーカードに3ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -954,7 +833,7 @@ namespace Cauldron.Core_Test
         public static CardDef LeaderGoblin
             => SampleCards.Creature(5, "ゴブリンリーダー",
                 1, 5,
-                effectText: "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのゴブリンクリーチャーのパワーを1増加する。",
+                effectText: "このカードをプレイしたとき、または自分のターン開始時に自分の場にあるほかのゴブリンクリーチャーのパワーを1増加する。",
                 effects: new[]
                 {
                     // プレイ時：自分のクリーチャーすべてを+1/+0 する。
@@ -1110,7 +989,7 @@ namespace Cauldron.Core_Test
         public static CardDef TyrantGoblin
             => SampleCards.Creature(6, "暴君ゴブリン",
                 6, 6,
-                effectText: "このカードが場に出たとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。",
+                effectText: "このカードをプレイしたとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。",
                 effects: new[]
                 {
                     // 手札をすべて捨てて、捨てた枚数パワーアップ
@@ -1161,8 +1040,8 @@ namespace Cauldron.Core_Test
                         })
                 });
 
-        public static CardDef DoctorBomb
-            => SampleCards.Creature(1, "ドクターボム",
+        public static CardDef Bomb
+            => SampleCards.Creature(1, "ボム",
                 1, 1, isToken: true,
                 effectText: "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーにランダムに1~4ダメージを与える。",
                 effects: new[]
@@ -1201,10 +1080,10 @@ namespace Cauldron.Core_Test
                         })
                 });
 
-        public static CardDef Doctor
-            => SampleCards.Creature(7, "ドクター",
+        public static CardDef Bomber
+            => SampleCards.Creature(7, "ボマー",
                 7, 7,
-                effectText: "このカードが場に出たとき、「ドクターボム」2枚をあなたの場に追加する。",
+                effectText: "このカードをプレイしたとき、「ボム」2枚をあなたの場に追加する。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -1221,7 +1100,7 @@ namespace Cauldron.Core_Test
                                                     OutZoneCondition: new(new[]{ OutZonePrettyName.CardPool }),
                                                     CardSetCondition: new(CardSetCondition.TypeValue.This),
                                                     NameCondition: new(
-                                                        new TextValue(DoctorBomb.Name),
+                                                        new TextValue(Bomb.Name),
                                                         TextCompare.CompareValue.Equality)
                                                 )
                                             })),
@@ -1932,12 +1811,18 @@ namespace Cauldron.Core_Test
         public static CardDef DDVisitor
             => SampleCards.Creature(1, "異次元からの来訪者",
                 1, 1,
-                effectText: "このカードが場に出たとき、このカードを+X/+0 する。X=すでに除外されている自分のカードの数",
+                effectText: "このカードを場に出したとき、このカードを+X/+0 する。X=すでに除外されている自分のカードの数",
                 effects: new[]
                 {
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByPlay: new EffectConditionByPlaying()),
+                        new EffectConditionWrap(ByNotPlay: new (
+                            Zone: ZonePrettyName.YouField,
+                            When: new(new EffectTiming(MoveCard: new(
+                                new[]{
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                },
+                                To: ZonePrettyName.YouField
+                                ))))),
                         new[]
                         {
                             new EffectAction(
@@ -2146,6 +2031,57 @@ namespace Cauldron.Core_Test
                                         new NumValue(1)),
                                     "exclude")),
                         }),
+                });
+
+        public static CardDef DDFighter
+            => SampleCards.Creature(2, "異次元の戦士",
+                1, 1, abilities: new[] { CreatureAbility.Cover },
+                effectText: "このカードの戦闘時に、このカードと戦闘相手を除外する。",
+                effects: new[] {
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                AttackBefore: new(
+                                    AttackCardCondition: new(
+                                        CardCondition.ContextConditionValue.This),
+                                    GuardCardCondition: new(
+                                        CardCondition.ContextConditionValue.Others)))))),
+                        new[]{
+                            new EffectAction(
+                                ExcludeCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Guard),
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.This)
+                                            })))),
+                        }),
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                AttackBefore: new(
+                                    AttackCardCondition: new(
+                                        CardCondition.ContextConditionValue.Others),
+                                    GuardCardCondition: new(
+                                        CardCondition.ContextConditionValue.This)))))),
+                        new[]{
+                            new EffectAction(
+                                ExcludeCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Attack),
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.This)
+                                            })))),
+                        })
                 });
 
         public static CardDef Parasite
@@ -3298,7 +3234,7 @@ namespace Cauldron.Core_Test
         public static CardDef BeginnerSorcerer
             => SampleCards.Creature(2, "初級魔導士",
                 1, 2,
-                effectText: "このカードが場に出たとき、あなたの場の「:魔導」を持つカード1枚を選択する。そのカードに「魔導」カウンターを2つ置く。",
+                effectText: "このカードをプレイしたとき、あなたの場の「:魔導」を持つカード1枚を選択する。そのカードに「魔導」カウンターを2つ置く。",
                 effects: new[]
                 {
                     new CardEffect(
@@ -3333,11 +3269,11 @@ namespace Cauldron.Core_Test
         public static CardDef GreatSorcerer
             => SampleCards.Creature(9, "偉大な魔導士",
                 5, 5, annotations: new[] { ":魔導" },
-                effectText: "あなたが魔法をプレイするたびに、このカードに「魔導」カウンターを1つ置く。" +
-                "このカードに「魔導」カウンターが1つ置かれるたびに、このカードのコスト-1。" +
-                "このカードをプレイしたとき、あなたの手札をすべて除外する。" +
-                "その後、あなたは手札を5枚引く。" +
-                "その後、あなたの手札「:魔導」カードすべてに「魔導」カウンターを5つ置く。",
+                effectText: "あなたが魔法をプレイするたびに、手札のこのカードに「魔導」カウンターを1つ置く。" +
+                    "このカードに「魔導」カウンターが1つ置かれるたびに、このカードのコスト-1。" +
+                    "このカードをプレイしたとき、あなたの手札をすべて除外する。" +
+                    "その後、あなたは手札を5枚引く。" +
+                    "その後、あなたの手札にある「:魔導」カードすべてに「魔導」カウンターを5つ置く。",
                 effects: new[]
                 {
                     // 魔法をプレイするたび、カウンターを置く。
@@ -3396,7 +3332,7 @@ namespace Cauldron.Core_Test
                                         new NumValue(1))))
                         }),
 
-                    // カードが場に出たとき
+                    // カードをプレイしたとき
                     new CardEffect(
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
@@ -3440,8 +3376,8 @@ namespace Cauldron.Core_Test
 
         public static CardDef UltraMagic
             => SampleCards.Sorcery(3, "大魔法",
-                effectText: "このカードが場に出たとき、あなたの場からすべての「魔導」カウンターを取り除く。" +
-                "その後、相手にXのダメージを与える。X=取り除いた「魔導」カウンターの数+1",
+                effectText: "このカードをプレイしたとき、あなたの場からすべての「魔導」カウンターを取り除く。" +
+                    "その後、相手にXのダメージを与える。X=取り除いた「魔導」カウンターの数+1",
                 effects: new[]
                 {
                     new CardEffect(
@@ -3484,6 +3420,77 @@ namespace Cauldron.Core_Test
                                             new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                         }))))
                         }),
+                });
+
+        public static CardDef MagicFighter
+            => SampleCards.Creature(3, "魔導の戦士",
+                1, 2, abilities: new[] { CreatureAbility.Cover },
+                effectText: "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
+                effects: new[] {
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                AttackAfter: new(
+                                    GuardCardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This
+                                    )))))),
+                        new[]
+                        {
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Attack,
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]{
+                                                            ZonePrettyName.OpponentField,
+                                                            ZonePrettyName.YouField,
+                                                        }))
+                                                )
+                                            })),
+                                    ZonePrettyName.OwnerHand))
+                        })
+                });
+
+        public static CardDef SuperMagicFighter
+            => SampleCards.Creature(4, "魔導の戦士長",
+                1, 2, abilities: new[] { CreatureAbility.Cover },
+                effectText: "このカードが攻撃されたとき、攻撃したカードを相手のデッキの一番上に移動する。",
+                effects: new[] {
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                AttackAfter: new(
+                                    GuardCardCondition: new(
+                                        ContextCondition: CardCondition.ContextConditionValue.This
+                                    )))))),
+                        new[]
+                        {
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    BattleEventContextCondition: CardCondition.BattleEventContextConditionValue.Attack,
+                                                    ZoneCondition: new(
+                                                        new ZoneValue(new[]{
+                                                            ZonePrettyName.OpponentField,
+                                                            ZonePrettyName.YouField,
+                                                        }))
+                                                )
+                                            })),
+                                    ZonePrettyName.OpponentDeck,
+                                    new InsertCardPosition(
+                                        InsertCardPosition.PositionTypeValue.Top,
+                                        1)))
+                        })
                 });
 
         public static CardDef DashGoblin

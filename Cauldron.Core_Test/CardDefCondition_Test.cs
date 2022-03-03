@@ -48,7 +48,7 @@ namespace Cauldron.Core_Test
         public async Task カードタイプ_true()
         {
             var testCondition = new CardDefCondition(
-                OutZoneCondition: new(new OutZonePrettyName[0]),
+                OutZoneCondition: new(Array.Empty<OutZonePrettyName>()),
                 TypeCondition: new(new[] { CardType.Creature })
                 );
 
@@ -67,7 +67,7 @@ namespace Cauldron.Core_Test
         public async Task カードタイプ_false()
         {
             var testCondition = new CardDefCondition(
-                OutZoneCondition: new(new OutZonePrettyName[0]),
+                OutZoneCondition: new(Array.Empty<OutZonePrettyName>()),
                 TypeCondition: new(new[] { CardType.Creature })
                 );
 

@@ -233,258 +233,6 @@
       ]
     },
     {
-      "cost": 2,
-      "name": "魔法の盾持ちゴブリン",
-      "flavorText": "",
-      "annotations": [],
-      "isToken": false,
-      "type": "creature",
-      "power": 1,
-      "toughness": 2,
-      "abilities": [ "cover" ],
-      "effectText": "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
-      "effects": [
-        {
-          "condition": {
-            "byNotPlay": {
-              "zone": "youField",
-              "when": {
-                "timing": {
-                  "attackAfter": {
-                    "guardCardCondition": {
-                      "contextCondition": "this",
-                      "battleEventContextCondition": "any",
-                      "damageEventContextCondition": "any",
-                      "ownerCondition": "any"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "actions": [
-            {
-              "moveCard": {
-                "cardsChoice": {
-                  "source": {
-                    "how": "all",
-                    "numPicks": { "pureValue": 1 },
-                    "orPlayerConditions": [],
-                    "orCardConditions": [
-                      {
-                        "contextCondition": "any",
-                        "battleEventContextCondition": "attack",
-                        "damageEventContextCondition": "any",
-                        "zoneCondition": {
-                          "value": { "pureValue": [ "opponentField", "youField" ] },
-                          "not": false
-                        },
-                        "ownerCondition": "any"
-                      }
-                    ],
-                    "orCardDefConditions": []
-                  },
-                  "how": "all",
-                  "numPicks": { "pureValue": 1 }
-                },
-                "to": "ownerHand"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "cost": 2,
-      "name": "強魔法の盾持ちゴブリン",
-      "flavorText": "",
-      "annotations": [],
-      "isToken": false,
-      "type": "creature",
-      "power": 1,
-      "toughness": 2,
-      "abilities": [ "cover" ],
-      "effectText": "このカードが攻撃されたとき、攻撃したカードを相手のデッキの一番上に移動する。",
-      "effects": [
-        {
-          "condition": {
-            "byNotPlay": {
-              "zone": "youField",
-              "when": {
-                "timing": {
-                  "attackAfter": {
-                    "guardCardCondition": {
-                      "contextCondition": "this",
-                      "battleEventContextCondition": "any",
-                      "damageEventContextCondition": "any",
-                      "ownerCondition": "any"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "actions": [
-            {
-              "moveCard": {
-                "cardsChoice": {
-                  "source": {
-                    "how": "all",
-                    "numPicks": { "pureValue": 1 },
-                    "orPlayerConditions": [],
-                    "orCardConditions": [
-                      {
-                        "contextCondition": "any",
-                        "battleEventContextCondition": "attack",
-                        "damageEventContextCondition": "any",
-                        "zoneCondition": {
-                          "value": { "pureValue": [ "opponentField", "youField" ] },
-                          "not": false
-                        },
-                        "ownerCondition": "any"
-                      }
-                    ],
-                    "orCardDefConditions": []
-                  },
-                  "how": "all",
-                  "numPicks": { "pureValue": 1 }
-                },
-                "to": "opponentDeck",
-                "insertCardPosition": {
-                  "positionType": "top",
-                  "positionIndex": 1
-                }
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "cost": 2,
-      "name": "異次元の盾持ちゴブリン",
-      "flavorText": "",
-      "annotations": [],
-      "isToken": false,
-      "type": "creature",
-      "power": 1,
-      "toughness": 1,
-      "abilities": [ "cover" ],
-      "effectText": "このカードの戦闘時に、このカードと戦闘相手を除外する。",
-      "effects": [
-        {
-          "condition": {
-            "byNotPlay": {
-              "zone": "youField",
-              "when": {
-                "timing": {
-                  "attackBefore": {
-                    "attackCardCondition": {
-                      "contextCondition": "this",
-                      "battleEventContextCondition": "any",
-                      "damageEventContextCondition": "any",
-                      "ownerCondition": "any"
-                    },
-                    "guardCardCondition": {
-                      "contextCondition": "others",
-                      "battleEventContextCondition": "any",
-                      "damageEventContextCondition": "any",
-                      "ownerCondition": "any"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "actions": [
-            {
-              "excludeCard": {
-                "choice": {
-                  "source": {
-                    "how": "all",
-                    "numPicks": { "pureValue": 1 },
-                    "orPlayerConditions": [],
-                    "orCardConditions": [
-                      {
-                        "contextCondition": "any",
-                        "battleEventContextCondition": "guard",
-                        "damageEventContextCondition": "any",
-                        "ownerCondition": "any"
-                      },
-                      {
-                        "contextCondition": "this",
-                        "battleEventContextCondition": "any",
-                        "damageEventContextCondition": "any",
-                        "ownerCondition": "any"
-                      }
-                    ],
-                    "orCardDefConditions": []
-                  },
-                  "how": "all",
-                  "numPicks": { "pureValue": 1 }
-                }
-              }
-            }
-          ]
-        },
-        {
-          "condition": {
-            "byNotPlay": {
-              "zone": "youField",
-              "when": {
-                "timing": {
-                  "attackBefore": {
-                    "attackCardCondition": {
-                      "contextCondition": "others",
-                      "battleEventContextCondition": "any",
-                      "damageEventContextCondition": "any",
-                      "ownerCondition": "any"
-                    },
-                    "guardCardCondition": {
-                      "contextCondition": "this",
-                      "battleEventContextCondition": "any",
-                      "damageEventContextCondition": "any",
-                      "ownerCondition": "any"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "actions": [
-            {
-              "excludeCard": {
-                "choice": {
-                  "source": {
-                    "how": "all",
-                    "numPicks": { "pureValue": 1 },
-                    "orPlayerConditions": [],
-                    "orCardConditions": [
-                      {
-                        "contextCondition": "any",
-                        "battleEventContextCondition": "attack",
-                        "damageEventContextCondition": "any",
-                        "ownerCondition": "any"
-                      },
-                      {
-                        "contextCondition": "this",
-                        "battleEventContextCondition": "any",
-                        "damageEventContextCondition": "any",
-                        "ownerCondition": "any"
-                      }
-                    ],
-                    "orCardDefConditions": []
-                  },
-                  "how": "all",
-                  "numPicks": { "pureValue": 1 }
-                }
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
       "cost": 3,
       "name": "暗殺ゴブリン",
       "flavorText": "暗殺者",
@@ -573,7 +321,7 @@
       "power": 1,
       "toughness": 1,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
+      "effectText": "このカードをプレイしたとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -692,7 +440,7 @@
       "power": 2,
       "toughness": 6,
       "abilities": [ "cover" ],
-      "effectText": "このカードが場に出たとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
+      "effectText": "このカードをプレイしたとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -742,7 +490,7 @@
       "power": 3,
       "toughness": 3,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、敵のフィールドにクリーチャーが4体以上いるなら、ランダムに1体を選択し、それをあなたの場に移動する。",
+      "effectText": "このカードをプレイしたとき、敵のフィールドにクリーチャーが4体以上いるなら、ランダムに1体を選択し、それをあなたの場に移動する。",
       "effects": [
         {
           "condition": {
@@ -854,7 +602,7 @@
       "power": 1,
       "toughness": 2,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、「分身ゴブリン」一体を場に出す。",
+      "effectText": "このカードをプレイしたとき、「分身ゴブリン」一体を場に出す。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -897,7 +645,7 @@
       "power": 1,
       "toughness": 1,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、「多重分身ゴブリン」2体を場に出す。",
+      "effectText": "このカードをプレイしたとき、「多重分身ゴブリン」2体を場に出す。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -996,7 +744,7 @@
       "power": 1,
       "toughness": 1,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、相手の場にあるランダムなクリーチャーカード1枚を破壊する。",
+      "effectText": "このカードをプレイしたとき、相手の場にあるランダムなクリーチャーカード1枚を破壊する。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -1037,7 +785,7 @@
     },
     {
       "cost": 3,
-      "name": "優しいゴブリン",
+      "name": "ゴブリンの衛生兵",
       "flavorText": "",
       "annotations": [],
       "isToken": false,
@@ -1045,7 +793,7 @@
       "power": 1,
       "toughness": 2,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、あなたのHPを2回復する。",
+      "effectText": "このカードをプレイしたとき、あなたのHPを2回復する。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -1204,7 +952,7 @@
       "power": 3,
       "toughness": 3,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーをもとの場に出す。",
+      "effectText": "このカードをプレイしたとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。その後、破壊したカードのコピーをもとの場に出す。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -1483,7 +1231,7 @@
       "power": 4,
       "toughness": 4,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、あなたはカードを1枚ドローする。このカードが場にある限り、あなたがプレイした魔法カードによるダメージを\u002B1する。",
+      "effectText": "このカードをプレイしたとき、あなたはカードを1枚ドローする。このカードが場にある限り、あなたがプレイした魔法カードによるダメージを\u002B1する。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -1543,7 +1291,7 @@
       "power": 3,
       "toughness": 7,
       "abilities": [ "cover" ],
-      "effectText": "このカードが場に出たとき、自分の場にある他のクリチャーカードに3ダメージを与える。",
+      "effectText": "このカードをプレイしたとき、自分の場にある他のクリチャーカードに3ダメージを与える。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -1593,7 +1341,7 @@
       "power": 1,
       "toughness": 5,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、または自分のターン開始時に自分の場にあるほかのゴブリンクリーチャーのパワーを1増加する。",
+      "effectText": "このカードをプレイしたとき、または自分のターン開始時に自分の場にあるほかのゴブリンクリーチャーのパワーを1増加する。",
       "effects": [
         {
           "condition": {
@@ -1862,7 +1610,7 @@
       "power": 6,
       "toughness": 6,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。",
+      "effectText": "このカードをプレイしたとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -1964,7 +1712,7 @@
     },
     {
       "cost": 1,
-      "name": "ドクターボム",
+      "name": "ボム",
       "flavorText": "",
       "annotations": [],
       "isToken": true,
@@ -2039,7 +1787,7 @@
     },
     {
       "cost": 7,
-      "name": "ドクター",
+      "name": "ボマー",
       "flavorText": "",
       "annotations": [],
       "isToken": false,
@@ -2047,7 +1795,7 @@
       "power": 7,
       "toughness": 7,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、「ドクターボム」2枚をあなたの場に追加する。",
+      "effectText": "このカードをプレイしたとき、「ボム」2枚をあなたの場に追加する。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -2068,7 +1816,7 @@
                         },
                         "cardSetCondition": { "type": "this" },
                         "nameCondition": {
-                          "value": { "pureValue": "ドクターボム" },
+                          "value": { "pureValue": "ボム" },
                           "compare": "equality"
                         }
                       }
@@ -3241,10 +2989,30 @@
       "power": 1,
       "toughness": 1,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、このカードを\u002BX/\u002B0 する。X=すでに除外されている自分のカードの数",
+      "effectText": "このカードを場に出したとき、このカードを\u002BX/\u002B0 する。X=すでに除外されている自分のカードの数",
       "effects": [
         {
-          "condition": { "byPlay": { "zone": "none" } },
+          "condition": {
+            "byNotPlay": {
+              "zone": "youField",
+              "when": {
+                "timing": {
+                  "moveCard": {
+                    "orCardConditions": [
+                      {
+                        "contextCondition": "this",
+                        "battleEventContextCondition": "any",
+                        "damageEventContextCondition": "any",
+                        "ownerCondition": "any"
+                      }
+                    ],
+                    "from": "none",
+                    "to": "youField"
+                  }
+                }
+              }
+            }
+          },
           "actions": [
             {
               "modifyCard": {
@@ -3578,6 +3346,130 @@
                   "numPicks": { "pureValue": 1 }
                 },
                 "name": "exclude"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cost": 2,
+      "name": "異次元の戦士",
+      "flavorText": "",
+      "annotations": [],
+      "isToken": false,
+      "type": "creature",
+      "power": 1,
+      "toughness": 1,
+      "abilities": [ "cover" ],
+      "effectText": "このカードの戦闘時に、このカードと戦闘相手を除外する。",
+      "effects": [
+        {
+          "condition": {
+            "byNotPlay": {
+              "zone": "youField",
+              "when": {
+                "timing": {
+                  "attackBefore": {
+                    "attackCardCondition": {
+                      "contextCondition": "this",
+                      "battleEventContextCondition": "any",
+                      "damageEventContextCondition": "any",
+                      "ownerCondition": "any"
+                    },
+                    "guardCardCondition": {
+                      "contextCondition": "others",
+                      "battleEventContextCondition": "any",
+                      "damageEventContextCondition": "any",
+                      "ownerCondition": "any"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "actions": [
+            {
+              "excludeCard": {
+                "choice": {
+                  "source": {
+                    "how": "all",
+                    "numPicks": { "pureValue": 1 },
+                    "orPlayerConditions": [],
+                    "orCardConditions": [
+                      {
+                        "contextCondition": "any",
+                        "battleEventContextCondition": "guard",
+                        "damageEventContextCondition": "any",
+                        "ownerCondition": "any"
+                      },
+                      {
+                        "contextCondition": "this",
+                        "battleEventContextCondition": "any",
+                        "damageEventContextCondition": "any",
+                        "ownerCondition": "any"
+                      }
+                    ],
+                    "orCardDefConditions": []
+                  },
+                  "how": "all",
+                  "numPicks": { "pureValue": 1 }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "condition": {
+            "byNotPlay": {
+              "zone": "youField",
+              "when": {
+                "timing": {
+                  "attackBefore": {
+                    "attackCardCondition": {
+                      "contextCondition": "others",
+                      "battleEventContextCondition": "any",
+                      "damageEventContextCondition": "any",
+                      "ownerCondition": "any"
+                    },
+                    "guardCardCondition": {
+                      "contextCondition": "this",
+                      "battleEventContextCondition": "any",
+                      "damageEventContextCondition": "any",
+                      "ownerCondition": "any"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "actions": [
+            {
+              "excludeCard": {
+                "choice": {
+                  "source": {
+                    "how": "all",
+                    "numPicks": { "pureValue": 1 },
+                    "orPlayerConditions": [],
+                    "orCardConditions": [
+                      {
+                        "contextCondition": "any",
+                        "battleEventContextCondition": "attack",
+                        "damageEventContextCondition": "any",
+                        "ownerCondition": "any"
+                      },
+                      {
+                        "contextCondition": "this",
+                        "battleEventContextCondition": "any",
+                        "damageEventContextCondition": "any",
+                        "ownerCondition": "any"
+                      }
+                    ],
+                    "orCardDefConditions": []
+                  },
+                  "how": "all",
+                  "numPicks": { "pureValue": 1 }
+                }
               }
             }
           ]
@@ -5580,7 +5472,7 @@
       "power": 1,
       "toughness": 2,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、あなたの場の「:魔導」を持つカード1枚を選択する。そのカードに「魔導」カウンターを2つ置く。",
+      "effectText": "このカードをプレイしたとき、あなたの場の「:魔導」を持つカード1枚を選択する。そのカードに「魔導」カウンターを2つ置く。",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -5634,7 +5526,7 @@
       "power": 5,
       "toughness": 5,
       "abilities": [],
-      "effectText": "あなたが魔法をプレイするたびに、このカードに「魔導」カウンターを1つ置く。このカードに「魔導」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードをプレイしたとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札「:魔導」カードすべてに「魔導」カウンターを5つ置く。",
+      "effectText": "あなたが魔法をプレイするたびに、手札のこのカードに「魔導」カウンターを1つ置く。このカードに「魔導」カウンターが1つ置かれるたびに、このカードのコスト-1。このカードをプレイしたとき、あなたの手札をすべて除外する。その後、あなたは手札を5枚引く。その後、あなたの手札にある「:魔導」カードすべてに「魔導」カウンターを5つ置く。",
       "effects": [
         {
           "condition": {
@@ -5825,7 +5717,7 @@
       "power": 0,
       "toughness": 0,
       "abilities": [],
-      "effectText": "このカードが場に出たとき、あなたの場からすべての「魔導」カウンターを取り除く。その後、相手にXのダメージを与える。X=取り除いた「魔導」カウンターの数\u002B1",
+      "effectText": "このカードをプレイしたとき、あなたの場からすべての「魔導」カウンターを取り除く。その後、相手にXのダメージを与える。X=取り除いた「魔導」カウンターの数\u002B1",
       "effects": [
         {
           "condition": { "byPlay": { "zone": "none" } },
@@ -5890,6 +5782,134 @@
                   },
                   "how": "all",
                   "numPicks": { "pureValue": 1 }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cost": 3,
+      "name": "魔導の戦士",
+      "flavorText": "",
+      "annotations": [],
+      "isToken": false,
+      "type": "creature",
+      "power": 1,
+      "toughness": 2,
+      "abilities": [ "cover" ],
+      "effectText": "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
+      "effects": [
+        {
+          "condition": {
+            "byNotPlay": {
+              "zone": "youField",
+              "when": {
+                "timing": {
+                  "attackAfter": {
+                    "guardCardCondition": {
+                      "contextCondition": "this",
+                      "battleEventContextCondition": "any",
+                      "damageEventContextCondition": "any",
+                      "ownerCondition": "any"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "actions": [
+            {
+              "moveCard": {
+                "cardsChoice": {
+                  "source": {
+                    "how": "all",
+                    "numPicks": { "pureValue": 1 },
+                    "orPlayerConditions": [],
+                    "orCardConditions": [
+                      {
+                        "contextCondition": "any",
+                        "battleEventContextCondition": "attack",
+                        "damageEventContextCondition": "any",
+                        "zoneCondition": {
+                          "value": { "pureValue": [ "opponentField", "youField" ] },
+                          "not": false
+                        },
+                        "ownerCondition": "any"
+                      }
+                    ],
+                    "orCardDefConditions": []
+                  },
+                  "how": "all",
+                  "numPicks": { "pureValue": 1 }
+                },
+                "to": "ownerHand"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cost": 4,
+      "name": "魔導の戦士長",
+      "flavorText": "",
+      "annotations": [],
+      "isToken": false,
+      "type": "creature",
+      "power": 1,
+      "toughness": 2,
+      "abilities": [ "cover" ],
+      "effectText": "このカードが攻撃されたとき、攻撃したカードを相手のデッキの一番上に移動する。",
+      "effects": [
+        {
+          "condition": {
+            "byNotPlay": {
+              "zone": "youField",
+              "when": {
+                "timing": {
+                  "attackAfter": {
+                    "guardCardCondition": {
+                      "contextCondition": "this",
+                      "battleEventContextCondition": "any",
+                      "damageEventContextCondition": "any",
+                      "ownerCondition": "any"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "actions": [
+            {
+              "moveCard": {
+                "cardsChoice": {
+                  "source": {
+                    "how": "all",
+                    "numPicks": { "pureValue": 1 },
+                    "orPlayerConditions": [],
+                    "orCardConditions": [
+                      {
+                        "contextCondition": "any",
+                        "battleEventContextCondition": "attack",
+                        "damageEventContextCondition": "any",
+                        "zoneCondition": {
+                          "value": { "pureValue": [ "opponentField", "youField" ] },
+                          "not": false
+                        },
+                        "ownerCondition": "any"
+                      }
+                    ],
+                    "orCardDefConditions": []
+                  },
+                  "how": "all",
+                  "numPicks": { "pureValue": 1 }
+                },
+                "to": "opponentDeck",
+                "insertCardPosition": {
+                  "positionType": "top",
+                  "positionIndex": 1
                 }
               }
             }

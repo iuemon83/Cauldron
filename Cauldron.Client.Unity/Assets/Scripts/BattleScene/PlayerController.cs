@@ -13,7 +13,9 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private TextMeshProUGUI nameText = default;
     [SerializeField]
-    private TextMeshProUGUI statusText = default;
+    private TextMeshProUGUI hpText = default;
+    [SerializeField]
+    private TextMeshProUGUI mpText = default;
     [SerializeField]
     private TextMeshProUGUI numDecksText = default;
     [SerializeField]
@@ -73,7 +75,8 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     {
         this.PlayerId = publicPlayerInfo.Id;
         this.nameText.text = publicPlayerInfo.Name;
-        this.statusText.text = $"[{publicPlayerInfo.CurrentHp} / {publicPlayerInfo.MaxHp}] [{publicPlayerInfo.CurrentMp} / {publicPlayerInfo.MaxMp}]";
+        this.hpText.text = $"[{publicPlayerInfo.CurrentHp} / {publicPlayerInfo.MaxHp}]";
+        this.mpText.text = $"[{publicPlayerInfo.CurrentMp} / {publicPlayerInfo.MaxMp}]";
         this.numDecksText.text = publicPlayerInfo.DeckCount.ToString();
         this.numCemeteriesText.text = publicPlayerInfo.Cemetery.Length.ToString();
         this.numExcludedsText.text = publicPlayerInfo.Excluded.Length.ToString();
