@@ -90,8 +90,8 @@ public class ActionLogView_ListNodeController : MonoBehaviour, IPointerClickHand
             ?? default;
 
         this.backgroundImage.color = playerId == BattleSceneController.Instance.YouId
-            ? BattleSceneController.YouColor
-            : BattleSceneController.OpponentColor;
+            ? BattleSceneController.Instance.YouColor
+            : BattleSceneController.Instance.OpponentColor;
     }
 
     void IPointerClickHandler.OnPointerClick(PointerEventData eventData)

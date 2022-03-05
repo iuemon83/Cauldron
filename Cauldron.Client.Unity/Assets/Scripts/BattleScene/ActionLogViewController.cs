@@ -1,12 +1,11 @@
 using Cysharp.Threading.Tasks;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ActionLogViewController : MonoBehaviour
 {
-    private static readonly float ShouldScrollToBottomThreshold = 0f;
+    private static readonly float ShouldScrollToBottomThreshold = 0.05f;
 
     [SerializeField]
     private ScrollRect ActionLogList = default;
@@ -14,15 +13,10 @@ public class ActionLogViewController : MonoBehaviour
     private ActionLogView_ListNodeController listNodePrefab = default;
     [SerializeField]
     private CardDetailController cardDetailController = default;
-    [SerializeField]
-    private Transform HiddenContainer = default;
-    [SerializeField]
-    private Transform DisplayContainer = default;
 
     private readonly List<ActionLogView_ListNodeController> nodeList = new List<ActionLogView_ListNodeController>();
 
     private Transform actionLogListContent;
-    private bool isDisplay = false;
 
     public void Start()
     {
@@ -32,20 +26,6 @@ public class ActionLogViewController : MonoBehaviour
     public async UniTask AddLog(ActionLog actionLog)
     {
         await this.AddListNode(actionLog);
-    }
-
-    public void ToggleDisplay()
-    {
-        if (this.isDisplay)
-        {
-            this.transform.SetParent(this.HiddenContainer.transform, false);
-        }
-        else
-        {
-            this.transform.SetParent(this.DisplayContainer.transform, false);
-        }
-
-        this.isDisplay = !this.isDisplay;
     }
 
     public void OnCloseButtonClick()
@@ -68,6 +48,8 @@ public class ActionLogViewController : MonoBehaviour
             );
 
         this.nodeList.Add(controller);
+
+        Debug.Log("actionlogÇÃÉXÉNÉçÅ[Éã="+ this.ActionLogList.verticalNormalizedPosition);
 
         var shouldScrollToBottom = this.ActionLogList.verticalNormalizedPosition < ShouldScrollToBottomThreshold;
 

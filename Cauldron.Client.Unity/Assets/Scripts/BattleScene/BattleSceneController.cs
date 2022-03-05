@@ -14,12 +14,17 @@ using UnityEngine.UI;
 
 public class BattleSceneController : MonoBehaviour
 {
-    public static readonly Color YouColor = new Color(0, 0, 255, 0.5f);
-    public static readonly Color OpponentColor = new Color(255, 0, 0, 0.5f);
-
     public static BattleSceneController Instance;
 
+    public Color YouColor => this.youColor;
+    public Color OpponentColor => this.opponentColor;
+
     public PlayerId YouId => this.youPlayerController.PlayerId;
+
+    [SerializeField]
+    private Color youColor = default;
+    [SerializeField]
+    private Color opponentColor = default;
 
     [SerializeField]
     private HandCardController handCardPrefab = default;
@@ -34,6 +39,11 @@ public class BattleSceneController : MonoBehaviour
     private ChoiceDialogController choiceDialogPrefab = default;
     [SerializeField]
     private ActionLogViewController actionLogViewController = default;
+
+    [SerializeField]
+    private CemeteryCardListViewController youCemeteryCardListViewController = default;
+    [SerializeField]
+    private CemeteryCardListViewController OpponentCemeteryCardListViewController = default;
 
     [SerializeField]
     private GameObject[] youHandSpaces = default;
@@ -118,6 +128,9 @@ public class BattleSceneController : MonoBehaviour
         Instance = this;
 
         var holder = ConnectionHolder.Find();
+
+        this.youCemeteryCardListViewController.InitAsYou();
+        this.OpponentCemeteryCardListViewController.InitAsOpponent();
 
         this.disposableList.AddRange(new[]
         {
@@ -282,7 +295,25 @@ public class BattleSceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// ターン終了ボタンのクイックイベント
+    /// 自分の墓地ビューボタンのクリックイベント
+    /// </summary>
+    public void OnYouCemeteryButtonClick()
+    {
+        this.OpponentCemeteryCardListViewController.Hidden();
+        this.youCemeteryCardListViewController.ToggleDisplay();
+    }
+
+    /// <summary>
+    /// 相手の墓地ビューボタンのクリックイベント
+    /// </summary>
+    public void OnOpponentCemeteryButtonClick()
+    {
+        this.youCemeteryCardListViewController.Hidden();
+        this.OpponentCemeteryCardListViewController.ToggleDisplay();
+    }
+
+    /// <summary>
+    /// ターン終了ボタンのクリックイベント
     /// </summary>
     public async void OnEndTurnButtonClick()
     {
@@ -293,7 +324,7 @@ public class BattleSceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// 降参ボタンのクイックイベント
+    /// 降参ボタンのクリックイベント
     /// </summary>
     public void OnSurrenderButtonClick()
     {
@@ -680,6 +711,18 @@ public class BattleSceneController : MonoBehaviour
                 ? this.youPlayerController
                 : this.opponentPlayerController;
 
+            switch (message.FromZone.ZoneName)
+            {
+                case ZoneName.Cemetery:
+                    {
+                        //TODO 墓地からカードが移動したときに墓地リストから削除する
+                        break;
+                    }
+
+                default:
+                    break;
+            }
+
             switch (message.ToZone.ZoneName)
             {
                 case ZoneName.Cemetery:
@@ -693,6 +736,16 @@ public class BattleSceneController : MonoBehaviour
                         {
                             await handCardController.DestroyEffect();
                         }
+
+                        if (this.YouId == message.ToZone.PlayerId)
+                        {
+                            this.youCemeteryCardListViewController.AddCard(message.Card);
+                        }
+                        else
+                        {
+                            this.OpponentCemeteryCardListViewController.AddCard(message.Card);
+                        }
+
                         break;
                     }
 
