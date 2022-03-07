@@ -41,9 +41,13 @@ public class BattleSceneController : MonoBehaviour
     private ActionLogViewController actionLogViewController = default;
 
     [SerializeField]
-    private CemeteryCardListViewController youCemeteryCardListViewController = default;
+    private ReadonlyCardListViewController youCemeteryCardListViewController = default;
     [SerializeField]
-    private CemeteryCardListViewController OpponentCemeteryCardListViewController = default;
+    private ReadonlyCardListViewController OpponentCemeteryCardListViewController = default;
+    [SerializeField]
+    private ReadonlyCardListViewController YouExcludedCardListViewController = default;
+    [SerializeField]
+    private ReadonlyCardListViewController OpponentExcludedCardListViewController = default;
 
     [SerializeField]
     private GameObject[] youHandSpaces = default;
@@ -129,8 +133,11 @@ public class BattleSceneController : MonoBehaviour
 
         var holder = ConnectionHolder.Find();
 
-        this.youCemeteryCardListViewController.InitAsYou();
-        this.OpponentCemeteryCardListViewController.InitAsOpponent();
+        this.youCemeteryCardListViewController.InitAsYou("Cemetery");
+        this.OpponentCemeteryCardListViewController.InitAsOpponent("Cemetery");
+
+        this.YouExcludedCardListViewController.InitAsYou("Excluded");
+        this.OpponentExcludedCardListViewController.InitAsOpponent("Excluded");
 
         this.disposableList.AddRange(new[]
         {
@@ -300,6 +307,8 @@ public class BattleSceneController : MonoBehaviour
     public void OnYouCemeteryButtonClick()
     {
         this.OpponentCemeteryCardListViewController.Hidden();
+        this.YouExcludedCardListViewController.Hidden();
+        this.OpponentExcludedCardListViewController.Hidden();
         this.youCemeteryCardListViewController.ToggleDisplay();
     }
 
@@ -309,7 +318,31 @@ public class BattleSceneController : MonoBehaviour
     public void OnOpponentCemeteryButtonClick()
     {
         this.youCemeteryCardListViewController.Hidden();
+        this.YouExcludedCardListViewController.Hidden();
+        this.OpponentExcludedCardListViewController.Hidden();
         this.OpponentCemeteryCardListViewController.ToggleDisplay();
+    }
+
+    /// <summary>
+    /// 自分の除外ビューボタンのクリックイベント
+    /// </summary>
+    public void OnYouExcludedButtonClick()
+    {
+        this.youCemeteryCardListViewController.Hidden();
+        this.OpponentCemeteryCardListViewController.Hidden();
+        this.OpponentExcludedCardListViewController.Hidden();
+        this.YouExcludedCardListViewController.ToggleDisplay();
+    }
+
+    /// <summary>
+    /// 相手の除外ビューボタンのクリックイベント
+    /// </summary>
+    public void OnOpponentExcludedButtonClick()
+    {
+        this.youCemeteryCardListViewController.Hidden();
+        this.OpponentCemeteryCardListViewController.Hidden();
+        this.YouExcludedCardListViewController.Hidden();
+        this.OpponentExcludedCardListViewController.ToggleDisplay();
     }
 
     /// <summary>
@@ -689,6 +722,15 @@ public class BattleSceneController : MonoBehaviour
             else if (this.handCardObjectsByCardId.TryGetValue(message.Card.Id, out var handCardController))
             {
                 await handCardController.ExcludeEffect();
+            }
+
+            if (this.YouId == message.Card.OwnerId)
+            {
+                this.YouExcludedCardListViewController.AddCard(message.Card);
+            }
+            else
+            {
+                this.OpponentExcludedCardListViewController.AddCard(message.Card);
             }
 
             await this.UpdateGameContext(gameContext);

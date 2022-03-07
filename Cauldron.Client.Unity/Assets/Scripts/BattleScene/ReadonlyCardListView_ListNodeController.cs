@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CemeteryCardListView_ListNodeController : MonoBehaviour, IPointerClickHandler
+public class ReadonlyCardListView_ListNodeController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
     private TextMeshProUGUI cardNameText = default;

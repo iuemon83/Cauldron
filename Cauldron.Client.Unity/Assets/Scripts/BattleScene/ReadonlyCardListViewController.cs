@@ -1,15 +1,20 @@
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CemeteryCardListViewController : MonoBehaviour
+public class ReadonlyCardListViewController : MonoBehaviour
 {
+    [SerializeField]
+    private TextMeshProUGUI titleText = default;
+    [SerializeField]
+    private TextMeshProUGUI numCardsText = default;
     [SerializeField]
     private ScrollRect cardList = default;
     [SerializeField]
-    private CemeteryCardListView_ListNodeController listNodePrefab = default;
+    private ReadonlyCardListView_ListNodeController listNodePrefab = default;
     [SerializeField]
     private CardDetailController cardDetailController = default;
     [SerializeField]
@@ -24,16 +29,18 @@ public class CemeteryCardListViewController : MonoBehaviour
     private Transform actionLogListContent;
     private bool isDisplay = false;
 
-    private readonly Dictionary<CardId, CemeteryCardListView_ListNodeController> dic
-        = new Dictionary<CardId, CemeteryCardListView_ListNodeController>();
+    private readonly Dictionary<CardId, ReadonlyCardListView_ListNodeController> dic
+        = new Dictionary<CardId, ReadonlyCardListView_ListNodeController>();
 
     public void Start()
     {
         this.actionLogListContent = this.cardList.transform.Find("Viewport").transform.Find("Content");
     }
 
-    public void InitAsYou()
+    public void InitAsYou(string title)
     {
+        this.titleText.text = title ?? "";
+        this.numCardsText.text = "[0]";
         this.backgroundImage.color = BattleSceneController.Instance.YouColor;
         var (controllerSuccess, controllerIcon) = ControllerIconCache.TryGet(ControllerIconCache.IconType.You);
         if (controllerSuccess)
@@ -42,8 +49,10 @@ public class CemeteryCardListViewController : MonoBehaviour
         }
     }
 
-    public void InitAsOpponent()
+    public void InitAsOpponent(string title)
     {
+        this.titleText.text = title ?? "";
+        this.numCardsText.text = "[0]";
         this.backgroundImage.color = BattleSceneController.Instance.OpponentColor;
         var (controllerSuccess, controllerIcon) = ControllerIconCache.TryGet(ControllerIconCache.IconType.Opponent);
         if (controllerSuccess)
@@ -99,6 +108,7 @@ public class CemeteryCardListViewController : MonoBehaviour
             );
 
         this.dic.Add(card.Id, controller);
+        this.numCardsText.text = $"[{this.dic.Count}]";
     }
 
     private void RemoveListNode(Card card)
@@ -108,5 +118,6 @@ public class CemeteryCardListViewController : MonoBehaviour
             Destroy(nodeController.gameObject);
             this.dic.Remove(card.Id);
         }
+        this.numCardsText.text = $"[{this.dic.Count}]";
     }
 }
