@@ -131,21 +131,27 @@ public class FieldCardController : CardController, IPointerClickHandler
         this.transform.SetSiblingIndex(origIndex);
     }
 
-    public async UniTask AttackEffect(Vector3 dest)
+    private async UniTask AttackEffect(Vector3 dest)
     {
         var destVec = Vector3.MoveTowards(
             this.transform.position,
             dest,
             (dest - this.transform.position).magnitude - 60);
 
-        await this.transform
-            .DOScale(1.2f, 0.2f);
+        // まず拡大しながら後ろに下がる
+        await DOTween.Sequence()
+            .Append(this.transform.DOScale(1.2f, 0.2f))
+            .Join(this.transform.DOMove(
+                this.transform.position + (this.transform.position - dest).normalized * 70,
+                0.2f));
 
         await DOTween.Sequence()
+            // 相手の位置まで移動して、もとの位置に戻る
             .Append(this.transform
                 .DOMove(destVec, 0.2f)
                 .SetLoops(2, LoopType.Yoyo)
                 .SetEase(Ease.InQuart))
+            // 元のサイズに戻りながら
             .Join(this.transform.DOScale(1f, 0.2f));
     }
 
