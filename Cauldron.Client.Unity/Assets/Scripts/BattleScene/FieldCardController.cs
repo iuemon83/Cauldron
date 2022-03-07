@@ -44,7 +44,7 @@ public class FieldCardController : CardController, IPointerClickHandler
     /// フィールドカードのクリックイベント
     /// </summary>
     /// <param name="eventData"></param>
-    public void OnPointerClick(PointerEventData eventData)
+    void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {

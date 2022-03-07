@@ -82,7 +82,7 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     /// 敵プレイヤーアイコンのクリックイベント
     /// </summary>
     /// <param name="eventData"></param>
-    public async void OnPointerClick(PointerEventData eventData)
+    async void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
     {
         if (this.IsPicked)
         {
