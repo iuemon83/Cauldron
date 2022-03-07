@@ -1381,7 +1381,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: vs AI
+  m_Text: solo
 --- !u!222 &919630305
 CanvasRenderer:
   m_ObjectHideFlags: 0

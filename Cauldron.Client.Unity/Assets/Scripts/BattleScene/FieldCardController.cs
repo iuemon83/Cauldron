@@ -16,6 +16,8 @@ public class FieldCardController : CardController, IPointerClickHandler
     [SerializeField]
     private TextMeshProUGUI damageText = default;
     [SerializeField]
+    private Image outlineImage = default;
+    [SerializeField]
     private Image backgroundImage = default;
     [SerializeField]
     private Image destroyIcon = default;
@@ -29,6 +31,13 @@ public class FieldCardController : CardController, IPointerClickHandler
         this.Init(card);
 
         this.openCardDetailView = openCardDetailView;
+    }
+
+    public void UpdateOutlineColor(float time)
+    {
+        var color = this.outlineImage.color;
+        color.a = Mathf.Sin(time) * 0.5f + 0.5f;
+        this.outlineImage.color = color;
     }
 
     /// <summary>
@@ -146,5 +155,10 @@ public class FieldCardController : CardController, IPointerClickHandler
 
         this.VisibleAttackIcon(false);
         this.VisibleAttackTargetIcon(false);
+    }
+
+    public void SetCanAttack(bool value)
+    {
+        this.outlineImage.gameObject.SetActive(value);
     }
 }

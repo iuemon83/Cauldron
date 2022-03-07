@@ -9,8 +9,6 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
-    private TextMeshProUGUI firstText = default;
-    [SerializeField]
     private TextMeshProUGUI nameText = default;
     [SerializeField]
     private TextMeshProUGUI hpText = default;
@@ -35,7 +33,7 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private GameObject pickedIcon = default;
     [SerializeField]
-    private Image outline = default;
+    private Image outlineImage = default;
 
     public PlayerId PlayerId { get; private set; }
 
@@ -51,19 +49,11 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    private bool isActiveTurn;
-
-    private float time;
-
-    private void Update()
+    public void UpdateOutlineColor(float time)
     {
-        if (this.isActiveTurn)
-        {
-            this.time += Time.deltaTime * 5.0f;
-            var color = this.outline.color;
-            color.a = Mathf.Sin(this.time) * 0.5f + 0.5f;
-            this.outline.color = color;
-        }
+        var color = this.outlineImage.color;
+        color.a = Mathf.Sin(time) * 0.5f + 0.5f;
+        this.outlineImage.color = color;
     }
 
     public void Set(PlayerId playerId)
@@ -81,18 +71,11 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.numCemeteriesText.text = publicPlayerInfo.Cemetery.Length.ToString();
         this.numExcludedsText.text = publicPlayerInfo.Excluded.Length.ToString();
         this.numHandsText.text = publicPlayerInfo.HandsCount.ToString();
-        this.firstText.gameObject.SetActive(publicPlayerInfo.IsFirst);
     }
 
     public void SetActiveTurn(bool value)
     {
-        this.isActiveTurn = value;
-        if (!this.isActiveTurn)
-        {
-            var color = this.outline.color;
-            color.a = 0;
-            this.outline.color = color;
-        }
+        this.outlineImage.gameObject.SetActive(value);
     }
 
     /// <summary>

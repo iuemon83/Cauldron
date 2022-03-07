@@ -104,6 +104,8 @@ public class BattleSceneController : MonoBehaviour
 
     private FieldCardController attackCardController;
 
+    private float time;
+
     private int NumPicks
     {
         get { return int.Parse(this.numPicksText.text); }
@@ -173,6 +175,8 @@ public class BattleSceneController : MonoBehaviour
 
     private async void Update()
     {
+        this.time += Time.deltaTime * 5.0f;
+
         if (!this.updating)
         {
             if (this.updateViewActionQueue.TryDequeue(out var updateViewAction))
@@ -181,6 +185,17 @@ public class BattleSceneController : MonoBehaviour
                 await updateViewAction();
                 this.updating = false;
             }
+        }
+
+        // 時間経過で実施する処理
+        // プレイヤー
+        this.youPlayerController.UpdateOutlineColor(this.time);
+        this.opponentPlayerController.UpdateOutlineColor(this.time);
+
+        // 場のカード
+        foreach (var fieldCard in this.fieldCardControllersByCardId.Values)
+        {
+            fieldCard.UpdateOutlineColor(this.time);
         }
     }
 
@@ -563,15 +578,9 @@ public class BattleSceneController : MonoBehaviour
             ? this.youFieldSpaces[index].transform.position
             : this.opponentFieldSpaces[index].transform.position;
 
-        // 攻撃可能なカードの位置調整
-        if (this.currentGameContext.ActivePlayerId == card.OwnerId
-            && card.CanAttack)
-        {
-            cardController.transform.position = new Vector3(
-                cardController.transform.position.x,
-                cardController.transform.position.y - (playerId == this.YouId ? -10 : 10)
-                );
-        }
+        var canAttack = this.currentGameContext.ActivePlayerId == card.OwnerId
+            && card.CanAttack;
+        cardController.SetCanAttack(canAttack);
 
         return cardController;
     }
@@ -604,8 +613,8 @@ public class BattleSceneController : MonoBehaviour
     {
         var title = "ゲーム終了";
         var message = winnerPlayerId == this.youPlayerController.PlayerId
-            ? "あなたの勝ち!"
-            : "あなたの負け...";
+            ? "You Win !"
+            : "You Lose...";
         var dialog = Instantiate(this.confirmDialogPrefab);
         dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
             onOkAction: async () =>
