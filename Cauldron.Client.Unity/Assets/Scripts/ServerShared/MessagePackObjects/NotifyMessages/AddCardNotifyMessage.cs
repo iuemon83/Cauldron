@@ -7,11 +7,13 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public CardId CardId { get; }
         public Zone ToZone { get; }
+        public int Index { get; }
 
-        public AddCardNotifyMessage(CardId CardId, Zone ToZone)
+        public AddCardNotifyMessage(CardId CardId, Zone ToZone, int Index)
         {
             this.CardId = CardId;
             this.ToZone = ToZone;
+            this.Index = Index;
         }
     }
 }

@@ -126,7 +126,7 @@ namespace Cauldron.Core.Entities
 
         public bool IsTurnStarted { get; private set; }
 
-        private readonly List<Card> temporaryCards = new List<Card>();
+        private readonly List<Card> temporaryCards = new();
 
         public Player GetWinner()
         {
@@ -373,6 +373,7 @@ namespace Cauldron.Core.Entities
 
             card.CostBuff = newCost - card.BaseCost;
 
+            var isModified = false;
             if (card.Type == CardType.Creature)
             {
                 var newPower = await (effectActionModifyCard.Power?.Modify(effectOwnerCard, effectEventArgs, card.Power)
@@ -381,21 +382,39 @@ namespace Cauldron.Core.Entities
                         ?? ValueTask.FromResult(card.Toughness));
                 var newAbilities = effectActionModifyCard.Ability?.Modify(card.Abilities)
                         ?? card.Abilities.ToArray();
+                var newAnnotations = effectActionModifyCard.Annotations?.Modify(card.Annotations)
+                        ?? card.Annotations.ToArray();
 
-                card.PowerBuff = newPower - card.BasePower;
-                card.ToughnessBuff = newToughness - card.BaseToughness;
+                var newPowerBuff = newPower - card.BasePower;
+                if (newPowerBuff != card.PowerBuff)
+                {
+                    card.PowerBuff = newPowerBuff;
+                    isModified = true;
+                }
+
+                var newToubhnessBuff = newToughness - card.BaseToughness;
+                if (newToubhnessBuff != card.ToughnessBuff)
+                {
+                    card.ToughnessBuff = newToubhnessBuff;
+                    isModified = true;
+                }
+
                 card.Abilities = newAbilities.ToList();
+                card.Annotations = newAnnotations.ToList();
             }
 
             // notify
-            var isPublic = card.Zone.IsPublic();
-            foreach (var p in this.playerRepository.AllPlayers)
+            if (isModified)
             {
-                this.EventListener?.OnModifyCard?.Invoke(p.Id,
-                    this.CreateGameContext(p.Id),
-                    new ModifyCardNotifyMessage(
-                        (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden()
-                        ));
+                var isPublic = card.Zone.IsPublic();
+                foreach (var p in this.playerRepository.AllPlayers)
+                {
+                    this.EventListener?.OnModifyCard?.Invoke(p.Id,
+                        this.CreateGameContext(p.Id),
+                        new ModifyCardNotifyMessage(
+                            (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden()
+                            ));
+                }
             }
         }
 
@@ -727,7 +746,9 @@ namespace Cauldron.Core.Entities
                         this.CreateGameContext(p.Id),
                         new AddCardNotifyMessage(
                             (p.Id == card.OwnerId || isPublic) ? card.Id : default,
-                            moveCardContext.To));
+                            moveCardContext.To,
+                            isPublic ? toIndex : -1
+                            ));
                 }
             }
             else
@@ -1406,6 +1427,11 @@ namespace Cauldron.Core.Entities
         public async ValueTask ModifyCounter(PlayerId targetPlayerId, string counterName, int numCounters)
         {
             this.logger.LogInformation($"start set counter.");
+
+            if (numCounters == 0)
+            {
+                return;
+            }
 
             var (exists, targetPlayer) = this.playerRepository.TryGet(targetPlayerId);
             if (!exists || targetPlayer == null)

@@ -5,11 +5,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Include="..\Cauldron.Server\CardSet\sample_cardset.json" Link="Resources\sample_cardset.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Cauldron.Shared\Cauldron.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Resources\" />
 	</ItemGroup>
 
 	<ProjectExtensions>

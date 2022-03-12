@@ -3634,5 +3634,56 @@ namespace Cauldron.Core_Test
             // 1度だけなのでもう発動しない
             Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp - 1, c.Player2.CurrentHp);
         }
+
+        [Fact]
+        public async Task ZombiesStatue()
+        {
+            var testCardDef = SampleCards.ZombiesStatue;
+            testCardDef.Cost = 0;
+
+            var zombieDef = SampleCards.Creature(0, "z", 1, 1, annotations: new[] { ":ゾンビ" });
+            var nozombieDef = SampleCards.Creature(0, "z", 1, 1);
+
+            var spellDef = SampleCards.SelectDamage;
+            spellDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, zombieDef, nozombieDef, spellDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                // ゾンビを破壊すると墓地がプラス1される
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var z1 = await TestUtil.NewCardAndPlayFromHand(g, pId, zombieDef.Id);
+
+                var beforeCemeterCount = c.Player1.Cemetery.Count;
+
+                // カードを破壊する
+                c.TestAnswer.ChoiceCardIdList = new[] { z1.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, spellDef.Id);
+
+                var afterCemeterCount = c.Player1.Cemetery.Count;
+
+                // 効果によって1枚追加で墓地にある
+                // 破壊されたカード+スペル+追加のカードで+3される
+                Assert.Equal(beforeCemeterCount + 3, afterCemeterCount);
+
+                // ゾンビ以外を破壊しても墓地はプラスされない
+                var nz1 = await TestUtil.NewCardAndPlayFromHand(g, pId, nozombieDef.Id);
+
+                beforeCemeterCount = c.Player1.Cemetery.Count;
+
+                // カードを破壊する
+                c.TestAnswer.ChoiceCardIdList = new[] { nz1.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, spellDef.Id);
+
+                afterCemeterCount = c.Player1.Cemetery.Count;
+
+                Assert.Equal(beforeCemeterCount + 2, afterCemeterCount);
+            });
+        }
     }
 }

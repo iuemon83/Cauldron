@@ -38,12 +38,8 @@ namespace Cauldron.Web.Server
         public MetaDataElm[] CardAbilities { get; } = Convert<CreatureAbility>();
         public MetaDataElm[] EffectTimingDamageAfterDamageTypes { get; }
             = Convert<EffectTimingDamageAfterEvent.TypeValue>();
-        public MetaDataElm[] EffectTimingDamageAfterEventSources { get; }
-            = Convert<EffectTimingDamageAfterEvent.SourceValue>();
         public MetaDataElm[] EffectTimingDamageBeforeDamageTypes { get; }
             = Convert<EffectTimingDamageBeforeEvent.TypeValue>();
-        public MetaDataElm[] EffectTimingDamageBeforeEventSources { get; }
-            = Convert<EffectTimingDamageBeforeEvent.SourceValue>();
         public MetaDataElm[] ChoiceHowList { get; } = Convert<Choice.HowValue>();
         public MetaDataElm[] ChoiceSourceHowList { get; } = Convert<ChoiceSource.HowValue>();
         public MetaDataElm[] NumConditionCompares { get; } = Convert<NumCompare.CompareValue>();

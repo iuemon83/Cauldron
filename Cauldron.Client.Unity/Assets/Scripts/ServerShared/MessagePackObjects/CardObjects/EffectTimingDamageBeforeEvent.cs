@@ -29,43 +29,22 @@ namespace Cauldron.Shared.MessagePackObjects
             NonBattle,
         }
 
-        public enum SourceValue
-        {
-            /// <summary>
-            /// いずれか
-            /// </summary>
-            [DisplayText("いずれか")]
-            Any,
-
-            /// <summary>
-            /// ダメージを与える側
-            /// </summary>
-            [DisplayText("ダメージを与える側")]
-            DamageSource,
-
-            /// <summary>
-            /// ダメージを受ける側
-            /// </summary>
-            [DisplayText("ダメージを受ける側")]
-            Take,
-        }
-
         public EffectTimingDamageBeforeEvent.TypeValue Type { get; }
-        public EffectTimingDamageBeforeEvent.SourceValue Source { get; }
-        public PlayerCondition? PlayerCondition { get; }
-        public CardCondition? CardCondition { get; }
+        public PlayerCondition? TakePlayerCondition { get; }
+        public CardCondition? SourceCardCondition { get; }
+        public CardCondition? TakeCardCondition { get; }
 
         public EffectTimingDamageBeforeEvent(
             EffectTimingDamageBeforeEvent.TypeValue Type = TypeValue.Any,
-            EffectTimingDamageBeforeEvent.SourceValue Source = SourceValue.Any,
-            PlayerCondition? PlayerCondition = null,
-            CardCondition? CardCondition = null
+            PlayerCondition? TakePlayerCondition = null,
+            CardCondition? SourceCardCondition = null,
+            CardCondition? TakeCardCondition = null
             )
         {
             this.Type = Type;
-            this.Source = Source;
-            this.PlayerCondition = PlayerCondition;
-            this.CardCondition = CardCondition;
+            this.TakePlayerCondition = TakePlayerCondition;
+            this.SourceCardCondition = SourceCardCondition;
+            this.TakeCardCondition = TakeCardCondition;
         }
     }
 }

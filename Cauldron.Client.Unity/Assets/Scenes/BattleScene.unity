@@ -3656,7 +3656,7 @@ GameObject:
   m_Component:
   - component: {fileID: 741050456}
   m_Layer: 5
-  m_Name: CemeteryCardListViewContainer
+  m_Name: ReadonlyCardListViewContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3674,7 +3674,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1511447166}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -4386,7 +4386,7 @@ RectTransform:
   m_Children:
   - {fileID: 1738064528}
   m_Father: {fileID: 1511447166}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4806,7 +4806,7 @@ RectTransform:
   m_Children:
   - {fileID: 579264665}
   m_Father: {fileID: 1511447166}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5835,7 +5835,7 @@ RectTransform:
   m_Children:
   - {fileID: 2080893094}
   m_Father: {fileID: 1511447166}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6534,9 +6534,9 @@ MonoBehaviour:
   choiceDialogPrefab: {fileID: 1252227299665276918, guid: a9d3743390399a8439c3a6d86f1480b3, type: 3}
   actionLogViewController: {fileID: 379143297}
   youCemeteryCardListViewController: {fileID: 1691459235}
-  OpponentCemeteryCardListViewController: {fileID: 592698995}
-  YouExcludedCardListViewController: {fileID: 1814931107}
-  OpponentExcludedCardListViewController: {fileID: 213776196}
+  opponentCemeteryCardListViewController: {fileID: 592698995}
+  youExcludedCardListViewController: {fileID: 1814931107}
+  opponentExcludedCardListViewController: {fileID: 213776196}
   youHandSpaces:
   - {fileID: 929650753}
   - {fileID: 603392972}
@@ -7677,12 +7677,12 @@ RectTransform:
   - {fileID: 1163766318}
   - {fileID: 1542599287}
   - {fileID: 467045537}
-  - {fileID: 2127111780}
   - {fileID: 741050456}
   - {fileID: 935592444}
   - {fileID: 1033704749}
   - {fileID: 1839677805}
   - {fileID: 1209567959}
+  - {fileID: 2127111780}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9583,7 +9583,7 @@ RectTransform:
   m_Children:
   - {fileID: 1064096546}
   m_Father: {fileID: 1511447166}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -10975,7 +10975,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7664410454445583648, guid: eb7bbcbbaffc1a648b5e5a4a86fe6069, type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 7664410454445583648, guid: eb7bbcbbaffc1a648b5e5a4a86fe6069, type: 3}
       propertyPath: m_AnchorMax.x

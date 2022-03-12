@@ -1,8 +1,5 @@
 ﻿using Cauldron.Core.Entities;
 using Cauldron.Core.Entities.Effect;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -70,7 +67,8 @@ namespace Cauldron.Shared.MessagePackObjects
                 }
             }
 
-            return mathedCards.Values;
+            return mathedCards.Values
+                .OrderBy(x => x.Name);
         }
 
         public static async ValueTask<IEnumerable<CardDef>> ListMatchedCardDefs(this ChoiceSource choiceSource,
@@ -84,7 +82,8 @@ namespace Cauldron.Shared.MessagePackObjects
             }
 
             return mathedCards
-                .SelectMany(c => Enumerable.Repeat(c, numDuplicates));
+                .SelectMany(c => Enumerable.Repeat(c, numDuplicates))
+                .OrderBy(x => x.Name);
         }
     }
 }

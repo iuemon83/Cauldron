@@ -39,6 +39,7 @@ namespace Cauldron.Core_Test
         }
 
         public static CardDef Artifact(int cost, string name, string effectText, bool isToken = false,
+            IEnumerable<string> annotations = null,
             string flavorText = "",
             IEnumerable<CardEffect> effects = null)
         {
@@ -47,6 +48,7 @@ namespace Cauldron.Core_Test
             t.IsToken = isToken;
             t.Type = CardType.Artifact;
             t.Name = name;
+            t.Annotations = annotations?.ToArray() ?? Array.Empty<string>();
             t.FlavorText = flavorText;
             t.EffectText = effectText;
             t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
@@ -55,6 +57,7 @@ namespace Cauldron.Core_Test
         }
 
         public static CardDef Sorcery(int cost, string name, string effectText, bool isToken = false,
+            IEnumerable<string> annotations = null,
             string flavorText = "",
             IEnumerable<CardEffect> effects = null)
         {
@@ -63,6 +66,7 @@ namespace Cauldron.Core_Test
             t.IsToken = isToken;
             t.Type = CardType.Sorcery;
             t.Name = name;
+            t.Annotations = annotations?.ToArray() ?? Array.Empty<string>();
             t.FlavorText = flavorText;
             t.EffectText = effectText;
             t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
@@ -634,8 +638,7 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
-                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
-                                    CardCondition: new CardCondition(
+                                    TakeCardCondition: new CardCondition(
                                         ContextCondition: CardCondition.ContextConditionValue.This
                                     )))
                             )
@@ -658,8 +661,7 @@ namespace Cauldron.Core_Test
                             new EffectWhen(new EffectTiming(
                                 DamageBefore: new(
                                     EffectTimingDamageBeforeEvent.TypeValue.Battle,
-                                    Source: EffectTimingDamageBeforeEvent.SourceValue.DamageSource,
-                                    CardCondition: new CardCondition(
+                                    SourceCardCondition: new CardCondition(
                                         NameCondition: new(
                                             new TextValue("ゴブリン"),
                                             TextCompare.CompareValue.Contains),
@@ -787,7 +789,7 @@ namespace Cauldron.Core_Test
                             new EffectWhen(new EffectTiming(
                                 DamageBefore: new(
                                     EffectTimingDamageBeforeEvent.TypeValue.NonBattle,
-                                    CardCondition: new(
+                                    SourceCardCondition: new(
                                         TypeCondition: new(new[]{ CardType.Sorcery }),
                                         OwnerCondition: CardCondition.OwnerConditionValue.You
                                     )))))),
@@ -888,14 +890,12 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageBefore: new(
-                                    Source: EffectTimingDamageAfterEvent.SourceValue.Take,
-                                    CardCondition: new(
+                                    TakeCardCondition: new(
                                         ContextCondition: CardCondition.ContextConditionValue.This)
                                     ))),
                             While: new(new EffectTiming(
                                 DamageBefore: new(
-                                    Source: EffectTimingDamageAfterEvent.SourceValue.Take,
-                                    CardCondition: new(
+                                    TakeCardCondition: new(
                                         ContextCondition: CardCondition.ContextConditionValue.This)
                                     )),
                                 0, 1))),
@@ -1121,8 +1121,7 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 DamageAfter: new(
-                                    Source: EffectTimingDamageAfterEvent.SourceValue.Take,
-                                    CardCondition: new(
+                                    TakeCardCondition: new(
                                         ContextCondition: CardCondition.ContextConditionValue.This)
                                     ))))),
                         new[]{
@@ -2384,8 +2383,7 @@ namespace Cauldron.Core_Test
                                             new EffectConditionWrap(ByNotPlay: new(
                                                 ZonePrettyName.YouField,
                                                 new EffectWhen(new EffectTiming(DamageBefore: new(
-                                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
-                                                    CardCondition: new(
+                                                    TakeCardCondition: new(
                                                         ContextCondition: CardCondition.ContextConditionValue.This
                                                     )))),
                                                 While: new(new EffectTiming(EndTurn: new(
@@ -2803,8 +2801,7 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
-                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
-                                    CardCondition: new CardCondition(
+                                    TakeCardCondition: new CardCondition(
                                         TypeCondition: new(new[]{ CardType.Creature }),
                                         ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
                                         ContextCondition: CardCondition.ContextConditionValue.Others
@@ -2845,16 +2842,47 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
-                                    Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
-                                    PlayerCondition: new PlayerCondition(
+                                    TakePlayerCondition: new PlayerCondition(
                                         PlayerCondition.ContextValue.You
-                                    ),
-                                    CardCondition: new CardCondition(
+                                    )
+                                    )
+                                ))
+                        )),
+                        new[]
+                        {
+                            new EffectAction(
+                                ModifyDamage: new EffectActionModifyDamage(
+                                    new NumValueModifier(
+                                        NumValueModifier.OperatorValue.Sub,
+                                        new NumValue(1)
+                                    )
+                                )
+                            ),
+                            new EffectAction(
+                                DestroyCard: new EffectActionDestroyCard(
+                                    new Choice(new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ContextCondition: CardCondition.ContextConditionValue.This
+                                            )
+                                        }))
+                                )
+                            )
+                        }
+                    ),
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            new(new(
+                                DamageBefore: new(
+                                    TakeCardCondition: new CardCondition(
                                         TypeCondition: new CardTypeCondition(new[]{ CardType.Creature }),
                                         ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),
                                         ContextCondition: CardCondition.ContextConditionValue.Others
-                                    )))
-                            )
+                                    ))
+                                ))
                         )),
                         new[]
                         {
@@ -3825,6 +3853,885 @@ namespace Cauldron.Core_Test
                                                     }))))
                                         })
                                 }))
+                        }),
+                });
+
+        public static CardDef Impact
+            => SampleCards.Sorcery(5, "衝撃",
+                effectText: "場のクリーチャーをすべて破壊する",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new EffectConditionByPlaying()),
+                        new[]
+                        {
+                            new EffectAction(DestroyCard: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.OpponentField,
+                                                    ZonePrettyName.YouField
+                                                })),
+                                                TypeCondition: new(new[]
+                                                {
+                                                    CardType.Creature
+                                                }))
+                                        }))))
+                        }),
+                });
+
+        public static CardDef SevereEarthquake
+            => SampleCards.Sorcery(5, "激震",
+                effectText: "場のアーティファクトをすべて破壊する",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new EffectConditionByPlaying()),
+                        new[]
+                        {
+                            new EffectAction(DestroyCard: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.OpponentField,
+                                                    ZonePrettyName.YouField
+                                                })),
+                                                TypeCondition: new(new[]
+                                                {
+                                                    CardType.Artifact
+                                                }))
+                                        }))))
+                        }),
+                });
+
+        public static CardDef Prodigy
+            => SampleCards.Sorcery(7, "驚異",
+                effectText: "場のカードをすべて破壊する",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new EffectConditionByPlaying()),
+                        new[]
+                        {
+                            new EffectAction(DestroyCard: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.OpponentField,
+                                                    ZonePrettyName.YouField
+                                                })))
+                                        }))))
+                        }),
+                });
+
+        public static CardDef ZombieToken
+            => SampleCards.Creature(1, "ゾンビトークン", 1, 1, annotations: new[] { ":ゾンビ" }, isToken: true);
+
+        public static CardDef Zombie
+            => SampleCards.Creature(1, "ゾンビ", 1, 1,
+                annotations: new[] { ":ゾンビ" },
+                effectText: "このクリーチャーが破壊されたターンの終了時に、あなたの場にゾンビトークンを1つ追加する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new (
+                            ZonePrettyName.YouCemetery,
+                            When: new(new EffectTiming(Destroy: new(
+                                new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                }))))),
+                        new[]
+                        {
+                            new EffectAction(ReserveEffect: new(new[]
+                            {
+                                new CardEffect(
+                                    new EffectConditionWrap(Reserve: new(
+                                        new EffectWhen(new EffectTiming(EndTurn: new())),
+                                        While: new(
+                                            new EffectTiming(EndTurn: new()),
+                                            0, 1))),
+                                    new[]
+                                    {
+                                        new EffectAction(AddCard: new(
+                                            new Choice(
+                                                new ChoiceSource(OrCardDefConditions: new[]
+                                                {
+                                                    new CardDefCondition(
+                                                        new OutZoneCondition(new[]
+                                                        {
+                                                            OutZonePrettyName.CardPool
+                                                        }),
+                                                        NameCondition: new(
+                                                            new TextValue(ZombieToken.Name),
+                                                            TextCompare.CompareValue.Equality)
+                                                        )
+                                                }),
+                                                Choice.HowValue.All,
+                                                new NumValue(1)
+                                                ),
+                                            new ZoneValue(new[]
+                                            {
+                                                ZonePrettyName.YouField
+                                            })))
+                                    })
+                            }))
+                        }),
+                });
+
+        public static CardDef ZombieDog
+            => SampleCards.Creature(2, "ゾンビ犬", 1, 1, annotations: new[] { ":ゾンビ" }, numTurnsToCanAttack: 0);
+
+        public static CardDef ZombieKiller
+            => SampleCards.Creature(2, "ゾンビキラー", 2, 2,
+                annotations: new[] { ":ゾンビ" },
+                effectText: "このクリーチャーが:ゾンビから受ける戦闘ダメージを-5する。" +
+                    "このクリーチャーが:ゾンビへ与える戦闘ダメージを+5する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            When: new(new EffectTiming(DamageBefore: new(
+                                EffectTimingDamageBeforeEvent.TypeValue.Battle,
+                                SourceCardCondition: new(
+                                    AnnotationCondition: new(":ゾンビ")
+                                    ),
+                                TakeCardCondition: new(CardCondition.ContextConditionValue.This)
+                                )))
+                            )),
+                        new[]
+                        {
+                            new EffectAction(ModifyDamage: new(
+                                new NumValueModifier(
+                                    NumValueModifier.OperatorValue.Sub,
+                                    new NumValue(5))))
+                        }),
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            When: new(new EffectTiming(DamageBefore: new(
+                                EffectTimingDamageBeforeEvent.TypeValue.Battle,
+                                SourceCardCondition: new(CardCondition.ContextConditionValue.This),
+                                TakeCardCondition: new(
+                                    AnnotationCondition: new(":ゾンビ")
+                                    )
+                                )))
+                            )),
+                        new[]
+                        {
+                            new EffectAction(ModifyDamage: new(
+                                new NumValueModifier(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(5))))
+                        })
+                });
+
+        public static CardDef PrinceZombie
+            => SampleCards.Creature(2, "ゾンビプリンス", 1, 1,
+                annotations: new[] { ":ゾンビ" },
+                effectText: "あなたの場のすべてのクリーチャーに:ゾンビを付与して、下記の効果を追加する。" +
+                    "・このカードが破壊されたとき、あなたの場にゾンビトークンを1つ追加する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(ModifyCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouField
+                                                })),
+                                                TypeCondition: new(new[]
+                                                {
+                                                    CardType.Creature
+                                                }))
+                                        })),
+                                Annotations: new(new[]{":ゾンビ"}, AnnotationsModifier.OperatorValue.Add)
+                                )),
+                            new EffectAction(AddEffect:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouField
+                                                })),
+                                                TypeCondition: new(new[]
+                                                {
+                                                    CardType.Creature
+                                                }))
+                                        })),
+                                new[]
+                                {
+                                    new CardEffect(
+                                        new EffectConditionWrap(ByNotPlay: new (
+                                            ZonePrettyName.YouCemetery,
+                                            When: new(new EffectTiming(Destroy: new(
+                                                new[]
+                                                {
+                                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                                }))))),
+                                        new[]
+                                        {
+                                            new EffectAction(AddCard: new(
+                                                new Choice(
+                                                    new ChoiceSource(OrCardDefConditions: new[]
+                                                    {
+                                                        new CardDefCondition(
+                                                            new OutZoneCondition(new[]
+                                                            {
+                                                                OutZonePrettyName.CardPool
+                                                            }),
+                                                            NameCondition: new(
+                                                                new TextValue(ZombieToken.Name),
+                                                                TextCompare.CompareValue.Equality)
+                                                            )
+                                                    }),
+                                                    Choice.HowValue.All,
+                                                    new NumValue(1)
+                                                    ),
+                                                new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouField
+                                                })))
+                                        }),
+                                }
+                                )),
+                        }),
+                });
+
+        public static CardDef ZombieMaster
+            => SampleCards.Creature(4, "ゾンビ使い", 1, 1,
+                annotations: new[] { ":ゾンビ" },
+                effectText: "このカードをプレイしたとき、墓地にある:ゾンビクリーチャーを1体選択し、場に移動する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(MoveCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouCemetery,
+                                                    ZonePrettyName.OpponentCemetery,
+                                                })),
+                                                TypeCondition: new(new[]
+                                                {
+                                                    CardType.Creature
+                                                }),
+                                                AnnotationCondition:new(":ゾンビ")
+                                                )
+                                        }),
+                                    Choice.HowValue.Choose,
+                                    new NumValue(1)
+                                    ),
+                                ZonePrettyName.YouField,
+                                Name: "move"
+                                )),
+                            new EffectAction(ModifyCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ActionContext: new(MoveCard: new(
+                                                    "move",
+                                                    ActionContextCardsOfMoveCard.TypeValue.Moved
+                                                ))),
+                                        })),
+                                Toughness: new(
+                                    NumValueModifier.OperatorValue.Replace,
+                                    new NumValue(NumValueCalculator: new(ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.CardBaseToughness,
+                                        new Choice(
+                                            new ChoiceSource(
+                                                orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ActionContext: new(MoveCard: new(
+                                                            "move",
+                                                            ActionContextCardsOfMoveCard.TypeValue.Moved
+                                                        ))),
+                                                }
+                                                )
+                                            )
+                                        )))
+                                    )
+                                ))
+                        }),
+                });
+
+        public static CardDef GluttonZombie
+            => SampleCards.Creature(3, "大食らいのゾンビ", 0, 1,
+                annotations: new[] { ":ゾンビ" },
+                abilities: new[] { CreatureAbility.Cover },
+                effectText: "このカードをプレイしたとき、あなたの墓地から:ゾンビを任意の枚数だけ除外する。" +
+                    "その後、このクリーチャーを+X/+Xする。" +
+                    "X=この効果で除外したカードの枚数",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(ExcludeCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouCemetery
+                                                })),
+                                                AnnotationCondition: new(":ゾンビ")
+                                                ),
+                                        }),
+                                    Choice.HowValue.Choose,
+                                    new NumValue(NumValueCalculator: new(ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(
+                                            new ChoiceSource(
+                                                orCardConditions: new[]{
+                                                    new CardCondition(
+                                                        ZoneCondition: new(new ZoneValue(new[]
+                                                        {
+                                                            ZonePrettyName.YouCemetery
+                                                        })),
+                                                        AnnotationCondition: new(":ゾンビ")
+                                                        ),
+                                                }
+                                                )
+                                            )
+                                    )))
+                                    ),
+                                "exclude"
+                                )),
+                            new EffectAction(ModifyCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                CardCondition.ContextConditionValue.This),
+                                        })),
+                                Power: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(NumValueCalculator: new(ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(
+                                            new ChoiceSource(
+                                                orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ActionContext: new(ExcludeCard: new(
+                                                            "exclude",
+                                                            ActionContextCardsOfExcludeCard.TypeValue.Excluded
+                                                        ))
+                                                        )
+                                                })))))),
+                                Toughness: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(NumValueCalculator: new(ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(
+                                            new ChoiceSource(
+                                                orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ActionContext: new(ExcludeCard: new(
+                                                            "exclude",
+                                                            ActionContextCardsOfExcludeCard.TypeValue.Excluded
+                                                        ))
+                                                        )
+                                                }))))))
+                                )),
+                        }),
+                });
+
+        public static CardDef KingZombie
+            => SampleCards.Creature(3, "ゾンビキング", 0, 1,
+                annotations: new[] { ":ゾンビ" },
+                effectText: "このカードが場に出たとき、このカードを+x/+yする。" +
+                    "X=あなたの墓地の:ゾンビの枚数" +
+                    "Y=相手の墓地の:ゾンビの枚数" +
+                    "このカードが破壊されたとき、「ゾンビキング」以外のあなたの墓地にある:ゾンビを2つまで選択する。" +
+                    "そのカードをあなたの場に移動する。その後、それらのカードのタフネスを1にする。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            When: new(new EffectTiming(MoveCard: new(
+                                OrCardConditions: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                },
+                                To: ZonePrettyName.YouField)))
+                            )),
+                        new[]
+                        {
+                            new EffectAction(ModifyCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                CardCondition.ContextConditionValue.This),
+                                        })),
+                                Power: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(NumValueCalculator: new(ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(
+                                            new ChoiceSource(
+                                                orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ZoneCondition: new(new ZoneValue(new[]
+                                                        {
+                                                            ZonePrettyName.YouCemetery
+                                                        })),
+                                                        AnnotationCondition: new(":ゾンビ")
+                                                        )
+                                                })))))),
+                                Toughness: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(NumValueCalculator: new(ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(
+                                            new ChoiceSource(
+                                                orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ZoneCondition: new(new ZoneValue(new[]
+                                                        {
+                                                            ZonePrettyName.OpponentCemetery
+                                                        })),
+                                                        AnnotationCondition: new(":ゾンビ")
+                                                        )
+                                                }))))))
+                                )),
+                        }),
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouCemetery,
+                            When: new(new EffectTiming(Destroy: new(
+                                OrCardCondition: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                })))
+                            )),
+                        new[]
+                        {
+                            new EffectAction(MoveCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                CardCondition.ContextConditionValue.OtherDefs,
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouCemetery,
+                                                })),
+                                                TypeCondition: new(new[]
+                                                {
+                                                    CardType.Creature
+                                                }),
+                                                AnnotationCondition:new(":ゾンビ")
+                                                )
+                                        }),
+                                    Choice.HowValue.Choose,
+                                    new NumValue(2)
+                                    ),
+                                ZonePrettyName.YouField,
+                                Name: "move"
+                                )),
+                                new EffectAction(ModifyCard:new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ActionContext: new(MoveCard: new(
+                                                        "move",
+                                                        ActionContextCardsOfMoveCard.TypeValue.Moved
+                                                    ))),
+                                            })),
+                                    Toughness: new(
+                                        NumValueModifier.OperatorValue.Replace,
+                                        new NumValue(1)
+                                    )))
+                        }
+                        )
+                });
+
+        // 「このターンに破壊された」を検索できない
+        //public static CardDef ZombiesTreasure
+        //    => SampleCards.Artifact(4, "ゾンビの秘宝",
+        //        annotations: new[] { ":ゾンビ" },
+        //        effectText: "あなたのターン終了時に、場のこのカードにターンカウンターを1つ置く。" +
+        //            "場のこのカードのターンカウンターが3以上になったとき、このカードを破壊する。" +
+        //            "ターン終了時に発動する。" +
+        //            "このターンに破壊されたあなたの墓地にある:ゾンビクリーチャーをあなたの場に移動する。",
+        //        effects: new[]
+        //        {
+        //            new CardEffect(
+        //                new EffectConditionWrap(ByNotPlay: new(
+        //                    ZonePrettyName.YouField,
+        //                    When: new(new EffectTiming(EndTurn: new(OrPlayerCondition: new[]
+        //                    {
+        //                        new PlayerCondition(PlayerCondition.ContextValue.You)
+        //                    })))
+        //                    )),
+        //                new[]
+        //                {
+        //                    new EffectAction(ModifyCounter: new(
+        //                        new Choice(
+        //                            new ChoiceSource(
+        //                                orCardConditions: new[]
+        //                                {
+        //                                    new CardCondition(CardCondition.ContextConditionValue.This)
+        //                                }),
+        //                            Choice.HowValue.Choose,
+        //                            new NumValue(1)
+        //                            ),
+        //                        "ターン",
+        //                        new NumValueModifier(
+        //                            NumValueModifier.OperatorValue.Add,
+        //                            new NumValue(1))
+        //                        ))
+        //                }),
+        //            new CardEffect(
+        //                new EffectConditionWrap(ByNotPlay: new(
+        //                    ZonePrettyName.YouField,
+        //                    If: new(new ConditionWrap(NumCondition: new(
+        //                        new NumValue(NumValueCalculator: new(ForCounter: new(
+        //                            "ターン",
+        //                            new Choice(
+        //                                new ChoiceSource(
+        //                                    orCardConditions: new[]
+        //                                    {
+        //                                        new CardCondition(CardCondition.ContextConditionValue.This)
+        //                                    })
+        //                                )
+        //                            ))),
+        //                        new NumCompare(3, NumCompare.CompareValue.GreaterThan)
+        //                        )))
+        //                    )),
+        //                new[]
+        //                {
+        //                    new EffectAction(DestroyCard: new(
+        //                        new Choice(
+        //                            new ChoiceSource(
+        //                                orCardConditions: new[]
+        //                                {
+        //                                    new CardCondition(CardCondition.ContextConditionValue.This)
+        //                                })
+        //                            )
+        //                        ))
+        //                }),
+        //            new CardEffect(
+        //                new EffectConditionWrap(ByNotPlay: new(
+        //                    ZonePrettyName.YouField,
+        //                    When: new(new EffectTiming(EndTurn: new()))
+        //                    )),
+        //                new[]
+        //                {
+        //                    new EffectAction(MoveCard: new(
+        //                        new Choice(
+        //                            new ChoiceSource(
+        //                                orCardConditions: new[]
+        //                                {
+        //                                    new CardCondition(
+        //                                        ZoneCondition: new(new ZoneValue(new[]
+        //                                        {
+        //                                            ZonePrettyName.YouCemetery
+        //                                        })),
+        //                                        TypeCondition: new(new[]
+        //                                        {
+        //                                            CardType.Creature
+        //                                        }),
+        //                                        AnnotationCondition: new(":ゾンビ"),
+        //                                        NumTurnsFromDestroy: new NumCompare(
+        //                                            0,
+        //                                            NumCompare.CompareValue.Equality)
+        //                                        ),
+        //                                }),
+        //                            Choice.HowValue.Choose,
+        //                            new NumValue(1)
+        //                            ),
+        //                        ZonePrettyName.YouField
+        //                        ))
+        //                }),
+        //        });
+
+        public static CardDef ZombieVirus
+            => SampleCards.Sorcery(2, "ゾンビウイルス",
+                annotations: new[] { ":ゾンビ" },
+                effectText: "お互いの手札、場のクリーチャーすべてに:ゾンビを付与する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(ModifyCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouField,
+                                                    ZonePrettyName.OpponentField,
+                                                    ZonePrettyName.YouHand,
+                                                    ZonePrettyName.OpponentHand,
+                                                })),
+                                                TypeCondition: new(new[]
+                                                {
+                                                    CardType.Creature
+                                                }))
+                                        })),
+                                Annotations: new(new[]{":ゾンビ"}, AnnotationsModifier.OperatorValue.Add)))
+                        }),
+                });
+
+        public static CardDef Sunlight
+            => SampleCards.Sorcery(2, "日の光",
+                annotations: new[] { ":ゾンビ" },
+                effectText: "場の:ゾンビをすべて除外する",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(ExcludeCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouField,
+                                                    ZonePrettyName.OpponentField,
+                                                })),
+                                                TypeCondition: new(new[]
+                                                {
+                                                    CardType.Creature
+                                                }),
+                                                AnnotationCondition: new(":ゾンビ")
+                                                )
+                                        }))
+                                )),
+                        }),
+                });
+
+        public static CardDef ZombieSearch
+            => SampleCards.Sorcery(1, "ゾンビの呼び声",
+                annotations: new[] { ":ゾンビ" },
+                effectText: "あなたのデッキから、「ゾンビの呼び声」以外の:ゾンビ1枚を選択する。" +
+                    "そのカードをあなたの墓地に移動する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(MoveCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                CardCondition.ContextConditionValue.OtherDefs,
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouDeck,
+                                                })),
+                                                AnnotationCondition: new(":ゾンビ")
+                                                ),
+                                        }),
+                                    Choice.HowValue.Choose,
+                                    new NumValue(1)
+                                    ),
+                                ZonePrettyName.YouCemetery
+                                )),
+                        }),
+                });
+
+        public static CardDef LivingDead
+            => SampleCards.Sorcery(1, "リビングデッド",
+                annotations: new[] { ":ゾンビ" },
+                effectText: "あなたの墓地にある:ゾンビクリーチャーを1つ選択する。そのカードをあなたの場に移動する。それのタフネスを1にする。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(MoveCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                AnnotationCondition: new(":ゾンビ"),
+                                                TypeCondition: new(new[]{ CardType.Creature }),
+                                                ZoneCondition: new ZoneCondition(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouCemetery
+                                                }))
+                                                ),
+                                        }),
+                                    Choice.HowValue.Choose,
+                                    new NumValue(1)
+                                    ),
+                                ZonePrettyName.YouField,
+                                Name: "move"
+                                )),
+                            new EffectAction(ModifyCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ActionContext: new(MoveCard: new(
+                                                    "move",
+                                                    ActionContextCardsOfMoveCard.TypeValue.Moved
+                                                ))),
+                                        })),
+                                Toughness: new(
+                                    NumValueModifier.OperatorValue.Replace,
+                                    new NumValue(1)
+                                )))
+                        }),
+                });
+
+        public static CardDef ZombiesCurse
+            => SampleCards.Sorcery(4, "ゾンビの呪い",
+                annotations: new[] { ":ゾンビ" },
+                effectText: "あなたの墓地にある:ゾンビをすべて除外する。場にあるカードをX枚ランダムに破壊する。" +
+                    "X=この効果であなたの墓地から除外した枚数",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(ExcludeCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouCemetery,
+                                                })),
+                                                AnnotationCondition: new(":ゾンビ")
+                                                ),
+                                        })),
+                                Name: "exclude"
+                                )),
+                            new EffectAction(DestroyCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouField,
+                                                    ZonePrettyName.OpponentField,
+                                                }))
+                                                ),
+                                        }),
+                                    Choice.HowValue.Random,
+                                    new NumValue(NumValueCalculator: new(ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(
+                                            new ChoiceSource(
+                                                orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ActionContext: new(ExcludeCard: new(
+                                                            "exclude",
+                                                            ActionContextCardsOfExcludeCard.TypeValue.Excluded)))
+                                                })))))
+                                    )
+                                )),
+                        }),
+                });
+
+        public static CardDef ZombiesStatue
+            => SampleCards.Artifact(1, "ゾンビの像",
+                annotations: new[] { ":ゾンビ" },
+                effectText: "このカードが場にある限り、あなたの場から墓地に:ゾンビが移動したとき、そのカードのコピーをあなたの墓地に追加する。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            When: new(new EffectTiming(MoveCard: new(
+                                OrCardConditions: new[]
+                                {
+                                    new CardCondition(
+                                        AnnotationCondition: new(":ゾンビ")
+                                        )
+                                },
+                                From: ZonePrettyName.YouField,
+                                To: ZonePrettyName.YouCemetery
+                                )))
+                            )),
+                        new[]
+                        {
+                            new EffectAction(AddCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                CardCondition.ContextConditionValue.EventSource
+                                                )
+                                        })
+                                    ),
+                                new ZoneValue(new[]
+                                {
+                                    ZonePrettyName.YouCemetery
+                                })
+                                )),
                         }),
                 });
     }

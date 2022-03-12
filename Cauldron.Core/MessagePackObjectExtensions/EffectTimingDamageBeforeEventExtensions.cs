@@ -24,59 +24,53 @@ namespace Cauldron.Shared.MessagePackObjects
                 return false;
             }
 
-            var playerMatch = PlayerIsMatch(_this, effectOwnerCard, eventArgs);
+            return TakePlayerIsMatch(_this, effectOwnerCard, eventArgs)
+                && await SourceCardIsMatch(_this, effectOwnerCard, eventArgs)
+                && await TakeCardIsMatch(_this, effectOwnerCard, eventArgs);
 
-            var cardMatch = await CardIsMatch(_this, effectOwnerCard, eventArgs);
-
-            return playerMatch || cardMatch;
-
-            static bool PlayerIsMatch(EffectTimingDamageBeforeEvent effectTimingDamageBeforeEvent, Card effectOwnerCard, EffectEventArgs eventArgs)
+            static bool TakePlayerIsMatch(EffectTimingDamageBeforeEvent _this, Card effectOwnerCard, EffectEventArgs eventArgs)
             {
-                return effectTimingDamageBeforeEvent.Source switch
+                if (_this.TakePlayerCondition == null)
                 {
-                    EffectTimingDamageBeforeEvent.SourceValue.Any => eventArgs.DamageContext?.GuardPlayer != null
-                        && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer)
-                            ?? false),
-                    EffectTimingDamageBeforeEvent.SourceValue.Take => eventArgs.DamageContext?.GuardPlayer != null
-                        && (effectTimingDamageBeforeEvent.PlayerCondition?.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer)
-                            ?? false),
-                    _ => false
-                };
+                    return true;
+                }
+
+                if (eventArgs.DamageContext?.GuardPlayer == null)
+                {
+                    return false;
+                }
+
+                return _this.TakePlayerCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer);
             }
 
-            static async ValueTask<bool> CardIsMatch(EffectTimingDamageBeforeEvent effectTimingDamageBeforeEvent, Card effectOwnerCard, EffectEventArgs eventArgs)
+            static async ValueTask<bool> SourceCardIsMatch(EffectTimingDamageBeforeEvent _this, Card effectOwnerCard, EffectEventArgs eventArgs)
             {
-                async ValueTask<bool> IsMatchDamageSource()
+                if (_this.SourceCardCondition == null)
                 {
-                    var damageSource = eventArgs.DamageContext?.DamageSourceCard;
-                    if (damageSource == null
-                        || effectTimingDamageBeforeEvent.CardCondition == null)
-                    {
-                        return false;
-                    }
-
-                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(effectOwnerCard, eventArgs, damageSource);
+                    return true;
                 }
 
-                async ValueTask<bool> IsMatchTake()
+                if (eventArgs.DamageContext?.DamageSourceCard == null)
                 {
-                    var guard = eventArgs.DamageContext?.GuardCard;
-                    if (guard == null
-                        || effectTimingDamageBeforeEvent.CardCondition == null)
-                    {
-                        return false;
-                    }
-
-                    return await effectTimingDamageBeforeEvent.CardCondition.IsMatch(effectOwnerCard, eventArgs, guard);
+                    return false;
                 }
 
-                return effectTimingDamageBeforeEvent.Source switch
+                return await _this.SourceCardCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.DamageSourceCard);
+            }
+
+            static async ValueTask<bool> TakeCardIsMatch(EffectTimingDamageBeforeEvent _this, Card effectOwnerCard, EffectEventArgs eventArgs)
+            {
+                if (_this.TakeCardCondition == null)
                 {
-                    EffectTimingDamageBeforeEvent.SourceValue.Any => await IsMatchDamageSource() || await IsMatchTake(),
-                    EffectTimingDamageBeforeEvent.SourceValue.DamageSource => await IsMatchDamageSource(),
-                    EffectTimingDamageBeforeEvent.SourceValue.Take => await IsMatchTake(),
-                    _ => false
-                };
+                    return true;
+                }
+
+                if (eventArgs.DamageContext?.GuardCard == null)
+                {
+                    return false;
+                }
+
+                return await _this.TakeCardCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardCard);
             }
         }
     }

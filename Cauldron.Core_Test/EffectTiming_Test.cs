@@ -361,9 +361,8 @@ namespace Cauldron.Core_Test
                     new CardEffect(
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
-                            new(new(DamageBefore : new(
-                                Source: EffectTimingDamageBeforeEvent.SourceValue.Any,
-                                CardCondition : new CardCondition()))))),
+                            new(new(DamageBefore : new()))
+                            )),
                         new[]{
                             new EffectAction(
                                 ModifyPlayer: new(
@@ -435,8 +434,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(DamageBefore : new (
-                                Source: EffectTimingDamageBeforeEvent.SourceValue.DamageSource,
-                                CardCondition : new CardCondition(
+                                SourceCardCondition : new CardCondition(
                                     ContextCondition: CardCondition.ContextConditionValue.This
                                     )))))),
                         new[]{
@@ -508,8 +506,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(DamageBefore : new(
-                                Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
-                                CardCondition : new CardCondition(
+                                TakeCardCondition : new CardCondition(
                                     ContextCondition: CardCondition.ContextConditionValue.Others
                                     )))))),
                         new[]{ TestUtil.TestEffectAction}
@@ -569,8 +566,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(DamageBefore: new(
-                                Source: EffectTimingDamageBeforeEvent.SourceValue.Take,
-                                CardCondition: new CardCondition(
+                                TakeCardCondition: new CardCondition(
                                     ContextCondition: CardCondition.ContextConditionValue.This
                                 )
                             )))
