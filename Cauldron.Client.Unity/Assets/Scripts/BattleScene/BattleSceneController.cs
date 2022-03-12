@@ -1145,42 +1145,47 @@ public class BattleSceneController : MonoBehaviour
     {
         Debug.Log($"questionId={message.QuestionId}");
 
-        this.pickedPlayerIdList.Clear();
-        this.pickedCardIdList.Clear();
-        this.pickedCardDefIdList.Clear();
-
-        this.askMessage = message;
-
-        // ダイアログで選択させるか、フィールドから選択させるかの判定
-        var choiceFromDialog = message.ChoiceCandidates.CardDefList.Length != 0
-            || message.ChoiceCandidates.CardList
-                .Any(x => x.Zone.ZoneName == ZoneName.Cemetery
-                    || x.Zone.ZoneName == ZoneName.Deck
-                    || x.Zone.ZoneName == ZoneName.CardPool);
-
-        if (choiceFromDialog)
+        this.updateViewActionQueue.Enqueue(() =>
         {
-            this.ShowChoiceDialog();
-            return;
-        }
+            this.pickedPlayerIdList.Clear();
+            this.pickedCardIdList.Clear();
+            this.pickedCardDefIdList.Clear();
 
-        foreach (var player in new[] { this.youPlayerController, this.opponentPlayerController })
-        {
-            player.VisiblePickCandidateIcon(message.ChoiceCandidates.PlayerIdList.Contains(player.PlayerId));
-        }
+            this.askMessage = message;
 
-        foreach (var card in message.ChoiceCandidates.CardList)
-        {
-            if (fieldCardControllersByCardId.TryGetValue(card.Id, out var fieldCardController))
+            // ダイアログで選択させるか、フィールドから選択させるかの判定
+            var choiceFromDialog = message.ChoiceCandidates.CardDefList.Length != 0
+                 || message.ChoiceCandidates.CardList
+                     .Any(x => x.Zone.ZoneName == ZoneName.Cemetery
+                         || x.Zone.ZoneName == ZoneName.Deck
+                         || x.Zone.ZoneName == ZoneName.CardPool);
+
+            if (choiceFromDialog)
             {
-                fieldCardController.VisiblePickCandidateIcon(true);
+                this.ShowChoiceDialog();
+                return UniTask.CompletedTask;
             }
-        }
 
-        this.pickUiGroup.SetActive(true);
-        this.choiceCardButton.interactable = true;
-        this.NumPicks = 0;
-        this.NumPicksLimit = this.askMessage.NumPicks;
+            foreach (var player in new[] { this.youPlayerController, this.opponentPlayerController })
+            {
+                player.VisiblePickCandidateIcon(message.ChoiceCandidates.PlayerIdList.Contains(player.PlayerId));
+            }
+
+            foreach (var card in message.ChoiceCandidates.CardList)
+            {
+                if (fieldCardControllersByCardId.TryGetValue(card.Id, out var fieldCardController))
+                {
+                    fieldCardController.VisiblePickCandidateIcon(true);
+                }
+            }
+
+            this.pickUiGroup.SetActive(true);
+            this.choiceCardButton.interactable = true;
+            this.NumPicks = 0;
+            this.NumPicksLimit = this.askMessage.NumPicks;
+
+            return UniTask.CompletedTask;
+        });
     }
 
     private async UniTask ShowCardDetail(CardDef cardDef)
