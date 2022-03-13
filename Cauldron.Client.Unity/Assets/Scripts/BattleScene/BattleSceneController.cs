@@ -155,7 +155,7 @@ public class BattleSceneController : MonoBehaviour
             holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.message)),
             holder.Receiver.OnExcludeCard.Subscribe((a) => this.OnExcludeCard(a.gameContext, a.message)),
             holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.message)),
-            holder.Receiver.OnEndGame.Subscribe(this.OnEndGame),
+            holder.Receiver.OnEndGame.Subscribe((a) => this.OnEndGame(a.gameContext, a.message)),
         });
 
         this.connectionHolder = ConnectionHolder.Find();
@@ -537,11 +537,6 @@ public class BattleSceneController : MonoBehaviour
             }
         }
 
-        if (gameContext.GameOver)
-        {
-            this.ShowEndGameDialog(gameContext.WinnerPlayerId);
-        }
-
         await UniTask.Delay(TimeSpan.FromSeconds(0.3));
     }
 
@@ -566,11 +561,6 @@ public class BattleSceneController : MonoBehaviour
         {
             this.opponentPlayerController.Set(opponent);
 
-        }
-
-        if (gameContext.GameOver)
-        {
-            this.ShowEndGameDialog(gameContext.WinnerPlayerId);
         }
 
         await UniTask.Delay(TimeSpan.FromSeconds(0.3));
@@ -688,12 +678,23 @@ public class BattleSceneController : MonoBehaviour
         }
     }
 
-    public void ShowEndGameDialog(PlayerId winnerPlayerId)
+    public void ShowEndGameDialog(EndGameNotifyMessage notify)
     {
         var title = "ゲーム終了";
-        var message = winnerPlayerId == this.youPlayerController.PlayerId
+        var winOrLoseText = notify.WinnerPlayerId == this.youPlayerController.PlayerId
             ? "Win !"
             : "Lose...";
+
+        var reasonText = notify.EndGameReason switch
+        {
+            EndGameReason.HpIsZero => "HPが0になりました。",
+            EndGameReason.CardEffect => $"「{notify.CardName}」の効果でゲームが終了しました。",
+            EndGameReason.Surrender => "降参しました。",
+            _ => throw new NotImplementedException($"正しくない値が指定されました。EndGameReason={notify.EndGameReason}"),
+        };
+
+        var message = winOrLoseText + Environment.NewLine + reasonText;
+
         var dialog = Instantiate(this.confirmDialogPrefab);
         dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
             onOkAction: async () =>
@@ -741,13 +742,15 @@ public class BattleSceneController : MonoBehaviour
         });
     }
 
-    void OnEndGame(GameContext gameContext)
+    void OnEndGame(GameContext gameContext, EndGameNotifyMessage message)
     {
         Debug.Log($"OnEndGame({this.Client.PlayerName})");
 
-        this.updateViewActionQueue.Enqueue(async () =>
+        this.updateViewActionQueue.Enqueue(() =>
         {
-            await this.UpdateGameContext(gameContext);
+            this.ShowEndGameDialog(message);
+
+            return UniTask.CompletedTask;
         });
     }
 

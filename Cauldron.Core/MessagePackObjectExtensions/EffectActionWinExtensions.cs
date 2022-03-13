@@ -1,6 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
 using Cauldron.Shared.MessagePackObjects;
-using System.Threading.Tasks;
 
 namespace Cauldron.Core.MessagePackObjectExtensions
 {
@@ -21,7 +20,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             var done = false;
             foreach (var playerId in targets)
             {
-                args.GameMaster.Win(playerId);
+                args.GameMaster.Win(playerId, EndGameReason.CardEffect, effectOwnerCard.Name);
 
                 done = true;
             }

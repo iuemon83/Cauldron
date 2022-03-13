@@ -102,8 +102,6 @@ namespace Cauldron.Core.Entities
         /// </summary>
         public void FullMp() => this.UsedMp = 0;
 
-        public void Damage(Card card) => this.Damage(card.Power);
-
         public void Damage(int x) => this.UsedHp = Math.Min(this.MaxHp, this.UsedHp + x);
 
         public void GainHp(int x) => this.UsedHp = Math.Max(0, this.UsedHp - x);

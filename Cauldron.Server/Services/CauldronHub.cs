@@ -111,7 +111,7 @@ namespace Cauldron.Server.Services
 
             try
             {
-                this._logger.LogInformation($"called {nameof(AskCard)}: questionId={currentQuestionId}, choiceCandidates={choiceCandidates}");
+                this._logger.LogInformation("called {name}: questionId={currentQuestionId}, choiceCandidates={choiceCandidates}", nameof(AskCard), currentQuestionId, choiceCandidates);
                 this.BroadcastTo(this.room, playerId.Value).OnAsk(new AskMessage(
                     currentQuestionId,
                     choiceCandidates,
@@ -168,61 +168,61 @@ namespace Cauldron.Server.Services
                     OnStartTurn: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnStartTurn(gameContext, message);
-                        this._logger.LogInformation($"OnStartTurn: {playerId}");
+                        this._logger.LogInformation("OnStartTurn: {playerId}", playerId);
                     },
                     OnPlay: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnPlayCard(gameContext, message);
-                        this._logger.LogInformation($"OnPlayCard: {playerId}");
+                        this._logger.LogInformation("OnPlayCard: {playerId}", playerId);
                     },
                     OnAddCard: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnAddCard(gameContext, message);
-                        this._logger.LogInformation($"OnAddCard: {playerId}");
+                        this._logger.LogInformation("OnAddCard: {playerId}", playerId);
                     },
                     OnExcludeCard: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnExcludeCard(gameContext, message);
-                        this._logger.LogInformation($"OnExcludeCard: {playerId}");
+                        this._logger.LogInformation("OnExcludeCard: {playerId}", playerId);
                     },
                     OnBattleStart: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnBattleStart(gameContext, message);
-                        this._logger.LogInformation($"OnBattle: {playerId}");
+                        this._logger.LogInformation("OnBattle: {playerId}", playerId);
                     },
                     OnBattleEnd: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnBattleEnd(gameContext, message);
-                        this._logger.LogInformation($"OnBattle: {playerId}");
+                        this._logger.LogInformation("OnBattle: {playerId}", playerId);
                     },
                     OnDamage: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnDamage(gameContext, message);
-                        this._logger.LogInformation($"OnDamage: {playerId}");
+                        this._logger.LogInformation("OnDamage: {playerId}", playerId);
                     },
                     OnModifyCard: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnModifyCard(gameContext, message);
-                        this._logger.LogInformation($"OnModifyCard: {playerId}");
+                        this._logger.LogInformation("OnModifyCard: {playerId}", playerId);
                     },
                     OnModifyPlayer: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnModifyPlayer(gameContext, message);
-                        this._logger.LogInformation($"OnModifyPlayer: {playerId}");
+                        this._logger.LogInformation("OnModifyPlayer: {playerId}", playerId);
                     },
                     OnMoveCard: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnMoveCard(gameContext, message);
-                        this._logger.LogInformation($"OnMoveCard: {playerId}");
+                        this._logger.LogInformation("OnMoveCard: {playerId}", playerId);
                     },
                     OnModityCounter: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnModifyCounter(gameContext, message);
-                        this._logger.LogInformation($"OnModifyCounter: {playerId}");
+                        this._logger.LogInformation("OnModifyCounter: {playerId}", playerId);
                     },
-                    OnEndGame: (playerId, gameContext) =>
+                    OnEndGame: (playerId, gameContext, message) =>
                     {
-                        this.BroadcastTo(this.room, playerId.Value).OnEndGame(gameContext);
+                        this.BroadcastTo(this.room, playerId.Value).OnEndGame(gameContext, message);
                         this._logger.LogInformation($"OnEndGame:");
                     },
                     AskCardAction: this.AskCard
@@ -269,7 +269,7 @@ namespace Cauldron.Server.Services
 
             var cards = gameMaster.CardPool.ToArray();
 
-            this._logger.LogInformation($"response {cards.Length}: {this.ConnectionId}");
+            this._logger.LogInformation("response {length}: {ConnectionId}", cards.Length, this.ConnectionId);
 
             return Task.FromResult(cards);
         }
@@ -298,7 +298,7 @@ namespace Cauldron.Server.Services
                     }
                     catch (Exception e)
                     {
-                        this._logger.LogInformation(e.ToString());
+                        this._logger.LogInformation("{a}", e.ToString());
                     }
 
                     if (success)
@@ -369,7 +369,7 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(request.GameId, request.PlayerId);
             if (playableStatus != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={playableStatus}");
+                this._logger.LogWarning("result={playableStatus}", playableStatus);
 
                 return new StartTurnReply(
                     playableStatus == GameMasterStatusCode.OK,
@@ -387,7 +387,7 @@ namespace Cauldron.Server.Services
 
             if (statusCode != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={statusCode}");
+                this._logger.LogWarning("result={statusCode}", statusCode);
             }
 
             return new StartTurnReply(
@@ -403,7 +403,7 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(request.GameId, request.PlayerId);
             if (playableStatus != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={playableStatus}");
+                this._logger.LogWarning("result={playableStatus}", playableStatus);
 
                 return new EndTurnReply(
                     playableStatus == GameMasterStatusCode.OK,
@@ -421,7 +421,7 @@ namespace Cauldron.Server.Services
 
             if (statusCode != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={statusCode}");
+                this._logger.LogWarning("result={statusCode}", statusCode);
             }
 
             return new EndTurnReply(
@@ -437,7 +437,7 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(request.GameId, request.PlayerId);
             if (playableStatus != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={playableStatus}");
+                this._logger.LogWarning("result={playableStatus}", playableStatus);
 
                 return new PlayFromHandReply(
                     playableStatus == GameMasterStatusCode.OK,
@@ -455,7 +455,7 @@ namespace Cauldron.Server.Services
 
             if (statusCode != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={statusCode}");
+                this._logger.LogWarning("result={statusCode}", statusCode);
             }
 
             return new PlayFromHandReply(
@@ -471,7 +471,7 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(request.GameId, request.PlayerId);
             if (playableStatus != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={playableStatus}");
+                this._logger.LogWarning("result={playableStatus}", playableStatus);
 
                 return new AttackToCreatureReply(
                     playableStatus == GameMasterStatusCode.OK,
@@ -489,7 +489,7 @@ namespace Cauldron.Server.Services
 
             if (statusCode != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={statusCode}");
+                this._logger.LogWarning("result={statusCode}", statusCode);
             }
 
             return new AttackToCreatureReply(
@@ -505,7 +505,7 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(request.GameId, request.PlayerId);
             if (playableStatus != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={playableStatus}");
+                this._logger.LogWarning("result={playableStatus}", playableStatus);
 
                 return new AttackToPlayerReply(
                     playableStatus == GameMasterStatusCode.OK,
@@ -523,7 +523,7 @@ namespace Cauldron.Server.Services
 
             if (statusCode != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={statusCode}");
+                this._logger.LogWarning("result={statusCode}", statusCode);
             }
 
             return new AttackToPlayerReply(
@@ -539,7 +539,7 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(gameId, this.self.Id);
             if (playableStatus != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={playableStatus}");
+                this._logger.LogWarning("result={playableStatus}", playableStatus);
                 return Task.FromResult((playableStatus, default(CardId[])));
             }
 
@@ -560,7 +560,7 @@ namespace Cauldron.Server.Services
             var playableStatus = IsPlayable(gameId, this.self.Id);
             if (playableStatus != GameMasterStatusCode.OK)
             {
-                this._logger.LogWarning($"result={playableStatus}");
+                this._logger.LogWarning("result={playableStatus}", playableStatus);
                 return Task.FromResult((playableStatus, default((PlayerId[], CardId[]))));
             }
 

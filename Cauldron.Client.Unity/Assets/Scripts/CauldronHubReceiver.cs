@@ -93,9 +93,10 @@ namespace Assets.Scripts
         void ICauldronHubReceiver.OnJoinGame()
             => this.onJoinGame.OnNext(Unit.Default);
 
-        public IObservable<GameContext> OnEndGame => onEndGame;
-        private readonly Subject<GameContext> onEndGame = new Subject<GameContext>();
-        void ICauldronHubReceiver.OnEndGame(GameContext gameContext)
-            => this.onEndGame.OnNext(gameContext);
+        public IObservable<(GameContext gameContext, EndGameNotifyMessage message)> OnEndGame => onEndGame;
+        private readonly Subject<(GameContext, EndGameNotifyMessage)> onEndGame
+            = new Subject<(GameContext, EndGameNotifyMessage)>();
+        void ICauldronHubReceiver.OnEndGame(GameContext gameContext, EndGameNotifyMessage message)
+            => this.onEndGame.OnNext((gameContext, message));
     }
 }

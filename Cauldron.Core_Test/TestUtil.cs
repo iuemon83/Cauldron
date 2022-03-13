@@ -56,7 +56,7 @@ namespace Cauldron.Core_Test
             Action<PlayerId, GameContext, BattleNotifyMessage> OnBattleStart = null,
             Action<PlayerId, GameContext, BattleNotifyMessage> OnBattleEnd = null,
             Action<PlayerId, GameContext, ModifyCounterNotifyMessage> OnModityCounter = null,
-            Action<PlayerId, GameContext> OnEndGame = null,
+            Action<PlayerId, GameContext, EndGameNotifyMessage> OnEndGame = null,
             Func<PlayerId, ChoiceCandidates, int, ValueTask<ChoiceAnswer>> AskCardAction = null
             ) => new(
                 OnStartTurn, OnPlayCard, OnAddCard, OnExcludeCard, OnMoveCard, OnModifyCard, OnModifyPlayer,

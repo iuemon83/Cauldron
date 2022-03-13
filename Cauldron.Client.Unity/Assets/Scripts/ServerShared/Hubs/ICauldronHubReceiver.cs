@@ -7,7 +7,7 @@ namespace Cauldron.Shared.Services
         void OnJoinGame();
         void OnReady();
         void OnStartGame();
-        void OnEndGame(GameContext gameContext);
+        void OnEndGame(GameContext gameContext, EndGameNotifyMessage message);
         void OnStartTurn(GameContext gameContext, StartTurnNotifyMessage message);
         void OnPlayCard(GameContext gameContext, PlayCardNotifyMessage message);
         void OnAddCard(GameContext gameContext, AddCardNotifyMessage message);

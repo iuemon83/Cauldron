@@ -110,7 +110,9 @@ namespace Cauldron.Core.Entities
             ? this.playerRepository.Opponents(this.ActivePlayer.Id)
             : Array.Empty<Player>();
 
-        public bool GameOver => this.playerRepository.AllPlayers.Any(player => player.CurrentHp <= 0);
+        public bool GameOver => this.endGameNotifyMessage != null;
+
+        private EndGameNotifyMessage? endGameNotifyMessage;
 
         public ConcurrentDictionary<PlayerId, int> PlayerTurnCountById { get; set; } = new();
 
@@ -221,7 +223,11 @@ namespace Cauldron.Core.Entities
 
         public GameMasterStatusCode Surrender(PlayerId playerId)
         {
-            var (_, status) = this.Win(this.GetOpponent(playerId).Id);
+            var (_, status) = this.Win(
+                this.GetOpponent(playerId).Id,
+                EndGameReason.Surrender,
+                null
+                );
 
             return status;
         }
@@ -1182,6 +1188,13 @@ namespace Cauldron.Core.Entities
                         ));
             }
 
+            // HPが0になったらその後の処理をすることなく負け判定
+            if (newDamageContext.GuardPlayer.CurrentHp <= 0)
+            {
+                this.Win(this.GetOpponent(newDamageContext.GuardPlayer.Id).Id, EndGameReason.HpIsZero, null);
+                return;
+            }
+
             await this.FireEvent(newEventArgs with { GameEvent = GameEvent.OnDamage });
         }
 
@@ -1584,7 +1597,7 @@ namespace Cauldron.Core.Entities
             return false;
         }
 
-        public (bool, GameMasterStatusCode) Win(PlayerId playerId)
+        public (bool, GameMasterStatusCode) Win(PlayerId playerId, EndGameReason reason, string? cardName)
         {
             var (exists, _) = this.playerRepository.TryGet(playerId);
             if (!exists)
@@ -1592,15 +1605,15 @@ namespace Cauldron.Core.Entities
                 return (false, GameMasterStatusCode.PlayerNotExists);
             }
 
-            // 対戦相手のHPをゼロにする
-            foreach (var p in this.playerRepository.Opponents(playerId))
-            {
-                p.Damage(p.MaxHp);
-            }
+            this.endGameNotifyMessage = new EndGameNotifyMessage(playerId, reason, cardName);
 
             foreach (var p in this.playerRepository.AllPlayers)
             {
-                this.EventListener?.OnEndGame?.Invoke(p.Id, this.CreateGameContext(p.Id));
+                this.EventListener?.OnEndGame?.Invoke(
+                    p.Id,
+                    this.CreateGameContext(p.Id),
+                    this.endGameNotifyMessage
+                    );
             }
 
             return (true, GameMasterStatusCode.OK);

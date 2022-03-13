@@ -92,7 +92,7 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     {
     }
 
-    void ICauldronHubReceiver.OnEndGame(GameContext gameContext)
+    void ICauldronHubReceiver.OnEndGame(GameContext gameContext, EndGameNotifyMessage message)
     {
     }
 
