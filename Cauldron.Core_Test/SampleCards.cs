@@ -4042,7 +4042,7 @@ namespace Cauldron.Core_Test
         public static CardDef PrinceZombie
             => SampleCards.Creature(2, "ゾンビプリンス", 1, 1,
                 annotations: new[] { ":ゾンビ" },
-                effectText: "あなたの場のすべてのクリーチャーに:ゾンビを付与して、下記の効果を追加する。" +
+                effectText: "このカード以外のあなたの場のすべてのクリーチャーに:ゾンビを付与して、下記の効果を追加する。" +
                     "・このカードが破壊されたとき、あなたの場にゾンビトークンを1つ追加する。",
                 effects: new[]
                 {
@@ -4056,6 +4056,7 @@ namespace Cauldron.Core_Test
                                         orCardConditions: new[]
                                         {
                                             new CardCondition(
+                                                CardCondition.ContextConditionValue.Others,
                                                 ZoneCondition: new(new ZoneValue(new[]
                                                 {
                                                     ZonePrettyName.YouField
@@ -4065,7 +4066,8 @@ namespace Cauldron.Core_Test
                                                     CardType.Creature
                                                 }))
                                         })),
-                                Annotations: new(new[]{":ゾンビ"}, AnnotationsModifier.OperatorValue.Add)
+                                Annotations: new(new[]{":ゾンビ"}, AnnotationsModifier.OperatorValue.Add),
+                                Name: "modify"
                                 )),
                             new EffectAction(AddEffect:new(
                                 new Choice(
@@ -4073,14 +4075,11 @@ namespace Cauldron.Core_Test
                                         orCardConditions: new[]
                                         {
                                             new CardCondition(
-                                                ZoneCondition: new(new ZoneValue(new[]
-                                                {
-                                                    ZonePrettyName.YouField
-                                                })),
-                                                TypeCondition: new(new[]
-                                                {
-                                                    CardType.Creature
-                                                }))
+                                                ActionContext: new(ModifyCard: new(
+                                                    "modify",
+                                                    ActionContextCardsOfModifyCard.TypeValue.Modified
+                                                    ))
+                                                )
                                         })),
                                 new[]
                                 {

@@ -22,15 +22,15 @@ public class FieldCardController : CardController, IPointerClickHandler
     [SerializeField]
     private Image destroyIcon = default;
 
-    private Action<Card> openCardDetailView;
+    private Action<Card> displaySmallCardDetail;
 
     public bool IsAttackTarget => this.attackTargetIcon.activeSelf;
 
-    public void Init(Card card, Action<Card> openCardDetailView)
+    public void Init(Card card, Action<Card> displaySmallCardDetail)
     {
         this.Init(card);
 
-        this.openCardDetailView = openCardDetailView;
+        this.displaySmallCardDetail = displaySmallCardDetail;
     }
 
     public void UpdateOutlineColor(float time)
@@ -46,6 +46,8 @@ public class FieldCardController : CardController, IPointerClickHandler
     /// <param name="eventData"></param>
     void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
     {
+        this.displaySmallCardDetail?.Invoke(this.Card);
+
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             if (this.IsPicked)
@@ -65,10 +67,6 @@ public class FieldCardController : CardController, IPointerClickHandler
                 // é©ï™ÇÃÉJÅ[Éh
                 BattleSceneController.Instance.ToggleAttackCard(this);
             }
-        }
-        else
-        {
-            this.openCardDetailView?.Invoke(this.Card);
         }
     }
 

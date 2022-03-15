@@ -66,11 +66,26 @@ public class BattleSceneController : MonoBehaviour
     [SerializeField]
     private CardDetailController cardDetailController = default;
 
+    /// <summary>
+    /// 場のカードを配置するためのコンテナ
+    /// </summary>
     [SerializeField]
-    private GameObject cardsSpace = default;
+    private GameObject fieldCardsContainer = default;
+
+    /// <summary>
+    /// 手札カードを配置するためのコンテナ
+    /// </summary>
+    [SerializeField]
+    private GameObject handCardsContainer = default;
+
+    /// <summary>
+    /// 選択中の手札カードを配置するためのコンテナ
+    /// </summary>
+    [SerializeField]
+    private GameObject playTargetHandCardsContainer = default;
 
     [SerializeField]
-    private CardDetailViewController cardDetailViewController = default;
+    private CardBigDetailController cardDetailViewController = default;
 
     [SerializeField]
     private Button choiceCardButton = default;
@@ -106,6 +121,8 @@ public class BattleSceneController : MonoBehaviour
 
     private float time;
 
+    private HandCardController playTargetHand = default;
+
     private int NumPicks
     {
         get { return int.Parse(this.numPicksText.text); }
@@ -140,6 +157,8 @@ public class BattleSceneController : MonoBehaviour
 
         this.youExcludedCardListViewController.InitAsYou("Excluded");
         this.opponentExcludedCardListViewController.InitAsOpponent("Excluded");
+
+        this.cardDetailController.Init(this.DisplayBigCardDetail, this.DisplayBigCardDefDetail);
 
         this.disposableList.AddRange(new[]
         {
@@ -196,6 +215,25 @@ public class BattleSceneController : MonoBehaviour
         foreach (var fieldCard in this.fieldCardControllersByCardId.Values)
         {
             fieldCard.UpdateOutlineColor(this.time);
+        }
+    }
+
+    private void SetPlayTargetHand(HandCardController target)
+    {
+        if (this.playTargetHand == null)
+        {
+            this.playTargetHand = null;
+        }
+
+        var prevId = this.playTargetHand?.CardId;
+
+        this.ResetAllMarks();
+
+        if (prevId != target.CardId)
+        {
+            target.transform.SetParent(this.playTargetHandCardsContainer.transform, false);
+            target.TogglePlayTarget();
+            this.playTargetHand = target;
         }
     }
 
@@ -572,11 +610,11 @@ public class BattleSceneController : MonoBehaviour
         {
             this.RemoveCardObjectByCardId(cardId);
 
-            controller = Instantiate(this.handCardPrefab, this.cardsSpace.transform);
+            controller = Instantiate(this.handCardPrefab, this.handCardsContainer.transform);
             handCardObjectsByCardId.Add(cardId, controller);
         }
 
-        controller.Init(card, this.OpenCardDetailView);
+        controller.Init(card, this.DisplaySmallCardDetailSimple, this.SetPlayTargetHand);
 
         controller.transform.position = this.youHandSpaces[index].transform.position;
 
@@ -589,11 +627,11 @@ public class BattleSceneController : MonoBehaviour
         {
             this.RemoveCardObjectByCardId(card.Id);
 
-            cardController = Instantiate(this.fieldCardPrefab, this.cardsSpace.transform);
+            cardController = Instantiate(this.fieldCardPrefab, this.fieldCardsContainer.transform);
             fieldCardControllersByCardId.Add(card.Id, cardController);
         }
 
-        cardController.Init(card, this.OpenCardDetailView);
+        cardController.Init(card, this.DisplaySmallCardDetailSimple);
 
         cardController.transform.position = playerId == this.YouId
             ? this.youFieldSpaces[index].transform.position
@@ -772,7 +810,7 @@ public class BattleSceneController : MonoBehaviour
             //TODO carddefじゃなくてcardは取れない？
             //await this.AddActionLog(new ActionLog($"プレイ: {carddef.Name}({ownerName})", card));
 
-            await this.ShowCardDetail(carddef);
+            await this.DisplaySmallCardDetail(carddef);
 
             //await this.UpdateGameContext(gameContext);
         });
@@ -1191,16 +1229,26 @@ public class BattleSceneController : MonoBehaviour
         });
     }
 
-    private async UniTask ShowCardDetail(CardDef cardDef)
+    private void DisplaySmallCardDetailSimple(Card card)
+    {
+        this.cardDetailController.SetCard(card);
+    }
+
+    private async UniTask DisplaySmallCardDetail(CardDef cardDef)
     {
         this.cardDetailController.SetCardDef(cardDef);
         await cardDetailController.transform.DOScale(1.1f, 0);
         await cardDetailController.transform.DOScale(1f, 0.5f);
     }
 
-    private void OpenCardDetailView(Card card)
+    private void DisplayBigCardDetail(Card card)
     {
         this.cardDetailViewController.Open(card);
+    }
+
+    private void DisplayBigCardDefDetail(CardDef cardDef)
+    {
+        this.cardDetailViewController.Open(cardDef);
     }
 
     public void Pick(PlayerController playerController)
@@ -1254,5 +1302,12 @@ public class BattleSceneController : MonoBehaviour
         this.pickedCardDefIdList.Clear();
         this.pickedCardIdList.Clear();
         this.pickedPlayerIdList.Clear();
+
+        if (this.playTargetHand != null)
+        {
+            this.playTargetHand.transform.SetParent(this.handCardsContainer.transform, false);
+            this.playTargetHand.DisablePlayTarget();
+            this.playTargetHand = null;
+        }
     }
 }

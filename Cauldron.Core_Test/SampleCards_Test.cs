@@ -2452,7 +2452,7 @@ namespace Cauldron.Core_Test
             await TestUtil.Turn(c.GameMaster, (g, pId) =>
             {
                 Assert.True(g.GameOver);
-                Assert.Equal(pId, g.GetWinner().Id);
+                Assert.Equal(pId, g.WinnerId);
             });
         }
 
@@ -3503,7 +3503,7 @@ namespace Cauldron.Core_Test
                 await g.GenerateNewCard(key1.Id, new Zone(pId, ZoneName.Hand), null);
                 await g.GenerateNewCard(key2.Id, new Zone(pId, ZoneName.Hand), null);
                 Assert.True(g.GameOver);
-                Assert.Equal(pId, g.GetWinner()?.Id);
+                Assert.Equal(pId, g.WinnerId);
             });
         }
 

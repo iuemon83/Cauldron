@@ -12,26 +12,35 @@ public class HandCardController : CardController, IPointerClickHandler
     private Image destroyIcon = default;
     [SerializeField]
     private Image backgroundImage = default;
+    [SerializeField]
+    private Button playButton = default;
 
-    private Action<Card> openCardDetailView;
+    private Action<Card> displaySmallCardDetail;
+    Action<HandCardController> setPlayTargetHand;
 
-    public void Init(Card card, Action<Card> openCardDetailView)
+    public void Init(Card card, Action<Card> displaySmallCardDetail, Action<HandCardController> setPlayTargetHand)
     {
         this.Init(card);
 
-        this.openCardDetailView = openCardDetailView;
+        this.displaySmallCardDetail = displaySmallCardDetail;
+        this.setPlayTargetHand = setPlayTargetHand;
     }
 
-    public async void OnPointerClick(PointerEventData eventData)
+    public  void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Left)
-        {
-            await BattleSceneController.Instance.PlayFromHand(this);
-        }
-        else
-        {
-            this.openCardDetailView?.Invoke(this.Card);
-        }
+        this.displaySmallCardDetail?.Invoke(this.Card);
+        this.setPlayTargetHand?.Invoke(this);
+    }
+
+    public void DisablePlayTarget()
+    {
+        this.playButton.gameObject.SetActive(false);
+    }
+
+    public bool TogglePlayTarget()
+    {
+        this.playButton.gameObject.SetActive(!this.playButton.gameObject.activeSelf);
+        return this.playButton.gameObject.activeSelf;
     }
 
     public async UniTask DestroyEffect()
@@ -49,5 +58,10 @@ public class HandCardController : CardController, IPointerClickHandler
                     0.2f));
 
         this.destroyIcon.gameObject.SetActive(false);
+    }
+
+    public async void OnPlayButtonClick()
+    {
+        await BattleSceneController.Instance.PlayFromHand(this);
     }
 }

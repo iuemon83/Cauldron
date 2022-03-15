@@ -1,5 +1,6 @@
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,6 +26,15 @@ public class CardDetailController : MonoBehaviour
 
     protected Card card;
     protected CardDef cardDef;
+
+    private Action<Card> displayBigCardDetail;
+    private Action<CardDef> displayBigCardDefDetail;
+
+    public void Init(Action<Card> displayBigCardDetail, Action<CardDef> displayBigCardDefDetail)
+    {
+        this.displayBigCardDefDetail = displayBigCardDefDetail;
+        this.displayBigCardDetail = displayBigCardDetail;
+    }
 
     // Update is called once per frame
     void Update()
@@ -83,5 +93,17 @@ public class CardDetailController : MonoBehaviour
     {
         this.card = null;
         this.cardDef = cardDef;
+    }
+
+    public void OnInfoButtonClick()
+    {
+        if (this.cardDef != null)
+        {
+            this.displayBigCardDefDetail(this.cardDef);
+        }
+        else if (this.card != null)
+        {
+            this.displayBigCardDetail(this.card);
+        }
     }
 }

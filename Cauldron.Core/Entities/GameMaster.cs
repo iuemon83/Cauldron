@@ -112,6 +112,8 @@ namespace Cauldron.Core.Entities
 
         public bool GameOver => this.endGameNotifyMessage != null;
 
+        public PlayerId WinnerId => this.endGameNotifyMessage?.WinnerPlayerId ?? default;
+
         private EndGameNotifyMessage? endGameNotifyMessage;
 
         public ConcurrentDictionary<PlayerId, int> PlayerTurnCountById { get; set; } = new();
@@ -129,20 +131,6 @@ namespace Cauldron.Core.Entities
         public bool IsTurnStarted { get; private set; }
 
         private readonly List<Card> temporaryCards = new();
-
-        public Player GetWinner()
-        {
-            if (this.ActivePlayer == null)
-            {
-                throw new InvalidOperationException("ActivePlayer is null");
-            }
-
-            // 引き分けならターンのプレイヤーの負け
-            var alives = this.playerRepository.Alives;
-            return alives.Count == 0
-                ? this.playerRepository.Opponents(this.ActivePlayer.Id)[0]
-                : alives[0];
-        }
 
         public Player? Get(PlayerId playerId) => this.playerRepository.TryGet(playerId).value;
 
@@ -791,7 +779,7 @@ namespace Cauldron.Core.Entities
             }
 
             return new GameContext(
-                this.GetWinner()?.Id ?? default,
+                this.WinnerId,
                 this.ActivePlayer?.Id ?? default,
                 this.temporaryCards.ToArray(),
                 this.GetOpponent(playerId).PublicPlayerInfo,
