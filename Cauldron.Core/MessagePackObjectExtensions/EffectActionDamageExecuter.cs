@@ -1,7 +1,6 @@
 ﻿using Cauldron.Core.Entities.Effect;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
-using System.Threading.Tasks;
 
 namespace Cauldron.Core.MessagePackObjectExtensions
 {
@@ -18,17 +17,18 @@ namespace Cauldron.Core.MessagePackObjectExtensions
         {
             var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.Choice, args);
 
+            var targetPlayers = args.GameMaster.playerRepository.TryList(choiceResult.PlayerIdList).ToArray();
+
             var done = false;
-
-            var damageValue = await _this.Value.Calculate(effectOwnerCard, args);
-
-            foreach (var playerId in choiceResult.PlayerIdList)
+            foreach (var guardPlayer in targetPlayers)
             {
-                var (exists, guardPlayer) = args.GameMaster.playerRepository.TryGet(playerId);
-                if (!exists)
+                var newArgs = args with
                 {
-                    continue;
-                }
+                    ActionTargetPlayers = targetPlayers,
+                    ActionTargetPlayer = guardPlayer
+                };
+
+                var damageValue = await _this.Value.Calculate(effectOwnerCard, newArgs);
 
                 var damageContext = new DamageContext(
                     effectOwnerCard,
@@ -43,6 +43,13 @@ namespace Cauldron.Core.MessagePackObjectExtensions
 
             foreach (var card in choiceResult.CardList)
             {
+                var newArgs = args with
+                {
+                    ActionTargetCards = choiceResult.CardList,
+                    ActionTargetCard = card
+                };
+                var damageValue = await _this.Value.Calculate(effectOwnerCard, newArgs);
+
                 var damageContext = new DamageContext(
                     effectOwnerCard,
                     Value: damageValue,

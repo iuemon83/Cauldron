@@ -1,7 +1,5 @@
 ﻿using Cauldron.Shared.MessagePackObjects;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Cauldron.Core.Entities
 {
@@ -13,11 +11,19 @@ namespace Cauldron.Core.Entities
 
         public IReadOnlyList<Player> Alives => this.PlayersById.Values.Where(p => p.CurrentHp > 0).ToArray();
 
-        public (bool exists, Player? value) TryGet(PlayerId id)
+        public (bool exists, Player value) TryGet(PlayerId id)
         {
             return this.PlayersById.TryGetValue(id, out var value)
                 ? (true, value)
-                : (false, default);
+                : (false, default!);
+        }
+
+        public IEnumerable<Player> TryList(IReadOnlyList<PlayerId> idList)
+        {
+            return idList
+                .Select(playerId => this.TryGet(playerId))
+                .Where(x => x.exists)
+                .Select(x => x.value);
         }
 
         public Player CreateNew(PlayerDef playerDef, RuleBook ruleBook, Card[] deckCards, bool isFirst)

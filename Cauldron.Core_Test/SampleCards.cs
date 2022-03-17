@@ -1394,6 +1394,51 @@ namespace Cauldron.Core_Test
                     )
                 });
 
+        public static CardDef SelectDeathDamage
+            => SampleCards.Sorcery(3, "破壊光線",
+                effectText: "場のクリーチャー1体を選択する。それにXのダメージを与える。X=そのクリーチャーの元々のタフネス",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
+                        new[]
+                        {
+                            new EffectAction(
+                                Damage: new(
+                                    new NumValue(NumValueCalculator: new(ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.CardBaseToughness,
+                                        new Choice(
+                                            new ChoiceSource(
+                                                orCardConditions: new[]
+                                                {
+                                                    new CardCondition(CardCondition.ContextConditionValue.ActionTarget)
+                                                }
+                                            )
+                                            )
+                                        ))),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]{
+                                                        ZonePrettyName.YouField,
+                                                        ZonePrettyName.OpponentField
+                                                    })),
+                                                    TypeCondition: new(new[]{ CardType.Creature })
+                                                )
+                                            }
+                                            ),
+                                        Choice.HowValue.Choose,
+                                        new NumValue(1)
+                                        )
+                                    )
+                            )
+                        }
+                    )
+                });
+
         public static CardDef Salvage
             => SampleCards.Sorcery(1, "サルベージ",
                 effectText: "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",

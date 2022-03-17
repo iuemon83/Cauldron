@@ -1,8 +1,6 @@
 ﻿using Cauldron.Core.Entities.Effect;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
-using System;
-using System.Threading.Tasks;
 
 namespace Cauldron.Core.MessagePackObjectExtensions
 {

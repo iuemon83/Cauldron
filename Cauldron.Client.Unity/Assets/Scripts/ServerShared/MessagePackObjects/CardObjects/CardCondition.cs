@@ -2,7 +2,6 @@
 
 using Assets.Scripts.ServerShared.MessagePackObjects;
 using MessagePack;
-using System;
 using System.Collections.Generic;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -47,6 +46,18 @@ namespace Cauldron.Shared.MessagePackObjects
             /// </summary>
             [DisplayText("イベントの発生源")]
             EventSource,
+
+            /// <summary>
+            /// EffectActionの対象となるカード
+            /// </summary>
+            [DisplayText("アクションの対象となるカード")]
+            ActionTarget,
+
+            /// <summary>
+            /// EffectActionの対象となるすべてのカード
+            /// </summary>
+            [DisplayText("アクションの対象となるすべてのカード")]
+            ActionTargetAll,
         }
 
         /// <summary>

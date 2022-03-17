@@ -1,8 +1,6 @@
 ﻿using Cauldron.Core.Entities.Effect;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
-using System;
-using System.Threading.Tasks;
 
 namespace Cauldron.Core.MessagePackObjectExtensions
 {
@@ -22,29 +20,45 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                 return (true, args);
             }
 
-            var targetCards = await args.GameMaster.Choice(effectOwnerCard, _this.TargetsChoice, args);
+            var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.TargetsChoice, args);
 
             var totalNumBeforeCounters = 0;
             var totalNumAfterCounters = 0;
 
-            foreach (var pid in targetCards.PlayerIdList)
+            var targetPlayers = args.GameMaster.playerRepository.TryList(choiceResult.PlayerIdList).ToArray();
+
+            foreach (var player in targetPlayers)
             {
                 var beforeNumCounters = 0;
                 totalNumBeforeCounters += beforeNumCounters;
+
+                var newArgs = args with
+                {
+                    ActionTargetPlayers = targetPlayers,
+                    ActionTargetPlayer = player
+                };
+
                 var modifyNum = await _this.NumCountersModifier.Modify(effectOwnerCard, args, beforeNumCounters)
                     - beforeNumCounters;
-                await args.GameMaster.ModifyCounter(pid, _this.CounterName, modifyNum);
+                await args.GameMaster.ModifyCounter(player.Id, _this.CounterName, modifyNum);
 
                 totalNumAfterCounters += modifyNum;
             }
 
-            foreach (var c in targetCards.CardList)
+            foreach (var card in choiceResult.CardList)
             {
-                var beforeNumCounters = c.GetCounter(_this.CounterName);
+                var beforeNumCounters = card.GetCounter(_this.CounterName);
                 totalNumBeforeCounters += beforeNumCounters;
-                var modifyNum = await _this.NumCountersModifier.Modify(effectOwnerCard, args, beforeNumCounters)
+
+                var newArgs = args with
+                {
+                    ActionTargetCards = choiceResult.CardList,
+                    ActionTargetCard = card
+                };
+
+                var modifyNum = await _this.NumCountersModifier.Modify(effectOwnerCard, newArgs, beforeNumCounters)
                     - beforeNumCounters;
-                await args.GameMaster.ModifyCounter(c, _this.CounterName, modifyNum);
+                await args.GameMaster.ModifyCounter(card, _this.CounterName, modifyNum);
 
                 totalNumAfterCounters += modifyNum;
             }
@@ -52,7 +66,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             if (!string.IsNullOrEmpty(_this.Name))
             {
                 var context = new ActionContext(ModifyCounter: new(
-                    targetCards.CardList,
+                    choiceResult.CardList,
                     Math.Max(0, totalNumBeforeCounters),
                     Math.Max(0, totalNumAfterCounters)
                     ));

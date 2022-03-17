@@ -19,7 +19,19 @@ namespace Cauldron.Shared.MessagePackObjects
             [DisplayText("ノンアクティブターンプレイヤー")]
             NonActive,
             [DisplayText("イベントの発生源")]
-            EventSource
+            EventSource,
+
+            /// <summary>
+            /// EffectActionの対象となるカード
+            /// </summary>
+            [DisplayText("アクションの対象となるプレイヤー")]
+            ActionTarget,
+
+            /// <summary>
+            /// EffectActionの対象となるすべてのカード
+            /// </summary>
+            [DisplayText("アクションの対象となるすべてのプレイヤー")]
+            ActionTargetAll,
         }
 
         public PlayerCondition.ContextValue Context { get; }

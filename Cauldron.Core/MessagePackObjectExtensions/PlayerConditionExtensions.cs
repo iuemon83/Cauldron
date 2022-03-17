@@ -1,6 +1,5 @@
 ﻿using Cauldron.Core.Entities;
 using Cauldron.Core.Entities.Effect;
-using System.Linq;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -19,14 +18,12 @@ namespace Cauldron.Shared.MessagePackObjects
                 playerCondition.Context switch
                 {
                     PlayerCondition.ContextValue.EventSource => playerToMatch.Id == eventArgs.SourcePlayer?.Id,
-                    _ => true
-                }
-                && playerCondition.Context switch
-                {
                     PlayerCondition.ContextValue.You => playerToMatch.Id == effectOwnerCard.OwnerId,
                     PlayerCondition.ContextValue.Opponent => playerToMatch.Id != effectOwnerCard.OwnerId,
                     PlayerCondition.ContextValue.Active => playerToMatch.Id == eventArgs.GameMaster.ActivePlayer.Id,
                     PlayerCondition.ContextValue.NonActive => playerToMatch.Id != eventArgs.GameMaster.ActivePlayer.Id,
+                    PlayerCondition.ContextValue.ActionTarget => playerToMatch.Id == eventArgs.ActionTargetPlayer?.Id,
+                    PlayerCondition.ContextValue.ActionTargetAll => eventArgs.ActionTargetPlayers.Select(x => x.Id).Contains(playerToMatch.Id),
                     _ => true
                 };
         }

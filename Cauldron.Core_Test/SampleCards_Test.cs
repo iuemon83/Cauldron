@@ -3685,5 +3685,51 @@ namespace Cauldron.Core_Test
                 Assert.Equal(beforeCemeterCount + 2, afterCemeterCount);
             });
         }
+
+        [Fact]
+        public async Task SelectDeathDamage()
+        {
+            var testCardDef = SampleCards.SelectDeathDamage;
+            testCardDef.Cost = 0;
+
+            var creatureDef = SampleCards.Creature(0, "z", 1, 3);
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, creatureDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var creature = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
+
+                // まだ生きてる
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 破壊される
+                Assert.Equal(ZoneName.Cemetery, creature.Zone.ZoneName);
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                // バフされてる場合のテスト
+                var creature = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
+                creature.ToughnessBuff = 1;
+
+                // まだ生きてる
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // バフの分残るので破壊されない
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+                Assert.Equal(1, creature.Toughness);
+            });
+        }
     }
 }

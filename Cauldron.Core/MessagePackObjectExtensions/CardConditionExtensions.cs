@@ -1,8 +1,5 @@
 ﻿using Cauldron.Core.Entities;
 using Cauldron.Core.Entities.Effect;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -53,6 +50,8 @@ namespace Cauldron.Shared.MessagePackObjects
                     CardCondition.ContextConditionValue.SameDefs => cardToMatch.CardDefId == effectOwnerCard.CardDefId,
                     CardCondition.ContextConditionValue.OtherDefs => cardToMatch.CardDefId != effectOwnerCard.CardDefId,
                     CardCondition.ContextConditionValue.EventSource => cardToMatch.Id == effectEventArgs.SourceCard?.Id,
+                    CardCondition.ContextConditionValue.ActionTarget => cardToMatch.Id == effectEventArgs.ActionTargetCard?.Id,
+                    CardCondition.ContextConditionValue.ActionTargetAll => effectEventArgs.ActionTargetCards.Select(x => x.Id).Contains(cardToMatch.Id),
                     _ => true
                 };
             }

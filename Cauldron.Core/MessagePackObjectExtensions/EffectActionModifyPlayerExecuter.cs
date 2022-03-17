@@ -1,6 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
 using Cauldron.Shared.MessagePackObjects;
-using System.Threading.Tasks;
 
 namespace Cauldron.Core.MessagePackObjectExtensions
 {
@@ -16,12 +15,18 @@ namespace Cauldron.Core.MessagePackObjectExtensions
         public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
         {
             var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.Choice, args);
-            var targets = choiceResult.PlayerIdList;
+            var targets = args.GameMaster.playerRepository.TryList(choiceResult.PlayerIdList).ToArray();
 
             var done = false;
-            foreach (var playerId in targets)
+            foreach (var player in targets)
             {
-                await args.GameMaster.ModifyPlayer(new(playerId, _this.PlayerModifier), effectOwnerCard, args);
+                var newArgs = args with
+                {
+                    ActionTargetPlayers = targets,
+                    ActionTargetPlayer = player
+                };
+
+                await args.GameMaster.ModifyPlayer(new(player.Id, _this.PlayerModifier), effectOwnerCard, args);
 
                 done = true;
             }
