@@ -697,6 +697,44 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task Hope()
+        {
+            var testCardDef = SampleCards.Hope;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef });
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                async ValueTask assert(int expectedNumDraws)
+                {
+                    var beforeNumOfDecks = g.ActivePlayer.Deck.Count;
+                    var beforeNumOfHands = g.ActivePlayer.Hands.AllCards.Count;
+
+                    await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                    var afterNumOfDecks = g.ActivePlayer.Deck.Count;
+                    Assert.Equal(beforeNumOfDecks - expectedNumDraws, afterNumOfDecks);
+
+                    var afterNumOfHands = g.ActivePlayer.Hands.AllCards.Count;
+                    Assert.Equal(beforeNumOfHands + expectedNumDraws, afterNumOfHands);
+                }
+
+                // HP差がないのでドローできない
+                await assert(0);
+
+                // HP差があるのでドローできる
+                await g.HitPlayer(new(c.Player1.Hands.AllCards[0], 1, GuardPlayer: c.Player1));
+                await assert(1);
+
+                // HP差があっても相手HPのほうが低いとドローできない
+                await g.HitPlayer(new(c.Player1.Hands.AllCards[0], 2, GuardPlayer: c.Player2));
+                await assert(0);
+            });
+        }
+
+        [Fact]
         public async Task Greed()
         {
             var testCardDef = SampleCards.Greed;
@@ -3729,6 +3767,73 @@ namespace Cauldron.Core_Test
                 // バフの分残るので破壊されない
                 Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
                 Assert.Equal(1, creature.Toughness);
+            });
+        }
+
+        [Fact]
+        public async Task RunawayMagic()
+        {
+            var testCardDef = SampleCards.RunawayMagic;
+            testCardDef.Cost = 0;
+
+            var creatureDef = SampleCards.Creature(0, "z", 1, 3);
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, creatureDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var creature = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
+
+                // まだ生きてる
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 魔導カウンターが乗っていないのでダメージを受けない
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+                Assert.Equal(creature.BaseToughness, creature.Toughness);
+
+                var creature2 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
+                await g.ModifyCounter(creature2, "魔導", 1);
+
+                // まだ生きてる
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 魔導カウンターが乗っていないのでダメージを受けない
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+                Assert.Equal(creature.BaseToughness, creature.Toughness);
+
+                // 魔導カウンターが1個のっているので1ダメージ
+                Assert.Equal(ZoneName.Field, creature2.Zone.ZoneName);
+                Assert.Equal(creature2.BaseToughness - 1, creature2.Toughness);
+
+                var creature3 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
+                await g.ModifyCounter(creature3, "魔導", 2);
+
+                // まだ生きてる
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 魔導カウンターが乗っていないのでダメージを受けない
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+                Assert.Equal(creature.BaseToughness, creature.Toughness);
+
+                // 魔導カウンターが1個のっているのでさらに1ダメージ
+                Assert.Equal(ZoneName.Field, creature2.Zone.ZoneName);
+                Assert.Equal(creature2.BaseToughness - 2, creature2.Toughness);
+
+                // 魔導カウンターが2個のっているので2ダメージ
+                Assert.Equal(ZoneName.Field, creature3.Zone.ZoneName);
+                Assert.Equal(creature3.BaseToughness - 2, creature3.Toughness);
             });
         }
     }

@@ -421,7 +421,7 @@ namespace Cauldron.Core.Entities
             }
 
             var drawnCards = new List<Card>();
-            foreach (var _ in Enumerable.Range(0, numCards))
+            foreach (var _ in Enumerable.Range(0, Math.Max(numCards, 0)))
             {
                 var (success, drawCard) = player.Draw();
 

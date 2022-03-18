@@ -445,6 +445,120 @@ namespace Cauldron.Core_Test
                     )
                 });
 
+        public static CardDef Hope
+            => SampleCards.Sorcery(1, "希望",
+                effectText: "あなたはカードをX枚ドローする。X=相手のHPとあなたのHPの差",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
+                        new[]
+                        {
+                            new EffectAction(
+                                DrawCard: new(
+                                    new NumValue(
+                                        NumValueCalculator: new(ForPlayer: new(
+                                            NumValueCalculatorForPlayer.TypeValue.PlayerCurrentHp,
+                                            new Choice(
+                                                new ChoiceSource(
+                                                    orPlayerConditions: new[]
+                                                    {
+                                                        new PlayerCondition(PlayerCondition.ContextValue.Opponent)
+                                                    })
+                                                )
+                                            )),
+                                        NumValueModifier: new(
+                                            NumValueModifier.OperatorValue.Sub,
+                                            new NumValue(
+                                                NumValueCalculator: new(ForPlayer: new(
+                                                    NumValueCalculatorForPlayer.TypeValue.PlayerCurrentHp,
+                                                    new Choice(
+                                                        new ChoiceSource(
+                                                            orPlayerConditions: new[]
+                                                            {
+                                                                new PlayerCondition(PlayerCondition.ContextValue.You)
+                                                            })
+                                                        )
+                                                    ))
+                                                )
+                                            )
+                                        ),
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                    )
+                            )
+                        }
+                    ),
+                });
+
+        public static CardDef RunawayMagic
+            => SampleCards.Sorcery(2, "暴走する魔力",
+                effectText: "場のすべてのクリーチャーにXのダメージを与える。その後、場のクリーチャーから魔導カウンターをすべて取り除く。",
+                effects: new[]
+                {
+                    new CardEffect(
+                        new EffectConditionWrap(
+                            ByPlay: new EffectConditionByPlaying()),
+                        new[]
+                        {
+                            new EffectAction(Damage: new(
+                                    new NumValue(
+                                        NumValueCalculator: new(ForCounter: new(
+                                            "魔導",
+                                            new Choice(
+                                                new ChoiceSource(
+                                                    orCardConditions: new[]
+                                                    {
+                                                        new CardCondition(CardCondition.ContextConditionValue.ActionTarget)
+                                                    }
+                                                    )
+                                                )
+                                            ))
+                                        ),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ZoneCondition: new(new ZoneValue(new[]
+                                                    {
+                                                        ZonePrettyName.YouField,
+                                                        ZonePrettyName.OpponentField,
+                                                    })),
+                                                    TypeCondition: new(new[]
+                                                    {
+                                                        CardType.Creature
+                                                    })
+                                                    )
+                                            }
+                                            )
+                                        )
+                                    )
+                            ),
+                            new EffectAction(ModifyCounter: new(
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ActionContext: new(Damage: new(
+                                                        "damage",
+                                                        ActionContextCardsOfDamage.TypeValue.DamagedCards
+                                                        ))
+                                                    )
+                                            }
+                                            )
+                                        ),
+                                    "魔導",
+                                    new NumValueModifier(
+                                        NumValueModifier.OperatorValue.Replace,
+                                        new NumValue(0)
+                                        )
+                                ))
+                        }
+                    ),
+                });
+
         public static CardDef ShamanGoblin
             => SampleCards.Creature(3, "呪術師ゴブリン",
                 1, 1,
