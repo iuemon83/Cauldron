@@ -42,7 +42,7 @@ public class CardDetailController : MonoBehaviour
         if (this.card != null)
         {
             this.cardNameText.text = this.card.Name;
-            this.effectText.text = this.card.EffectText;
+            this.effectText.text = this.card.EffectDescription;
             this.costText.text = this.card.Cost.ToString();
 
             switch (this.card.Type)
@@ -63,7 +63,7 @@ public class CardDetailController : MonoBehaviour
         else if (this.cardDef != null)
         {
             this.cardNameText.text = this.cardDef.Name;
-            this.effectText.text = this.cardDef.EffectText;
+            this.effectText.text = this.cardDef.EffectDescription;
             this.costText.text = this.cardDef.Cost.ToString();
 
             switch (this.cardDef.Type)

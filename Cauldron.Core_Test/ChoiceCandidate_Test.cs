@@ -41,6 +41,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(
                             ByPlay: new()),
                         new[]
@@ -119,6 +120,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(
                             ByPlay: new()),
                         new[]
@@ -194,6 +196,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new(new(Destroy: new(
@@ -275,6 +278,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(
                             ByNotPlay: new(
                                 ZonePrettyName.YouField,
@@ -350,6 +354,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(
                             ByNotPlay: new(
                                 ZonePrettyName.YouField,
@@ -421,11 +426,12 @@ namespace Cauldron.Core_Test
                             PlayerCondition.ContextValue.Active
                         )
                     }));
-            var testCardDef = SampleCards.Artifact(0, "test", "test", false,
+            var testCardDef = SampleCards.Artifact(0, "test", false,
                 effects: new[]
                 {
                     // ターン開始時、カレントプレイヤーに1ダメージ
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(
                             ByNotPlay: new(
                                 ZonePrettyName.YouField,
@@ -525,7 +531,7 @@ namespace Cauldron.Core_Test
                     }),
                 Choice.HowValue.Random,
                 new NumValue(1));
-            var testCardDef = SampleCards.Artifact(0, "test", "test", false);
+            var testCardDef = SampleCards.Artifact(0, "test", false);
 
             // 以下テスト
             var c = await TestUtil.InitTest(new[] { goblin, testCardDef }, this.output);

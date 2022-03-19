@@ -31,7 +31,6 @@ namespace Cauldron.Core_Test
             int BasePower = default,
             int BaseToughness = default,
             IReadOnlyList<CreatureAbility> Abilities = default,
-            string EffectText = default,
             IReadOnlyList<CardEffect> Effects = default,
             int NumTurnsToCanAttack = default,
             int NumAttacksLimitInTurn = default
@@ -39,7 +38,7 @@ namespace Cauldron.Core_Test
         {
             return new Card(Id, CardDefId, BaseCost, IsToken, Type, CardSetName, Name,
                 FlavorText, Annotations ?? Array.Empty<string>(), BasePower, BaseToughness,
-                Abilities ?? Array.Empty<CreatureAbility>(), EffectText,
+                Abilities ?? Array.Empty<CreatureAbility>(),
                 Effects ?? Array.Empty<CardEffect>(),
                 NumTurnsToCanAttack, NumAttacksLimitInTurn);
         }

@@ -18,6 +18,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(
                             ByNotPlay: new(
                                 ZonePrettyName.YouField,

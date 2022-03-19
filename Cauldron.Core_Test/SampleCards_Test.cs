@@ -3217,7 +3217,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.MagicObject;
             testCardDef.Cost = 0;
 
-            var sorceryDef = SampleCards.Sorcery(0, "", "");
+            var sorceryDef = SampleCards.Sorcery(0, "");
 
             var c = await TestUtil.InitTest(new[] { testCardDef, sorceryDef });
 
@@ -3271,7 +3271,7 @@ namespace Cauldron.Core_Test
         {
             var testCardDef = SampleCards.MagicMonster;
 
-            var sorceryDef = SampleCards.Sorcery(0, "", "");
+            var sorceryDef = SampleCards.Sorcery(0, "");
 
             var c = await TestUtil.InitTest(new[] { testCardDef, sorceryDef });
 

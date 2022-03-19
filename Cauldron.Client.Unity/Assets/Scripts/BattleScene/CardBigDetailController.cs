@@ -68,7 +68,7 @@ $@"カウンター | {counterText}";
         }
 
         this.otherDetailText.text = this.OtherText(card);
-        this.effectText.text = card.EffectText;
+        this.effectText.text = card.EffectDescription;
 
         this.gameObject.SetActive(true);
     }
@@ -88,7 +88,7 @@ $@"カウンター | {counterText}";
         }
 
         this.otherDetailText.text = "";
-        this.effectText.text = cardDef.EffectText;
+        this.effectText.text = cardDef.EffectDescription;
 
         this.gameObject.SetActive(true);
     }

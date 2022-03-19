@@ -1422,6 +1422,17 @@ namespace Cauldron.Core.Entities
                 this.effectManager.RegisterOrRemoveEffectWhile(ef, card);
             }
 
+            var isPublic = card.Zone.IsPublic();
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnModifyCard?.Invoke(
+                    p.Id,
+                    this.CreateGameContext(p.Id),
+                    new ModifyCardNotifyMessage(
+                        (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden()
+                        ));
+            }
+
             return GameMasterStatusCode.OK;
         }
 

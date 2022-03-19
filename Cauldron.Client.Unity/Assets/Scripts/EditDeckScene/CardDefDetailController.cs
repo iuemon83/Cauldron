@@ -34,7 +34,7 @@ public class CardDefDetailController : MonoBehaviour
         }
 
         this.cardNameText.text = this.source.Name;
-        this.effectText.text = this.source.EffectText;
+        this.effectText.text = this.source.EffectDescription;
         this.costText.text = this.source.Cost.ToString();
 
         switch (this.source.Type)

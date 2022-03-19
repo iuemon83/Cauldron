@@ -17,6 +17,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(StartTurn: new()))
@@ -61,6 +62,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new(new(StartTurn : new(
@@ -105,6 +107,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(StartTurn : new(
@@ -151,6 +154,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(EndTurn: new()))
@@ -195,6 +199,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(EndTurn : new(
@@ -242,6 +247,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(EndTurn : new(
@@ -286,6 +292,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]{ TestUtil.TestEffectAction }
@@ -321,6 +328,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 1,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(Play : new(
@@ -359,6 +367,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5, numTurnsToCanAttack: 0,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(DamageBefore : new()))
@@ -431,6 +440,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5, numTurnsToCanAttack: 0,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(DamageBefore : new (
@@ -503,6 +513,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5, numTurnsToCanAttack: 0,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(DamageBefore : new(
@@ -563,6 +574,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(DamageBefore: new(
@@ -576,10 +588,11 @@ namespace Cauldron.Core_Test
                 });
 
             // クリーチャーに1ダメージの魔法
-            var testSorceryDef = SampleCards.Sorcery(0, "test2", "test2",
+            var testSorceryDef = SampleCards.Sorcery(0, "test2",
                 effects: new[]
                 {
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -623,6 +636,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(
                             ByNotPlay: new(
                                 ZonePrettyName.YouCemetery,

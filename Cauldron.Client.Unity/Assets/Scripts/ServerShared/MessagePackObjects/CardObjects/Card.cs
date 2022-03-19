@@ -54,8 +54,6 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public List<CreatureAbility> Abilities { get; set; }
 
-        public string EffectText { get; set; }
-
         public List<CardEffect> Effects { get; set; }
 
         public Dictionary<string, int> CountersByName { get; set; }
@@ -82,6 +80,8 @@ namespace Cauldron.Shared.MessagePackObjects
         public int NumTurnsInField { get; set; }
 
         public bool HasAbility(CreatureAbility ability) => this.Abilities.Contains(ability);
+
+        public string EffectDescription => string.Join(Environment.NewLine, this.Effects.Select(x => x.Description));
 
         /// <summary>
         /// 指定したアビリティが有効になっている場合はtrue、そうでなければfalse
@@ -139,7 +139,6 @@ namespace Cauldron.Shared.MessagePackObjects
             int BasePower,
             int BaseToughness,
             IReadOnlyList<CreatureAbility> Abilities,
-            string EffectText,
             IReadOnlyList<CardEffect> Effects,
             int NumTurnsToCanAttack,
             int NumAttacksLimitInTurn
@@ -157,7 +156,6 @@ namespace Cauldron.Shared.MessagePackObjects
             this.BasePower = BasePower;
             this.BaseToughness = BaseToughness;
             this.Abilities = Abilities.ToList();
-            this.EffectText = EffectText;
             this.Effects = Effects.ToList();
             this.NumTurnsToCanAttack = NumTurnsToCanAttack;
             this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;
@@ -181,7 +179,6 @@ namespace Cauldron.Shared.MessagePackObjects
             this.BaseToughness = cardDef.Toughness;
 
             this.Abilities = cardDef.Abilities.ToList();
-            this.EffectText = cardDef.EffectText;
             this.Effects = cardDef.Effects.ToList();
             this.NumTurnsToCanAttack = cardDef.NumTurnsToCanAttack ?? default;
             this.NumAttacksLimitInTurn = cardDef.NumAttacksLimitInTurn ?? default;
@@ -231,7 +228,6 @@ namespace Cauldron.Shared.MessagePackObjects
                 default,
                 default,
                 Array.Empty<CreatureAbility>(),
-                "",
                 Array.Empty<CardEffect>(),
                 default,
                 default

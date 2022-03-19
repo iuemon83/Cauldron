@@ -1,6 +1,7 @@
 ﻿using MessagePack;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -37,8 +38,6 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public IReadOnlyList<CreatureAbility> Abilities { get; set; } = Array.Empty<CreatureAbility>();
 
-        public string EffectText { get; set; } = "";
-
         public IReadOnlyList<CardEffect> Effects { get; set; } = Array.Empty<CardEffect>();
 
         /// <summary>
@@ -50,6 +49,8 @@ namespace Cauldron.Shared.MessagePackObjects
         /// 1ターン中に攻撃可能な回数
         /// </summary>
         public int? NumAttacksLimitInTurn { get; set; }
+
+        public string EffectDescription => string.Join(Environment.NewLine, this.Effects.Select(x => x.Description));
 
         public CardDef()
         {
@@ -68,7 +69,6 @@ namespace Cauldron.Shared.MessagePackObjects
             int Power,
             int Toughness,
             IReadOnlyList<CreatureAbility> Abilities,
-            string EffectText,
             IReadOnlyList<CardEffect> Effects,
             int? NumTurnsToCanAttack,
             int? NumAttacksLimitInTurn
@@ -85,7 +85,6 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Power = Power;
             this.Toughness = Toughness;
             this.Abilities = Abilities;
-            this.EffectText = EffectText;
             this.Effects = Effects;
             this.NumTurnsToCanAttack = NumTurnsToCanAttack;
             this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;

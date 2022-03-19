@@ -16,7 +16,6 @@ namespace Cauldron.Core_Test
             string flavorText = "",
             int? numTurnsToCanAttack = null, int? numAttacksInTurn = null, bool isToken = false,
             IEnumerable<CreatureAbility> abilities = null,
-            string effectText = "",
             IEnumerable<CardEffect> effects = null)
         {
             var t = CardDef.Empty;
@@ -30,7 +29,6 @@ namespace Cauldron.Core_Test
             t.NumAttacksLimitInTurn = numAttacksInTurn;
             t.IsToken = isToken;
             t.Abilities = abilities?.ToArray() ?? Array.Empty<CreatureAbility>();
-            t.EffectText = effectText;
             t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
 
             t.Type = CardType.Creature;
@@ -38,7 +36,7 @@ namespace Cauldron.Core_Test
             return t;
         }
 
-        public static CardDef Artifact(int cost, string name, string effectText, bool isToken = false,
+        public static CardDef Artifact(int cost, string name, bool isToken = false,
             IEnumerable<string> annotations = null,
             string flavorText = "",
             IEnumerable<CardEffect> effects = null)
@@ -50,13 +48,12 @@ namespace Cauldron.Core_Test
             t.Name = name;
             t.Annotations = annotations?.ToArray() ?? Array.Empty<string>();
             t.FlavorText = flavorText;
-            t.EffectText = effectText;
             t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
 
             return t;
         }
 
-        public static CardDef Sorcery(int cost, string name, string effectText, bool isToken = false,
+        public static CardDef Sorcery(int cost, string name, bool isToken = false,
             IEnumerable<string> annotations = null,
             string flavorText = "",
             IEnumerable<CardEffect> effects = null)
@@ -68,7 +65,6 @@ namespace Cauldron.Core_Test
             t.Name = name;
             t.Annotations = annotations?.ToArray() ?? Array.Empty<string>();
             t.FlavorText = flavorText;
-            t.EffectText = effectText;
             t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
 
             return t;
@@ -98,10 +94,10 @@ namespace Cauldron.Core_Test
         public static CardDef DoubleStrikeGoblin
             => SampleCards.Creature(3, "二刀流のゴブリン",
                 2, 1,
-                effectText: "このカードの戦闘時、戦闘開始前に相手クリーチャーに、Xのダメージを与える。X=このカードの攻撃力",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードの戦闘時、戦闘開始前に相手クリーチャーに、Xのダメージを与える。X=このカードの攻撃力",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -131,13 +127,13 @@ namespace Cauldron.Core_Test
                                             }))))
                         }),
                     new CardEffect(
-                        new EffectConditionWrap(
-                            ByNotPlay: new(
-                                ZonePrettyName.YouField,
-                                new EffectWhen(new EffectTiming(
-                                    AttackBefore: new(
-                                        GuardCardCondition: new(
-                                            CardCondition.ContextConditionValue.This)))))),
+                        "",
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            new EffectWhen(new EffectTiming(
+                                AttackBefore: new(
+                                    GuardCardCondition: new(
+                                        CardCondition.ContextConditionValue.This)))))),
                         new[]{
                             new EffectAction(
                                 Damage: new(
@@ -169,11 +165,11 @@ namespace Cauldron.Core_Test
         public static CardDef MechanicGoblin
             => SampleCards.Creature(1, "ゴブリンの技師",
                 1, 1,
-                effectText: "このカードが破壊されたとき、手札に「からくりゴブリン」1枚を加える。",
                 effects: new[]
                 {
                     // 破壊時、からくりゴブリン１枚を手札に加える
                     new CardEffect(
+                        "このカードが破壊されたとき、手札に「からくりゴブリン」1枚を加える。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouCemetery,
                             new(new(Destroy: new (
@@ -209,10 +205,10 @@ namespace Cauldron.Core_Test
         public static CardDef MagicBook
             => SampleCards.Creature(1, "魔法の本",
                 1, 1,
-                effectText: "このカードをプレイしたとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、ランダムな魔法カード1枚をあなたの手札に追加する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]{
@@ -238,10 +234,10 @@ namespace Cauldron.Core_Test
         public static CardDef GoblinFollower
             => SampleCards.Creature(1, "ゴブリンフォロワー",
                 1, 1,
-                effectText: "あなたが「ゴブリン」と名のつくクリーチャーカードをプレイしたとき、このカードをデッキから場に出す。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたが「ゴブリン」と名のつくクリーチャーカードをプレイしたとき、このカードをデッキから場に出す。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouDeck,
                             new EffectWhen(new EffectTiming(
@@ -275,10 +271,10 @@ namespace Cauldron.Core_Test
         public static CardDef GoblinsPet
             => SampleCards.Creature(2, "ゴブリンのペット",
                 2, 6, abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードをプレイしたとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、相手の手札からランダムなクリーチャー1枚を相手の場に出す。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]{
@@ -304,10 +300,10 @@ namespace Cauldron.Core_Test
         public static CardDef MindController
             => SampleCards.Creature(3, "催眠術師",
                 3, 3,
-                effectText: "このカードをプレイしたとき、敵のフィールドにクリーチャーが4体以上いるなら、ランダムに1体を選択し、それをあなたの場に移動する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、敵のフィールドにクリーチャーが4体以上いるなら、ランダムに1体を選択し、それをあなたの場に移動する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -360,9 +356,9 @@ namespace Cauldron.Core_Test
         public static CardDef NinjaGoblin
             => SampleCards.Creature(3, "分身ゴブリン",
                 1, 2,
-                effectText: "このカードをプレイしたとき、「分身ゴブリン」一体を場に出す。",
                 effects: new[] {
                     new CardEffect(
+                        "このカードをプレイしたとき、「分身ゴブリン」一体を場に出す。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -385,9 +381,9 @@ namespace Cauldron.Core_Test
         public static CardDef SuperNinjaGoblin
             => SampleCards.Creature(3, "多重分身ゴブリン",
                 1, 1,
-                effectText: "このカードをプレイしたとき、「多重分身ゴブリン」2体を場に出す。",
                 effects: new[] {
                     new CardEffect(
+                        "このカードをプレイしたとき、「多重分身ゴブリン」2体を場に出す。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -410,11 +406,11 @@ namespace Cauldron.Core_Test
 
         public static CardDef Greed
             => SampleCards.Sorcery(2, "強欲",
-                effectText: "あなたはカードを2枚ドローする。このカードを手札から捨てるとき、あなたはカードを1枚ドローする。",
                 effects: new[]
                 {
                     // カードを2枚引く
                     new CardEffect(
+                        "あなたはカードを2枚ドローする。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -427,6 +423,7 @@ namespace Cauldron.Core_Test
                     ),
                     // このカードが手札から捨てられたなら、1枚引く
                     new CardEffect(
+                        "このカードを手札から捨てるとき、あなたはカードを1枚ドローする。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouCemetery,
                             new(new(MoveCard: new(
@@ -447,10 +444,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Hope
             => SampleCards.Sorcery(1, "希望",
-                effectText: "あなたはカードをX枚ドローする。X=相手のHPとあなたのHPの差",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたはカードをX枚ドローする。X=相手のHPとあなたのHPの差",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -493,10 +490,12 @@ namespace Cauldron.Core_Test
 
         public static CardDef RunawayMagic
             => SampleCards.Sorcery(2, "暴走する魔力",
-                effectText: "場のすべてのクリーチャーにXのダメージを与える。その後、場のクリーチャーから魔導カウンターをすべて取り除く。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "場のすべてのクリーチャーにXのダメージを与える。" +
+                            "その後、場のクリーチャーから魔導カウンターをすべて取り除く。" +
+                            "X=そのクリーチャーに乗っている魔導カウンターの数",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -562,10 +561,10 @@ namespace Cauldron.Core_Test
         public static CardDef ShamanGoblin
             => SampleCards.Creature(3, "呪術師ゴブリン",
                 1, 1,
-                effectText: "このカードをプレイしたとき、相手の場にあるランダムなクリーチャーカード1枚を破壊する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、相手の場にあるランダムなクリーチャーカード1枚を破壊する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -592,10 +591,10 @@ namespace Cauldron.Core_Test
         public static CardDef HealerGoblin
             => SampleCards.Creature(3, "ゴブリンの衛生兵",
                 1, 2,
-                effectText: "このカードをプレイしたとき、あなたのHPを2回復する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、あなたのHPを2回復する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -621,10 +620,10 @@ namespace Cauldron.Core_Test
         public static CardDef FireGoblin
             => SampleCards.Creature(4, "火炎のゴブリン",
                 4, 2,
-                effectText: "このカードをプレイしたとき、相手プレイヤーか、相手の場にいるクリーチャーカード1枚に2ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、相手プレイヤーか、相手の場にいるクリーチャーカード1枚に2ダメージを与える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -659,10 +658,10 @@ namespace Cauldron.Core_Test
         public static CardDef BeginnerSummoner
             => SampleCards.Creature(4, "初心者召喚士",
                 3, 3,
-                effectText: "このカードが破壊されたとき、ランダムなコスト2のクリーチャーを1体場に出す。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードが破壊されたとき、ランダムなコスト2のクリーチャーを1体場に出す。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouCemetery,
                             new EffectWhen(new EffectTiming(
@@ -697,11 +696,11 @@ namespace Cauldron.Core_Test
         public static CardDef MadScientist
             => SampleCards.Creature(4, "マッドサイエンティスト",
                 3, 3,
-                effectText: "このカードをプレイしたとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。" +
-                    "その後、破壊したカードのコピーをもとの場に出す。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、自分の場か、相手の場にあるクリーチャーカード1枚を選択して、それを破壊する。" +
+                            "その後、破壊したカードのコピーをもとの場に出す。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]{
@@ -742,11 +741,11 @@ namespace Cauldron.Core_Test
         public static CardDef BraveGoblin
             => SampleCards.Creature(4, "ゴブリンの勇者",
                 2, 2,
-                effectText: "自分が受けるダメージを2軽減する。自分の場の他のゴブリンクリーチャーが戦闘で与えるダメージを1増加する。",
                 effects: new[]
                 {
                     // 自分が受けるダメージを2軽減する
                     new CardEffect(
+                        "自分が受けるダメージを2軽減する。",
                         new EffectConditionWrap(
                             ByNotPlay: new(
                             ZonePrettyName.YouField,
@@ -770,6 +769,7 @@ namespace Cauldron.Core_Test
                     ),
                     // 自分の他のゴブリンクリーチャーが戦闘で与えるダメージを1増加する
                     new CardEffect(
+                        "自分の場の他のゴブリンクリーチャーが戦闘で与えるダメージを1増加する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -802,10 +802,10 @@ namespace Cauldron.Core_Test
         public static CardDef Faceless
             => SampleCards.Creature(4, "顔なし",
                 7, 7,
-                effectText: "あなたの次のターン開始時、あなたのMPは2減少する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたの次のターン開始時、あなたのMPは2減少する。",
                         new EffectConditionWrap(ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
@@ -813,6 +813,7 @@ namespace Cauldron.Core_Test
                                 ReserveEffect: new(new[]
                                 {
                                     new CardEffect(
+                                        "",
                                         new EffectConditionWrap(
                                             Reserve: new(
                                                 When: new(new EffectTiming(
@@ -853,10 +854,10 @@ namespace Cauldron.Core_Test
         public static CardDef Prophet
             => SampleCards.Creature(5, "預言者",
                 0, 7,
-                effectText: "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を7にする",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を7にする",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -884,11 +885,10 @@ namespace Cauldron.Core_Test
         public static CardDef MagicDragon
             => SampleCards.Creature(5, "マジックドラゴン",
                 4, 4,
-                effectText: "このカードをプレイしたとき、あなたはカードを1枚ドローする。" +
-                    "このカードが場にある限り、あなたがプレイした魔法カードによるダメージを+1する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、あなたはカードを1枚ドローする。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]{
@@ -898,6 +898,7 @@ namespace Cauldron.Core_Test
                                     new PlayerCondition(PlayerCondition.ContextValue.You)))
                         }),
                     new CardEffect(
+                        "このカードが場にある限り、あなたがプレイした魔法カードによるダメージを+1する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -920,10 +921,10 @@ namespace Cauldron.Core_Test
         public static CardDef GiantGoblin
             => SampleCards.Creature(5, "ゴブリンの巨人",
                 3, 7, abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードをプレイしたとき、自分の場にある他のクリチャーカードに3ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、自分の場にある他のクリチャーカードに3ダメージを与える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -949,12 +950,12 @@ namespace Cauldron.Core_Test
         public static CardDef LeaderGoblin
             => SampleCards.Creature(5, "ゴブリンリーダー",
                 1, 5,
-                effectText: "このカードをプレイしたとき、または自分のターン開始時に自分の場にあるほかのゴブリンクリーチャーのパワーを1増加する。",
                 effects: new[]
                 {
                     // プレイ時：自分のクリーチャーすべてを+1/+0 する。
                     // 自分のターン開始時：自分のクリーチャーすべてを+1/+0 する。
                     new CardEffect(
+                        "このカードをプレイしたとき、または自分のターン開始時に自分の場にあるほかのゴブリンクリーチャーのパワーを1増加する。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new(new(
@@ -996,10 +997,10 @@ namespace Cauldron.Core_Test
             => SampleCards.Creature(5, "二重の盾持ちゴブリン",
                 3, 4,
                 abilities: new[] { CreatureAbility.Cover },
-                effectText: "このクリーチャーがダメージを受けるとき、1度だけそのダメージを0にする。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このクリーチャーがダメージを受けるとき、1度だけそのダメージを0にする。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -1026,10 +1027,10 @@ namespace Cauldron.Core_Test
         public static CardDef Nightmare
             => SampleCards.Creature(6, "悪夢",
                 2, 8,
-                effectText: "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を2倍にする",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのターンの開始時にこのカードが場にあるとき、このカードの攻撃力を2倍にする",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -1057,10 +1058,10 @@ namespace Cauldron.Core_Test
         public static CardDef RiderGoblin
             => SampleCards.Creature(6, "騎兵ゴブリン",
                 3, 5,
-                effectText: "あなたが魔法カードをプレイしたとき、あなたの場に「騎兵ゴブリン」1枚を追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたが魔法カードをプレイしたとき、あなたの場に「騎兵ゴブリン」1枚を追加する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -1103,11 +1104,11 @@ namespace Cauldron.Core_Test
         public static CardDef TyrantGoblin
             => SampleCards.Creature(6, "暴君ゴブリン",
                 6, 6,
-                effectText: "このカードをプレイしたとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。",
                 effects: new[]
                 {
                     // 手札をすべて捨てて、捨てた枚数パワーアップ
                     new CardEffect(
+                        "このカードをプレイしたとき、あなたの手札をすべて捨てる。このカードのパワーとタフネスをX増加する。Xは捨てた手札の枚数である。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]{
@@ -1157,10 +1158,10 @@ namespace Cauldron.Core_Test
         public static CardDef Bomb
             => SampleCards.Creature(1, "ボム",
                 1, 1, isToken: true,
-                effectText: "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーにランダムに1~4ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードが破壊されたとき、ランダムな敵クリーチャー1体か敵プレイヤーにランダムに1~4ダメージを与える。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouCemetery,
                             new EffectWhen(new EffectTiming(
@@ -1197,10 +1198,10 @@ namespace Cauldron.Core_Test
         public static CardDef Bomber
             => SampleCards.Creature(7, "ボマー",
                 7, 7,
-                effectText: "このカードをプレイしたとき、「ボム」2枚をあなたの場に追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、「ボム」2枚をあなたの場に追加する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]{
@@ -1227,10 +1228,10 @@ namespace Cauldron.Core_Test
         public static CardDef Disaster
             => SampleCards.Creature(7, "災い",
                 6, 6,
-                effectText: "このクリーチャーがダメージを受けるたび、「ノール」1体をあなたの場に追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このクリーチャーがダメージを受けるたび、「ノール」1体をあなたの場に追加する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -1266,10 +1267,10 @@ namespace Cauldron.Core_Test
         public static CardDef Firelord
             => SampleCards.Creature(8, "炎の王",
                 8, 8, abilities: new[] { CreatureAbility.CantAttack },
-                effectText: "このカードが場にあるとき、あなたのターン終了時に、ランダムな敵クリーチャー1体か敵プレイヤーに8ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードが場にあるとき、あなたのターン終了時に、ランダムな敵クリーチャー1体か敵プレイヤーに8ダメージを与える。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -1307,7 +1308,7 @@ namespace Cauldron.Core_Test
         // 別の効果でベースのコストから変更されているとそれが消えてしまう
         //public static CardDef KingGoblin
         //    => SampleCards.Creature(10, "ゴブリンの王", 8, 8,
-        //        effectText: "あなたの場にカードが4枚以上あるとき、このカードのコストは0になる。" +
+        //        "あなたの場にカードが4枚以上あるとき、このカードのコストは0になる。" +
         //            "このカードのプレイ時、あなたの場にカードが4枚以上あるなら、あなたの場のカードをすべて破壊する。",
         //        effects: new[]
         //        {
@@ -1316,11 +1317,11 @@ namespace Cauldron.Core_Test
         public static CardDef Death
             => SampleCards.Creature(10, "死",
                 12, 12,
-                effectText: "このカードをプレイしたとき、このカードを除く全てのクリーチャーを破壊する。" +
-                "その後、X枚のランダムな自分の手札を墓地へ移動する。X=この効果で破壊したクリーチャーの数",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、このカードを除く全てのクリーチャーを破壊する。" +
+                        "その後、X枚のランダムな自分の手札を墓地へ移動する。X=この効果で破壊したクリーチャーの数",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]{
@@ -1372,10 +1373,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef TempRamp
             => SampleCards.Sorcery(0, "一時的なランプ",
-                effectText: "あなたの最大MPを1増加する。ターン終了時あなたの最大MPを1減少する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたの最大MPを1増加する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1397,6 +1398,7 @@ namespace Cauldron.Core_Test
                     ),
                     // ターン終了時あなたの最大MPを1減少する。
                     new CardEffect(
+                        "ターン終了時あなたの最大MPを1減少する。",
                         new EffectConditionWrap(ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
@@ -1404,6 +1406,7 @@ namespace Cauldron.Core_Test
                                 new[]
                                 {
                                     new CardEffect(
+                                        "",
                                         new EffectConditionWrap(Reserve: new(
                                             new EffectWhen(new EffectTiming(
                                                 EndTurn: new(
@@ -1440,10 +1443,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef SelectDamage
             => SampleCards.Sorcery(1, "ファイア",
-                effectText: "プレイヤーか、場のクリーチャー1体を選択する。それに1ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "プレイヤーか、場のクリーチャー1体を選択する。それに1ダメージを与える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1478,10 +1481,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef RandomDamage
             => SampleCards.Sorcery(1, "稲妻",
-                effectText: "ランダムな場のクリーチャー1体に2ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "ランダムな場のクリーチャー1体に2ダメージを与える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1510,10 +1513,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef SelectDeathDamage
             => SampleCards.Sorcery(3, "破壊光線",
-                effectText: "場のクリーチャー1体を選択する。それにXのダメージを与える。X=そのクリーチャーの元々のタフネス",
                 effects: new[]
                 {
                     new CardEffect(
+                        "場のクリーチャー1体を選択する。それにXのダメージを与える。X=そのクリーチャーの元々のタフネス",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1555,10 +1558,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Salvage
             => SampleCards.Sorcery(1, "サルベージ",
-                effectText: "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1611,10 +1614,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Recycle
             => SampleCards.Sorcery(1, "リサイクル",
-                effectText: "墓地のカードを1枚選択する。それのコピーをあなたの手札に加える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "墓地のカードを1枚選択する。それのコピーをあなたの手札に加える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1639,10 +1642,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef SimpleReborn
             => SampleCards.Sorcery(1, "簡易蘇生",
-                effectText: "墓地のクリーチャーをランダムに1体選択する。それをあなたの場に出す。それのタフネスを1にする。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "墓地のクリーチャーをランダムに1体選択する。それをあなたの場に出す。それのタフネスを1にする。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1684,10 +1687,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Sword
             => SampleCards.Sorcery(1, "剣",
-                effectText: "あなたの場にあるクリチャー1体を選択する。それは+1/+0 の修整を受ける。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたの場にあるクリチャー1体を選択する。それは+1/+0 の修整を受ける。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1716,10 +1719,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Shield
             => SampleCards.Sorcery(1, "盾",
-                effectText: "あなたの場にあるクリチャー1体を選択する。それは+0/+1 の修整を受ける。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたの場にあるクリチャー1体を選択する。それは+0/+1 の修整を受ける。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1748,10 +1751,11 @@ namespace Cauldron.Core_Test
 
         public static CardDef Hit
             => SampleCards.Sorcery(1, "ヒット",
-                effectText: "相手プレイヤーに1ダメージを与える。", isToken: true,
+                isToken: true,
                 effects: new[]
                 {
                     new CardEffect(
+                        "相手プレイヤーに1ダメージを与える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1768,10 +1772,11 @@ namespace Cauldron.Core_Test
 
         public static CardDef Heal
             => SampleCards.Sorcery(1, "ヒール",
-                effectText: "あなたのライフを1回復する。", isToken: true,
+                isToken: true,
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのライフを1回復する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1790,10 +1795,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef HitOrHeal
             => SampleCards.Sorcery(1, "ヒットorヒール",
-                effectText: "「ヒット」か「ヒール」のうち1枚を選択し、それを自分の手札に加える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "「ヒット」か「ヒール」のうち1枚を選択し、それを自分の手札に加える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1827,10 +1832,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Sealed
             => SampleCards.Sorcery(0, "封印",
-                effectText: "選択したクリーチャー1体を「封印」状態にする",
                 effects: new[]
                 {
                     new CardEffect(
+                        "選択したクリーチャー1体を「封印」状態にする",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1862,11 +1867,11 @@ namespace Cauldron.Core_Test
 
         public static CardDef BreakCover
             => SampleCards.Sorcery(1, "盾砕き",
-                effectText: "相手の場の「カバー」アビリティを持つすべてのクリーチャーから、「カバー」アビリティを削除する。" +
-                    "その後それらのクリーチャーに1ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "相手の場の「カバー」アビリティを持つすべてのクリーチャーから、「カバー」アビリティを削除する。" +
+                            "その後それらのクリーチャーに1ダメージを与える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1909,10 +1914,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Exclude
             => SampleCards.Sorcery(5, "除外",
-                effectText: "場にあるカード一つを選択する。それを除外する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "場にあるカード一つを選択する。それを除外する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1939,10 +1944,10 @@ namespace Cauldron.Core_Test
         public static CardDef DDObserver
             => SampleCards.Creature(1, "異次元の観測者",
                 1, 1,
-                effectText: "このカードが場にあるとき、場のほかのカードが除外されるたびに、このカードを+1/+0する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードが場にあるとき、場のほかのカードが除外されるたびに、このカードを+1/+0する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -1969,10 +1974,10 @@ namespace Cauldron.Core_Test
         public static CardDef DDVisitor
             => SampleCards.Creature(1, "異次元からの来訪者",
                 1, 1,
-                effectText: "このカードを場に出したとき、このカードを+X/+0 する。X=すでに除外されている自分のカードの数",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードを場に出したとき、このカードを+X/+0 する。X=すでに除外されている自分のカードの数",
                         new EffectConditionWrap(ByNotPlay: new (
                             Zone: ZonePrettyName.YouField,
                             When: new(new EffectTiming(MoveCard: new(
@@ -2013,10 +2018,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef ReturnFromDD
             => SampleCards.Sorcery(1, "異次元からの脱出",
-                effectText: "自分の除外済みのクリーチャーカードをランダムで一つを選択する。そのカードを場に追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "自分の除外済みのクリーチャーカードをランダムで一つを選択する。そのカードを場に追加する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2048,10 +2053,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef DDTransaction
             => SampleCards.Sorcery(1, "異次元との取引",
-                effectText: "自分の手札をランダムに1枚除外する。その後、場のカードX枚をランダムに破壊する。X=除外したカードのコスト",
                 effects: new[]
                 {
                     new CardEffect(
+                        "自分の手札をランダムに1枚除外する。その後、場のカードX枚をランダムに破壊する。X=除外したカードのコスト",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2109,10 +2114,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef DDDraw
             => SampleCards.Sorcery(1, "異次元ドロー",
-                effectText: "あなたのデッキからランダムに3枚除外する。その後、あなたは1枚ドローする。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのデッキからランダムに3枚除外する。その後、あなたは1枚ドローする。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2143,10 +2148,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef ExcludHand
             => SampleCards.Sorcery(1, "異次元への追放",
-                effectText: "あなたは残りHPの半分のダメージを受ける。その後、相手の手札をランダムに1枚選択し、それを除外する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたは残りHPの半分のダメージを受ける。その後、相手の手札をランダムに1枚選択し、それを除外する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2194,9 +2199,9 @@ namespace Cauldron.Core_Test
         public static CardDef DDFighter
             => SampleCards.Creature(2, "異次元の戦士",
                 1, 1, abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードの戦闘時に、このカードと戦闘相手を除外する。",
                 effects: new[] {
                     new CardEffect(
+                        "このカードの戦闘時に、このカードと戦闘相手を除外する。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -2219,6 +2224,7 @@ namespace Cauldron.Core_Test
                                             })))),
                         }),
                     new CardEffect(
+                        "",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -2245,11 +2251,10 @@ namespace Cauldron.Core_Test
         public static CardDef Parasite
             => SampleCards.Creature(1, "寄生虫",
                 1, 1, isToken: true,
-                effectText: "このカードがデッキから手札に移動したとき、このカードをあなたの場に出す。" +
-                    "このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードがデッキから手札に移動したとき、このカードをあなたの場に出す。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(MoveCard: new(
@@ -2272,6 +2277,7 @@ namespace Cauldron.Core_Test
                                 ZonePrettyName.YouField)),
                         }),
                     new CardEffect(
+                        "このカードがあなたの場にある限り、あなたのターン終了時に、あなたは1ダメージを受ける。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(EndTurn: new(
@@ -2296,10 +2302,10 @@ namespace Cauldron.Core_Test
         public static CardDef Insector
             => SampleCards.Creature(1, "虫つかい",
                 1, 1,
-                effectText: "このカードをプレイしたとき、相手のデッキの1番上に「寄生虫」を1枚追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、相手のデッキの1番上に「寄生虫」を1枚追加する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2324,9 +2330,9 @@ namespace Cauldron.Core_Test
 
         public static CardDef EmergencyFood
             => SampleCards.Sorcery(1, "非常食",
-                effectText: "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
                 effects: new[] {
                     new CardEffect(
+                        "あなたはランダムに手札を1枚捨てる。あなたはXのライフを得る。X=捨てたカードのコスト",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]{
@@ -2370,9 +2376,9 @@ namespace Cauldron.Core_Test
 
         public static CardDef Gather
             => SampleCards.Sorcery(1, "集合",
-                effectText: "あなたの手札に「ゴブリン」を3枚加える。",
                 effects: new[] {
                     new CardEffect(
+                        "あなたの手札に「ゴブリン」を3枚加える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2400,10 +2406,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Copy
             => SampleCards.Sorcery(2, "複製",
-                effectText: "相手の場のカードを一枚選択する。そのカードと同名のカードを一枚あなたの手札に加える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "相手の場のカードを一枚選択する。そのカードと同名のカードを一枚あなたの手札に加える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2429,11 +2435,11 @@ namespace Cauldron.Core_Test
 
         public static CardDef FirstAttack
             => SampleCards.Sorcery(2, "ゴブリンの一撃",
-                effectText: "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに1ダメージを与える。" +
-                "あなたの手札に「ゴブリンの二撃」1枚を加える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに1ダメージを与える。" +
+                        "あなたの手札に「ゴブリンの二撃」1枚を加える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2483,10 +2489,10 @@ namespace Cauldron.Core_Test
         public static CardDef SecondAttack
             => SampleCards.Sorcery(2, "ゴブリンの二撃",
                 isToken: true,
-                effectText: "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに2ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "相手プレイヤーか、あなたの場か、相手の場にあるクリーチャー1体を選択する。それに2ダメージを与える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2518,10 +2524,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef HolyShield
             => SampleCards.Sorcery(2, "聖なる盾",
-                effectText: "あなたの場にある他のカードに次の効果を付与する。「ターン終了時まで、受けるダメージは0になる。」",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたの場にある他のカードに次の効果を付与する。「ターン終了時まで、受けるダメージは0になる。」",
                         new EffectConditionWrap(ByPlay: new ()),
                         new[]{
                             new EffectAction(
@@ -2539,6 +2545,7 @@ namespace Cauldron.Core_Test
                                     new[]
                                     {
                                         new CardEffect(
+                                            "ターン終了時まで、受けるダメージは0になる。",
                                             new EffectConditionWrap(ByNotPlay: new(
                                                 ZonePrettyName.YouField,
                                                 new EffectWhen(new EffectTiming(DamageBefore: new(
@@ -2569,10 +2576,10 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef ChangeHands => SampleCards.Sorcery(2, "手札入れ替え",
-            effectText: "あなたは手札をすべて捨てる。あなたは捨てた枚数カードをドローする。",
             effects: new[]
             {
                 new CardEffect(
+                    "あなたは手札をすべて捨てる。あなたは捨てた枚数カードをドローする。",
                     new EffectConditionWrap(
                         ByPlay: new EffectConditionByPlaying()),
                     new[]
@@ -2616,11 +2623,11 @@ namespace Cauldron.Core_Test
 
         public static CardDef Slap
             => SampleCards.Sorcery(2, "袋叩き",
-                effectText: "相手の場にあるクリーチャー1体を選択する。それにXダメージを与える。X=あなたの場にあるクリーチャーの数",
                 effects: new[]
                 {
                     // 使用時、対象の相手クリーチャー一体にxダメージ。x="自分の場のクリーチャーの数"
                     new CardEffect(
+                        "相手の場にあるクリーチャー1体を選択する。それにXダメージを与える。X=あなたの場にあるクリーチャーの数",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2660,10 +2667,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Ramp
             => SampleCards.Sorcery(2, "ランプ",
-                effectText: "あなたのMPの最大値を1増加し、利用可能なMPを1減少する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのMPの最大値を1増加し、利用可能なMPを1減少する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2690,9 +2697,9 @@ namespace Cauldron.Core_Test
 
         public static CardDef BounceHand
             => SampleCards.Sorcery(2, "手札へ戻す",
-                effectText: "場のカード1枚を選択する。選択したカードを持ち主の手札に移動する。",
                 effects: new[] {
                     new CardEffect(
+                        "場のカード1枚を選択する。選択したカードを持ち主の手札に移動する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2716,9 +2723,9 @@ namespace Cauldron.Core_Test
 
         public static CardDef BounceDeck
             => SampleCards.Sorcery(2, "デッキへ戻す",
-                effectText: "場のカード1枚を選択する。選択したカードを持ち主のデッキのランダムな位置に移動する。",
                 effects: new[] {
                     new CardEffect(
+                        "場のカード1枚を選択する。選択したカードを持ち主のデッキのランダムな位置に移動する。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2743,10 +2750,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef DoubleCopy
             => SampleCards.Sorcery(3, "二重複製",
-                effectText: "相手の場のカードを一枚選択する。そのカードと同名のカードを二枚あなたの手札に加える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "相手の場のカードを一枚選択する。そのカードと同名のカードを二枚あなたの手札に加える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2772,10 +2779,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef FullAttack
             => SampleCards.Sorcery(3, "一斉射撃",
-                effectText: "相手プレイヤーか、相手の場にあるクリーチャーすべてに、1ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "相手プレイヤーか、相手の場にあるクリーチャーすべてに、1ダメージを与える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2803,10 +2810,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Search
             => SampleCards.Sorcery(3, "探索",
-                effectText: "あなたのデッキからランダムなカード1枚を、あなたの手札に加える。そのカードのコストを半分にする。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのデッキからランダムなカード1枚を、あなたの手札に加える。そのカードのコストを半分にする。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2851,10 +2858,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef GoblinCaptureJar
             => SampleCards.Sorcery(4, "ゴブリン封印の壺",
-                effectText: "あなたの場か、相手の場にあるクリーチャーのうち、名前に「ゴブリン」を含むカードすべてのパワーを1にし、「封印」状態にする。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたの場か、相手の場にあるクリーチャーのうち、名前に「ゴブリン」を含むカードすべてのパワーを1にし、「封印」状態にする。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -2885,11 +2892,11 @@ namespace Cauldron.Core_Test
 
         public static CardDef Virus
             => SampleCards.Sorcery(5, "ウイルス",
-                effectText: "相手の場と相手の手札にあるパワー4以上のクリーチャーをすべて墓地に移動する。" +
-                "2回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "相手の場と相手の手札にあるパワー4以上のクリーチャーをすべて墓地に移動する。" +
+                        "2回後の相手ターン終了時まで、相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -2912,6 +2919,7 @@ namespace Cauldron.Core_Test
                                 new[]
                                 {
                                     new CardEffect(
+                                        "",
                                         new EffectConditionWrap(Reserve: new(
                                             new EffectWhen(new EffectTiming(
                                                 MoveCard: new(
@@ -2951,10 +2959,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef OldShield
             => SampleCards.Artifact(1, "ぼろの盾",
-                effectText: "あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
                         new EffectConditionWrap(
                             ByNotPlay: new(
                             ZonePrettyName.YouField,
@@ -2992,10 +3000,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef OldWall
             => SampleCards.Artifact(1, "ぼろの壁",
-                effectText: "あなたか、あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。その後、このカードを破壊する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたか、あなたの場にあるクリーチャーがダメージを受けるとき、そのダメージを1軽減する。",
                         new EffectConditionWrap(
                             ByNotPlay: new(
                             ZonePrettyName.YouField,
@@ -3031,6 +3039,7 @@ namespace Cauldron.Core_Test
                         }
                     ),
                     new CardEffect(
+                        "その後、このカードを破壊する。",
                         new EffectConditionWrap(
                             ByNotPlay: new(
                             ZonePrettyName.YouField,
@@ -3070,10 +3079,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef GoblinStatue
             => SampleCards.Artifact(4, "呪いのゴブリン像",
-                effectText: "あなたのターン終了時、もしあなたの墓地が30枚以上なら、相手プレイヤー、相手の場にあるクリーチャーすべてに6ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのターン終了時、もしあなたの墓地が30枚以上なら、相手プレイヤー、相手の場にあるクリーチャーすべてに6ダメージを与える。",
                         new EffectConditionWrap(
                             ByNotPlay: new(ZonePrettyName.YouField,
                                 new(new(EndTurn: new(
@@ -3116,12 +3125,11 @@ namespace Cauldron.Core_Test
 
         public static CardDef HolyStatue
             => SampleCards.Artifact(4, "癒やしの像",
-                effectText: "あなたの場にあるクリーチャーすべては+0/+1 の修整を受ける。" +
-                "あなたが場にクリーチャーを出したとき、それは+0/+1 の修整を受ける。",
                 effects: new[]
                 {
                     // 使用時、すべての自分クリーチャーを+0/+1
                     new CardEffect(
+                        "あなたの場にあるクリーチャーすべては+0/+1 の修整を受ける。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -3145,6 +3153,7 @@ namespace Cauldron.Core_Test
 
                     // 自分クリーチャーのプレイ時+0/+1
                     new CardEffect(
+                        "あなたが場にクリーチャーを出したとき、それは+0/+1 の修整を受ける。",
                         new EffectConditionWrap(
                             ByNotPlay: new(
                             ZonePrettyName.YouField,
@@ -3180,11 +3189,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef VictoryRoad
             => SampleCards.Artifact(1, "勝利への道",
-                effectText: "あなたのターン開始時に、場にあるこのカードを墓地に移動する。" +
-                "場にあるこのカードが墓地に移動されたとき、「勝利の像」1枚をあなたの場に追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのターン開始時に、場にあるこのカードを墓地に移動する。" ,
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(StartTurn: new(
@@ -3206,6 +3214,7 @@ namespace Cauldron.Core_Test
                                             }))))
                         }),
                     new CardEffect(
+                        "場にあるこのカードが墓地に移動されたとき、「勝利の像」1枚をあなたの場に追加する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouCemetery,
                             new EffectWhen(new EffectTiming(
@@ -3244,11 +3253,11 @@ namespace Cauldron.Core_Test
 
         public static CardDef VictoryStatue
             => SampleCards.Artifact(10, "勝利の像",
-                effectText: "あなたのターン開始時に、このカードがあなたの場にあるとき、あなたはゲームに勝利する。",
                 isToken: true,
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのターン開始時に、このカードがあなたの場にあるとき、あなたはゲームに勝利する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(StartTurn: new(
@@ -3273,12 +3282,10 @@ namespace Cauldron.Core_Test
         public static CardDef MagicObject
             => SampleCards.Creature(1, "魔力吸収体",
                 1, 1, annotations: new[] { ":魔導" },
-                effectText: "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔導」カウンターを1つ置く。" +
-                "このカードに「魔導」カウンターが置かれるたびに、このカードを+1/+0する。" +
-                "このカードから「魔導」カウンターが取り除かれるたびに、このカードを-1/+0する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "いずれかのプレイヤーが魔法をプレイするたびに、場のこのカードに「魔導」カウンターを1つ置く。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(Play: new(
@@ -3306,6 +3313,7 @@ namespace Cauldron.Core_Test
                         }),
 
                     new CardEffect(
+                        "このカードに「魔導」カウンターが置かれるたびに、このカードを+1/+0する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -3331,6 +3339,7 @@ namespace Cauldron.Core_Test
                         }),
 
                     new CardEffect(
+                        "このカードから「魔導」カウンターが取り除かれるたびに、このカードを-1/+0する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -3359,11 +3368,10 @@ namespace Cauldron.Core_Test
         public static CardDef MagicMonster
             => SampleCards.Creature(5, "魔法生物",
                 3, 4, annotations: new[] { ":魔導" },
-                effectText: "あなたが魔法をプレイするたびに、このカードに「魔導」カウンターを1つ置く。" +
-                "このカードに「魔導」カウンターが1つ置かれるたびに、このカードのコスト-1。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたが魔法をプレイするたびに、このカードに「魔導」カウンターを1つ置く。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(
@@ -3393,6 +3401,7 @@ namespace Cauldron.Core_Test
                         }),
 
                     new CardEffect(
+                        "このカードに「魔導」カウンターが1つ置かれるたびに、このカードのコスト-1。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(
@@ -3421,10 +3430,10 @@ namespace Cauldron.Core_Test
         public static CardDef BeginnerSorcerer
             => SampleCards.Creature(2, "初級魔導士",
                 1, 2,
-                effectText: "このカードをプレイしたとき、あなたの場の「:魔導」を持つカード1枚を選択する。そのカードに「魔導」カウンターを2つ置く。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、あなたの場の「:魔導」を持つカード1枚を選択する。そのカードに「魔導」カウンターを2つ置く。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -3456,15 +3465,11 @@ namespace Cauldron.Core_Test
         public static CardDef GreatSorcerer
             => SampleCards.Creature(9, "偉大な魔導士",
                 5, 5, annotations: new[] { ":魔導" },
-                effectText: "あなたが魔法をプレイするたびに、手札のこのカードに「魔導」カウンターを1つ置く。" +
-                    "このカードに「魔導」カウンターが1つ置かれるたびに、このカードのコスト-1。" +
-                    "このカードをプレイしたとき、あなたの手札をすべて除外する。" +
-                    "その後、あなたは手札を5枚引く。" +
-                    "その後、あなたの手札にある「:魔導」カードすべてに「魔導」カウンターを5つ置く。",
                 effects: new[]
                 {
                     // 魔法をプレイするたび、カウンターを置く。
                     new CardEffect(
+                        "あなたが魔法をプレイするたびに、手札のこのカードに「魔導」カウンターを1つ置く。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(
@@ -3495,6 +3500,7 @@ namespace Cauldron.Core_Test
 
                     // カウンターが置かれるたび、コスト-1
                     new CardEffect(
+                        "このカードに「魔導」カウンターが1つ置かれるたびに、このカードのコスト-1。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouHand,
                             new EffectWhen(new EffectTiming(
@@ -3521,6 +3527,9 @@ namespace Cauldron.Core_Test
 
                     // カードをプレイしたとき
                     new CardEffect(
+                        "このカードをプレイしたとき、あなたの手札をすべて除外する。" +
+                        "その後、あなたは手札を5枚引く。" +
+                        "その後、あなたの手札にある「:魔導」カードすべてに「魔導」カウンターを5つ置く。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -3563,11 +3572,11 @@ namespace Cauldron.Core_Test
 
         public static CardDef UltraMagic
             => SampleCards.Sorcery(3, "大魔法",
-                effectText: "このカードをプレイしたとき、あなたの場からすべての「魔導」カウンターを取り除く。" +
-                    "その後、相手にXのダメージを与える。X=取り除いた「魔導」カウンターの数+1",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、あなたの場からすべての「魔導」カウンターを取り除く。" +
+                            "その後、相手にXのダメージを与える。X=取り除いた「魔導」カウンターの数+1",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -3612,9 +3621,9 @@ namespace Cauldron.Core_Test
         public static CardDef MagicFighter
             => SampleCards.Creature(3, "魔導の戦士",
                 1, 2, abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
                 effects: new[] {
                     new CardEffect(
+                        "このカードが攻撃されたとき、攻撃したカードを持ち主の手札に移動する。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -3646,9 +3655,9 @@ namespace Cauldron.Core_Test
         public static CardDef SuperMagicFighter
             => SampleCards.Creature(4, "魔導の戦士長",
                 1, 2, abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードが攻撃されたとき、攻撃したカードを相手のデッキの一番上に移動する。",
                 effects: new[] {
                     new CardEffect(
+                        "このカードが攻撃されたとき、攻撃したカードを相手のデッキの一番上に移動する。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
@@ -3682,10 +3691,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef DashGoblin
             => SampleCards.Creature(2, "特攻ゴブリン", 1, 1,
-                effectText: "このカードが場に出たとき、相手プレイヤーに1ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードが場に出たとき、相手プレイヤーに1ダメージを与える。",
                         new EffectConditionWrap(ByNotPlay: new (
                             Zone: ZonePrettyName.YouField,
                             When: new(new EffectTiming(MoveCard: new(
@@ -3709,10 +3718,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Investment
             => Sorcery(1, "投資",
-                "1ターン後のターン終了時に、あなたはカードを2枚ドローする。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "1ターン後のターン終了時に、あなたはカードを2枚ドローする。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouCemetery,
                             When: new(new EffectTiming(EndTurn:new(
@@ -3736,10 +3745,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef GoblinLover
             => Creature(1, "ゴブリン好き", 1, 1,
-                effectText: "このカードのプレイ時、あなたの場にほかの「ゴブリン」と名の付くカードがあるとき、このカードを+1/+1する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードのプレイ時、あなたの場にほかの「ゴブリン」と名の付くカードがあるとき、このカードを+1/+1する。",
                         new EffectConditionWrap(
                             ByPlay: new(
                                 If: new(new ConditionWrap(NumCondition: new(
@@ -3781,22 +3790,20 @@ namespace Cauldron.Core_Test
 
         public static CardDef Key1
             => Sorcery(1, "封印の鍵1",
-                effectText: "",
                 effects: Array.Empty<CardEffect>()
                 );
 
         public static CardDef Key2
             => Sorcery(1, "封印の鍵2",
-                effectText: "",
                 effects: Array.Empty<CardEffect>()
                 );
 
         public static CardDef SealedGoblin
             => Creature(1, "封印されしゴブリン", 1, 1,
-                effectText: "このカードと「封印の鍵1」「封印の鍵2」があなたの手札にそろったとき、あなたはゲームに勝利する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードと「封印の鍵1」「封印の鍵2」があなたの手札にそろったとき、あなたはゲームに勝利する。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouHand,
                             If: new(new ConditionWrap(ConditionAnd: new(new[]
@@ -3850,10 +3857,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Emergency
             => Sorcery(3, "緊急出動",
-                effectText: "相手の場にクリーチャーが1枚以上あり、あなたの場にクリーチャーが0枚のとき、あなたの場に「盾持ちゴブリン」2枚を追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "相手の場にクリーチャーが1枚以上あり、あなたの場にクリーチャーが0枚のとき、あなたの場に「盾持ちゴブリン」2枚を追加する。",
                         new EffectConditionWrap(
                             ByPlay: new(
                                 If: new(new ConditionWrap(ConditionAnd: new(new[]
@@ -3910,10 +3917,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef HealOrDamage
             => Sorcery(3, "回復かダメージ",
-                effectText: "あなたのHPが5以下なら、あなたのHPを+5する。そうでないなら、相手プレイヤーに3のダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのHPが5以下なら、あなたのHPを+5する。",
                         new EffectConditionWrap(
                             ByPlay: new(
                                 If: new(new ConditionWrap(NumCondition: new(
@@ -3943,6 +3950,7 @@ namespace Cauldron.Core_Test
                                 ))
                         }),
                     new CardEffect(
+                        "そうでないなら、相手プレイヤーに3のダメージを与える。",
                         new EffectConditionWrap(
                             ByPlay: new(
                                 If: new(new ConditionWrap(ConditionNot: new(
@@ -3972,10 +3980,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef RevengeGoblin
             => SampleCards.Creature(1, "仕返しゴブリン", 1, 1,
-                effectText: "このカードが破壊されたターンの終了時に、相手に1ダメージを与える。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードが破壊されたターンの終了時に、相手に1ダメージを与える。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouCemetery,
                             When: new(new EffectTiming(Destroy: new(
@@ -3989,6 +3997,7 @@ namespace Cauldron.Core_Test
                                 new[]
                                 {
                                     new CardEffect(
+                                        "",
                                         new EffectConditionWrap(Reserve: new(
                                             new EffectWhen(new EffectTiming(EndTurn: new(
                                                 new[]
@@ -4017,10 +4026,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Impact
             => SampleCards.Sorcery(5, "衝撃",
-                effectText: "場のクリーチャーをすべて破壊する",
                 effects: new[]
                 {
                     new CardEffect(
+                        "場のクリーチャーをすべて破壊する",
                         new EffectConditionWrap(ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
@@ -4045,10 +4054,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef SevereEarthquake
             => SampleCards.Sorcery(5, "激震",
-                effectText: "場のアーティファクトをすべて破壊する",
                 effects: new[]
                 {
                     new CardEffect(
+                        "場のアーティファクトをすべて破壊する",
                         new EffectConditionWrap(ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
@@ -4073,10 +4082,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Prodigy
             => SampleCards.Sorcery(7, "驚異",
-                effectText: "場のカードをすべて破壊する",
                 effects: new[]
                 {
                     new CardEffect(
+                        "場のカードをすべて破壊する",
                         new EffectConditionWrap(ByPlay: new EffectConditionByPlaying()),
                         new[]
                         {
@@ -4101,10 +4110,10 @@ namespace Cauldron.Core_Test
         public static CardDef Zombie
             => SampleCards.Creature(1, "ゾンビ", 1, 1,
                 annotations: new[] { ":ゾンビ" },
-                effectText: "このクリーチャーが破壊されたターンの終了時に、あなたの場にゾンビトークンを1つ追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このクリーチャーが破壊されたターンの終了時に、あなたの場にゾンビトークンを1つ追加する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouCemetery,
                             When: new(new EffectTiming(Destroy: new(
@@ -4117,6 +4126,7 @@ namespace Cauldron.Core_Test
                             new EffectAction(ReserveEffect: new(new[]
                             {
                                 new CardEffect(
+                                    "",
                                     new EffectConditionWrap(Reserve: new(
                                         new EffectWhen(new EffectTiming(EndTurn: new())),
                                         While: new(
@@ -4156,11 +4166,10 @@ namespace Cauldron.Core_Test
         public static CardDef ZombieKiller
             => SampleCards.Creature(2, "ゾンビキラー", 2, 2,
                 annotations: new[] { ":ゾンビ" },
-                effectText: "このクリーチャーが:ゾンビから受ける戦闘ダメージを-5する。" +
-                    "このクリーチャーが:ゾンビへ与える戦闘ダメージを+5する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このクリーチャーが:ゾンビから受ける戦闘ダメージを-5する。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             When: new(new EffectTiming(DamageBefore: new(
@@ -4179,6 +4188,7 @@ namespace Cauldron.Core_Test
                                     new NumValue(5))))
                         }),
                     new CardEffect(
+                        "このクリーチャーが:ゾンビへ与える戦闘ダメージを+5する。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             When: new(new EffectTiming(DamageBefore: new(
@@ -4201,11 +4211,11 @@ namespace Cauldron.Core_Test
         public static CardDef PrinceZombie
             => SampleCards.Creature(2, "ゾンビプリンス", 1, 1,
                 annotations: new[] { ":ゾンビ" },
-                effectText: "このカード以外のあなたの場のすべてのクリーチャーに:ゾンビを付与して、下記の効果を追加する。" +
-                    "・このカードが破壊されたとき、あなたの場にゾンビトークンを1つ追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカード以外のあなたの場のすべてのクリーチャーに:ゾンビを付与して、次の効果を追加する。" +
+                            "「このカードが破壊されたとき、あなたの場にゾンビトークンを1つ追加する。」",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -4243,6 +4253,7 @@ namespace Cauldron.Core_Test
                                 new[]
                                 {
                                     new CardEffect(
+                                        "このカードが破壊されたとき、あなたの場にゾンビトークンを1つ追加する。",
                                         new EffectConditionWrap(ByNotPlay: new (
                                             ZonePrettyName.YouCemetery,
                                             When: new(new EffectTiming(Destroy: new(
@@ -4282,10 +4293,10 @@ namespace Cauldron.Core_Test
         public static CardDef ZombieMaster
             => SampleCards.Creature(4, "ゾンビ使い", 1, 1,
                 annotations: new[] { ":ゾンビ" },
-                effectText: "このカードをプレイしたとき、墓地にある:ゾンビクリーチャーを1体選択し、場に移動する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、墓地にある:ゾンビクリーチャーを1体選択し、場に移動する。",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -4350,12 +4361,12 @@ namespace Cauldron.Core_Test
             => SampleCards.Creature(3, "大食らいのゾンビ", 0, 1,
                 annotations: new[] { ":ゾンビ" },
                 abilities: new[] { CreatureAbility.Cover },
-                effectText: "このカードをプレイしたとき、あなたの墓地から:ゾンビを任意の枚数だけ除外する。" +
-                    "その後、このクリーチャーを+X/+Xする。" +
-                    "X=この効果で除外したカードの枚数",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードをプレイしたとき、あなたの墓地から:ゾンビを任意の枚数だけ除外する。" +
+                            "その後、このクリーチャーを+X/+Xする。" +
+                            "X=この効果で除外したカードの枚数",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -4437,14 +4448,12 @@ namespace Cauldron.Core_Test
         public static CardDef KingZombie
             => SampleCards.Creature(3, "ゾンビキング", 0, 1,
                 annotations: new[] { ":ゾンビ" },
-                effectText: "このカードが場に出たとき、このカードを+x/+yする。" +
-                    "X=あなたの墓地の:ゾンビの枚数" +
-                    "Y=相手の墓地の:ゾンビの枚数" +
-                    "このカードが破壊されたとき、「ゾンビキング」以外のあなたの墓地にある:ゾンビを2つまで選択する。" +
-                    "そのカードをあなたの場に移動する。その後、それらのカードのタフネスを1にする。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードが場に出たとき、このカードを+x/+yする。" +
+                            "X=あなたの墓地の:ゾンビの枚数" +
+                            "Y=相手の墓地の:ゾンビの枚数",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             When: new(new EffectTiming(MoveCard: new(
@@ -4499,6 +4508,8 @@ namespace Cauldron.Core_Test
                                 )),
                         }),
                     new CardEffect(
+                        "このカードが破壊されたとき、「ゾンビキング」以外のあなたの墓地にある:ゾンビを2つまで選択する。" +
+                        "そのカードをあなたの場に移動する。その後、それらのカードのタフネスを1にする。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouCemetery,
                             When: new(new EffectTiming(Destroy: new(
@@ -4556,7 +4567,7 @@ namespace Cauldron.Core_Test
         //public static CardDef ZombiesTreasure
         //    => SampleCards.Artifact(4, "ゾンビの秘宝",
         //        annotations: new[] { ":ゾンビ" },
-        //        effectText: "あなたのターン終了時に、場のこのカードにターンカウンターを1つ置く。" +
+        //        "あなたのターン終了時に、場のこのカードにターンカウンターを1つ置く。" +
         //            "場のこのカードのターンカウンターが3以上になったとき、このカードを破壊する。" +
         //            "ターン終了時に発動する。" +
         //            "このターンに破壊されたあなたの墓地にある:ゾンビクリーチャーをあなたの場に移動する。",
@@ -4655,10 +4666,10 @@ namespace Cauldron.Core_Test
         public static CardDef ZombieVirus
             => SampleCards.Sorcery(2, "ゾンビウイルス",
                 annotations: new[] { ":ゾンビ" },
-                effectText: "お互いの手札、場のクリーチャーすべてに:ゾンビを付与する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "お互いの手札、場のクリーチャーすべてに:ゾンビを付与する。",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -4687,10 +4698,10 @@ namespace Cauldron.Core_Test
         public static CardDef Sunlight
             => SampleCards.Sorcery(2, "日の光",
                 annotations: new[] { ":ゾンビ" },
-                effectText: "場の:ゾンビをすべて除外する",
                 effects: new[]
                 {
                     new CardEffect(
+                        "場の:ゾンビをすべて除外する",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -4719,11 +4730,11 @@ namespace Cauldron.Core_Test
         public static CardDef ZombieSearch
             => SampleCards.Sorcery(1, "ゾンビの呼び声",
                 annotations: new[] { ":ゾンビ" },
-                effectText: "あなたのデッキから、「ゾンビの呼び声」以外の:ゾンビ1枚を選択する。" +
-                    "そのカードをあなたの墓地に移動する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたのデッキから、「ゾンビの呼び声」以外の:ゾンビ1枚を選択する。" +
+                            "そのカードをあなたの墓地に移動する。",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -4752,10 +4763,10 @@ namespace Cauldron.Core_Test
         public static CardDef LivingDead
             => SampleCards.Sorcery(1, "リビングデッド",
                 annotations: new[] { ":ゾンビ" },
-                effectText: "あなたの墓地にある:ゾンビクリーチャーを1つ選択する。そのカードをあなたの場に移動する。それのタフネスを1にする。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたの墓地にある:ゾンビクリーチャーを1つ選択する。そのカードをあなたの場に移動する。それのタフネスを1にする。",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -4800,11 +4811,11 @@ namespace Cauldron.Core_Test
         public static CardDef ZombiesCurse
             => SampleCards.Sorcery(4, "ゾンビの呪い",
                 annotations: new[] { ":ゾンビ" },
-                effectText: "あなたの墓地にある:ゾンビをすべて除外する。場にあるカードをX枚ランダムに破壊する。" +
-                    "X=この効果であなたの墓地から除外した枚数",
                 effects: new[]
                 {
                     new CardEffect(
+                        "あなたの墓地にある:ゾンビをすべて除外する。場にあるカードをX枚ランダムに破壊する。" +
+                            "X=この効果であなたの墓地から除外した枚数",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -4856,10 +4867,10 @@ namespace Cauldron.Core_Test
         public static CardDef ZombiesStatue
             => SampleCards.Artifact(1, "ゾンビの像",
                 annotations: new[] { ":ゾンビ" },
-                effectText: "このカードが場にある限り、あなたの場から墓地に:ゾンビが移動したとき、そのカードのコピーをあなたの墓地に追加する。",
                 effects: new[]
                 {
                     new CardEffect(
+                        "このカードが場にある限り、あなたの場から墓地に:ゾンビが移動したとき、そのカードのコピーをあなたの墓地に追加する。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             When: new(new EffectTiming(MoveCard: new(
