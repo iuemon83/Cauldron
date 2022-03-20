@@ -23,9 +23,9 @@ public class ActionLogViewController : MonoBehaviour
         this.actionLogListContent = this.ActionLogList.transform.Find("Viewport").transform.Find("Content");
     }
 
-    public async UniTask AddLog(ActionLog actionLog)
+    public async UniTask AddLog(ActionLog actionLog, bool isChild)
     {
-        await this.AddListNode(actionLog);
+        await this.AddListNode(actionLog, isChild);
     }
 
     public void OnCloseButtonClick()
@@ -33,7 +33,7 @@ public class ActionLogViewController : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    private async UniTask AddListNode(ActionLog actionLog)
+    private async UniTask AddListNode(ActionLog actionLog, bool isChild)
     {
         Debug.Log($"{actionLog.Message}, {actionLog.Card?.Name}, {actionLog.PlayerInfo?.Name}");
 
@@ -42,14 +42,17 @@ public class ActionLogViewController : MonoBehaviour
             return;
         }
 
-        var controller = Instantiate(this.listNodePrefab, this.actionLogListContent.transform);
-        controller.Init(actionLog,
-            this.cardDetailController.SetCard
+        var nodeController = Instantiate(this.listNodePrefab);
+        nodeController.Init(actionLog,
+            this.cardDetailController.SetCard,
+            isChild
             );
 
-        this.nodeList.Add(controller);
+        nodeController.transform.SetParent(this.actionLogListContent.transform, false);
 
-        Debug.Log("actionlogのスクロール="+ this.ActionLogList.verticalNormalizedPosition);
+        this.nodeList.Add(nodeController);
+
+        Debug.Log("actionlogのスクロール=" + this.ActionLogList.verticalNormalizedPosition);
 
         var shouldScrollToBottom = this.ActionLogList.verticalNormalizedPosition < ShouldScrollToBottomThreshold;
 

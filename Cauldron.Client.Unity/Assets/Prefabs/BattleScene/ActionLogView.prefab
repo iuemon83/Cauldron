@@ -509,8 +509,6 @@ MonoBehaviour:
   ActionLogList: {fileID: 2407290967930883024}
   listNodePrefab: {fileID: 1094848898060710054, guid: 990863e61bd55174bac6712094c76a14, type: 3}
   cardDetailController: {fileID: 0}
-  HiddenContainer: {fileID: 0}
-  DisplayContainer: {fileID: 0}
 --- !u!1 &6348306756704505660
 GameObject:
   m_ObjectHideFlags: 0
@@ -798,7 +796,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1825035412570402446}
   m_HandleRect: {fileID: 2314378675091032901}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

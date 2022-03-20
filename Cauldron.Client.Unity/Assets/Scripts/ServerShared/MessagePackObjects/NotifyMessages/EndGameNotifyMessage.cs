@@ -19,13 +19,17 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public PlayerId WinnerPlayerId { get; }
         public EndGameReason EndGameReason { get; }
-        public string? CardName { get; }
+        public Card? EffectOwnerCard { get; }
 
-        public EndGameNotifyMessage(PlayerId WinnerPlayerId, EndGameReason EndGameReason, string? CardName)
+        public EndGameNotifyMessage(
+            PlayerId WinnerPlayerId,
+            EndGameReason EndGameReason,
+            Card? EffectOwnerCard = default
+            )
         {
             this.WinnerPlayerId = WinnerPlayerId;
             this.EndGameReason = EndGameReason;
-            this.CardName = CardName;
+            this.EffectOwnerCard = EffectOwnerCard;
         }
     }
 }

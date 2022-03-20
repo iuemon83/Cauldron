@@ -12,14 +12,7 @@ namespace Cauldron.Core_Test
 {
     public class CardCondition_Test
     {
-        private readonly ITestOutputHelper output;
-
-        public CardCondition_Test(ITestOutputHelper output)
-        {
-            this.output = output;
-        }
-
-        private Card TestCard(
+        private static Card TestCard(
             CardId Id = default,
             CardDefId CardDefId = default,
             int BaseCost = default,
@@ -42,6 +35,13 @@ namespace Cauldron.Core_Test
                 Abilities ?? Array.Empty<CreatureAbility>(),
                 Effects ?? Array.Empty<CardEffect>(),
                 NumTurnsToCanAttack, NumAttacksLimitInTurn);
+        }
+
+        private readonly ITestOutputHelper output;
+
+        public CardCondition_Test(ITestOutputHelper output)
+        {
+            this.output = output;
         }
 
         [Fact]

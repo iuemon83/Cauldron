@@ -52,7 +52,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             {
                 foreach (var cd in Enumerable.Repeat(cardDef, _this.NumOfAddCards))
                 {
-                    var card = await effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, _this.InsertCardPosition);
+                    var card = await effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, _this.InsertCardPosition, effectOwnerCard);
                     if (card == null)
                     {
                         // カードの生成に失敗

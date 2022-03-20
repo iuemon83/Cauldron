@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -9,13 +11,21 @@ namespace Cauldron.Shared.MessagePackObjects
         public Zone FromZone { get; }
         public Zone ToZone { get; }
         public int Index { get; }
+        public Card? EffectOwnerCard { get; }
 
-        public MoveCardNotifyMessage(Card Card, Zone FromZone, Zone ToZone, int Index)
+        public MoveCardNotifyMessage(
+            Card Card,
+            Zone FromZone,
+            Zone ToZone,
+            int Index,
+            Card? EffectOwnerCard = default
+            )
         {
             this.Card = Card;
             this.FromZone = FromZone;
             this.ToZone = ToZone;
             this.Index = Index;
+            this.EffectOwnerCard = EffectOwnerCard;
         }
     }
 }

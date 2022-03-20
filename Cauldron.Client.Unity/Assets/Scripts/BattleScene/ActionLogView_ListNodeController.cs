@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class ActionLogView_ListNodeController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
+    private RectTransform container = default;
+    [SerializeField]
     private TextMeshProUGUI cardNameText = default;
     [SerializeField]
     private TextMeshProUGUI actionNameText = default;
@@ -22,7 +24,7 @@ public class ActionLogView_ListNodeController : MonoBehaviour, IPointerClickHand
 
     private ActionLog actionLog;
 
-    public void Init(ActionLog actionLog, Action<Card> ShowDetailAction)
+    public void Init(ActionLog actionLog, Action<Card> ShowDetailAction, bool isChild)
     {
         this.actionLog = actionLog;
         this.showCardDetailAction = ShowDetailAction;
@@ -36,6 +38,12 @@ public class ActionLogView_ListNodeController : MonoBehaviour, IPointerClickHand
         this.InitControllerIcon();
         this.InitZoneIcon(this.actionLog.Card);
         this.InitColor();
+
+        if (isChild)
+        {
+            var p = this.container.offsetMin;
+            this.container.offsetMin = new Vector2(30, p.y);
+        }
     }
 
     private void InitControllerIcon()

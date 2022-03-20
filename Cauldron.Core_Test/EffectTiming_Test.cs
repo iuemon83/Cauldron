@@ -661,7 +661,7 @@ namespace Cauldron.Core_Test
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 Assert.Equal(beforeHp, c.Player1.CurrentHp);
-                await g.DestroyCard(testCard);
+                await g.DestroyCard(testCard, default);
                 Assert.Equal(beforeHp - 1, c.Player1.CurrentHp);
             });
         }

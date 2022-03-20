@@ -33,7 +33,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
 
                 var numCards = await _this.NumCards.Calculate(effectOwnerCard, newArgs);
 
-                var (status, cards) = await args.GameMaster.Draw(p.Id, numCards);
+                var (status, cards) = await args.GameMaster.Draw(p.Id, numCards, effectOwnerCard);
                 drawnCards.AddRange(cards);
             }
 

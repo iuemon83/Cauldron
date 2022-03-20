@@ -311,7 +311,7 @@ namespace Cauldron.Core.Entities
                     player.Deck.Shuffle();
 
                     // カードを配る
-                    await this.Draw(player.Id, this.RuleBook.InitialNumHands);
+                    await this.Draw(player.Id, this.RuleBook.InitialNumHands, default);
                 }
 
                 foreach (var p in this.playerRepository.AllPlayers)
@@ -333,7 +333,7 @@ namespace Cauldron.Core.Entities
         /// 指定したカードを破壊します。
         /// </summary>
         /// <param name="cardToDestroy"></param>
-        public async ValueTask<bool> DestroyCard(Card cardToDestroy)
+        public async ValueTask<bool> DestroyCard(Card cardToDestroy, Card? effectOwnerCard)
         {
             var (exists, player) = this.playerRepository.TryGet(cardToDestroy.OwnerId);
             if (!exists || player == null)
@@ -353,7 +353,7 @@ namespace Cauldron.Core.Entities
                 new(cardToDestroy.OwnerId, ZoneName.Field),
                 new(cardToDestroy.OwnerId, ZoneName.Cemetery));
 
-            await this.MoveCard(cardToDestroy.Id, moveContext);
+            await this.MoveCard(cardToDestroy.Id, moveContext, effectOwnerCard);
 
             await this.FireEvent(new EffectEventArgs(GameEvent.OnDestroy, this, SourceCard: cardToDestroy));
 
@@ -406,13 +406,17 @@ namespace Cauldron.Core.Entities
                     this.EventListener?.OnModifyCard?.Invoke(p.Id,
                         this.CreateGameContext(p.Id),
                         new ModifyCardNotifyMessage(
-                            (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden()
+                            (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden(),
+                            effectOwnerCard
                             ));
                 }
             }
         }
 
-        public async ValueTask<(GameMasterStatusCode, IReadOnlyList<Card>)> Draw(PlayerId playerId, int numCards)
+        public async ValueTask<(GameMasterStatusCode, IReadOnlyList<Card>)> Draw(
+            PlayerId playerId,
+            int numCards,
+            Card? effectOwnerCard)
         {
             var (exists, player) = this.playerRepository.TryGet(playerId);
             if (!exists || player == null)
@@ -448,7 +452,8 @@ namespace Cauldron.Core.Entities
                                 new DamageNotifyMessage(
                                     DamageNotifyMessage.ReasonValue.DrawDeath,
                                     1,
-                                    GuardPlayerId: playerId));
+                                    GuardPlayerId: playerId
+                                    ));
                         }
                     }
                 }
@@ -499,7 +504,8 @@ namespace Cauldron.Core.Entities
                                         playerId,
                                         ZoneName.Hand
                                     ),
-                                    0));
+                                    0,
+                                    effectOwnerCard));
                         }
 
                         await this.FireEvent(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
@@ -512,7 +518,7 @@ namespace Cauldron.Core.Entities
             return (GameMasterStatusCode.OK, drawnCards);
         }
 
-        public async ValueTask<Card?> GenerateNewCard(CardDefId cardDefId, Zone zone, InsertCardPosition? insertCardPosition)
+        public async ValueTask<Card?> GenerateNewCard(CardDefId cardDefId, Zone zone, InsertCardPosition? insertCardPosition, Card effectOwnerCard)
         {
             var card = this.cardRepository.CreateNew(cardDefId);
             if (card == null)
@@ -528,12 +534,12 @@ namespace Cauldron.Core.Entities
                 zone,
                 insertCardPosition);
 
-            await this.MoveCard(card.Id, moveContext);
+            await this.MoveCard(card.Id, moveContext, effectOwnerCard);
 
             return card;
         }
 
-        public async ValueTask<bool> ExcludeCard(Card cardToExclude)
+        public async ValueTask<bool> ExcludeCard(Card cardToExclude, Card effectOwnerCard)
         {
             var excluded = false;
             Player? player = default;
@@ -609,7 +615,8 @@ namespace Cauldron.Core.Entities
                         new ExcludeCardNotifyMessage(
                             (isPublic || cardToExclude.OwnerId == p.Id)
                                 ? cardToExclude : cardToExclude.AsHidden(),
-                            fromZone
+                            fromZone,
+                            effectOwnerCard
                             )
                         );
                 }
@@ -621,7 +628,7 @@ namespace Cauldron.Core.Entities
             return excluded;
         }
 
-        public async ValueTask MoveCard(CardId cardId, MoveCardContext moveCardContext)
+        public async ValueTask MoveCard(CardId cardId, MoveCardContext moveCardContext, Card? effectOwnerCard)
         {
             var (exists, card) = this.cardRepository.TryGetById(cardId);
             if (!exists)
@@ -689,7 +696,8 @@ namespace Cauldron.Core.Entities
                     if (toPlayer.Field.Full)
                     {
                         this.logger.LogInformation("field is full");
-                        await this.MoveCard(card.Id, new(moveCardContext.From, new Zone(toPlayer.Id, ZoneName.Cemetery)));
+                        await this.MoveCard(card.Id,
+                            new(moveCardContext.From, new Zone(toPlayer.Id, ZoneName.Cemetery)), effectOwnerCard);
                         return;
                     }
 
@@ -702,7 +710,8 @@ namespace Cauldron.Core.Entities
                     if (toPlayer.Hands.Count == this.RuleBook.MaxNumHands)
                     {
                         this.logger.LogInformation("hand is full");
-                        await this.MoveCard(card.Id, new(moveCardContext.From, new Zone(toPlayer.Id, ZoneName.Cemetery)));
+                        await this.MoveCard(card.Id,
+                            new(moveCardContext.From, new Zone(toPlayer.Id, ZoneName.Cemetery)), effectOwnerCard);
                         return;
                     }
 
@@ -741,7 +750,8 @@ namespace Cauldron.Core.Entities
                         new AddCardNotifyMessage(
                             (p.Id == card.OwnerId || isPublic) ? card.Id : default,
                             moveCardContext.To,
-                            isPublic ? toIndex : -1
+                            isPublic ? toIndex : -1,
+                            effectOwnerCard
                             ));
                 }
             }
@@ -760,7 +770,8 @@ namespace Cauldron.Core.Entities
                             (p.Id == card.OwnerId || isPublic) ? card : card.AsHidden(),
                             moveCardContext.From,
                             moveCardContext.To,
-                            isPublic ? toIndex : -1
+                            isPublic ? toIndex : -1,
+                            effectOwnerCard
                             ));
                 }
             }
@@ -789,7 +800,7 @@ namespace Cauldron.Core.Entities
                 );
         }
 
-        public async ValueTask<GameMasterStatusCode> Discard(PlayerId playerId, IEnumerable<CardId> handCardId)
+        public async ValueTask<GameMasterStatusCode> Discard(PlayerId playerId, IEnumerable<CardId> handCardId, Card effectOwnerCard)
         {
             var (exists, player) = this.playerRepository.TryGet(playerId);
             if (!exists)
@@ -805,7 +816,9 @@ namespace Cauldron.Core.Entities
 
             foreach (var card in handCards)
             {
-                await this.MoveCard(card.Id, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Cemetery)));
+                await this.MoveCard(card.Id,
+                    new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Cemetery)),
+                    effectOwnerCard);
             }
 
             return GameMasterStatusCode.OK;
@@ -854,7 +867,7 @@ namespace Cauldron.Core.Entities
 
             await this.FireEvent(new EffectEventArgs(GameEvent.OnStartTurn, this, SourcePlayer: this.ActivePlayer));
 
-            await this.Draw(this.ActivePlayer.Id, 1);
+            await this.Draw(this.ActivePlayer.Id, 1, default);
 
             return GameMasterStatusCode.OK;
         }
@@ -931,11 +944,19 @@ namespace Cauldron.Core.Entities
             switch (playingCard.Type)
             {
                 case CardType.Sorcery:
-                    await this.MoveCard(handCardId, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Temporary)));
+                    await this.MoveCard(
+                        handCardId,
+                        new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Temporary)),
+                        default
+                        );
                     break;
 
                 default:
-                    await this.MoveCard(handCardId, new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Field)));
+                    await this.MoveCard(
+                        handCardId,
+                        new(new(playerId, ZoneName.Hand), new(playerId, ZoneName.Field)),
+                        default
+                        );
                     break;
             }
 
@@ -947,7 +968,11 @@ namespace Cauldron.Core.Entities
             switch (playingCard.Type)
             {
                 case CardType.Sorcery:
-                    await this.MoveCard(handCardId, new(new(playerId, ZoneName.Temporary), new(playerId, ZoneName.Cemetery)));
+                    await this.MoveCard(
+                        handCardId,
+                        new(new(playerId, ZoneName.Temporary), new(playerId, ZoneName.Cemetery)),
+                        default
+                        );
                     break;
 
                 default:
@@ -1116,7 +1141,7 @@ namespace Cauldron.Core.Entities
                 Value: newArgs.BattleContext.AttackCard.Power,
                 IsBattle: true
             );
-            await this.HitPlayer(damageContext);
+            await this.DamagePlayer(damageContext, default);
 
             attackCard.NumAttacksInTurn++;
 
@@ -1134,7 +1159,7 @@ namespace Cauldron.Core.Entities
             return GameMasterStatusCode.OK;
         }
 
-        public async ValueTask HitPlayer(DamageContext damageContext)
+        public async ValueTask DamagePlayer(DamageContext damageContext, Card? effectOwnerCard)
         {
             var eventArgs = new EffectEventArgs(
                 GameEvent.OnDamageBefore,
@@ -1172,14 +1197,15 @@ namespace Cauldron.Core.Entities
                             : DamageNotifyMessage.ReasonValue.Effect,
                         newDamageContext.Value,
                         SourceCardId: newDamageContext.DamageSourceCard.Id,
-                        GuardPlayerId: newDamageContext.GuardPlayer.Id
+                        GuardPlayerId: newDamageContext.GuardPlayer.Id,
+                        EffectOwnerCard: effectOwnerCard
                         ));
             }
 
             // HPが0になったらその後の処理をすることなく負け判定
             if (newDamageContext.GuardPlayer.CurrentHp <= 0)
             {
-                this.Win(this.GetOpponent(newDamageContext.GuardPlayer.Id).Id, EndGameReason.HpIsZero, null);
+                this.Win(this.GetOpponent(newDamageContext.GuardPlayer.Id).Id, EndGameReason.HpIsZero, default);
                 return;
             }
 
@@ -1247,7 +1273,7 @@ namespace Cauldron.Core.Entities
                     Value: newArgs.BattleContext.AttackCard.Power,
                     IsBattle: true
                 );
-                await this.HitCreature(damageContext);
+                await this.DamageCreature(damageContext, default);
 
                 // 反撃ダメージは戦闘イベントとして扱わない
                 var damageContext2 = new DamageContext(
@@ -1256,7 +1282,7 @@ namespace Cauldron.Core.Entities
                     Value: newArgs.BattleContext.GuardCard.Power,
                     IsBattle: true
                 );
-                await this.HitCreature(damageContext2);
+                await this.DamageCreature(damageContext2, default);
             }
 
             // 攻撃するとステルスを失う
@@ -1281,13 +1307,13 @@ namespace Cauldron.Core.Entities
             if (newArgs.BattleContext.AttackCard.EnableAbility(CreatureAbility.Deadly)
                 && newArgs.BattleContext.GuardCard.Zone.ZoneName == ZoneName.Field)
             {
-                await this.DestroyCard(newArgs.BattleContext.GuardCard);
+                await this.DestroyCard(newArgs.BattleContext.GuardCard, default);
             }
 
             if (newArgs.BattleContext.GuardCard.EnableAbility(CreatureAbility.Deadly)
                 && newArgs.BattleContext.AttackCard.Zone.ZoneName == ZoneName.Field)
             {
-                await this.DestroyCard(newArgs.BattleContext.AttackCard);
+                await this.DestroyCard(newArgs.BattleContext.AttackCard, default);
             }
 
             // 戦闘後のイベント
@@ -1296,7 +1322,7 @@ namespace Cauldron.Core.Entities
             return GameMasterStatusCode.OK;
         }
 
-        public async ValueTask HitCreature(DamageContext damageContext)
+        public async ValueTask DamageCreature(DamageContext damageContext, Card? effectOwnerCard)
         {
             var eventArgs = new EffectEventArgs(GameEvent.OnDamageBefore, this, DamageContext: damageContext);
             var newEventArgs = await this.FireEvent(eventArgs);
@@ -1326,7 +1352,8 @@ namespace Cauldron.Core.Entities
                             : DamageNotifyMessage.ReasonValue.Effect,
                         newDamageContext.Value,
                         SourceCardId: newDamageContext.DamageSourceCard.Id,
-                        GuardCardId: newDamageContext.GuardCard.Id
+                        GuardCardId: newDamageContext.GuardCard.Id,
+                        EffectOwnerCard: effectOwnerCard
                         ));
             }
 
@@ -1409,11 +1436,14 @@ namespace Cauldron.Core.Entities
             {
                 this.EventListener?.OnModifyPlayer?.Invoke(p.Id,
                     this.CreateGameContext(p.Id),
-                    new ModifyPlayerNotifyMessage(modifyPlayerContext.PlayerId));
+                    new ModifyPlayerNotifyMessage(
+                        modifyPlayerContext.PlayerId,
+                        effectOwnerCard
+                        ));
             }
         }
 
-        public GameMasterStatusCode AddEffect(Card card, IEnumerable<CardEffect> effectToAdd)
+        public GameMasterStatusCode AddEffect(Card card, IEnumerable<CardEffect> effectToAdd, Card effectOwnerCard)
         {
             card.Effects.AddRange(effectToAdd);
 
@@ -1429,14 +1459,15 @@ namespace Cauldron.Core.Entities
                     p.Id,
                     this.CreateGameContext(p.Id),
                     new ModifyCardNotifyMessage(
-                        (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden()
+                        (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden(),
+                        effectOwnerCard
                         ));
             }
 
             return GameMasterStatusCode.OK;
         }
 
-        public async ValueTask ModifyCounter(PlayerId targetPlayerId, string counterName, int numCounters)
+        public async ValueTask ModifyCounter(PlayerId targetPlayerId, string counterName, int numCounters, Card effectOwnerCard)
         {
             this.logger.LogInformation($"start set counter.");
 
@@ -1463,7 +1494,11 @@ namespace Cauldron.Core.Entities
                     p.Id,
                     this.CreateGameContext(p.Id),
                     new ModifyCounterNotifyMessage(
-                        counterName, numCounters, TargetPlayerId: targetPlayerId));
+                        counterName,
+                        numCounters,
+                        TargetPlayerId: targetPlayerId,
+                        EffectOwnerCard: effectOwnerCard
+                        ));
             }
 
             var addOrRemove = numCounters > 0
@@ -1483,7 +1518,7 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public async ValueTask ModifyCounter(Card targetCard, string counterName, int numCounters)
+        public async ValueTask ModifyCounter(Card targetCard, string counterName, int numCounters, Card effectOwnerCard)
         {
             this.logger.LogInformation($"start set counter.");
 
@@ -1505,7 +1540,9 @@ namespace Cauldron.Core.Entities
                     this.CreateGameContext(p.Id),
                     new ModifyCounterNotifyMessage(
                         counterName, numCounters,
-                        TargetCard: card));
+                        TargetCard: card,
+                        EffectOwnerCard: effectOwnerCard
+                        ));
             }
 
             var addOrRemove = numCounters > 0
@@ -1596,7 +1633,7 @@ namespace Cauldron.Core.Entities
             return false;
         }
 
-        public (bool, GameMasterStatusCode) Win(PlayerId playerId, EndGameReason reason, string? cardName)
+        public (bool, GameMasterStatusCode) Win(PlayerId playerId, EndGameReason reason, Card? effectOwnerCard)
         {
             var (exists, _) = this.playerRepository.TryGet(playerId);
             if (!exists)
@@ -1604,7 +1641,7 @@ namespace Cauldron.Core.Entities
                 return (false, GameMasterStatusCode.PlayerNotExists);
             }
 
-            this.endGameNotifyMessage = new EndGameNotifyMessage(playerId, reason, cardName);
+            this.endGameNotifyMessage = new EndGameNotifyMessage(playerId, reason, effectOwnerCard);
 
             foreach (var p in this.playerRepository.AllPlayers)
             {
@@ -1642,7 +1679,7 @@ namespace Cauldron.Core.Entities
 
             foreach (var c in deadCards)
             {
-                await this.DestroyCard(c);
+                await this.DestroyCard(c, default);
             }
         }
 

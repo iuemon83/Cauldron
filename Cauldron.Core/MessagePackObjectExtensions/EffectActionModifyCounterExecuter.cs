@@ -40,7 +40,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
 
                 var modifyNum = await _this.NumCountersModifier.Modify(effectOwnerCard, args, beforeNumCounters)
                     - beforeNumCounters;
-                await args.GameMaster.ModifyCounter(player.Id, _this.CounterName, modifyNum);
+                await args.GameMaster.ModifyCounter(player.Id, _this.CounterName, modifyNum, effectOwnerCard);
 
                 totalNumAfterCounters += modifyNum;
             }
@@ -58,7 +58,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
 
                 var modifyNum = await _this.NumCountersModifier.Modify(effectOwnerCard, newArgs, beforeNumCounters)
                     - beforeNumCounters;
-                await args.GameMaster.ModifyCounter(card, _this.CounterName, modifyNum);
+                await args.GameMaster.ModifyCounter(card, _this.CounterName, modifyNum, effectOwnerCard);
 
                 totalNumAfterCounters += modifyNum;
             }

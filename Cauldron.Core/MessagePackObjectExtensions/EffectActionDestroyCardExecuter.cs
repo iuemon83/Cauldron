@@ -19,7 +19,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             var deletedCardList = new List<Card>();
             foreach (var card in choiceResult.CardList)
             {
-                var deleted = await args.GameMaster.DestroyCard(card);
+                var deleted = await args.GameMaster.DestroyCard(card, effectOwnerCard);
                 if (deleted)
                 {
                     deletedCardList.Add(card);

@@ -28,7 +28,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                 if (success)
                 {
                     var moveContext = new MoveCardContext(card.Zone, toZone, _this.InsertCardPosition);
-                    await args.GameMaster.MoveCard(card.Id, moveContext);
+                    await args.GameMaster.MoveCard(card.Id, moveContext, effectOwnerCard);
                     done = true;
                 }
             }

@@ -460,9 +460,9 @@ public class BattleSceneController : MonoBehaviour
         dialog.transform.SetParent(this.canvas.transform, false);
     }
 
-    private async UniTask AddActionLog(ActionLog actionLog)
+    private async UniTask AddActionLog(ActionLog actionLog, bool isChild = false)
     {
-        await this.actionLogViewController.AddLog(actionLog);
+        await this.actionLogViewController.AddLog(actionLog, isChild);
     }
 
     /// <summary>
@@ -704,18 +704,6 @@ public class BattleSceneController : MonoBehaviour
         }
     }
 
-    private void RemoveExcludedCard(Card card)
-    {
-        if (this.YouId == card.OwnerId)
-        {
-            this.youExcludedCardListViewController.RemoveCard(card);
-        }
-        else
-        {
-            this.opponentExcludedCardListViewController.RemoveCard(card);
-        }
-    }
-
     public void ShowEndGameDialog(EndGameNotifyMessage notify)
     {
         var title = "ゲーム終了";
@@ -726,7 +714,7 @@ public class BattleSceneController : MonoBehaviour
         var reasonText = notify.EndGameReason switch
         {
             EndGameReason.HpIsZero => "HPが0になりました。",
-            EndGameReason.CardEffect => $"「{notify.CardName}」の効果でゲームが終了しました。",
+            EndGameReason.CardEffect => $"「{notify.EffectOwnerCard?.Name ?? ""}」の効果でゲームが終了しました。",
             EndGameReason.Surrender => "降参しました。",
             _ => throw new NotImplementedException($"正しくない値が指定されました。EndGameReason={notify.EndGameReason}"),
         };
@@ -827,7 +815,11 @@ public class BattleSceneController : MonoBehaviour
                 message.CardId);
             var playerName = Utility.GetPlayerName(gameContext, message.ToZone.PlayerId);
 
-            await this.AddActionLog(new ActionLog("追加", card));
+            if (message.EffectOwnerCard != null)
+            {
+                await this.AddActionLog(new ActionLog("発動", message.EffectOwnerCard));
+            }
+            await this.AddActionLog(new ActionLog("追加", card), message.EffectOwnerCard != null);
 
             switch (message.ToZone.ZoneName)
             {
@@ -862,7 +854,13 @@ public class BattleSceneController : MonoBehaviour
         {
             var ownerName = Utility.GetPlayerName(gameContext, message.Card.OwnerId);
 
-            await this.AddActionLog(new ActionLog($"{message.FromZone.ZoneName}→除外", message.Card));
+            if (message.EffectOwnerCard != null)
+            {
+                await this.AddActionLog(new ActionLog("発動", message.EffectOwnerCard));
+            }
+            await this.AddActionLog(
+                new ActionLog($"{message.FromZone.ZoneName}→除外", message.Card)
+                , message.EffectOwnerCard != null);
 
             if (this.fieldCardControllersByCardId.TryGetValue(message.Card.Id, out var fieldCardController)
                 && fieldCardController.Card.Type != CardType.Sorcery)
@@ -894,7 +892,14 @@ public class BattleSceneController : MonoBehaviour
             var ownerName = Utility.GetPlayerName(gameContext, message.Card.OwnerId);
             var playerName = Utility.GetPlayerName(gameContext, message.ToZone.PlayerId);
 
-            await this.AddActionLog(new ActionLog($"移動 {message.FromZone.ZoneName}→{message.ToZone.ZoneName}", message.Card));
+            if (message.EffectOwnerCard != null)
+            {
+                await this.AddActionLog(new ActionLog("発動", message.EffectOwnerCard));
+            }
+            await this.AddActionLog(
+                new ActionLog($"移動 {message.FromZone.ZoneName}→{message.ToZone.ZoneName}", message.Card),
+                message.EffectOwnerCard != null
+                );
 
             var cardId = message.Card.Id;
             var targetPlayer = message.ToZone.PlayerId == this.YouId
@@ -982,7 +987,11 @@ public class BattleSceneController : MonoBehaviour
         {
             var ownerName = Utility.GetPlayerName(gameContext, message.Card.OwnerId);
 
-            await this.AddActionLog(new ActionLog("修整", message.Card));
+            if (message.EffectOwnerCard != null)
+            {
+                await this.AddActionLog(new ActionLog("発動", message.EffectOwnerCard));
+            }
+            await this.AddActionLog(new ActionLog("修整", message.Card), message.EffectOwnerCard != null);
 
             await this.UpdateGameContext(gameContext);
         });
@@ -998,7 +1007,14 @@ public class BattleSceneController : MonoBehaviour
                     ? gameContext.You.PublicPlayerInfo
                     : gameContext.Opponent;
 
-            await this.AddActionLog(new ActionLog("修整", playerInfo));
+            if (message.EffectOwnerCard != null)
+            {
+                await this.AddActionLog(new ActionLog("発動", message.EffectOwnerCard));
+            }
+            await this.AddActionLog(
+                new ActionLog("修整", playerInfo),
+                message.EffectOwnerCard != null
+                );
 
             static async UniTask HealOrDamageEffect(PlayerController playerController, int oldHp, int newHp)
             {
@@ -1046,7 +1062,14 @@ public class BattleSceneController : MonoBehaviour
             {
                 var ownerName = Utility.GetPlayerName(gameContext, message.TargetCard.OwnerId);
 
-                await this.AddActionLog(new ActionLog($"カウンター {message.CounterName}({message.NumCounters})", message.TargetCard));
+                if (message.EffectOwnerCard != null)
+                {
+                    await this.AddActionLog(new ActionLog("発動", message.EffectOwnerCard));
+                }
+                await this.AddActionLog(
+                    new ActionLog($"カウンター {message.CounterName}({message.NumCounters})", message.TargetCard),
+                    message.EffectOwnerCard != null
+                    );
             }
             else if (message.TargetPlayerId != default)
             {
@@ -1055,7 +1078,14 @@ public class BattleSceneController : MonoBehaviour
                     ? gameContext.You.PublicPlayerInfo
                     : gameContext.Opponent;
 
-                await this.AddActionLog(new ActionLog($"カウンター {message.CounterName}({message.NumCounters})", playerInfo));
+                if (message.EffectOwnerCard != null)
+                {
+                    await this.AddActionLog(new ActionLog("発動", message.EffectOwnerCard));
+                }
+                await this.AddActionLog(
+                    new ActionLog($"カウンター {message.CounterName}({message.NumCounters})", playerInfo),
+                    message.EffectOwnerCard != null
+                    );
             }
 
             await this.UpdateGameContext(gameContext);
@@ -1132,7 +1162,14 @@ public class BattleSceneController : MonoBehaviour
                             ? gameContext.You.PublicPlayerInfo
                             : gameContext.Opponent;
 
-                        await this.AddActionLog(new ActionLog($"ダメージ {message.Damage}", guardPlayerInfo));
+                        if (message.EffectOwnerCard != null)
+                        {
+                            await this.AddActionLog(new ActionLog("発動", message.EffectOwnerCard));
+                        }
+                        await this.AddActionLog(
+                            new ActionLog($"ダメージ {message.Damage}", guardPlayerInfo),
+                            message.EffectOwnerCard != null
+                            );
 
                         break;
                     }
@@ -1146,13 +1183,27 @@ public class BattleSceneController : MonoBehaviour
                                 ? gameContext.You.PublicPlayerInfo
                                 : gameContext.Opponent;
 
-                            await this.AddActionLog(new ActionLog($"ダメージ {message.Damage}", guardPlayerInfo));
+                            if (message.EffectOwnerCard != null)
+                            {
+                                await this.AddActionLog(new ActionLog("発動", message.EffectOwnerCard));
+                            }
+                            await this.AddActionLog(
+                                new ActionLog($"ダメージ {message.Damage}", guardPlayerInfo),
+                                message.EffectOwnerCard != null
+                                );
                         }
                         else
                         {
                             var (guardCardOwnerName, guardCard) = Utility.GetCardAndOwner(gameContext, message.GuardCardId);
 
-                            await this.AddActionLog(new ActionLog($"ダメージ {message.Damage}", guardCard));
+                            if (message.EffectOwnerCard != null)
+                            {
+                                await this.AddActionLog(new ActionLog("発動", message.EffectOwnerCard));
+                            }
+                            await this.AddActionLog(
+                                new ActionLog($"ダメージ {message.Damage}", guardCard),
+                                message.EffectOwnerCard != null
+                                );
                         }
 
                         break;

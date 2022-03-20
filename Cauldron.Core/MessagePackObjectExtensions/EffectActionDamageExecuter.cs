@@ -36,7 +36,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                     GuardPlayer: guardPlayer
                     );
 
-                await args.GameMaster.HitPlayer(damageContext);
+                await args.GameMaster.DamagePlayer(damageContext, effectOwnerCard);
 
                 done = true;
             }
@@ -55,7 +55,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                     Value: damageValue,
                     GuardCard: card
                     );
-                await args.GameMaster.HitCreature(damageContext);
+                await args.GameMaster.DamageCreature(damageContext, effectOwnerCard);
 
                 done = true;
             }

@@ -425,7 +425,7 @@ namespace Cauldron.Core_Test
                 Assert.Equal(p2Goblin.Id, diffHandsIdList[0]);
 
                 // 攻撃したときは効果が発動しない
-                await g.DestroyCard(p1TestCard);
+                await g.DestroyCard(p1TestCard, default);
                 var p2TestCard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
 
                 var beforpOpFieldIdList = op.Field.AllCards.Select(c => c.Id).ToArray();
@@ -573,7 +573,7 @@ namespace Cauldron.Core_Test
                 Assert.Equal(p2Goblin.Id, afterDeckIdList[0]);
 
                 // 攻撃したときは効果が発動しない
-                await g.DestroyCard(p1TestCard);
+                await g.DestroyCard(p1TestCard, default);
                 var p2TestCard = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
 
                 var beforpOpFieldIdList = op.Field.AllCards.Select(c => c.Id).ToArray();
@@ -649,7 +649,7 @@ namespace Cauldron.Core_Test
 
                 var beforeHands = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
 
-                await g.DestroyCard(testcard);
+                await g.DestroyCard(testcard, default);
 
                 // 手札にトークンが一枚増える
                 var addedHands = c.Player1.Hands.AllCards.Where(c => !beforeHands.Contains(c.Id)).ToArray();
@@ -725,11 +725,11 @@ namespace Cauldron.Core_Test
                 await assert(0);
 
                 // HP差があるのでドローできる
-                await g.HitPlayer(new(c.Player1.Hands.AllCards[0], 1, GuardPlayer: c.Player1));
+                await g.DamagePlayer(new(c.Player1.Hands.AllCards[0], 1, GuardPlayer: c.Player1), default);
                 await assert(1);
 
                 // HP差があっても相手HPのほうが低いとドローできない
-                await g.HitPlayer(new(c.Player1.Hands.AllCards[0], 2, GuardPlayer: c.Player2));
+                await g.DamagePlayer(new(c.Player1.Hands.AllCards[0], 2, GuardPlayer: c.Player2), default);
                 await assert(0);
             });
         }
@@ -772,7 +772,7 @@ namespace Cauldron.Core_Test
                 var beforeNumOfDecks = g.ActivePlayer.Deck.Count;
                 var beforeNumOfHands = g.ActivePlayer.Hands.AllCards.Count;
 
-                await TestUtil.AssertGameAction(() => g.Discard(pId, new[] { g.ActivePlayer.Hands.AllCards[0].Id }));
+                await TestUtil.AssertGameAction(() => g.Discard(pId, new[] { g.ActivePlayer.Hands.AllCards[0].Id }, default));
 
                 var afterNumOfDecks = g.ActivePlayer.Deck.Count;
                 Assert.Equal(beforeNumOfDecks - 1, afterNumOfDecks);
@@ -891,7 +891,7 @@ namespace Cauldron.Core_Test
 
                 // プレイ以外の方法で場に出ても相手に1ダメージ
                 beforeHp = op.CurrentHp;
-                await g.GenerateNewCard(testCardDef.Id, new(pId, ZoneName.Field), default);
+                await g.GenerateNewCard(testCardDef.Id, new(pId, ZoneName.Field), default, default);
                 Assert.Equal(beforeHp - 1, op.CurrentHp);
             });
         }
@@ -916,7 +916,7 @@ namespace Cauldron.Core_Test
                 // 場にはtestCardが1体出ている
                 Assert.Single(g.ActivePlayer.Field.AllCards);
 
-                await g.DestroyCard(testCard);
+                await g.DestroyCard(testCard, default);
 
                 // 破壊されると2コストのカードが場に出る
                 Assert.Single(g.ActivePlayer.Field.AllCards);
@@ -974,7 +974,7 @@ namespace Cauldron.Core_Test
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // ダメージ軽減される
-                await g.HitCreature(new(testcard, 3, testcard));
+                await g.DamageCreature(new(testcard, 3, testcard), default);
                 Assert.Equal(testcard.BaseToughness - 1, testcard.Toughness);
 
                 // ほかクリーチャーの攻撃が強化される
@@ -1222,7 +1222,7 @@ namespace Cauldron.Core_Test
 
                     var beforeOpHp = op.CurrentHp;
 
-                    await g.DestroyCard(testCard);
+                    await g.DestroyCard(testCard, default);
 
                     var damage = beforeOpHp - op.CurrentHp;
 
@@ -1459,7 +1459,7 @@ namespace Cauldron.Core_Test
             {
                 var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
 
-                await g.DestroyCard(goblin);
+                await g.DestroyCard(goblin, default);
 
                 Assert.Empty(c.Player1.Field.AllCards);
 
@@ -1477,7 +1477,7 @@ namespace Cauldron.Core_Test
             // 後攻
             await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                await g.DestroyCard(goblin);
+                await g.DestroyCard(goblin, default);
 
                 Assert.Empty(c.Player2.Field.AllCards);
 
@@ -2344,7 +2344,7 @@ namespace Cauldron.Core_Test
                 foreach (var _ in Enumerable.Range(0, 30))
                 {
                     var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                    await g.DestroyCard(goblin);
+                    await g.DestroyCard(goblin, default);
                 }
 
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -2442,7 +2442,9 @@ namespace Cauldron.Core_Test
                 // バウンスしてもう一度出す
                 await g.MoveCard(testCard.Id, new Core.Entities.Effect.MoveCardContext(
                     new Zone(pId, ZoneName.Field),
-                    new Zone(pId, ZoneName.Hand)));
+                    new Zone(pId, ZoneName.Hand)),
+                    default
+                    );
 
                 await g.PlayFromHand(pId, testCard.Id);
             });
@@ -2751,7 +2753,8 @@ namespace Cauldron.Core_Test
             var nextDrawCard = await c.GameMaster.GenerateNewCard(
                 goblinDefp4.Id,
                 new Zone(c.Player1.Id, ZoneName.Deck),
-                new InsertCardPosition(InsertCardPosition.PositionTypeValue.Top));
+                new InsertCardPosition(InsertCardPosition.PositionTypeValue.Top),
+                default);
 
             // 先攻2
             await TestUtil.Turn(c.GameMaster, (g, pId) =>
@@ -2768,7 +2771,8 @@ namespace Cauldron.Core_Test
             var nextDrawCard2 = await c.GameMaster.GenerateNewCard(
                 goblinDefp3.Id,
                 new Zone(c.Player1.Id, ZoneName.Deck),
-                new InsertCardPosition(InsertCardPosition.PositionTypeValue.Top));
+                new InsertCardPosition(InsertCardPosition.PositionTypeValue.Top),
+                default);
 
             // 先攻3
             await TestUtil.Turn(c.GameMaster, (g, pId) =>
@@ -2785,7 +2789,9 @@ namespace Cauldron.Core_Test
             var nextDrawCard3 = await c.GameMaster.GenerateNewCard(
                 goblinDefp4.Id,
                 new Zone(c.Player1.Id, ZoneName.Deck),
-                new InsertCardPosition(InsertCardPosition.PositionTypeValue.Top));
+                new InsertCardPosition(InsertCardPosition.PositionTypeValue.Top),
+                default
+                );
 
             // 先攻4
             await TestUtil.Turn(c.GameMaster, (g, pId) =>
@@ -2843,7 +2849,7 @@ namespace Cauldron.Core_Test
             {
                 // 場に出る以前に除外されていても影響なし
                 var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                await g.ExcludeCard(goblin);
+                await g.ExcludeCard(goblin, default);
 
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
                 var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -2851,7 +2857,7 @@ namespace Cauldron.Core_Test
                 // 攻撃力はもとのまま
                 Assert.Equal(testCard.BasePower, testCard.Power);
 
-                await g.ExcludeCard(goblin2);
+                await g.ExcludeCard(goblin2, default);
 
                 // カードが除外されたので攻撃力が1上がる
                 Assert.Equal(testCard.BasePower + 1, testCard.Power);
@@ -2867,7 +2873,7 @@ namespace Cauldron.Core_Test
                 // まだ攻撃力はもとのまま
                 Assert.Equal(testCard.BasePower + 1, testCard.Power);
 
-                await g.ExcludeCard(goblin);
+                await g.ExcludeCard(goblin, default);
 
                 // 相手のカードが除外されても攻撃力が上がる
                 Assert.Equal(testCard.BasePower + 2, testCard.Power);
@@ -2893,14 +2899,14 @@ namespace Cauldron.Core_Test
                 Assert.Equal(testCard.BasePower, testCard.Power);
 
                 var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                await g.ExcludeCard(goblin);
+                await g.ExcludeCard(goblin, default);
 
                 // 除外済み:1 なので、+1されている
                 var testCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
                 Assert.Equal(testCard2.BasePower + 1, testCard2.Power);
 
                 var goblin3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                await g.ExcludeCard(goblin3);
+                await g.ExcludeCard(goblin3, default);
 
                 // 除外済み:2 なので、+2されている
                 var testCard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -2937,7 +2943,7 @@ namespace Cauldron.Core_Test
                 Assert.Empty(p.Field.AllCards);
 
                 var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                await g.ExcludeCard(goblin);
+                await g.ExcludeCard(goblin, default);
 
                 Assert.Empty(p.Field.AllCards);
 
@@ -2978,8 +2984,8 @@ namespace Cauldron.Core_Test
                 var p = g.Get(pId);
 
                 // 手札を2コストのカードだけにする（除外されるカードを固定するため）
-                await g.Discard(p.Id, p.Hands.AllCards.Select(c => c.Id).ToArray());
-                await g.GenerateNewCard(goblinC2Def.Id, new Zone(pId, ZoneName.Hand), default);
+                await g.Discard(p.Id, p.Hands.AllCards.Select(c => c.Id).ToArray(), default);
+                await g.GenerateNewCard(goblinC2Def.Id, new Zone(pId, ZoneName.Hand), default, default);
 
                 var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
                 var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
@@ -3239,19 +3245,19 @@ namespace Cauldron.Core_Test
                 Assert.Equal(testcard.BasePower + 1, testcard.Power);
 
                 // カウンターが減ったら-1/+0される
-                await g.ModifyCounter(testcard, "魔導", -1);
+                await g.ModifyCounter(testcard, "魔導", -1, default);
                 Assert.Equal(testcard.BasePower, testcard.Power);
 
                 // カウンターが乗ったら+1/+0される
-                await g.ModifyCounter(testcard, "魔導", 1);
+                await g.ModifyCounter(testcard, "魔導", 1, default);
                 Assert.Equal(testcard.BasePower + 1, testcard.Power);
 
                 // 2つカウンターが乗ったら+2/+0される
-                await g.ModifyCounter(testcard, "魔導", 2);
+                await g.ModifyCounter(testcard, "魔導", 2, default);
                 Assert.Equal(testcard.BasePower + 3, testcard.Power);
 
                 // 2つカウンターが減ったら+2/+0される
-                await g.ModifyCounter(testcard, "魔導", -2);
+                await g.ModifyCounter(testcard, "魔導", -2, default);
                 Assert.Equal(testcard.BasePower + 1, testcard.Power);
 
                 return testcard;
@@ -3281,7 +3287,7 @@ namespace Cauldron.Core_Test
                 var p = g.Get(pId);
                 var op = g.GetOpponent(pId);
 
-                var testcard = await g.GenerateNewCard(testCardDef.Id, new Zone(pId, ZoneName.Hand), null);
+                var testcard = await g.GenerateNewCard(testCardDef.Id, new Zone(pId, ZoneName.Hand), null, default);
                 Assert.Equal(0, testcard.GetCounter("魔導"));
                 Assert.Equal(testcard.BasePower, testcard.Power);
 
@@ -3293,11 +3299,11 @@ namespace Cauldron.Core_Test
                 Assert.Equal(testcard.BaseCost - 1, testcard.Cost);
 
                 // 魔法を使わなくてもカウンターが乗ったらコストが-1
-                await g.ModifyCounter(testcard, "魔導", 1);
+                await g.ModifyCounter(testcard, "魔導", 1, default);
                 Assert.Equal(testcard.BaseCost - 2, testcard.Cost);
 
                 // 2つカウンターが乗ったらコストが-2
-                await g.ModifyCounter(testcard, "魔導", 2);
+                await g.ModifyCounter(testcard, "魔導", 2, default);
                 Assert.Equal(testcard.BaseCost - 4, testcard.Cost);
 
                 return testcard;
@@ -3398,7 +3404,7 @@ namespace Cauldron.Core_Test
                 // カウンターがないので相手に1ダメージ
                 Assert.Equal(beforeOpHp - 1, op.CurrentHp);
 
-                await g.ModifyCounter(goblin1, "魔導", 1);
+                await g.ModifyCounter(goblin1, "魔導", 1, default);
 
                 beforeOpHp = op.CurrentHp;
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -3408,8 +3414,8 @@ namespace Cauldron.Core_Test
                 // カウンターがなくなっている
                 Assert.Equal(0, goblin1.GetCounter("魔導"));
 
-                await g.ModifyCounter(goblin1, "魔導", 1);
-                await g.ModifyCounter(goblin2, "魔導", 1);
+                await g.ModifyCounter(goblin1, "魔導", 1, default);
+                await g.ModifyCounter(goblin2, "魔導", 1, default);
 
                 beforeOpHp = op.CurrentHp;
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
@@ -3534,12 +3540,12 @@ namespace Cauldron.Core_Test
                 Assert.False(g.GameOver);
 
                 // 手札に3枚そろってないので勝利しない
-                await g.GenerateNewCard(key1.Id, new Zone(pId, ZoneName.Hand), null);
+                await g.GenerateNewCard(key1.Id, new Zone(pId, ZoneName.Hand), null, default);
                 Assert.False(g.GameOver);
 
                 // 手札に3枚そろったのでゲームに勝利する
-                await g.GenerateNewCard(key1.Id, new Zone(pId, ZoneName.Hand), null);
-                await g.GenerateNewCard(key2.Id, new Zone(pId, ZoneName.Hand), null);
+                await g.GenerateNewCard(key1.Id, new Zone(pId, ZoneName.Hand), null, default);
+                await g.GenerateNewCard(key2.Id, new Zone(pId, ZoneName.Hand), null, default);
                 Assert.True(g.GameOver);
                 Assert.Equal(pId, g.WinnerId);
             });
@@ -3613,11 +3619,13 @@ namespace Cauldron.Core_Test
                 Assert.Equal(10, p.CurrentHp);
 
                 // 自分のHPが5以下なので、自分が回復
-                await g.HitPlayer(new Core.Entities.Effect.DamageContext(
+                await g.DamagePlayer(new Core.Entities.Effect.DamageContext(
                     default,
                     5,
                     GuardPlayer: p,
-                    IsBattle: false));
+                    IsBattle: false),
+                    default
+                    );
                 Assert.Equal(5, p.CurrentHp);
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
                 Assert.Equal(10, p.CurrentHp);
@@ -3798,7 +3806,7 @@ namespace Cauldron.Core_Test
                 Assert.Equal(creature.BaseToughness, creature.Toughness);
 
                 var creature2 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
-                await g.ModifyCounter(creature2, "魔導", 1);
+                await g.ModifyCounter(creature2, "魔導", 1, default);
 
                 // まだ生きてる
                 Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
@@ -3815,7 +3823,7 @@ namespace Cauldron.Core_Test
                 Assert.Equal(creature2.BaseToughness - 1, creature2.Toughness);
 
                 var creature3 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
-                await g.ModifyCounter(creature3, "魔導", 2);
+                await g.ModifyCounter(creature3, "魔導", 2, default);
 
                 // まだ生きてる
                 Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);

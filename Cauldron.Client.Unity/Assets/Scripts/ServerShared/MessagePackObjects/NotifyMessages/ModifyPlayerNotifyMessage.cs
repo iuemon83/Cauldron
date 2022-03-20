@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -6,10 +8,15 @@ namespace Cauldron.Shared.MessagePackObjects
     public class ModifyPlayerNotifyMessage
     {
         public PlayerId PlayerId { get; }
+        public Card? EffectOwnerCard { get; }
 
-        public ModifyPlayerNotifyMessage(PlayerId PlayerId)
+        public ModifyPlayerNotifyMessage(
+            PlayerId PlayerId,
+            Card? EffectOwnerCard = default
+            )
         {
             this.PlayerId = PlayerId;
+            this.EffectOwnerCard = EffectOwnerCard;
         }
     }
 }

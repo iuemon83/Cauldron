@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -27,19 +29,23 @@ namespace Cauldron.Shared.MessagePackObjects
         public PlayerId GuardPlayerId { get; }
         public CardId GuardCardId { get; }
         public int Damage { get; }
+        public Card? EffectOwnerCard { get; }
 
         public DamageNotifyMessage(
             ReasonValue Reason,
             int Damage,
             CardId SourceCardId = default,
             PlayerId GuardPlayerId = default,
-            CardId GuardCardId = default)
+            CardId GuardCardId = default,
+            Card? EffectOwnerCard = default
+            )
         {
             this.Reason = Reason;
             this.SourceCardId = SourceCardId;
             this.GuardPlayerId = GuardPlayerId;
             this.GuardCardId = GuardCardId;
             this.Damage = Damage;
+            this.EffectOwnerCard = EffectOwnerCard;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             var done = false;
             foreach (var card in targets)
             {
-                args.GameMaster.AddEffect(card, _this.EffectToAdd);
+                args.GameMaster.AddEffect(card, _this.EffectToAdd, effectOwnerCard);
             }
 
             if (!string.IsNullOrEmpty(_this.Name))

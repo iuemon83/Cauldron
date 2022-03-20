@@ -20,7 +20,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             var excludedCardList = new List<Card>();
             foreach (var cardToExclude in choiceResult.CardList)
             {
-                var excluded = await effectEventArgs.GameMaster.ExcludeCard(cardToExclude);
+                var excluded = await effectEventArgs.GameMaster.ExcludeCard(cardToExclude, effectOwnerCard);
                 if (excluded)
                 {
                     excludedCardList.Add(cardToExclude);

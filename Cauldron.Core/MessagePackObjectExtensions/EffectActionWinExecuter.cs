@@ -20,7 +20,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             var done = false;
             foreach (var playerId in targets)
             {
-                args.GameMaster.Win(playerId, EndGameReason.CardEffect, effectOwnerCard.Name);
+                args.GameMaster.Win(playerId, EndGameReason.CardEffect, effectOwnerCard);
 
                 done = true;
             }
