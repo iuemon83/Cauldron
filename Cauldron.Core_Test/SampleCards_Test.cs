@@ -3798,7 +3798,6 @@ namespace Cauldron.Core_Test
                 // まだ生きてる
                 Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
 
-                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 魔導カウンターが乗っていないのでダメージを受けない
@@ -3811,7 +3810,6 @@ namespace Cauldron.Core_Test
                 // まだ生きてる
                 Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
 
-                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 魔導カウンターが乗っていないのでダメージを受けない
@@ -3828,7 +3826,6 @@ namespace Cauldron.Core_Test
                 // まだ生きてる
                 Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
 
-                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 魔導カウンターが乗っていないのでダメージを受けない
@@ -3842,6 +3839,76 @@ namespace Cauldron.Core_Test
                 // 魔導カウンターが2個のっているので2ダメージ
                 Assert.Equal(ZoneName.Field, creature3.Zone.ZoneName);
                 Assert.Equal(creature3.BaseToughness - 2, creature3.Toughness);
+            });
+        }
+
+        [Fact]
+        public async Task ZombieMaster()
+        {
+            var testCardDef = SampleCards.ZombieMaster;
+            testCardDef.Cost = 0;
+
+            var creatureDef = SampleCards.Creature(0, "z", 1, 3, annotations: new[] { ":ゾンビ" });
+            var damageSpellDef = SampleCards.SelectDeathDamage;
+            damageSpellDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, creatureDef, damageSpellDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var creature = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, damageSpellDef.Id);
+
+                // 墓地にいる
+                Assert.Equal(ZoneName.Cemetery, creature.Zone.ZoneName);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 場に戻る
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+                // タフネスは元に戻っている
+                Assert.Equal(creature.BaseToughness, creature.Toughness);
+            });
+        }
+
+        [Fact]
+        public async Task LivingDead()
+        {
+            var testCardDef = SampleCards.LivingDead;
+            testCardDef.Cost = 0;
+
+            var creatureDef = SampleCards.Creature(0, "z", 1, 3, annotations: new[] { ":ゾンビ" });
+            var damageSpellDef = SampleCards.SelectDeathDamage;
+            damageSpellDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, creatureDef, damageSpellDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var creature = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, damageSpellDef.Id);
+
+                // 墓地にいる
+                Assert.Equal(ZoneName.Cemetery, creature.Zone.ZoneName);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 場に戻る
+                Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
+                // タフネスは1になる
+                Assert.Equal(1, creature.Toughness);
             });
         }
     }

@@ -4300,7 +4300,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
-                            new EffectAction(MoveCard:new(
+                            new EffectAction(ModifyCard:new(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
@@ -4321,20 +4321,6 @@ namespace Cauldron.Core_Test
                                     Choice.HowValue.Choose,
                                     new NumValue(1)
                                     ),
-                                ZonePrettyName.YouField,
-                                Name: "move"
-                                )),
-                            new EffectAction(ModifyCard:new(
-                                new Choice(
-                                    new ChoiceSource(
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition(
-                                                ActionContext: new(MoveCard: new(
-                                                    "move",
-                                                    ActionContextCardsOfMoveCard.TypeValue.Moved
-                                                ))),
-                                        })),
                                 Toughness: new(
                                     NumValueModifier.OperatorValue.Replace,
                                     new NumValue(NumValueCalculator: new(ForCard: new(
@@ -4344,16 +4330,29 @@ namespace Cauldron.Core_Test
                                                 orCardConditions: new[]
                                                 {
                                                     new CardCondition(
-                                                        ActionContext: new(MoveCard: new(
-                                                            "move",
-                                                            ActionContextCardsOfMoveCard.TypeValue.Moved
-                                                        ))),
+                                                        CardCondition.ContextConditionValue.ActionTarget
+                                                        )
                                                 }
                                                 )
                                             )
                                         )))
-                                    )
-                                ))
+                                    ),
+                                Name: "modify"
+                                )),
+                            new EffectAction(MoveCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ActionContext: new(ModifyCard: new(
+                                                    "modify",
+                                                    ActionContextCardsOfModifyCard.TypeValue.Modified))
+                                                )
+                                        })
+                                    ),
+                                ZonePrettyName.YouField
+                                )),
                         }),
                 });
 
@@ -4770,7 +4769,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
-                            new EffectAction(MoveCard:new(
+                            new EffectAction(ModifyCard:new(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
@@ -4787,24 +4786,27 @@ namespace Cauldron.Core_Test
                                     Choice.HowValue.Choose,
                                     new NumValue(1)
                                     ),
-                                ZonePrettyName.YouField,
-                                Name: "move"
+                                Toughness: new(
+                                    NumValueModifier.OperatorValue.Replace,
+                                    new NumValue(1)
+                                ),
+                                Name: "modify"
                                 )),
-                            new EffectAction(ModifyCard:new(
+                            new EffectAction(MoveCard:new(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
                                         {
                                             new CardCondition(
-                                                ActionContext: new(MoveCard: new(
-                                                    "move",
-                                                    ActionContextCardsOfMoveCard.TypeValue.Moved
-                                                ))),
-                                        })),
-                                Toughness: new(
-                                    NumValueModifier.OperatorValue.Replace,
-                                    new NumValue(1)
-                                )))
+                                                ActionContext: new(ModifyCard: new(
+                                                    "modify",
+                                                    ActionContextCardsOfModifyCard.TypeValue.Modified
+                                                    ))
+                                                )
+                                        })
+                                    ),
+                                ZonePrettyName.YouField
+                                )),
                         }),
                 });
 

@@ -46,7 +46,7 @@ namespace Cauldron.Core.Entities
             return false;
         }
 
-        public async void EndGameEvent(GameEvent gameEvent, EffectEventArgs effectEventArgs)
+        public async void FinalyGameEvent(GameEvent gameEvent, EffectEventArgs effectEventArgs)
         {
             foreach (var key in this.effectWhileCounter[gameEvent].Keys)
             {

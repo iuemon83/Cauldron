@@ -20,7 +20,12 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             var done = false;
             foreach (var card in targets)
             {
-                await effectEventArgs.GameMaster.ModifyCard(card, _this, effectOwnerCard, effectEventArgs);
+                var newArgs = effectEventArgs with
+                {
+                    ActionTargetCard = card,
+                    ActionTargetCards = targets
+                };
+                await effectEventArgs.GameMaster.ModifyCard(card, _this, effectOwnerCard, newArgs);
 
                 done = true;
             }

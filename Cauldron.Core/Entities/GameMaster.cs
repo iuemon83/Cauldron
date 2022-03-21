@@ -1690,7 +1690,7 @@ namespace Cauldron.Core.Entities
             var newEventArgs = await this.effectManager.DoEffect(effectEventArgs);
 
             // ↑でダメージが0になると、damagebeforeイベントにマッチしなくなる！！！！！！！！！
-            this.effectManager.EndGameEvent(effectEventArgs.GameEvent, effectEventArgs);
+            this.effectManager.FinalyGameEvent(effectEventArgs.GameEvent, effectEventArgs);
 
             return newEventArgs;
         }
