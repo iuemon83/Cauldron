@@ -33,7 +33,7 @@ namespace Cauldron.Core.Entities
         public int UsedMp { get; private set; }
         public int CurrentMp => Math.Max(0, this.MaxMp - this.UsedMp);
 
-        private readonly Dictionary<string, int> counter = new();
+        private readonly Dictionary<string, int> CountersByName = new();
 
         public Player(PlayerId id, string name, RuleBook ruleBook, IReadOnlyList<Card> deck, bool isFirst)
         {
@@ -145,19 +145,28 @@ namespace Cauldron.Core.Entities
             this.IsFirst
             );
 
-        public void ModifyCounter(string name, int value)
+        public void ModifyCounter(string name, int addValue)
         {
-            if (!this.counter.TryGetValue(name, out var v))
+            if (!this.CountersByName.TryGetValue(name, out var num))
             {
-                this.counter.Add(name, 0);
+                this.CountersByName.Add(name, 0);
             }
 
-            this.counter[name] = v + value;
+            var newNum = num + addValue;
+
+            if (newNum > 0)
+            {
+                this.CountersByName[name] = newNum;
+            }
+            else
+            {
+                this.CountersByName.Remove(name);
+            }
         }
 
         public int GetCounter(string name)
         {
-            return this.counter.TryGetValue(name, out var num)
+            return this.CountersByName.TryGetValue(name, out var num)
                 ? num
                 : 0;
         }

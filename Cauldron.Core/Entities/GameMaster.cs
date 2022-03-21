@@ -741,14 +741,15 @@ namespace Cauldron.Core.Entities
 
             if (isAdd)
             {
-                var isPublic = moveCardContext.To.IsPublic();
-
                 foreach (var p in this.playerRepository.AllPlayers)
                 {
+                    var isPublic = p.Id == card.OwnerId
+                        || moveCardContext.To.IsPublic();
+
                     this.EventListener?.OnAddCard?.Invoke(p.Id,
                         this.CreateGameContext(p.Id),
                         new AddCardNotifyMessage(
-                            (p.Id == card.OwnerId || isPublic) ? card.Id : default,
+                            isPublic ? card.Id : default,
                             moveCardContext.To,
                             isPublic ? toIndex : -1,
                             effectOwnerCard
@@ -757,17 +758,18 @@ namespace Cauldron.Core.Entities
             }
             else
             {
-                var isPublic = moveCardContext.From.IsPublic()
-                    || moveCardContext.To.IsPublic();
-
                 foreach (var p in this.playerRepository.AllPlayers)
                 {
+                    var isPublic = p.Id == card.OwnerId
+                        || moveCardContext.From.IsPublic()
+                        || moveCardContext.To.IsPublic();
+
                     // カードの持ち主以外への通知は
                     // 移動元か移動後どちらかの領域が公開領域の場合のみ
                     this.EventListener?.OnMoveCard?.Invoke(p.Id,
                         this.CreateGameContext(p.Id),
                         new MoveCardNotifyMessage(
-                            (p.Id == card.OwnerId || isPublic) ? card : card.AsHidden(),
+                            isPublic ? card : card.AsHidden(),
                             moveCardContext.From,
                             moveCardContext.To,
                             isPublic ? toIndex : -1,

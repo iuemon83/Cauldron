@@ -129,7 +129,7 @@ public class CardController : MonoBehaviour
 
         for (var i = 0; i < this.counterSpaceList.Length; i++)
         {
-            if (counterValues.Length > i)
+            if (counterValues.Length > i && counterValues[i] != 0)
             {
                 this.counterSpaceList[i].SetActive(true);
                 this.counterTextList[i].text = counterValues[i].ToString();

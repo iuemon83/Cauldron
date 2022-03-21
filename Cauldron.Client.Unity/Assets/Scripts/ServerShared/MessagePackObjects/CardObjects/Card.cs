@@ -203,7 +203,16 @@ namespace Cauldron.Shared.MessagePackObjects
                 this.CountersByName.Add(name, 0);
             }
 
-            this.CountersByName[name] = num + addValue;
+            var newNum = num + addValue;
+
+            if (newNum > 0)
+            {
+                this.CountersByName[name] = newNum;
+            }
+            else
+            {
+                this.CountersByName.Remove(name);
+            }
         }
 
         public int GetCounter(string name)
