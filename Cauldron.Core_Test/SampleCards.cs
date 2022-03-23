@@ -2900,7 +2900,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
-                            new EffectAction(DestroyCard: new(
+                            new EffectAction(MoveCard: new(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
@@ -2913,8 +2913,10 @@ namespace Cauldron.Core_Test
                                                         ZonePrettyName.OpponentField,
                                                         ZonePrettyName.OpponentHand
                                                         })))
-                                        })))
-                            ),
+                                        })
+                                    ),
+                                ZonePrettyName.YouCemetery
+                                )),
                             new EffectAction(ReserveEffect: new(
                                 new[]
                                 {

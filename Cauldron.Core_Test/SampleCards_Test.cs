@@ -2725,15 +2725,28 @@ namespace Cauldron.Core_Test
             goblinDefp4.Cost = 0;
             goblinDefp4.Power = 4;
 
-            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDefp3, goblinDefp4 });
+            var c = await TestUtil.InitTest(new[] { testCardDef, goblinDefp3, goblinDefp4 }, this.output);
 
             // 先攻
-            var (goblinP3, goblinP4) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            var (goblinP3, goblinP4, goblinP3_hand, goblinP4_hand) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
                 var goblinP3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDefp3.Id);
                 var goblinP4 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDefp4.Id);
 
-                return (goblinP3, goblinP4);
+                // 手札にも追加する
+                var goblinP3_hand = await c.GameMaster.GenerateNewCard(
+                    goblinDefp3.Id,
+                    new Zone(c.Player1.Id, ZoneName.Hand),
+                    new InsertCardPosition(InsertCardPosition.PositionTypeValue.Bottom),
+                    default);
+
+                var goblinP4_hand = await c.GameMaster.GenerateNewCard(
+                    goblinDefp4.Id,
+                    new Zone(c.Player1.Id, ZoneName.Hand),
+                    new InsertCardPosition(InsertCardPosition.PositionTypeValue.Bottom),
+                    default);
+
+                return (goblinP3, goblinP4, goblinP3_hand, goblinP4_hand);
             });
 
             // 後攻
@@ -2745,8 +2758,12 @@ namespace Cauldron.Core_Test
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 相手の場のパワー4以上のクリーチャーだけ破壊
-                Assert.Equal(1, c.Player1.Field.Count);
-                Assert.Equal(goblinDefp3.Id, c.Player1.Field.AllCards[0].CardDefId);
+                Assert.Equal(ZoneName.Field, goblinP3.Zone.ZoneName);
+                Assert.Equal(ZoneName.Cemetery, goblinP4.Zone.ZoneName);
+
+                // 手札のカードも破壊されてる
+                Assert.Equal(ZoneName.Hand, goblinP3_hand.Zone.ZoneName);
+                Assert.Equal(ZoneName.Cemetery, goblinP4_hand.Zone.ZoneName);
             });
 
             // 次にドローするカードをパワー4以上にする
