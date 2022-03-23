@@ -3368,11 +3368,13 @@ namespace Cauldron.Core_Test
         {
             var testCardDef = SampleCards.GreatSorcerer;
             var testCardDef_cost0 = SampleCards.GreatSorcerer;
+            testCardDef_cost0.Name = "コスト0";
             testCardDef_cost0.Cost = 0;
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, testCardDef_cost0 },
-                Enumerable.Repeat(testCardDef_cost0, 20).ToArray()
+                Enumerable.Repeat(testCardDef, 20).ToArray(),
+                this.output
                 );
 
             // 先攻
@@ -3393,6 +3395,8 @@ namespace Cauldron.Core_Test
 
                 // 新たな手札すべてにカウンターが5個置かれている
                 Assert.True(p.Hands.AllCards.All(c => c.GetCounter("魔導") == 5));
+                // 新たな手札すべてのコストが-5されている
+                Assert.True(p.Hands.AllCards.All(c => c.Cost == c.BaseCost - 5));
             });
         }
 
