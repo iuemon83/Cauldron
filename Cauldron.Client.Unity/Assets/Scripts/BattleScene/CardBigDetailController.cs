@@ -26,9 +26,14 @@ public class CardBigDetailController : MonoBehaviour
             ? "なし"
             : string.Join(",", card.Annotations);
 
+        var abilitiesText = card.Abilities.Count == 0
+            ? "なし"
+            : string.Join(",", card.Abilities);
+
         var result =
 $@"{card.Cost} / {card.Power} / {card.Toughness}
-アノテーション | {annnotationsText}";
+アノテーション | {annnotationsText}
+アビリティ | {abilitiesText}";
 
         if (card.Type == CardType.Creature)
         {

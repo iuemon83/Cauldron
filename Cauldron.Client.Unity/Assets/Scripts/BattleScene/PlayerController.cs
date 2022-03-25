@@ -49,10 +49,15 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void UpdateOutlineColor(float time)
+    private void Update()
+    {
+        this.UpdateOutlineColorByTime();
+    }
+
+    private void UpdateOutlineColorByTime()
     {
         var color = this.outlineImage.color;
-        color.a = Mathf.Sin(time) * 0.5f + 0.5f;
+        color.a = Mathf.Sin(2 * Mathf.PI * 0.5f * Time.time) * 0.5f + 0.5f;
         this.outlineImage.color = color;
     }
 

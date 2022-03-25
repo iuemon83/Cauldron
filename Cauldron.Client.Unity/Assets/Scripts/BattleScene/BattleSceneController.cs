@@ -119,8 +119,6 @@ public class BattleSceneController : MonoBehaviour
 
     private FieldCardController attackCardController;
 
-    private float time;
-
     private HandCardController playTargetHand = default;
 
     private int NumPicks
@@ -194,8 +192,6 @@ public class BattleSceneController : MonoBehaviour
 
     private async void Update()
     {
-        this.time += Time.deltaTime * 5.0f;
-
         if (!this.updating)
         {
             if (this.updateViewActionQueue.TryDequeue(out var updateViewAction))
@@ -204,17 +200,6 @@ public class BattleSceneController : MonoBehaviour
                 await updateViewAction();
                 this.updating = false;
             }
-        }
-
-        // 時間経過で実施する処理
-        // プレイヤー
-        this.youPlayerController.UpdateOutlineColor(this.time);
-        this.opponentPlayerController.UpdateOutlineColor(this.time);
-
-        // 場のカード
-        foreach (var fieldCard in this.fieldCardControllersByCardId.Values)
-        {
-            fieldCard.UpdateOutlineColor(this.time);
         }
     }
 

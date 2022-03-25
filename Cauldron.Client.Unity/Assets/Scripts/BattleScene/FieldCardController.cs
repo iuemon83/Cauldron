@@ -33,10 +33,17 @@ public class FieldCardController : CardController, IPointerClickHandler
         this.displaySmallCardDetail = displaySmallCardDetail;
     }
 
-    public void UpdateOutlineColor(float time)
+    protected override void Update()
+    {
+        base.Update();
+
+        this.UpdateOutlineColorByTime();
+    }
+
+    public void UpdateOutlineColorByTime()
     {
         var color = this.outlineImage.color;
-        color.a = Mathf.Sin(time) * 0.5f + 0.5f;
+        color.a = Mathf.Sin(2 * Mathf.PI * 0.5f * Time.time) * 0.5f + 0.5f;
         this.outlineImage.color = color;
     }
 

@@ -83,6 +83,10 @@ namespace Cauldron.Core_Test
             => SampleCards.Creature(2, "盾持ちゴブリン", 1, 2, flavorText: "盾になる",
                 abilities: new[] { CreatureAbility.Cover });
 
+        public static CardDef BigShieldGoblin
+            => SampleCards.Creature(3, "大盾のゴブリン", 1, 4, flavorText: "大きな盾を持っている",
+                abilities: new[] { CreatureAbility.Cover, CreatureAbility.CantAttack });
+
         public static CardDef TwinGoblin
             => SampleCards.Creature(2, "双子のゴブリン", 1, 1,
                 numAttacksInTurn: 2);

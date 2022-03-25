@@ -62,9 +62,6 @@ public class CardController : MonoBehaviour
 
     public Card Card { get; private set; }
 
-    private float timeElapsed;
-    private int currentAbilityIndex;
-
     protected virtual void Update()
     {
         if (this.Card == null)
@@ -72,12 +69,7 @@ public class CardController : MonoBehaviour
             return;
         }
 
-        this.timeElapsed += Time.deltaTime;
-        if (this.timeElapsed >= 1f)
-        {
-            this.UpdateAbilityIcon();
-            this.timeElapsed = 0f;
-        }
+        this.UpdateAbilityIcon();
     }
 
     private void UpdateAbilityIcon()
@@ -86,11 +78,9 @@ public class CardController : MonoBehaviour
         {
             this.abilityView.SetActive(true);
 
-            this.currentAbilityIndex = this.currentAbilityIndex < this.Card.Abilities.Count - 1
-                ? this.currentAbilityIndex + 1
-                : 0;
+            var index = (int)Math.Floor(Time.time) % this.Card.Abilities.Count;
 
-            var (success, icon) = AbilityIconCache.TryGet(this.Card.Abilities[this.currentAbilityIndex]);
+            var (success, icon) = AbilityIconCache.TryGet(this.Card.Abilities[index]);
             if (success)
             {
                 this.abilityIconImage.sprite = icon;
