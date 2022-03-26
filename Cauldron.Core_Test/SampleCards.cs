@@ -4171,7 +4171,6 @@ namespace Cauldron.Core_Test
 
         public static CardDef ZombieKiller
             => SampleCards.Creature(2, "ゾンビキラー", 2, 2,
-                annotations: new[] { ":ゾンビ" },
                 effects: new[]
                 {
                     new CardEffect(

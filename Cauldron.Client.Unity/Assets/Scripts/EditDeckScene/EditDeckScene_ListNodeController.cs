@@ -42,7 +42,7 @@ public class EditDeckScene_ListNodeController : MonoBehaviour, IPointerEnterHand
             ? $"{this.Source.Cost}/{this.Source.Power}/{this.Source.Toughness}"
             : $"{this.Source.Cost}/-/-";
         this.currentDeckCountText.text = "0";
-        this.limitDeckCountText.text = $"{(this.Source.IsToken ? 0 : limit)}";
+        this.limitDeckCountText.text = limit.ToString();
     }
 
     /// <summary>
