@@ -1,41 +1,56 @@
 ﻿using Cauldron.Shared.MessagePackObjects;
-using System.Collections.Generic;
 
 namespace Cauldron.Core.Entities
 {
     public class Field
     {
-        private RuleBook RuleBook { get; }
-
         /// <summary>
         /// 順序を保存するため
         /// </summary>
-        private List<Card> Cards { get; } = new();
+        private Card?[] Cards { get; }
 
-        public IReadOnlyList<Card> AllCards => this.Cards;
+        public IReadOnlyList<Card> AllCards => this.Cards.OfType<Card>().ToArray();
+
+        public IReadOnlyList<Card?> AllCardsWithIndex => this.Cards;
 
         public int Count => this.AllCards.Count;
 
-        public bool Full => this.Count >= this.RuleBook.MaxNumFieldCards;
+        public bool Full => this.Cards.All(c => c != null);
 
         public Field(RuleBook ruleBook)
         {
-            this.RuleBook = ruleBook;
+            this.Cards = new Card[ruleBook.MaxNumFieldCards];
         }
 
-        public void Add(Card card)
+        public int Add(Card card)
         {
             if (this.Full)
             {
-                return;
+                return -1;
             }
 
-            this.Cards.Add(card);
+            foreach (var i in Enumerable.Range(0, this.Cards.Length))
+            {
+                if (this.Cards[i] == null)
+                {
+                    this.Cards[i] = card;
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         public void Remove(Card card)
         {
-            this.Cards.Remove(card);
+            foreach (var i in Enumerable.Range(0, this.Cards.Length))
+            {
+                if (this.Cards[i]?.Id == card.Id)
+                {
+                    this.Cards[i] = null;
+                    return;
+                }
+            }
         }
     }
 }

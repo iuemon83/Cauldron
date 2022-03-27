@@ -51,6 +51,7 @@ public class Client
 
     public CardId[] MyCreatureCards => this.currentContext
         .You.PublicPlayerInfo.Field
+        .OfType<Card>()
         .Where(card => card.Type == CardType.Creature)
         .Select(c => c.Id)
         .ToArray();

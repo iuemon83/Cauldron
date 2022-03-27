@@ -50,7 +50,7 @@ namespace Cauldron.Core.Entities
             this.MaxLimitMp = this.RuleBook.MaxLimitMp;
             this.MaxMp = this.RuleBook.InitialMp;
             this.Deck = new Deck(deck);
-            this.Hands = new Hands();
+            this.Hands = new Hands(this.RuleBook);
             this.Field = new Field(this.RuleBook);
             this.Cemetery = new Cemetery();
             this.Excludes = new List<CardDef>();
@@ -133,7 +133,7 @@ namespace Cauldron.Core.Entities
         public PublicPlayerInfo PublicPlayerInfo => new(
             this.Id,
             this.Name,
-            this.Field.AllCards.ToArray(),
+            this.Field.AllCardsWithIndex.ToArray(),
             this.Deck.Count,
             this.Cemetery.AllCards.ToArray(),
             this.Excludes.ToArray(),

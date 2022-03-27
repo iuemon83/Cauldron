@@ -1,4 +1,6 @@
-﻿using Cauldron.Shared;
+﻿#nullable enable
+
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
 using System;
@@ -10,7 +12,9 @@ namespace Assets.Scripts
 {
     static class Utility
     {
-        public static T RandomPick<T>(IReadOnlyList<T> source) => source.Any() ? source[UnityEngine.Random.Range(0, source.Count)] : default;
+        public static T RandomPick<T>(IReadOnlyList<T> source) => source.Any()
+            ? source[UnityEngine.Random.Range(0, source.Count)]
+            : default!;
 
         public static string GetPlayerName(GameContext gameContext, PlayerId playerId)
         {
@@ -19,7 +23,7 @@ namespace Assets.Scripts
                 : gameContext.Opponent.Name;
         }
 
-        public static (string ownerPlayerName, Card card) GetCard(GameContext gameContext, Zone zone, CardId cardId)
+        public static (string ownerPlayerName, Card? card) GetCard(GameContext gameContext, Zone zone, CardId cardId)
         {
             var zonePlayer = gameContext.You.PublicPlayerInfo.Id == zone.PlayerId
                 ? gameContext.You.PublicPlayerInfo
@@ -30,7 +34,7 @@ namespace Assets.Scripts
                 ZoneName.Hand => gameContext.You.PublicPlayerInfo.Id == zone.PlayerId
                     ? gameContext.You.Hands.FirstOrDefault(c => c.Id == cardId)
                     : null,
-                ZoneName.Field => zonePlayer.Field.FirstOrDefault(c => c.Id == cardId),
+                ZoneName.Field => zonePlayer.Field.FirstOrDefault(c => c?.Id == cardId),
                 ZoneName.Cemetery => zonePlayer.Cemetery.FirstOrDefault(c => c.Id == cardId),
                 _ => null
             };
@@ -42,7 +46,7 @@ namespace Assets.Scripts
             return (ownerName, card);
         }
 
-        public static Card GetCard(GameContext gameContext, CardId cardId)
+        public static Card? GetCard(GameContext gameContext, CardId cardId)
         {
             // 非公開領域に移動した場合は取れない
             return gameContext.You.Hands
@@ -51,10 +55,10 @@ namespace Assets.Scripts
                 .Concat(gameContext.Opponent.Field)
                 .Concat(gameContext.Opponent.Cemetery)
                 .Concat(gameContext.TemporaryCards)
-                .FirstOrDefault(c => c.Id == cardId);
+                .FirstOrDefault(c => c?.Id == cardId);
         }
 
-        public static (string ownerPlayerName, Card card) GetCardAndOwner(GameContext gameContext, CardId cardId)
+        public static (string ownerPlayerName, Card? card) GetCardAndOwner(GameContext gameContext, CardId cardId)
         {
             var card = GetCard(gameContext, cardId);
 

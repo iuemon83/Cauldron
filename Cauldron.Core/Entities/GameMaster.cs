@@ -47,7 +47,9 @@ namespace Cauldron.Core.Entities
                     ? environment.You.PublicPlayerInfo
                     : environment.Opponent;
 
-                return guardPlayer.Field.Any(c => c.EnableAbility(CreatureAbility.Cover));
+                return guardPlayer.Field
+                    .OfType<Card>()
+                    .Any(c => c.EnableAbility(CreatureAbility.Cover));
             }
 
             return
@@ -701,8 +703,7 @@ namespace Cauldron.Core.Entities
                         return;
                     }
 
-                    toPlayer.Field.Add(card);
-                    toIndex = toPlayer.Field.Count - 1;
+                    toIndex = toPlayer.Field.Add(card);
                     break;
 
                 case ZoneName.Hand:

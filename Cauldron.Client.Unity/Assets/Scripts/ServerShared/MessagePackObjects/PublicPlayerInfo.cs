@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -10,7 +12,7 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public PlayerId Id { get; }
         public string Name { get; }
-        public Card[] Field { get; }
+        public Card?[] Field { get; }
         public int DeckCount { get; }
         public Card[] Cemetery { get; }
         public CardDef[] Excluded { get; }
@@ -24,7 +26,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public PublicPlayerInfo(
             PlayerId Id,
             string Name,
-            Card[] Field,
+            Card?[] Field,
             int DeckCount,
             Card[] Cemetery,
             CardDef[] Excluded,

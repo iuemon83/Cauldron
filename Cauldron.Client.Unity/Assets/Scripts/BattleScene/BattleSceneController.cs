@@ -14,6 +14,9 @@ using UnityEngine.UI;
 
 public class BattleSceneController : MonoBehaviour
 {
+    private static readonly int MaxNumFields = 5;
+    private static readonly int MaxNumHands = 10;
+
     public static BattleSceneController Instance;
 
     public Color YouColor => this.youColor;
@@ -512,7 +515,7 @@ public class BattleSceneController : MonoBehaviour
                 // ‚È‚­‚È‚Á‚½‚à‚Ì‚ðíœ‚·‚é
                 this.RemoveHandCardObj(handCardId);
             }
-            foreach (var handIndex in Enumerable.Range(0, Mathf.Min(youHands.Length, 10)))
+            foreach (var handIndex in Enumerable.Range(0, Mathf.Min(youHands.Length, MaxNumHands)))
             {
                 var handCard = youHands[handIndex];
                 this.GetOrCreateHandCardObject(handCard.Id, handCard, handIndex);
@@ -521,7 +524,7 @@ public class BattleSceneController : MonoBehaviour
             var youFieldCards = publicInfo.Field;
             var removeFieldIdList = this.fieldCardControllersByCardId
                 .Where(x => x.Value.Card.OwnerId == publicInfo.Id
-                    && !youFieldCards.Any(c => c.Id == x.Key))
+                    && !youFieldCards.Any(c => c?.Id == x.Key))
                 .Select(x => x.Key)
                 .ToArray();
             foreach (var fieldCardId in removeFieldIdList)
@@ -529,10 +532,13 @@ public class BattleSceneController : MonoBehaviour
                 // ‚È‚­‚È‚Á‚½‚à‚Ì‚ðíœ‚·‚é
                 this.RemoveFieldCardObj(fieldCardId);
             }
-            foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(youFieldCards.Length, 5)))
+            foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(youFieldCards.Length, MaxNumFields)))
             {
                 var fieldCard = youFieldCards[fieldIndex];
-                var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard, publicInfo.Id, fieldIndex);
+                if (fieldCard != null)
+                {
+                    this.GetOrCreateFieldCardObject(fieldCard, publicInfo.Id, fieldIndex);
+                }
             }
         }
 
@@ -544,7 +550,7 @@ public class BattleSceneController : MonoBehaviour
             var opponentFieldCards = opponent.Field;
             var removeFieldIdList = this.fieldCardControllersByCardId
                 .Where(x => x.Value.Card.OwnerId == opponent.Id
-                    && !opponentFieldCards.Any(c => c.Id == x.Key))
+                    && !opponentFieldCards.Any(c => c?.Id == x.Key))
                 .Select(x => x.Key)
                 .ToArray();
             foreach (var fieldCardId in removeFieldIdList)
@@ -556,7 +562,10 @@ public class BattleSceneController : MonoBehaviour
             {
                 var fieldCard = opponentFieldCards[fieldIndex];
 
-                var fieldCardObj = this.GetOrCreateFieldCardObject(fieldCard, opponent.Id, fieldIndex);
+                if (fieldCard != null)
+                {
+                    this.GetOrCreateFieldCardObject(fieldCard, opponent.Id, fieldIndex);
+                }
             }
         }
 
