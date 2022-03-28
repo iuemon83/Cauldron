@@ -1664,6 +1664,36 @@ namespace Cauldron.Core_Test
                     )
                 });
 
+        public static CardDef Reborn
+            => SampleCards.Sorcery(5, "蘇生",
+                effects: new[]
+                {
+                    new CardEffect(
+                        "墓地のクリーチャーを1体選択する。それをあなたの場に出す。",
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(
+                                MoveCard: new(
+                                    new Choice(
+                                        new ChoiceSource(orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]{
+                                                    ZonePrettyName.YouCemetery,
+                                                    ZonePrettyName.OpponentCemetery
+                                                })),
+                                                TypeCondition: new(new[]{ CardType.Creature })
+                                            )
+                                        }),
+                                        Choice.HowValue.Choose,
+                                        new NumValue(1)),
+                                    ZonePrettyName.YouField
+                                    )),
+                        }
+                    )
+                });
+
         public static CardDef Sword
             => SampleCards.Sorcery(1, "剣",
                 effects: new[]

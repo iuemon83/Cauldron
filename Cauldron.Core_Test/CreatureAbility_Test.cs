@@ -329,7 +329,7 @@ namespace Cauldron.Core_Test
                     Assert.DoesNotContain(CreatureAbility.Stealth, stealthCard1.Abilities);
                 }
 
-                // クリーチャーに攻撃
+                // プレイヤーに攻撃
                 {
                     // 攻撃前はステルスがある
                     Assert.Contains(CreatureAbility.Stealth, stealthCard2.Abilities);
@@ -337,9 +337,45 @@ namespace Cauldron.Core_Test
                     var status = await g.AttackToPlayer(pid, stealthCard2.Id, g.GetOpponent(pid).Id);
                     Assert.Equal(GameMasterStatusCode.OK, status);
 
-                    // クリーチャーに攻撃後はステルスがなくなる
+                    // 攻撃後はステルスがなくなる
                     Assert.DoesNotContain(CreatureAbility.Stealth, stealthCard2.Abilities);
                 }
+            });
+        }
+
+        [Fact]
+        public async Task Stealth_墓地から復活したらステルスも復活する()
+        {
+            var stealthCardDef = SampleCards.Creature(0, "a", 1, 1,
+                abilities: new[] { CreatureAbility.Stealth }
+                );
+
+            var spellDef = SampleCards.SelectDeathDamage;
+            spellDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { stealthCardDef, spellDef },
+                output);
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var stealthCard1 = await TestUtil.NewCardAndPlayFromHand(g, pid, stealthCardDef.Id);
+
+                // 攻撃前はステルスがある
+                Assert.Contains(CreatureAbility.Stealth, stealthCard1.Abilities);
+
+                var status = await g.AttackToPlayer(pid, stealthCard1.Id, g.GetOpponent(pid).Id);
+                Assert.Equal(GameMasterStatusCode.OK, status);
+
+                // 攻撃後はステルスがなくなる
+                Assert.DoesNotContain(CreatureAbility.Stealth, stealthCard1.Abilities);
+
+                // 墓地に移動した後はステルスが復活する
+                c.TestAnswer.ChoiceCardIdList = new[] { stealthCard1.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pid, spellDef.Id);
+
+                Assert.Equal(ZoneName.Cemetery, stealthCard1.Zone.ZoneName);
+                Assert.Contains(CreatureAbility.Stealth, stealthCard1.Abilities);
             });
         }
     }
