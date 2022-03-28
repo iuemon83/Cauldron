@@ -108,7 +108,6 @@ namespace Cauldron.Core_Test
 
                 Assert.Equal(GameMasterStatusCode.OK, actual2);
                 // 相打ちする
-                Assert.Equal(0, test1.Toughness);
                 Assert.Equal(test3.BaseToughness - test1.Power, test3.Toughness);
                 // タフネスが0なので墓地に行く
                 Assert.Equal(Shared.ZoneName.Cemetery, test1.Zone.ZoneName);

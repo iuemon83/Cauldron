@@ -147,15 +147,15 @@ namespace Cauldron.Core_Test
                 // 自分はダメージなし
                 Assert.Equal(testCard.BaseToughness, testCard.Toughness);
                 // 相手は倒す
-                Assert.Equal(0, goblinT1.Toughness);
+                Assert.Equal(ZoneName.Cemetery, goblinT1.Zone.ZoneName);
 
                 var testCard2 = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
 
                 // 相手を倒しきれないのでダメージを受ける
                 await g.AttackToCreature(pid, testCard2.Id, goblinT3.Id);
 
-                Assert.Equal(0, testCard2.Toughness);
-                Assert.Equal(0, goblinT3.Toughness);
+                Assert.Equal(ZoneName.Cemetery, testCard2.Zone.ZoneName);
+                Assert.Equal(ZoneName.Cemetery, goblinT3.Zone.ZoneName);
             });
         }
 
@@ -194,8 +194,8 @@ namespace Cauldron.Core_Test
                 // 相手を倒しきれないのでダメージを受ける
                 await g.AttackToCreature(pid, goblinT3.Id, testCard.Id);
 
-                Assert.Equal(0, testCard.Toughness);
-                Assert.Equal(0, goblinT3.Toughness);
+                Assert.Equal(ZoneName.Cemetery, testCard.Zone.ZoneName);
+                Assert.Equal(ZoneName.Cemetery, goblinT3.Zone.ZoneName);
             });
         }
 
@@ -235,36 +235,32 @@ namespace Cauldron.Core_Test
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, goblinDef, goblinDef2 },
-                Enumerable.Repeat(testCardDef, 4)
-                    .Concat(Enumerable.Repeat(goblinDef, 20))
-                    .Concat(Enumerable.Repeat(goblinDef2, 16))
+                Enumerable.Repeat(testCardDef, 10)
+                    .Concat(Enumerable.Repeat(goblinDef, 15))
+                    .Concat(Enumerable.Repeat(goblinDef2, 15))
                     );
 
             await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
-                var beforeFieldIdList = c.Player1.Field.AllCards.Select(c => c.Id).ToArray();
                 var beforeDeckCount = c.Player1.Deck.Count;
+                Assert.Equal(0, c.Player1.Field.Count);
 
                 var goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
 
-                var afterFieldIdList = c.Player1.Field.AllCards.Select(c => c.Id).ToArray();
+                var afterFieldIdList = c.Player1.Field.AllCards;
                 var diffFieldIdList = afterFieldIdList
-                    .Except(beforeFieldIdList)
                     // 自分で出したカード以外
-                    .Where(id => id != goblin.Id)
+                    .Where(c => c.Id != goblin.Id)
                     .ToArray();
 
                 var afterDeckCount = c.Player1.Deck.Count;
 
-                //TODO たまたま2枚とも手札に来てるとテストが失敗するぞ！！
+                // 追加されたカードがある
                 Assert.True(diffFieldIdList.Length > 1);
-                Assert.Equal(beforeDeckCount - afterDeckCount, diffFieldIdList.Length);
-
-                foreach (var diffId in diffFieldIdList)
-                {
-                    var (_, diffCard) = c.CardRepository.TryGetById(diffId);
-                    Assert.Equal(testCardDef.Id, diffCard.CardDefId);
-                }
+                // 追加されたカードはぜんぶゴブリンフォロワー
+                Assert.True(diffFieldIdList.All(c => c.CardDefId == testCardDef.Id));
+                // デッキからなくなる
+                Assert.True(c.Player1.Deck.AllCards.All(c => c.CardDefId != testCardDef.Id));
             });
         }
 
@@ -598,13 +594,16 @@ namespace Cauldron.Core_Test
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, goblinDef, sorceryDef },
-                Enumerable.Repeat(goblinDef, 10)
-                    .Concat(Enumerable.Repeat(sorceryDef, 10))
-                    );
+                Enumerable.Repeat(sorceryDef, 10)
+                );
 
             await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
                 var op = c.GameMaster.GetOpponent(pid);
+
+                // 相手の手札にクリーチャーを追加しておく
+                // 効果で場に出ることを確認するため
+                var addHandCard = await g.GenerateNewCard(goblinDef.Id, new Zone(c.Player2.Id, ZoneName.Hand), default, default);
 
                 var beforeOpFieldIdList = op.Field.AllCards.Select(c => c.Id).ToArray();
                 var beforeOpHandsIdList = op.Hands.AllCards.Select(c => c.Id).ToArray();
@@ -621,13 +620,11 @@ namespace Cauldron.Core_Test
                     .Except(afterOpHandsIdList)
                     .ToArray();
 
+                // 相手の手札から場に1枚カードが出ている
                 Assert.Single(diffOpFieldIdList);
                 Assert.Single(diffOpHandsIdList);
-
-                Assert.Equal(diffOpFieldIdList[0], diffOpFieldIdList[0]);
-
-                var (_, diffCard) = c.CardRepository.TryGetById(diffOpFieldIdList[0]);
-                Assert.Equal(goblinDef.Id, diffCard.CardDefId);
+                Assert.Equal(diffOpFieldIdList[0], diffOpHandsIdList[0]);
+                Assert.Equal(addHandCard.Id, diffOpHandsIdList[0]);
             });
         }
 
@@ -1356,7 +1353,7 @@ namespace Cauldron.Core_Test
             testCardDef.Cost = 0;
 
             var goblinDef = SampleCards.Creature(0, "t", 1, 2);
-            var spellDef = SampleCards.SelectDamage;
+            var spellDef = SampleCards.SelectDeathDamage;
             spellDef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -1370,15 +1367,14 @@ namespace Cauldron.Core_Test
                 // まずクリーチャーを破壊する
                 c.TestAnswer.ChoiceCardIdList = new[] { goblin.Id };
                 var s1 = await TestUtil.NewCardAndPlayFromHand(g, pId, spellDef.Id);
-                var s2 = await TestUtil.NewCardAndPlayFromHand(g, pId, spellDef.Id);
 
                 Assert.Empty(c.Player1.Field.AllCards);
-                Assert.Equal(0, goblin.Toughness);
+                Assert.Equal(ZoneName.Cemetery, goblin.Zone.ZoneName);
 
                 var beforeHandCardIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
 
                 // 自分のカードが対象
-                c.TestAnswer.ExpectedCardIdList = new[] { goblin.Id, s1.Id, s2.Id };
+                c.TestAnswer.ExpectedCardIdList = new[] { goblin.Id, s1.Id };
                 c.TestAnswer.ChoiceCardIdList = new[] { goblin.Id };
                 await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
@@ -1419,7 +1415,7 @@ namespace Cauldron.Core_Test
                 var s2 = await TestUtil.NewCardAndPlayFromHand(g, pId, spellDef.Id);
 
                 Assert.Empty(c.Player1.Field.AllCards);
-                Assert.Equal(0, goblin.Toughness);
+                Assert.Equal(ZoneName.Cemetery, goblin.Zone.ZoneName);
 
                 var beforeHandCardIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
 
@@ -3930,6 +3926,68 @@ namespace Cauldron.Core_Test
                 Assert.Equal(ZoneName.Field, creature.Zone.ZoneName);
                 // タフネスは1になる
                 Assert.Equal(1, creature.Toughness);
+            });
+        }
+
+        [Fact]
+        public async Task PrinceZombie()
+        {
+            var testCardDef = SampleCards.PrinceZombie;
+            testCardDef.Cost = 0;
+
+            var token = SampleCards.ZombieToken;
+
+            var creatureDef = SampleCards.Creature(0, "z", 1, 3);
+            var damageSpellDef = SampleCards.SelectDeathDamage;
+            damageSpellDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, token, creatureDef, damageSpellDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var creature = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // ----場のほかのクリーチャーが破壊されたら、場にゾンビトークンを追加する
+                // 場には2体だけ
+                Assert.Equal(2, c.Player1.Field.Count);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { creature.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, damageSpellDef.Id);
+
+                // 墓地にいる
+                Assert.Equal(ZoneName.Cemetery, creature.Zone.ZoneName);
+                // 1体追加されるので場に2体いる
+                Assert.Equal(2, c.Player1.Field.Count);
+
+                // ----場のゾンビトークン破壊されたら、場にゾンビトークンを追加する
+                // 場には2体だけ
+                Assert.Equal(2, c.Player1.Field.Count);
+
+                var token = c.Player1.Field.AllCards.First(c => c.Name != testCard.Name);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { token.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, damageSpellDef.Id);
+
+                // 墓地にいる
+                Assert.Equal(ZoneName.Cemetery, token.Zone.ZoneName);
+                // 1体追加されるので場に2体いる
+                Assert.Equal(2, c.Player1.Field.Count);
+
+                // ----自身が破壊されたら、場にゾンビトークは追加されない
+                // 場には2体だけ
+                Assert.Equal(2, c.Player1.Field.Count);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { testCard.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, damageSpellDef.Id);
+
+                // 墓地にいる
+                Assert.Equal(ZoneName.Cemetery, testCard.Zone.ZoneName);
+                // 1体追加されないので場には1体だけ
+                Assert.Equal(1, c.Player1.Field.Count);
             });
         }
     }

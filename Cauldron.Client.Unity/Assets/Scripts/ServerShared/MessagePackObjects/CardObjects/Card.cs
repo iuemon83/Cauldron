@@ -20,17 +20,13 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public int BaseCost { get; set; }
 
-        public int CostBuff { get; set; }
+        public string CardSetName { get; set; } = "";
 
-        public string CardSetName { get; set; }
+        public string Name { get; set; } = "";
 
-        public string Name { get; set; }
+        public string FlavorText { get; set; } = "";
 
-        public string FullName => $"{this.CardSetName}.{this.Name}";
-
-        public string FlavorText { get; set; }
-
-        public List<string> Annotations { get; set; }
+        public List<string> Annotations { get; set; } = new List<string>();
 
         public bool IsToken { get; set; }
 
@@ -40,24 +36,20 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public int BaseToughness { get; set; }
 
-        public int PowerBuff { get; set; }
+        public Zone Zone { get; set; } = Zone.Empty;
 
-        public int ToughnessBuff { get; set; }
+        public List<CreatureAbility> Abilities { get; set; } = new List<CreatureAbility>();
 
-        public int Cost => Math.Max(0, this.BaseCost + this.CostBuff);
-
-        public int Power => Math.Max(0, this.BasePower + this.PowerBuff);
-
-        public int Toughness => Math.Max(0, this.BaseToughness + this.ToughnessBuff);
-
-        public Zone Zone { get; set; }
-
-        public List<CreatureAbility> Abilities { get; set; }
-
-        public List<CardEffect> Effects { get; set; }
+        public List<CardEffect> Effects { get; set; } = new List<CardEffect>();
 
         public Dictionary<string, int> CountersByName { get; set; }
             = new Dictionary<string, int>();
+
+        public int CostBuff { get; set; }
+
+        public int PowerBuff { get; set; }
+
+        public int ToughnessBuff { get; set; }
 
         /// <summary>
         /// 攻撃可能となるまでのターン数
@@ -78,6 +70,16 @@ namespace Cauldron.Shared.MessagePackObjects
         /// フィールドに出てからのターン数
         /// </summary>
         public int NumTurnsInField { get; set; }
+
+        private readonly CardDef? cardDef;
+
+        public string FullName => $"{this.CardSetName}.{this.Name}";
+
+        public int Cost => Math.Max(0, this.BaseCost + this.CostBuff);
+
+        public int Power => Math.Max(0, this.BasePower + this.PowerBuff);
+
+        public int Toughness => Math.Max(0, this.BaseToughness + this.ToughnessBuff);
 
         public bool HasAbility(CreatureAbility ability) => this.Abilities.Contains(ability);
 
@@ -144,6 +146,51 @@ namespace Cauldron.Shared.MessagePackObjects
             int NumAttacksLimitInTurn
             )
         {
+            this.Init(
+                Id,
+                CardDefId,
+                BaseCost,
+                IsToken,
+                Type,
+                CardSetName,
+                Name,
+                FlavorText,
+                Annotations.ToList(),
+                BasePower,
+                BaseToughness,
+                Abilities.ToList(),
+                Effects.ToList(),
+                NumTurnsToCanAttack,
+                NumAttacksLimitInTurn
+                );
+        }
+
+        public Card(CardDef cardDef)
+        {
+            this.Id = CardId.NewId();
+            this.cardDef = cardDef;
+
+            this.Init(cardDef);
+        }
+
+        private void Init(
+            CardId Id,
+            CardDefId CardDefId,
+            int BaseCost,
+            bool IsToken,
+            CardType Type,
+            string CardSetName,
+            string Name,
+            string FlavorText,
+            IReadOnlyList<string> Annotations,
+            int BasePower,
+            int BaseToughness,
+            IReadOnlyList<CreatureAbility> Abilities,
+            IReadOnlyList<CardEffect> Effects,
+            int NumTurnsToCanAttack,
+            int NumAttacksLimitInTurn
+            )
+        {
             this.Id = Id;
             this.CardDefId = CardDefId;
             this.BaseCost = BaseCost;
@@ -163,27 +210,39 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Zone = Zone.Empty;
         }
 
-        public Card(CardDef cardDef)
+        private void Init(CardDef cardDef)
         {
-            this.Id = CardId.NewId();
-            this.CardDefId = cardDef.Id;
-            this.BaseCost = cardDef.Cost;
-            this.IsToken = cardDef.IsToken;
-            this.Type = cardDef.Type;
-            this.CardSetName = cardDef.CardSetName;
-            this.Name = cardDef.Name;
-            this.FlavorText = cardDef.FlavorText;
-            this.Annotations = cardDef.Annotations.ToList();
+            this.Init(
+                this.Id,
+                cardDef.Id,
+                cardDef.Cost,
+                cardDef.IsToken,
+                cardDef.Type,
+                cardDef.CardSetName,
+                cardDef.Name,
+                cardDef.FlavorText,
+                cardDef.Annotations.ToList(),
+                cardDef.Power,
+                cardDef.Toughness,
+                cardDef.Abilities.ToList(),
+                cardDef.Effects.ToList(),
+                cardDef.NumTurnsToCanAttack ?? default,
+                cardDef.NumAttacksLimitInTurn ?? default
+                );
+        }
 
-            this.BasePower = cardDef.Power;
-            this.BaseToughness = cardDef.Toughness;
+        public void Reset()
+        {
+            if (this.cardDef != null)
+            {
+                this.Init(this.cardDef);
+            }
 
-            this.Abilities = cardDef.Abilities.ToList();
-            this.Effects = cardDef.Effects.ToList();
-            this.NumTurnsToCanAttack = cardDef.NumTurnsToCanAttack ?? default;
-            this.NumAttacksLimitInTurn = cardDef.NumAttacksLimitInTurn ?? default;
-
-            this.Zone = Zone.Empty;
+            this.NumAttacksInTurn = 0;
+            this.NumTurnsInField = 0;
+            this.CostBuff = 0;
+            this.PowerBuff = 0;
+            this.ToughnessBuff = 0;
         }
 
         public override string ToString()

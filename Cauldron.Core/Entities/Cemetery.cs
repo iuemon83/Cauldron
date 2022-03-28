@@ -1,5 +1,4 @@
 ﻿using Cauldron.Shared.MessagePackObjects;
-using System.Collections.Generic;
 
 namespace Cauldron.Core.Entities
 {
@@ -18,6 +17,7 @@ namespace Cauldron.Core.Entities
 
         public void Add(Card card)
         {
+            card.Reset();
             this.Cards.Add(card);
         }
 

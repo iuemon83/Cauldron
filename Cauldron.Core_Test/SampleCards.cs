@@ -1565,7 +1565,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        "墓地のカードを1枚選択する。それをあなたの手札に加える。そのカードがクリーチャーならタフネスを元々のタフネスと等しい値にする。",
+                        "墓地のカードを1枚選択する。それをあなたの手札に加える。",
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]
@@ -1577,41 +1577,16 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition(
                                                 ZoneCondition: new(new ZoneValue(
-                                                    new[]{ ZonePrettyName.YouCemetery, ZonePrettyName.OpponentCemetery }))
+                                                    new[]{
+                                                        ZonePrettyName.YouCemetery,
+                                                        ZonePrettyName.OpponentCemetery
+                                                    }))
                                             )
                                         }),
                                         Choice.HowValue.Choose,
                                         new NumValue(1)),
-                                    ZonePrettyName.YouHand,
-                                    Name: "move"
+                                    ZonePrettyName.YouHand
                                     )),
-                            new EffectAction(
-                                ModifyCard: new(
-                                    new Choice(
-                                        new ChoiceSource(orCardConditions: new[]
-                                        {
-                                            new CardCondition(
-                                                ActionContext: new(
-                                                    MoveCard: new(
-                                                        "move",
-                                                        ActionContextCardsOfMoveCard.TypeValue.Moved))
-                                            )
-                                        })),
-                                    Toughness: new(
-                                        NumValueModifier.OperatorValue.Replace,
-                                        new NumValue(NumValueCalculator: new(
-                                            ForCard: new(
-                                                NumValueCalculatorForCard.TypeValue.CardBaseToughness,
-                                                new Choice(
-                                                    new ChoiceSource(orCardConditions: new[]
-                                                    {
-                                                        new CardCondition(
-                                                            ActionContext: new(
-                                                                MoveCard: new(
-                                                                    "move",
-                                                                    ActionContextCardsOfMoveCard.TypeValue.Moved))
-                                                        )
-                                                    }))))))))
                         }
                     )
                 });
@@ -4219,79 +4194,41 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        "このカード以外のあなたの場のすべてのクリーチャーに:ゾンビを付与して、次の効果を追加する。" +
-                            "「このカードが破壊されたとき、あなたの場にゾンビトークンを1つ追加する。」",
-                        new EffectConditionWrap(ByPlay: new()),
+                        "このカードが場にある限り、あなたの場のほかのカードが場から墓地に移動するたび、あなたの場にゾンビトークンを追加する。",
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            When: new(new EffectTiming(MoveCard: new(
+                                OrCardConditions: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.Others)
+                                },
+                                From: ZonePrettyName.YouField,
+                                To: ZonePrettyName.YouCemetery
+                                )))
+                            )),
                         new[]
                         {
-                            new EffectAction(ModifyCard:new(
+                            new EffectAction(AddCard: new(
                                 new Choice(
-                                    new ChoiceSource(
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition(
-                                                CardCondition.ContextConditionValue.Others,
-                                                ZoneCondition: new(new ZoneValue(new[]
-                                                {
-                                                    ZonePrettyName.YouField
-                                                })),
-                                                TypeCondition: new(new[]
-                                                {
-                                                    CardType.Creature
-                                                }))
-                                        })),
-                                Annotations: new(new[]{":ゾンビ"}, AnnotationsModifier.OperatorValue.Add),
-                                Name: "modify"
-                                )),
-                            new EffectAction(AddEffect:new(
-                                new Choice(
-                                    new ChoiceSource(
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition(
-                                                ActionContext: new(ModifyCard: new(
-                                                    "modify",
-                                                    ActionContextCardsOfModifyCard.TypeValue.Modified
-                                                    ))
-                                                )
-                                        })),
-                                new[]
+                                    new ChoiceSource(OrCardDefConditions: new[]
+                                    {
+                                        new CardDefCondition(
+                                            new OutZoneCondition(new[]
+                                            {
+                                                OutZonePrettyName.CardPool
+                                            }),
+                                            NameCondition: new(
+                                                new TextValue(ZombieToken.Name),
+                                                TextCompare.CompareValue.Equality)
+                                            )
+                                    }),
+                                    Choice.HowValue.All,
+                                    new NumValue(1)
+                                    ),
+                                new ZoneValue(new[]
                                 {
-                                    new CardEffect(
-                                        "このカードが破壊されたとき、あなたの場にゾンビトークンを1つ追加する。",
-                                        new EffectConditionWrap(ByNotPlay: new (
-                                            ZonePrettyName.YouCemetery,
-                                            When: new(new EffectTiming(Destroy: new(
-                                                new[]
-                                                {
-                                                    new CardCondition(CardCondition.ContextConditionValue.This)
-                                                }))))),
-                                        new[]
-                                        {
-                                            new EffectAction(AddCard: new(
-                                                new Choice(
-                                                    new ChoiceSource(OrCardDefConditions: new[]
-                                                    {
-                                                        new CardDefCondition(
-                                                            new OutZoneCondition(new[]
-                                                            {
-                                                                OutZonePrettyName.CardPool
-                                                            }),
-                                                            NameCondition: new(
-                                                                new TextValue(ZombieToken.Name),
-                                                                TextCompare.CompareValue.Equality)
-                                                            )
-                                                    }),
-                                                    Choice.HowValue.All,
-                                                    new NumValue(1)
-                                                    ),
-                                                new ZoneValue(new[]
-                                                {
-                                                    ZonePrettyName.YouField
-                                                })))
-                                        }),
-                                }
-                                )),
+                                    ZonePrettyName.YouField
+                                })))
                         }),
                 });
 
@@ -4305,7 +4242,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
-                            new EffectAction(ModifyCard:new(
+                            new EffectAction(MoveCard:new(
                                 new Choice(
                                     new ChoiceSource(
                                         orCardConditions: new[]
@@ -4325,36 +4262,6 @@ namespace Cauldron.Core_Test
                                         }),
                                     Choice.HowValue.Choose,
                                     new NumValue(1)
-                                    ),
-                                Toughness: new(
-                                    NumValueModifier.OperatorValue.Replace,
-                                    new NumValue(NumValueCalculator: new(ForCard: new(
-                                        NumValueCalculatorForCard.TypeValue.CardBaseToughness,
-                                        new Choice(
-                                            new ChoiceSource(
-                                                orCardConditions: new[]
-                                                {
-                                                    new CardCondition(
-                                                        CardCondition.ContextConditionValue.ActionTarget
-                                                        )
-                                                }
-                                                )
-                                            )
-                                        )))
-                                    ),
-                                Name: "modify"
-                                )),
-                            new EffectAction(MoveCard:new(
-                                new Choice(
-                                    new ChoiceSource(
-                                        orCardConditions: new[]
-                                        {
-                                            new CardCondition(
-                                                ActionContext: new(ModifyCard: new(
-                                                    "modify",
-                                                    ActionContextCardsOfModifyCard.TypeValue.Modified))
-                                                )
-                                        })
                                     ),
                                 ZonePrettyName.YouField
                                 )),
@@ -4456,8 +4363,8 @@ namespace Cauldron.Core_Test
                 {
                     new CardEffect(
                         "このカードが場に出たとき、このカードを+x/+yする。" +
-                            "X=あなたの墓地の:ゾンビの枚数" +
-                            "Y=相手の墓地の:ゾンビの枚数",
+                        "X=あなたの墓地の:ゾンビの枚数" +
+                        "Y=相手の墓地の:ゾンビの枚数",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             When: new(new EffectTiming(MoveCard: new(
@@ -4673,7 +4580,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        "お互いの手札、場のクリーチャーすべてに:ゾンビを付与する。",
+                        "お互いの手札、墓地のクリーチャーすべてに:ゾンビを付与する。",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -4685,10 +4592,10 @@ namespace Cauldron.Core_Test
                                             new CardCondition(
                                                 ZoneCondition: new(new ZoneValue(new[]
                                                 {
-                                                    ZonePrettyName.YouField,
-                                                    ZonePrettyName.OpponentField,
                                                     ZonePrettyName.YouHand,
                                                     ZonePrettyName.OpponentHand,
+                                                    ZonePrettyName.YouCemetery,
+                                                    ZonePrettyName.OpponentCemetery,
                                                 })),
                                                 TypeCondition: new(new[]
                                                 {
@@ -4701,7 +4608,6 @@ namespace Cauldron.Core_Test
 
         public static CardDef Sunlight
             => SampleCards.Sorcery(2, "日の光",
-                annotations: new[] { ":ゾンビ" },
                 effects: new[]
                 {
                     new CardEffect(
@@ -4738,7 +4644,7 @@ namespace Cauldron.Core_Test
                 {
                     new CardEffect(
                         "あなたのデッキから、「ゾンビの呼び声」以外の:ゾンビ1枚を選択する。" +
-                            "そのカードをあなたの墓地に移動する。",
+                        "そのカードをあなたの墓地に移動する。",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
