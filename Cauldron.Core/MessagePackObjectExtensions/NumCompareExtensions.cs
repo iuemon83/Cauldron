@@ -1,16 +1,19 @@
-﻿using System;
+﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared.MessagePackObjects.Value;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
     public static class NumCompareExtensions
     {
-        public static bool IsMatch(this NumCompare _this, int checkValue)
+        public static async ValueTask<bool> IsMatch(this NumCompare _this, int checkValue, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
+            var value = await _this.Value.Calculate(effectOwnerCard, effectEventArgs);
+
             var result = _this.Compare switch
             {
-                NumCompare.CompareValue.Equality => checkValue == _this.Value,
-                NumCompare.CompareValue.LessThan => checkValue <= _this.Value,
-                NumCompare.CompareValue.GreaterThan => checkValue >= _this.Value,
+                NumCompare.CompareValue.Equality => checkValue == value,
+                NumCompare.CompareValue.LessThan => checkValue <= value,
+                NumCompare.CompareValue.GreaterThan => checkValue >= value,
                 _ => throw new InvalidOperationException($"{nameof(_this.Compare)}: {_this.Compare}")
             };
 

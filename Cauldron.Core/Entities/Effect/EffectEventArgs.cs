@@ -14,7 +14,8 @@ namespace Cauldron.Core.Entities.Effect
         BattleContext? BattleContext = null,
         DamageContext? DamageContext = null,
         MoveCardContext? MoveCardContext = null,
-        ModifyCounterContext? ModifyCounterContext = null
+        ModifyCounterContext? ModifyCounterContext = null,
+        ExcludeCardContext? ExcludeCardContext = null
         )
     {
         public IReadOnlyList<Player> ActionTargetPlayers { get; init; } = ActionTargetPlayers ?? Array.Empty<Player>();

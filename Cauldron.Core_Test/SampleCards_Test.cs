@@ -2870,9 +2870,12 @@ namespace Cauldron.Core_Test
                 // 攻撃力はもとのまま
                 Assert.Equal(testCard.BasePower, testCard.Power);
 
+                // 場のカードが除外されたので攻撃力が1上がる
                 await g.ExcludeCard(goblin2, default);
+                Assert.Equal(testCard.BasePower + 1, testCard.Power);
 
-                // カードが除外されたので攻撃力が1上がる
+                // 場以外のカードが除外されても攻撃力はあがらない
+                await g.ExcludeCard(c.Player1.Hands.AllCards[0], default);
                 Assert.Equal(testCard.BasePower + 1, testCard.Power);
 
                 return testCard;

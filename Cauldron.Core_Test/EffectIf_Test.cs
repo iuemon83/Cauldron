@@ -41,7 +41,7 @@ namespace Cauldron.Core_Test
                                                         })))
                                             )),
                                     new NumCompare(
-                                        2,
+                                        new NumValue(2),
                                         NumCompare.CompareValue.GreaterThan)
                                         )))
                             )),

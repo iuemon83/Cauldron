@@ -1,6 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
 using Cauldron.Shared.MessagePackObjects.Value;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -11,7 +10,7 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             var x = await _this.Value.Calculate(effectOwnerCard, eventArgs);
 
-            return _this.Compare.IsMatch(x);
+            return await _this.Compare.IsMatch(x, effectOwnerCard, eventArgs);
         }
     }
 }

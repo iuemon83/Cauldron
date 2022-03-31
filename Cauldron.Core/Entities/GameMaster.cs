@@ -624,6 +624,7 @@ namespace Cauldron.Core.Entities
                 }
 
                 await this.FireEvent(new EffectEventArgs(GameEvent.OnExclude, this,
+                    ExcludeCardContext: new(fromZone),
                     SourceCard: cardToExclude));
             }
 
@@ -694,6 +695,12 @@ namespace Cauldron.Core.Entities
                     break;
 
                 case ZoneName.Field:
+                    // 魔法カードは場に出せない
+                    if (card.Type == CardType.Sorcery)
+                    {
+                        throw new InvalidOperationException($"sorcery card can't move to field={card.Name}");
+                    }
+
                     // 場の枚数が上限なら、直接墓地に行く
                     if (toPlayer.Field.Full)
                     {

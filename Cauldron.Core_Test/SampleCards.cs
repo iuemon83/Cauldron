@@ -334,7 +334,7 @@ namespace Cauldron.Core_Test
                                                     )
                                                 }))))),
                                     new NumCompare(
-                                        4,
+                                        new NumValue(4),
                                         NumCompare.CompareValue.GreaterThan)
                                         ))))),
                         new[]{
@@ -684,7 +684,7 @@ namespace Cauldron.Core_Test
                                             OutZoneCondition: new OutZoneCondition(
                                                 new[]{ OutZonePrettyName.CardPool }),
                                             CostCondition: new NumCompare(
-                                                2,
+                                                new NumValue(2),
                                                 NumCompare.CompareValue.Equality),
                                             TypeCondition: new(new[]{ CardType.Creature })
                                         )
@@ -1960,10 +1960,21 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
-                                ExcludeCard: new(new[]
-                                {
-                                    new CardCondition(CardCondition.ContextConditionValue.Others)
-                                }))))),
+                                ExcludeCard: new(
+                                    new[]
+                                    {
+                                        new CardCondition(
+                                            CardCondition.ContextConditionValue.Others
+                                            )
+                                    },
+                                    FromZoneCondition: new(new ZoneValue(new[]
+                                    {
+                                        ZonePrettyName.YouField,
+                                        ZonePrettyName.OpponentField,
+                                    }))
+                                )
+                                ))
+                            )),
                         new[]
                         {
                             new EffectAction(
@@ -2916,7 +2927,8 @@ namespace Cauldron.Core_Test
                                         {
                                             new CardCondition(
                                                 PowerCondition: new NumCompare(
-                                                    4, NumCompare.CompareValue.GreaterThan),
+                                                    new NumValue(4),
+                                                    NumCompare.CompareValue.GreaterThan),
                                                 ZoneCondition: new(
                                                     new ZoneValue(new[]{
                                                         ZonePrettyName.OpponentField,
@@ -2938,7 +2950,8 @@ namespace Cauldron.Core_Test
                                                     {
                                                         new CardCondition(
                                                             PowerCondition: new NumCompare(
-                                                                4, NumCompare.CompareValue.GreaterThan))
+                                                                new NumValue(4),
+                                                                NumCompare.CompareValue.GreaterThan))
                                                     },
                                                     ZonePrettyName.OpponentDeck,
                                                     ZonePrettyName.OpponentHand))),
@@ -3113,7 +3126,8 @@ namespace Cauldron.Core_Test
                                                 )
                                             }))))),
                                 new NumCompare(
-                                    30, NumCompare.CompareValue.GreaterThan)
+                                    new NumValue(30),
+                                    NumCompare.CompareValue.GreaterThan)
                                     ))))),
                         new[]{
                             new EffectAction(Damage: new(
@@ -3777,7 +3791,7 @@ namespace Cauldron.Core_Test
                                                 }))
                                             ))),
                                         new NumCompare(
-                                            1,
+                                            new NumValue(1),
                                             NumCompare.CompareValue.GreaterThan)
                                         )))
                                 )),
@@ -3833,7 +3847,7 @@ namespace Cauldron.Core_Test
                                                 }))
                                             ))),
                                         new NumCompare(
-                                            1,
+                                            new NumValue(1),
                                             NumCompare.CompareValue.GreaterThan)
                                         )),
                                 new ConditionWrap(NumCondition: new(
@@ -3850,7 +3864,7 @@ namespace Cauldron.Core_Test
                                                 }))
                                             ))),
                                         new NumCompare(
-                                            1,
+                                            new NumValue(1),
                                             NumCompare.CompareValue.GreaterThan)
                                         ))
                             })))
@@ -3888,7 +3902,7 @@ namespace Cauldron.Core_Test
                                                     }))
                                                 ))),
                                             new NumCompare(
-                                                0,
+                                                new NumValue(0),
                                                 NumCompare.CompareValue.Equality)
                                             )),
                                     new ConditionWrap(NumCondition: new(
@@ -3903,7 +3917,7 @@ namespace Cauldron.Core_Test
                                                     }))
                                                 ))),
                                             new NumCompare(
-                                                1,
+                                                new NumValue(1),
                                                 NumCompare.CompareValue.GreaterThan)
                                             )),
                                 })))
@@ -3942,7 +3956,7 @@ namespace Cauldron.Core_Test
                                                 new PlayerCondition(PlayerCondition.ContextValue.You)
                                             }))))),
                                     new NumCompare(
-                                        5,
+                                        new NumValue(5),
                                         NumCompare.CompareValue.LessThan)
                                     ))))),
                         new[]
@@ -3973,7 +3987,7 @@ namespace Cauldron.Core_Test
                                                 new PlayerCondition(PlayerCondition.ContextValue.You)
                                             }))))),
                                     new NumCompare(
-                                        5,
+                                        new NumValue(5),
                                         NumCompare.CompareValue.LessThan)
                                     ))))))),
                         new[]
@@ -4844,6 +4858,91 @@ namespace Cauldron.Core_Test
                                     ZonePrettyName.YouCemetery
                                 })
                                 )),
+                        }),
+                });
+
+        public static CardDef Mutation
+            => SampleCards.Sorcery(1, "変異",
+                effects: new[]
+                {
+                    new CardEffect(
+                        "あなたの場のクリーチャーを1体選択する。" +
+                        "そのクリーチャーを除外する。" +
+                        "その後、そのクリーチャーよりもコストが1高いランダムなクリーチャーをあなたの場に1体追加する。",
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(ExcludeCard:new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                TypeCondition: new(new[]
+                                                {
+                                                    CardType.Creature
+                                                }),
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouField
+                                                }))
+                                                )
+                                        }),
+                                    Choice.HowValue.Choose,
+                                    new NumValue(1)
+                                    ),
+                                Name: "exclude"
+                                )),
+                            new EffectAction(AddCard: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        OrCardDefConditions: new[]
+                                        {
+                                            new CardDefCondition(
+                                                new OutZoneCondition(new[]
+                                                {
+                                                    OutZonePrettyName.CardPool
+                                                }),
+                                                TypeCondition: new(new[]
+                                                {
+                                                    CardType.Creature
+                                                }),
+                                                CostCondition: new(
+                                                    new NumValue(
+                                                        NumValueCalculator: new(ForCard: new(
+                                                            NumValueCalculatorForCard.TypeValue.CardCost,
+                                                            new Choice(
+                                                                new ChoiceSource(
+                                                                    orCardConditions: new[]
+                                                                    {
+                                                                        new CardCondition(
+                                                                            ActionContext: new(ExcludeCard:new(
+                                                                                "exclude",
+                                                                                ActionContextCardsOfExcludeCard.TypeValue.Excluded
+                                                                                ))
+                                                                            )
+                                                                    }
+                                                                    )
+                                                                )
+                                                            )),
+                                                        NumValueModifier: new(
+                                                            NumValueModifier.OperatorValue.Add,
+                                                            new NumValue(1)
+                                                            )
+                                                        ),
+                                                    NumCompare.CompareValue.Equality
+                                                    )
+                                                )
+                                        }
+                                        ),
+                                    Choice.HowValue.Random,
+                                    new NumValue(1)
+                                    ),
+                                new ZoneValue(new[]
+                                {
+                                    ZonePrettyName.YouField
+                                })
+                                ))
                         }),
                 });
     }

@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using Cauldron.Shared.MessagePackObjects.Value;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -16,11 +17,11 @@ namespace Cauldron.Shared.MessagePackObjects
             GreaterThan,
         }
 
-        public int Value { get; }
+        public NumValue Value { get; }
         public NumCompare.CompareValue Compare { get; }
 
         public NumCompare(
-            int Value,
+            NumValue Value,
             NumCompare.CompareValue Compare
             )
         {

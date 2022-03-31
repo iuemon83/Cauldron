@@ -1,17 +1,21 @@
-﻿namespace Cauldron.Shared.MessagePackObjects
+﻿using Cauldron.Core.Entities.Effect;
+
+namespace Cauldron.Shared.MessagePackObjects
 {
     public static class CounterConditionExtensions
     {
-        public static bool IsMatch(this CounterCondition _this, Card cardToMatch)
+        public static async ValueTask<bool> IsMatch(this CounterCondition _this,
+            Card cardToMatch, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             var counter = cardToMatch.GetCounter(_this.CounterName);
-            return _this.IsMatch(_this.CounterName, counter);
+            return await _this.IsMatch(_this.CounterName, counter, effectOwnerCard, effectEventArgs);
         }
 
-        public static bool IsMatch(this CounterCondition _this, string counterName, int numCounters)
+        public static async ValueTask<bool> IsMatch(this CounterCondition _this,
+            string counterName, int numCounters, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             return _this.CounterName == counterName
-                && _this.NumCountersCondition.IsMatch(numCounters);
+                && (await _this.NumCountersCondition.IsMatch(numCounters, effectOwnerCard, effectEventArgs));
         }
     }
 }

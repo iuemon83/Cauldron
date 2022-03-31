@@ -1,6 +1,4 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -10,6 +8,20 @@ namespace Cauldron.Shared.MessagePackObjects
             Card effectOwnerCard, EffectEventArgs args)
         {
             if (args.SourceCard == null)
+            {
+                return false;
+            }
+
+            if (args.ExcludeCardContext == null)
+            {
+                return false;
+            }
+
+            // sourcecard のzone はすでにexcluded になっているので参照しない
+            var isMatchedZone = await (_this.FromZoneCondition?.IsMatch(effectOwnerCard, args, args.ExcludeCardContext.From)
+                ?? ValueTask.FromResult(true));
+
+            if (!isMatchedZone)
             {
                 return false;
             }

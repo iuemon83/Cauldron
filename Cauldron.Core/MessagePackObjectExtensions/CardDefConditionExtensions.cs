@@ -1,9 +1,5 @@
 ﻿using Cauldron.Core.Entities;
 using Cauldron.Core.Entities.Effect;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -56,11 +52,16 @@ namespace Cauldron.Shared.MessagePackObjects
             CardDef cardDefToMatch, Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
             return
-                (_this.CostCondition?.IsMatch(cardDefToMatch.Cost) ?? true)
-                && (_this.PowerCondition?.IsMatch(cardDefToMatch.Power) ?? true)
-                && (_this.ToughnessCondition?.IsMatch(cardDefToMatch.Toughness) ?? true)
-                && (await (_this.CardSetCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardDefToMatch) ?? ValueTask.FromResult(true)))
-                && (await (_this.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardDefToMatch.Name) ?? ValueTask.FromResult(true)))
+                (await (_this.CostCondition?.IsMatch(cardDefToMatch.Cost, effectOwnerCard, effectEventArgs)
+                    ?? ValueTask.FromResult(true)))
+                && (await (_this.PowerCondition?.IsMatch(cardDefToMatch.Power, effectOwnerCard, effectEventArgs)
+                    ?? ValueTask.FromResult(true)))
+                && (await (_this.ToughnessCondition?.IsMatch(cardDefToMatch.Toughness, effectOwnerCard, effectEventArgs)
+                    ?? ValueTask.FromResult(true)))
+                && (await (_this.CardSetCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardDefToMatch)
+                    ?? ValueTask.FromResult(true)))
+                && (await (_this.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardDefToMatch.Name)
+                    ?? ValueTask.FromResult(true)))
                 && (_this.TypeCondition?.IsMatch(cardDefToMatch.Type) ?? true);
         }
     }
