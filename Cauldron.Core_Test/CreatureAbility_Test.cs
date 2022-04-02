@@ -55,17 +55,17 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Deadly_攻撃する()
         {
-            var normalcardDef = SampleCards.Creature(0, "t", 0, 10);
-            var deadlyCardDef = SampleCards.Creature(0, "t2", 0, 1,
+            var normalcardDef = SampleCards.Creature(0, "t", 1, 10);
+            var deadlyCardDef = SampleCards.Creature(0, "t2", 0, 2,
                 abilities: new[] { CreatureAbility.Deadly });
 
             var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef }, this.output);
 
-            var normal = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            var normal1 = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
-                var normal = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
+                var normal1 = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
 
-                return normal;
+                return normal1;
             });
 
             await TestUtil.Turn(c.GameMaster, async (g, pid) =>
@@ -73,10 +73,37 @@ namespace Cauldron.Core_Test
                 var deadlyCard = await TestUtil.NewCardAndPlayFromHand(g, pid, deadlyCardDef.Id);
 
                 // 必殺なので倒せる、自分もダメージは受ける
-                var status = await g.AttackToCreature(pid, deadlyCard.Id, normal.Id);
-                Assert.Equal(GameMasterStatusCode.OK, status);
-                Assert.Equal(ZoneName.Cemetery, normal.Zone.ZoneName);
-                Assert.Equal(deadlyCard.BaseToughness - normal.Power, deadlyCard.Toughness);
+                await TestUtil.AssertGameAction(() => g.AttackToCreature(pid, deadlyCard.Id, normal1.Id));
+                Assert.Equal(ZoneName.Cemetery, normal1.Zone.ZoneName);
+                Assert.Equal(deadlyCard.BaseToughness - normal1.Power, deadlyCard.Toughness);
+            });
+        }
+
+        [Fact]
+        public async Task Deadly_攻撃して自分が破壊される()
+        {
+            var normalcardDef = SampleCards.Creature(0, "t", 1, 10);
+            var deadlyCardDef = SampleCards.Creature(0, "t2", 0, 1,
+                abilities: new[] { CreatureAbility.Deadly });
+
+            var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef }, this.output);
+
+            var normal1 = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var normal1 = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
+                var normal2 = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
+
+                return normal1;
+            });
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var deadlyCard = await TestUtil.NewCardAndPlayFromHand(g, pid, deadlyCardDef.Id);
+
+                // 自分が破壊されても必殺なので倒せる
+                await TestUtil.AssertGameAction(() => g.AttackToCreature(pid, deadlyCard.Id, normal1.Id));
+                Assert.Equal(ZoneName.Cemetery, deadlyCard.Zone.ZoneName);
+                Assert.Equal(ZoneName.Cemetery, normal1.Zone.ZoneName);
             });
         }
 
@@ -106,6 +133,33 @@ namespace Cauldron.Core_Test
                 Assert.Equal(ZoneName.Cemetery, normal.Zone.ZoneName);
 
                 Assert.Equal(deadlyCard.BaseToughness - normal.Power, deadlyCard.Toughness);
+            });
+        }
+
+        [Fact]
+        public async Task Deadly_攻撃されて破壊される()
+        {
+            var normalcardDef = SampleCards.Creature(0, "t", 1, 10);
+            var deadlyCardDef = SampleCards.Creature(0, "t2", 0, 1,
+                abilities: new[] { CreatureAbility.Deadly });
+
+            var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef }, this.output);
+
+            var deadlyCard = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var deadlyCard = await TestUtil.NewCardAndPlayFromHand(g, pid, deadlyCardDef.Id);
+
+                return deadlyCard;
+            });
+
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                var normal = await TestUtil.NewCardAndPlayFromHand(g, pid, normalcardDef.Id);
+
+                // 相手が必殺なので倒される、ただし攻撃はできる
+                await TestUtil.AssertGameAction(() => g.AttackToCreature(pid, normal.Id, deadlyCard.Id));
+                Assert.Equal(ZoneName.Cemetery, deadlyCard.Zone.ZoneName);
+                Assert.Equal(ZoneName.Cemetery, normal.Zone.ZoneName);
             });
         }
 

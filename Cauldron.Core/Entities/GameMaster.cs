@@ -1311,8 +1311,6 @@ namespace Cauldron.Core.Entities
                     new BattleNotifyMessage(attackCard.Id, GuardCardId: guardCard.Id));
             }
 
-            await this.DestroyDeadCards();
-
             // 相手が必殺ならダメージに関係なく破壊する
             if (newArgs.BattleContext.AttackCard.EnableAbility(CreatureAbility.Deadly)
                 && newArgs.BattleContext.GuardCard.Zone.ZoneName == ZoneName.Field)
@@ -1325,6 +1323,8 @@ namespace Cauldron.Core.Entities
             {
                 await this.DestroyCard(newArgs.BattleContext.AttackCard, default);
             }
+
+            await this.DestroyDeadCards();
 
             // 戦闘後のイベント
             await this.FireEvent(newArgs with { GameEvent = GameEvent.OnAttack });
