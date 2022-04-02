@@ -4,6 +4,7 @@ using Cauldron.Shared.Services;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Linq;
+using UnityEngine;
 
 public class AiClient
 {
@@ -95,14 +96,16 @@ public class AiClient
 
             if (!attackTargetPlayerIdList.Any() && !attackTargetCardIdList.Any())
             {
-                this.Logging($"攻撃対象なし！！");
-                return;
+                this.Logging($"攻撃できないか攻撃対象なし！！");
+                continue;
             }
 
             // 敵のモンスターがいる
-            if (attackTargetCardIdList.Any() && UnityEngine.Random.Range(0, 100) > 50)
+            if (attackTargetCardIdList.Any() && UnityEngine.Random.Range(0, 100) > 40)
             {
-                var opponentCardId = attackTargetCardIdList[0];
+                var index = UnityEngine.Random.Range(0, attackTargetCardIdList.Length);
+
+                var opponentCardId = attackTargetCardIdList[index];
 
                 await this.client.Attack(attackCardId, opponentCardId);
             }
