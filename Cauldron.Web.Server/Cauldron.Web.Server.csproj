@@ -5,9 +5,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Include="..\Cauldron.Server\CardSet\sample_cardset.json" Link="Resources\sample_cardset.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
+		<Content Include="..\Cauldron.Server\CardSet\sample_cardset.json" Link="Resources\sample_cardset.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\Cauldron.Server\CardSet\sample_cardset2.json" Link="Resources\sample_cardset2.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -19,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Resources\" />
+		<Folder Include="Resources\" />
 	</ItemGroup>
 
 	<ProjectExtensions>

@@ -9,11 +9,11 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public EffectTimingDamageAfterEvent(
             EffectTimingDamageBeforeEvent.TypeValue Type = TypeValue.Any,
-            PlayerCondition? TakePlayerCondition = null,
             CardCondition? SourceCardCondition = null,
+            PlayerCondition? TakePlayerCondition = null,
             CardCondition? TakeCardCondition = null
             )
-            : base(Type, TakePlayerCondition, SourceCardCondition, TakeCardCondition)
+            : base(Type, SourceCardCondition, TakePlayerCondition, TakeCardCondition)
         {
         }
     }

@@ -14,8 +14,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task ターン終了時まで()
         {
-            var goblinDef = SampleCards.Creature(0, "ゴブリン", 2, 2);
-            var testCardDef = SampleCards.Creature(0, "test", 1, 5,
+            var goblinDef = SampleCards1.Creature(0, "ゴブリン", 2, 2);
+            var testCardDef = SampleCards1.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         "",
@@ -89,7 +89,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 次の自分ターン開始時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", 1, 5,
+            var testCardDef = SampleCards1.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         "",
@@ -152,7 +152,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 次の自分ターン終了時()
         {
-            var testCardDef = SampleCards.Creature(0, "test", 1, 5,
+            var testCardDef = SampleCards1.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         "",
@@ -217,7 +217,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task 三ターン後の開始時に()
         {
-            var testCardDef = SampleCards.Creature(0, "test", 1, 5,
+            var testCardDef = SampleCards1.Creature(0, "test", 1, 5,
                 effects: new[]{
                     new CardEffect(
                         "",

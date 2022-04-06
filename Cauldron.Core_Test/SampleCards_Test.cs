@@ -19,9 +19,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task QuickGoblin()
+        public async Task Quick()
         {
-            var testCardDef = SampleCards.QuickGoblin;
+            var testCardDef = SampleCards1.Quick;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -38,9 +38,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task TwinGoblin()
+        public async Task Twin()
         {
-            var testCardDef = SampleCards.TwinGoblin;
+            var testCardDef = SampleCards1.Twin;
             testCardDef.Cost = 0;
             testCardDef.NumTurnsToCanAttack = 0;
 
@@ -68,9 +68,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task SlowGoblin()
+        public async Task SlowStarter()
         {
-            var testCardDef = SampleCards.SlowGoblin;
+            var testCardDef = SampleCards1.SlowStarter;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -115,15 +115,15 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DoubleStrikeGoblin_çUåÇÇ∑ÇÈ()
         {
-            var testCardDef = SampleCards.DoubleStrikeGoblin;
+            var testCardDef = SampleCards2.DoubleStrikeGoblin;
             testCardDef.Cost = 0;
             testCardDef.NumTurnsToCanAttack = 0;
 
-            var goblinT1Def = SampleCards.Goblin;
+            var goblinT1Def = SampleCards1.Vanilla;
             goblinT1Def.Cost = 0;
             goblinT1Def.Toughness = 1;
 
-            var goblinT3Def = SampleCards.Goblin;
+            var goblinT3Def = SampleCards1.Vanilla;
             goblinT3Def.Cost = 0;
             goblinT3Def.Toughness = 3;
 
@@ -162,15 +162,15 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DoubleStrikeGoblin_çUåÇÇ≥ÇÍÇÈ()
         {
-            var testCardDef = SampleCards.DoubleStrikeGoblin;
+            var testCardDef = SampleCards2.DoubleStrikeGoblin;
             testCardDef.Cost = 0;
             testCardDef.NumTurnsToCanAttack = 0;
 
-            var goblinT1Def = SampleCards.Goblin;
+            var goblinT1Def = SampleCards1.Vanilla;
             goblinT1Def.Cost = 0;
             goblinT1Def.Toughness = 1;
 
-            var goblinT3Def = SampleCards.Goblin;
+            var goblinT3Def = SampleCards1.Vanilla;
             goblinT3Def.Cost = 0;
             goblinT3Def.Toughness = 3;
 
@@ -202,9 +202,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MagicBook()
         {
-            var testCardDef = SampleCards.MagicBook;
+            var testCardDef = SampleCards1.MagicBook;
             testCardDef.Cost = 0;
-            var sorceryDef = SampleCards.Sword;
+            var sorceryDef = SampleCards1.Sword;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, sorceryDef });
 
@@ -227,11 +227,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task GoblinFollower()
         {
-            var testCardDef = SampleCards.GoblinFollower;
+            var testCardDef = SampleCards2.GoblinFollower;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
-            var goblinDef2 = SampleCards.QuickGoblin;
+            var goblinDef = SampleCards2.Goblin;
+            var goblinDef2 = SampleCards2.GoblinLover;
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, goblinDef, goblinDef2 },
@@ -271,12 +271,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task GoblinFollower2()
         {
-            var testCardDef = SampleCards.GoblinFollower;
+            var testCardDef = SampleCards2.GoblinFollower;
             testCardDef.Cost = 0;
 
-            var notGoblinDef = SampleCards.Goblin;
+            var notGoblinDef = SampleCards1.Vanilla;
             notGoblinDef.Cost = 0;
-            notGoblinDef.Name = "ÉeÉXÉg";
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, notGoblinDef },
@@ -312,10 +311,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task GoblinFollower3()
         {
-            var testCardDef = SampleCards.GoblinFollower;
+            var testCardDef = SampleCards2.GoblinFollower;
             testCardDef.Cost = 0;
 
-            var notGoblinCreatureDef = SampleCards.GoblinCaptureJar;
+            var notGoblinCreatureDef = SampleCards2.GoblinCaptureJar;
             notGoblinCreatureDef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -348,10 +347,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Insector()
         {
-            var testCardDef = SampleCards.Insector;
+            var testCardDef = SampleCards1.Insector;
             testCardDef.Cost = 0;
 
-            var tokenDef = SampleCards.Parasite;
+            var tokenDef = SampleCards1.Parasite;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, tokenDef });
 
@@ -381,10 +380,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MagicFighter()
         {
-            var testCardDef = SampleCards.MagicFighter;
+            var testCardDef = SampleCards2.MagicFighter;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, });
@@ -438,10 +437,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MagicFighter_çUåÇÉJÅ[ÉhÇ™îjâÛÇ≥ÇÍÇΩèÍçá()
         {
-            var testCardDef = SampleCards.MagicFighter;
+            var testCardDef = SampleCards2.MagicFighter;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
             goblinDef.Toughness = 1;
 
@@ -481,11 +480,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MagicFighter_é©ï™Ç™îjâÛÇ≥ÇÍÇΩèÍçá()
         {
-            var testCardDef = SampleCards.MagicFighter;
+            var testCardDef = SampleCards2.MagicFighter;
             testCardDef.Cost = 0;
             testCardDef.Toughness = 1;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
             goblinDef.Power = 2;
             goblinDef.Toughness = 5;
@@ -526,10 +525,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task SuperMagicFighter()
         {
-            var testCardDef = SampleCards.SuperMagicFighter;
+            var testCardDef = SampleCards2.SuperMagicFighter;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, });
@@ -586,11 +585,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task GoblinsPet()
         {
-            var testCardDef = SampleCards.GoblinsPet;
+            var testCardDef = SampleCards2.GoblinsPet;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
-            var sorceryDef = SampleCards.SelectDamage;
+            var goblinDef = SampleCards1.Vanilla;
+            var sorceryDef = SampleCards1.SelectDamage;
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, goblinDef, sorceryDef },
@@ -629,11 +628,11 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task MechanicGoblin()
+        public async Task Mechanic()
         {
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 1, 2);
-            var tokenDef = SampleCards.KarakuriGoblin;
-            var testCardDef = SampleCards.MechanicGoblin;
+            var goblinDef = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 1, 2);
+            var tokenDef = SampleCards1.KarakuriDoll;
+            var testCardDef = SampleCards1.Mechanic;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { tokenDef, testCardDef, goblinDef });
@@ -656,28 +655,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task NinjaGoblin()
+        public async Task Ninja()
         {
-            var testCard = SampleCards.NinjaGoblin;
-            testCard.Cost = 0;
-
-            var c = await TestUtil.InitTest(new[] { testCard });
-
-            await TestUtil.AssertGameAction(() =>
-                c.GameMaster.PlayFromHand(c.Player1.Id, c.GameMaster.ActivePlayer.Hands.AllCards[0].Id));
-
-            // èÍÇ…ÇÕ2ëÃèoÇƒÇ¢ÇƒÅAÇ∫ÇÒÇ‘testcard
-            Assert.Equal(2, c.GameMaster.ActivePlayer.Field.AllCards.Count);
-            foreach (var card in c.GameMaster.ActivePlayer.Field.AllCards)
-            {
-                Assert.Equal(testCard.Id, card.CardDefId);
-            }
-        }
-
-        [Fact]
-        public async Task SuperNinjaGoblin()
-        {
-            var testCard = SampleCards.SuperNinjaGoblin;
+            var testCard = SampleCards1.Ninja;
             testCard.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCard });
@@ -696,7 +676,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Hope()
         {
-            var testCardDef = SampleCards.Hope;
+            var testCardDef = SampleCards1.Hope;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -734,7 +714,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Greed()
         {
-            var testCardDef = SampleCards.Greed;
+            var testCardDef = SampleCards1.Greed;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -758,7 +738,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Greed_éËéDÇ©ÇÁéÃÇƒÇÈ()
         {
-            var testCardDef = SampleCards.Greed;
+            var testCardDef = SampleCards1.Greed;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -781,9 +761,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task ShamanGoblin()
+        public async Task Shaman()
         {
-            var testCardDef = SampleCards.ShamanGoblin;
+            var testCardDef = SampleCards1.Shaman;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -810,9 +790,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task HealerGoblin()
+        public async Task Healer()
         {
-            var testCardDef = SampleCards.HealerGoblin;
+            var testCardDef = SampleCards1.Healer;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -834,10 +814,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task FireGoblin()
         {
-            var testCardDef = SampleCards.FireGoblin;
+            var testCardDef = SampleCards2.FireGoblin;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef }, this.output);
@@ -870,7 +850,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DashGoblin()
         {
-            var testCardDef = SampleCards.DashGoblin;
+            var testCardDef = SampleCards2.DashGoblin;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -896,11 +876,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task BeginnerSummoner()
         {
-            var testCardDef = SampleCards.BeginnerSummoner;
+            var testCardDef = SampleCards1.BeginnerSummoner;
             testCardDef.Cost = 0;
-            var cost1Def = SampleCards.Goblin;
+            var cost1Def = SampleCards1.Vanilla;
             cost1Def.Cost = 1;
-            var cost2Def = SampleCards.Goblin;
+            var cost2Def = SampleCards1.Vanilla;
             cost2Def.Cost = 2;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, cost1Def, cost2Def });
@@ -924,10 +904,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MadScientist()
         {
-            var testCardDef = SampleCards.MadScientist;
+            var testCardDef = SampleCards1.MadScientist;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 2, 2);
+            var goblinDef = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 2, 2);
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef }, this.output);
 
@@ -955,11 +935,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task BraveGoblin()
         {
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards2.Goblin;
             goblinDef.Cost = 0;
             goblinDef.NumTurnsToCanAttack = 0;
 
-            var testCardDef = SampleCards.BraveGoblin;
+            var testCardDef = SampleCards2.BraveGoblin;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -991,10 +971,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MagicDragon()
         {
-            var testCardDef = SampleCards.MagicDragon;
+            var testCardDef = SampleCards1.MagicDragon;
             testCardDef.Cost = 0;
 
-            var sorceryDef = SampleCards.SelectDamage;
+            var sorceryDef = SampleCards1.SelectDamage;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, sorceryDef }, this.output);
 
@@ -1044,11 +1024,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task GiantGoblin()
         {
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
             goblinDef.Toughness = 5;
 
-            var testCardDef = SampleCards.GiantGoblin;
+            var testCardDef = SampleCards2.GiantGoblin;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -1074,8 +1054,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task LeaderGoblin()
         {
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 1, 2);
-            var testCreatureDef = SampleCards.LeaderGoblin;
+            var goblinDef = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 1, 2);
+            var testCreatureDef = SampleCards2.LeaderGoblin;
             testCreatureDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCreatureDef });
@@ -1122,7 +1102,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task TyrantGoblin()
         {
-            var testCardDef = SampleCards.TyrantGoblin;
+            var testCardDef = SampleCards2.TyrantGoblin;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -1142,10 +1122,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task RiderGoblin()
         {
-            var testCardDef = SampleCards.RiderGoblin;
+            var testCardDef = SampleCards2.RiderGoblin;
             testCardDef.Cost = 0;
-            var tokenDef = SampleCards.WarGoblin;
-            var sorceryDef = SampleCards.RandomDamage;
+            var tokenDef = SampleCards2.WarGoblin;
+            var sorceryDef = SampleCards1.RandomDamage;
             sorceryDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, tokenDef, sorceryDef });
@@ -1179,9 +1159,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Bomber()
         {
-            var testCardDef = SampleCards.Bomber;
+            var testCardDef = SampleCards1.Bomber;
             testCardDef.Cost = 0;
-            var addcardDef = SampleCards.Bomb;
+            var addcardDef = SampleCards1.Bomb;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, addcardDef });
 
@@ -1202,7 +1182,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Bomb()
         {
-            var testCardDef = SampleCards.Bomb;
+            var testCardDef = SampleCards1.Bomb;
             testCardDef.IsToken = false;
             testCardDef.Cost = 0;
 
@@ -1233,7 +1213,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Firelord()
         {
-            var testCardDef = SampleCards.Firelord;
+            var testCardDef = SampleCards1.Firelord;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -1256,11 +1236,11 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task Death()
+        public async Task Reaper()
         {
-            var testCardDef = SampleCards.Death;
+            var testCardDef = SampleCards1.Reaper;
             testCardDef.Cost = 0;
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
@@ -1302,7 +1282,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task TempRamp()
         {
-            var testCardDef = SampleCards.TempRamp;
+            var testCardDef = SampleCards1.TempRamp;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
 
@@ -1349,11 +1329,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Salvage()
         {
-            var testCardDef = SampleCards.Salvage;
+            var testCardDef = SampleCards1.Salvage;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Creature(0, "t", 1, 2);
-            var spellDef = SampleCards.SelectDeathDamage;
+            var goblinDef = SampleCards1.Creature(0, "t", 1, 2);
+            var spellDef = SampleCards1.SelectDeathDamage;
             spellDef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -1392,120 +1372,11 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task Recycle()
-        {
-            var testCardDef = SampleCards.Recycle;
-            testCardDef.Cost = 0;
-
-            var goblinDef = SampleCards.Creature(0, "t", 1, 2);
-            var spellDef = SampleCards.SelectDamage;
-            spellDef.Cost = 0;
-
-            var c = await TestUtil.InitTest(
-                new[] { goblinDef, testCardDef, spellDef }, this.output);
-
-            // êÊçU
-            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-
-                // Ç‹Ç∏ÉJÅ[ÉhÇîjâÛÇ∑ÇÈ
-                c.TestAnswer.ChoiceCardIdList = new[] { goblin.Id };
-                var s1 = await TestUtil.NewCardAndPlayFromHand(g, pId, spellDef.Id);
-                var s2 = await TestUtil.NewCardAndPlayFromHand(g, pId, spellDef.Id);
-
-                Assert.Empty(c.Player1.Field.AllCards);
-                Assert.Equal(ZoneName.Cemetery, goblin.Zone.ZoneName);
-
-                var beforeHandCardIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
-
-                // é©ï™ÇÃÉJÅ[ÉhÇ™ëŒè€
-                c.TestAnswer.ExpectedCardIdList = new[] { goblin.Id, s1.Id, s2.Id };
-                c.TestAnswer.ChoiceCardIdList = new[] { goblin.Id };
-                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                var afterHandIdList = c.Player1.Hands.AllCards.Select(c => c.Id).ToArray();
-                var diffHandIdList = afterHandIdList.Except(beforeHandCardIdList).ToArray();
-
-                // ÉRÉsÅ[Ç™éËéDÇ…â¡ÇÌÇÈ
-                Assert.Single(diffHandIdList);
-                var (_, diffHandCard) = c.CardRepository.TryGetById(diffHandIdList[0]);
-                Assert.NotEqual(goblin.Id, diffHandCard.Id);
-                Assert.Equal(goblin.CardDefId, diffHandCard.CardDefId);
-            });
-        }
-
-        [Fact]
-        public async Task SimpleReborn()
-        {
-            var goblinDef = SampleCards.Creature(0, "test", 1, 2);
-
-            var t0def = SampleCards.Creature(0, "t0", 1, 0);
-
-            var testCardDef = SampleCards.SimpleReborn;
-            testCardDef.Cost = 0;
-
-            var otherCardDef = SampleCards.DeadlyGoblin;
-
-            var c = await TestUtil.InitTest(
-                new[] { testCardDef, goblinDef, t0def, otherCardDef });
-
-            // êÊçU
-            var goblin = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-
-                await g.DestroyCard(goblin, default);
-
-                Assert.Empty(c.Player1.Field.AllCards);
-
-                // é©ï™ÇÃÉJÅ[ÉhÇ™ëŒè€
-                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                Assert.Single(c.Player1.Field.AllCards);
-                Assert.Equal(goblinDef.Id, c.Player1.Field.AllCards[0].CardDefId);
-                // É^ÉtÉlÉXÇÕ1Ç…Ç»ÇÈ
-                Assert.Equal(1, c.Player1.Field.AllCards[0].Toughness);
-
-                return goblin;
-            });
-
-            // å„çU
-            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                await g.DestroyCard(goblin, default);
-
-                Assert.Empty(c.Player2.Field.AllCards);
-
-                // ëäéËÇÃÉJÅ[ÉhÇ™ëŒè€
-                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                Assert.Equal(ZoneName.Field, goblin.Zone.ZoneName);
-
-                Assert.Single(c.Player2.Field.AllCards);
-                Assert.Equal(goblinDef.Id, c.Player2.Field.AllCards[0].CardDefId);
-                // É^ÉtÉlÉXÇÕ1Ç…Ç»ÇÈ
-                Assert.Equal(1, c.Player2.Field.AllCards[0].Toughness);
-
-                // É^ÉtÉlÉX0ÇÃÉJÅ[ÉhÇ™ëŒè€
-                var t0 = await TestUtil.NewCardAndPlayFromHand(g, pId, t0def.Id);
-
-                Assert.Equal(ZoneName.Cemetery, t0.Zone.ZoneName);
-
-                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                Assert.Equal(ZoneName.Field, t0.Zone.ZoneName);
-                // É^ÉtÉlÉXÇÕ1Ç…Ç»ÇÈ
-                Assert.Equal(1, t0.Toughness);
-            });
-        }
-
-        [Fact]
         public async Task Sword()
         {
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 1, 2);
+            var goblinDef = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 1, 2);
 
-            var testCardDef = SampleCards.Sword;
+            var testCardDef = SampleCards1.Sword;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef }, this.output);
@@ -1527,10 +1398,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Shield()
         {
-            var testCardDef = SampleCards.Shield;
+            var testCardDef = SampleCards1.Shield;
             testCardDef.Cost = 0;
 
-            var goblin = SampleCards.Creature(0, "ÉSÉuÉäÉì", 1, 2);
+            var goblin = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 1, 2);
 
             var c = await TestUtil.InitTest(new[] { goblin, testCardDef }, this.output);
 
@@ -1551,11 +1422,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task HitOrHeal()
         {
-            var testCardDef1 = SampleCards.HitOrHeal;
+            var testCardDef1 = SampleCards1.HitOrHeal;
             testCardDef1.Cost = 0;
 
-            var hitDef = SampleCards.Hit;
-            var healDef = SampleCards.Heal;
+            var hitDef = SampleCards1.Hit;
+            var healDef = SampleCards1.Heal;
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef1, hitDef, healDef }, this.output);
@@ -1579,12 +1450,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Copy()
         {
-            var testCardDef1 = SampleCards.Copy;
+            var testCardDef1 = SampleCards1.Copy;
             testCardDef1.Cost = 0;
 
-            var goblin1Def = SampleCards.Goblin;
+            var goblin1Def = SampleCards1.Vanilla;
             goblin1Def.Cost = 0;
-            var goblin2Def = SampleCards.QuickGoblin;
+            var goblin2Def = SampleCards1.Quick;
             goblin2Def.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef1, goblin1Def, goblin2Def }, this.output);
@@ -1614,52 +1485,14 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task DoubleCopy()
-        {
-            var testCardDef1 = SampleCards.DoubleCopy;
-            testCardDef1.Cost = 0;
-
-            var goblin1Def = SampleCards.Goblin;
-            goblin1Def.Cost = 0;
-            var goblin2Def = SampleCards.QuickGoblin;
-            goblin2Def.Cost = 0;
-
-            var c = await TestUtil.InitTest(new[] { testCardDef1, goblin1Def, goblin2Def }, this.output);
-
-            // êÊçU
-            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                var c1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin1Def.Id);
-                var c2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin1Def.Id);
-                var c3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblin2Def.Id);
-
-                c.TestAnswer.ExpectedCardIdList = new[] { c1.Id, c2.Id, c3.Id };
-                c.TestAnswer.ChoiceCardIdList = new[] { c1.Id, };
-            });
-
-            // å„çU
-            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                var beforeHandIds = c.Player2.Hands.AllCards.Select(c => c.Id).ToArray();
-
-                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef1.Id);
-
-                var diffHands = c.Player2.Hands.AllCards.Where(c => !beforeHandIds.Contains(c.Id)).ToArray();
-                Assert.Equal(2, diffHands.Length);
-                Assert.Equal(goblin1Def.Id, diffHands[0].CardDefId);
-                Assert.Equal(goblin1Def.Id, diffHands[1].CardDefId);
-            });
-        }
-
-        [Fact]
         public async Task FirstAttack()
         {
-            var testCardDef1 = SampleCards.FirstAttack;
+            var testCardDef1 = SampleCards2.FirstAttack;
             testCardDef1.Cost = 0;
 
-            var testCardDef2 = SampleCards.SecondAttack;
+            var testCardDef2 = SampleCards2.SecondAttack;
 
-            var creatureDef = SampleCards.Creature(0, "t", 1, 1);
+            var creatureDef = SampleCards1.Creature(0, "t", 1, 1);
 
             var c = await TestUtil.InitTest(new[] { testCardDef1, testCardDef2, creatureDef }, this.output);
 
@@ -1685,53 +1518,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task HolyShield()
-        {
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 2, 3, numTurnsToCanAttack: 0);
-
-            var testCardDef = SampleCards.HolyShield;
-            testCardDef.Cost = 0;
-
-            var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
-
-            // êÊçU
-            var (goblin1, goblin2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-
-                return (goblin1, goblin2);
-            });
-
-            // å„çU
-            var goblin3 = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                var goblin3 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                // ÉSÉuÉäÉìÇ≈ìGÇçUåÇ
-                // çUåÇÇµÇΩï˚ÇÕÉ_ÉÅÅ[ÉWÇéÛÇØÇ»Ç¢
-                await g.AttackToCreature(pId, goblin3.Id, goblin1.Id);
-                Assert.Equal(goblinDef.Toughness - goblinDef.Power, goblin1.Toughness);
-                Assert.Equal(goblin3.BaseToughness, goblin3.Toughness);
-
-                return goblin3;
-            });
-
-            // êÊçU
-            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                // éüÇÃÉ^Å[ÉìÇ»ÇÃÇ≈ÅAÇ®å›Ç¢Ç…É_ÉÅÅ[ÉWÇéÛÇØÇÈ
-                await g.AttackToCreature(pId, goblin2.Id, goblin3.Id);
-                Assert.Equal(goblinDef.Toughness - goblinDef.Power, goblin2.Toughness);
-                Assert.Equal(goblinDef.Toughness - goblinDef.Power, goblin3.Toughness);
-            });
-        }
-
-        [Fact]
         public async Task ChangeHands()
         {
-            var testCardDef = SampleCards.ChangeHands;
+            var testCardDef = SampleCards1.ChangeHands;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -1758,7 +1547,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Ramp()
         {
-            var testCardDef = SampleCards.Ramp;
+            var testCardDef = SampleCards1.Ramp;
             testCardDef.Cost = 1;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -1780,10 +1569,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task BounceHand()
         {
-            var testCardDef = SampleCards.BounceHand;
+            var testCardDef = SampleCards1.BounceHand;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, }, this.output);
@@ -1840,10 +1629,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task BounceDeck()
         {
-            var testCardDef = SampleCards.BounceDeck;
+            var testCardDef = SampleCards1.BounceDeck;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, }, this.output);
@@ -1902,10 +1691,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Slap()
         {
-            var testCardDef = SampleCards.Slap;
+            var testCardDef = SampleCards1.Slap;
             testCardDef.Cost = 0;
 
-            var creatureDef = SampleCards.Creature(0, "t", 1, 10);
+            var creatureDef = SampleCards1.Creature(0, "t", 1, 10);
 
             var c = await TestUtil.InitTest(new[] { creatureDef, testCardDef }, this.output);
 
@@ -1944,12 +1733,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task GoblinCaptureJar()
         {
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards2.Goblin;
             goblinDef.Cost = 0;
-            var notGoblinDef = SampleCards.Goblin;
+            var notGoblinDef = SampleCards1.Vanilla;
             notGoblinDef.Name = "ÉXÉâÉCÉÄ";
             goblinDef.Cost = 0;
-            var testCardDef = SampleCards.GoblinCaptureJar;
+            var testCardDef = SampleCards2.GoblinCaptureJar;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, notGoblinDef, testCardDef });
@@ -1987,9 +1776,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task FullAttack()
         {
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
-            var testCardDef = SampleCards.FullAttack;
+            var testCardDef = SampleCards1.FullAttack;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -2016,9 +1805,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Search()
         {
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 4;
-            var testCardDef = SampleCards.Search;
+            var testCardDef = SampleCards1.Search;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -2044,9 +1833,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldShield_ÉNÉäÅ[É`ÉÉÅ[ÇÃñhå‰éû()
         {
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 2, 2);
+            var goblinDef = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 2, 2);
 
-            var testCardDef = SampleCards.OldShield;
+            var testCardDef = SampleCards1.OldShield;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -2078,9 +1867,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldShield_ÉvÉåÉCÉÑÅ[ÇÃñhå‰éû()
         {
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 2, 2);
+            var goblinDef = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 2, 2);
 
-            var testCardDef = SampleCards.OldShield;
+            var testCardDef = SampleCards1.OldShield;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -2112,12 +1901,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldShield_çUåÇéû()
         {
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
             goblinDef.Power = 2;
             goblinDef.Toughness = 5;
 
-            var testCardDef = SampleCards.OldShield;
+            var testCardDef = SampleCards1.OldShield;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -2148,12 +1937,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldShield_0É_ÉÅÅ[ÉW()
         {
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
             goblinDef.Power = 1;
             goblinDef.Toughness = 5;
 
-            var testCardDef = SampleCards.OldShield;
+            var testCardDef = SampleCards1.OldShield;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -2184,9 +1973,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldWall_ÉvÉåÉCÉÑÅ[ÇçUåÇ()
         {
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 2, 2);
+            var goblinDef = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 2, 2);
 
-            var testCardDef = SampleCards.OldWall;
+            var testCardDef = SampleCards1.OldWall;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -2214,9 +2003,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldWall_ÉNÉäÅ[É`ÉÉÅ[ÇçUåÇ()
         {
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 2, 2);
+            var goblinDef = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 2, 2);
 
-            var testCardDef = SampleCards.OldWall;
+            var testCardDef = SampleCards1.OldWall;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -2247,12 +2036,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task OldWall_çUåÇéû()
         {
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
             goblinDef.Power = 2;
             goblinDef.Toughness = 5;
 
-            var testCardDef = SampleCards.OldWall;
+            var testCardDef = SampleCards1.OldWall;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -2283,10 +2072,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task EmergencyFood()
         {
-            var goblin = SampleCards.Goblin;
+            var goblin = SampleCards1.Vanilla;
             goblin.Cost = 2;
 
-            var testCardDef = SampleCards.EmergencyFood;
+            var testCardDef = SampleCards1.EmergencyFood;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -2313,11 +2102,11 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task GoblinStatue()
+        public async Task StatueOfCurse()
         {
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 1, 10);
+            var goblinDef = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 1, 10);
 
-            var testCardDef = SampleCards.GoblinStatue;
+            var testCardDef = SampleCards1.StatueOfCurse;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -2359,11 +2148,11 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task HolyStatue()
+        public async Task StatueOfHoly()
         {
-            var goblinDef = SampleCards.Creature(0, "ÉSÉuÉäÉì", 1, 2);
+            var goblinDef = SampleCards1.Creature(0, "ÉSÉuÉäÉì", 1, 2);
 
-            var testCardDef = SampleCards.HolyStatue;
+            var testCardDef = SampleCards1.StatueOfHoly;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef });
@@ -2392,10 +2181,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task VictoryRoad()
         {
-            var testCardDef = SampleCards.VictoryRoad;
+            var testCardDef = SampleCards1.VictoryRoad;
             testCardDef.Cost = 0;
 
-            var tokenCardDef = SampleCards.VictoryStatue;
+            var tokenCardDef = SampleCards1.VictoryStatue;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, tokenCardDef });
 
@@ -2423,10 +2212,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task VictoryRoad_Bounce()
         {
-            var testCardDef = SampleCards.VictoryRoad;
+            var testCardDef = SampleCards1.VictoryRoad;
             testCardDef.Cost = 0;
 
-            var tokenCardDef = SampleCards.VictoryStatue;
+            var tokenCardDef = SampleCards1.VictoryStatue;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, tokenCardDef });
 
@@ -2462,7 +2251,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task VictoryStatue()
         {
-            var testCardDef = SampleCards.VictoryStatue;
+            var testCardDef = SampleCards1.VictoryStatue;
             testCardDef.Cost = 0;
             testCardDef.IsToken = false;
 
@@ -2495,7 +2284,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Faceless()
         {
-            var testCardDef = SampleCards.Faceless;
+            var testCardDef = SampleCards1.Faceless;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -2532,7 +2321,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Prophet()
         {
-            var testCardDef = SampleCards.Prophet;
+            var testCardDef = SampleCards1.Prophet;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -2562,10 +2351,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DoubleShield_çUåÇÇ…ÇÊÇÈÉ_ÉÅÅ[ÉW()
         {
-            var testCardDef = SampleCards.DoubleShield;
+            var testCardDef = SampleCards1.DoubleShield;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
@@ -2596,10 +2385,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DoubleShield_çUåÇà»äOÇ…ÇÊÇÈÉ_ÉÅÅ[ÉW()
         {
-            var testCardDef = SampleCards.DoubleShield;
+            var testCardDef = SampleCards1.DoubleShield;
             testCardDef.Cost = 0;
 
-            var spellDef = SampleCards.SelectDamage;
+            var spellDef = SampleCards1.SelectDamage;
             spellDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, spellDef }, this.output);
@@ -2629,7 +2418,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Nightmare()
         {
-            var testCardDef = SampleCards.Nightmare;
+            var testCardDef = SampleCards1.Nightmare;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -2674,12 +2463,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Disaster()
         {
-            var testCardDef = SampleCards.Disaster;
+            var testCardDef = SampleCards1.Disaster;
             testCardDef.Cost = 0;
 
-            var tokenDef = SampleCards.Gnoll;
+            var tokenDef = SampleCards1.Gnoll;
 
-            var spellDef = SampleCards.SelectDamage;
+            var spellDef = SampleCards1.SelectDamage;
             spellDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, tokenDef, spellDef }, this.output);
@@ -2710,14 +2499,14 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Virus()
         {
-            var testCardDef = SampleCards.Virus;
+            var testCardDef = SampleCards1.Virus;
             testCardDef.Cost = 0;
 
-            var goblinDefp3 = SampleCards.Goblin;
+            var goblinDefp3 = SampleCards1.Vanilla;
             goblinDefp3.Cost = 0;
             goblinDefp3.Power = 3;
 
-            var goblinDefp4 = SampleCards.Goblin;
+            var goblinDefp4 = SampleCards1.Vanilla;
             goblinDefp4.Cost = 0;
             goblinDefp4.Power = 4;
 
@@ -2817,10 +2606,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Exclude()
         {
-            var testCardDef = SampleCards.Exclude;
+            var testCardDef = SampleCards1.Exclude;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef }, this.output);
@@ -2849,10 +2638,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DDObserver()
         {
-            var testCardDef = SampleCards.DDObserver;
+            var testCardDef = SampleCards2.DDObserver;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
@@ -2899,10 +2688,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DDVisitor()
         {
-            var testCardDef = SampleCards.DDVisitor;
+            var testCardDef = SampleCards2.DDVisitor;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
@@ -2941,10 +2730,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task ReturnFromDD()
         {
-            var testCardDef = SampleCards.ReturnFromDD;
+            var testCardDef = SampleCards2.ReturnFromDD;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
@@ -2983,13 +2772,13 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DDTransaction()
         {
-            var testCardDef = SampleCards.DDTransaction;
+            var testCardDef = SampleCards2.DDTransaction;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
-            var goblinC2Def = SampleCards.Goblin;
+            var goblinC2Def = SampleCards1.Vanilla;
             goblinC2Def.Cost = 2;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, goblinC2Def });
@@ -3023,10 +2812,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DDFighter_çUåÇÇ∑ÇÈ()
         {
-            var testCardDef = SampleCards.DDFighter;
+            var testCardDef = SampleCards2.DDFighter;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
@@ -3066,10 +2855,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DDFighter_çUåÇÇ≥ÇÍÇÈ()
         {
-            var testCardDef = SampleCards.DDFighter;
+            var testCardDef = SampleCards2.DDFighter;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
@@ -3109,10 +2898,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DDFighter_çUåÇÇ≥ÇÍÇƒëäéËÇ™éÄÇ ()
         {
-            var testCardDef = SampleCards.DDFighter;
+            var testCardDef = SampleCards2.DDFighter;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
             goblinDef.Toughness = 1;
 
@@ -3153,7 +2942,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task DDFighter_ÉvÉåÉCÉÑÅ[Ç÷çUåÇÇ∑ÇÈ()
         {
-            var testCardDef = SampleCards.DDFighter;
+            var testCardDef = SampleCards2.DDFighter;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -3179,19 +2968,19 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task BreakCover()
+        public async Task SearchRight()
         {
-            var testCardDef = SampleCards.BreakCover;
+            var testCardDef = SampleCards1.SearchRight;
             testCardDef.Cost = 0;
 
-            var coverCardDef = SampleCards.Goblin;
-            coverCardDef.Cost = 0;
-            coverCardDef.Abilities = new[] { CreatureAbility.Cover };
+            var stealthCardDef = SampleCards1.Vanilla;
+            stealthCardDef.Cost = 0;
+            stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
-            var noCoverCardDef = SampleCards.Goblin;
-            noCoverCardDef.Cost = 0;
+            var noStealthCardDef = SampleCards1.Vanilla;
+            noStealthCardDef.Cost = 0;
 
-            var c = await TestUtil.InitTest(new[] { testCardDef, coverCardDef, noCoverCardDef });
+            var c = await TestUtil.InitTest(new[] { testCardDef, stealthCardDef, noStealthCardDef });
 
             // êÊçU
             var (cover, cover2, nocover, nocover2) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
@@ -3199,10 +2988,10 @@ namespace Cauldron.Core_Test
                 var p = g.Get(pId);
                 var op = g.GetOpponent(pId);
 
-                var coverCard = await TestUtil.NewCardAndPlayFromHand(g, pId, coverCardDef.Id);
-                var coverCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, coverCardDef.Id);
-                var noCoverCard = await TestUtil.NewCardAndPlayFromHand(g, pId, noCoverCardDef.Id);
-                var noCoverCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, noCoverCardDef.Id);
+                var coverCard = await TestUtil.NewCardAndPlayFromHand(g, pId, stealthCardDef.Id);
+                var coverCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, stealthCardDef.Id);
+                var noCoverCard = await TestUtil.NewCardAndPlayFromHand(g, pId, noStealthCardDef.Id);
+                var noCoverCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, noStealthCardDef.Id);
 
                 return (coverCard, coverCard2, noCoverCard, noCoverCard2);
             });
@@ -3213,7 +3002,7 @@ namespace Cauldron.Core_Test
                 var p = g.Get(pId);
                 var op = g.GetOpponent(pId);
 
-                var mycover = await TestUtil.NewCardAndPlayFromHand(g, pId, coverCardDef.Id);
+                var mycover = await TestUtil.NewCardAndPlayFromHand(g, pId, stealthCardDef.Id);
 
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
@@ -3221,14 +3010,8 @@ namespace Cauldron.Core_Test
                 Assert.Empty(cover.Abilities);
                 Assert.Empty(cover2.Abilities);
 
-                // ëäéËÇÃèÍÇÃÉJÉoÅ[éùÇøÇæÇØÇ…1É_ÉÅÅ[ÉW
-                Assert.Equal(cover.BaseToughness - 1, cover.Toughness);
-                Assert.Equal(cover2.BaseToughness - 1, cover2.Toughness);
-                Assert.Equal(nocover.BaseToughness, nocover.Toughness);
-                Assert.Equal(nocover2.BaseToughness, nocover2.Toughness);
-
                 // é©ï™ÇÃèÍÇÃÉJÉoÅ[ÇÕÇªÇÃÇ‹Ç‹
-                Assert.Contains(CreatureAbility.Cover, mycover.Abilities);
+                Assert.Contains(CreatureAbility.Stealth, mycover.Abilities);
                 Assert.Equal(mycover.BaseToughness, mycover.Toughness);
             });
         }
@@ -3236,10 +3019,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MagicObject()
         {
-            var testCardDef = SampleCards.MagicObject;
+            var testCardDef = SampleCards2.MagicObject;
             testCardDef.Cost = 0;
 
-            var sorceryDef = SampleCards.Sorcery(0, "");
+            var sorceryDef = SampleCards1.Sorcery(0, "");
 
             var c = await TestUtil.InitTest(new[] { testCardDef, sorceryDef });
 
@@ -3291,9 +3074,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task MagicMonster()
         {
-            var testCardDef = SampleCards.MagicMonster;
+            var testCardDef = SampleCards2.MagicMonster;
 
-            var sorceryDef = SampleCards.Sorcery(0, "");
+            var sorceryDef = SampleCards1.Sorcery(0, "");
 
             var c = await TestUtil.InitTest(new[] { testCardDef, sorceryDef });
 
@@ -3337,10 +3120,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task BeginnerSorcerer()
         {
-            var testCardDef = SampleCards.BeginnerSorcerer;
+            var testCardDef = SampleCards2.BeginnerSorcerer;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Creature(0, "t", 1, 1, annotations: new[] { ":ñÇì±" });
+            var goblinDef = SampleCards1.Creature(0, "t", 1, 1, annotations: new[] { ":ñÇì±" });
 
             var c = await TestUtil.InitTest(new[] { goblinDef, testCardDef }, this.output);
 
@@ -3365,8 +3148,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task GreatSorcerer()
         {
-            var testCardDef = SampleCards.GreatSorcerer;
-            var testCardDef_cost0 = SampleCards.GreatSorcerer;
+            var testCardDef = SampleCards2.GreatSorcerer;
+            var testCardDef_cost0 = SampleCards2.GreatSorcerer;
             testCardDef_cost0.Name = "ÉRÉXÉg0";
             testCardDef_cost0.Cost = 0;
 
@@ -3402,9 +3185,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task UltraMagic()
         {
-            var testCardDef = SampleCards.UltraMagic;
+            var testCardDef = SampleCards2.UltraMagic;
             testCardDef.Cost = 0;
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards1.Vanilla;
             goblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef });
@@ -3451,7 +3234,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Investment()
         {
-            var testCardDef = SampleCards.Investment;
+            var testCardDef = SampleCards1.Investment;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, });
@@ -3494,14 +3277,13 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task GoblinLover()
         {
-            var testCardDef = SampleCards.GoblinLover;
+            var testCardDef = SampleCards2.GoblinLover;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
+            var goblinDef = SampleCards2.Goblin;
             goblinDef.Cost = 0;
 
-            var notGoblinDef = SampleCards.Goblin;
-            notGoblinDef.Name = "ÉRÉuÉäÉì";
+            var notGoblinDef = SampleCards1.Vanilla;
             notGoblinDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef, goblinDef, notGoblinDef });
@@ -3544,9 +3326,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task SealedGoblin()
         {
-            var testCardDef = SampleCards.SealedGoblin;
-            var key1 = SampleCards.Key1;
-            var key2 = SampleCards.Key2;
+            var testCardDef = SampleCards1.SealedGoblin;
+            var key1 = SampleCards1.Key1;
+            var key2 = SampleCards1.Key2;
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, key1, key2 },
@@ -3574,11 +3356,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Emergency()
         {
-            var testCardDef = SampleCards.Emergency;
+            var testCardDef = SampleCards1.Emergency;
             testCardDef.Cost = 0;
 
-            var goblinDef = SampleCards.Goblin;
-            var shieldGoblinDef = SampleCards.ShieldGoblin;
+            var goblinDef = SampleCards1.Vanilla;
+            var shieldGoblinDef = SampleCards1.Shielder;
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, goblinDef, shieldGoblinDef }
@@ -3618,7 +3400,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task HealOrDamage()
         {
-            var testCardDef = SampleCards.HealOrDamage;
+            var testCardDef = SampleCards1.HealOrDamage;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -3657,10 +3439,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task RevengeGoblin()
         {
-            var testCardDef = SampleCards.RevengeGoblin;
+            var testCardDef = SampleCards2.RevengeGoblin;
             testCardDef.Cost = 0;
 
-            var spellDef = SampleCards.SelectDamage;
+            var spellDef = SampleCards1.SelectDamage;
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, spellDef }, this.output
@@ -3704,13 +3486,13 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task ZombiesStatue()
         {
-            var testCardDef = SampleCards.ZombiesStatue;
+            var testCardDef = SampleCards2.ZombiesStatue;
             testCardDef.Cost = 0;
 
-            var zombieDef = SampleCards.Creature(0, "z", 1, 1, annotations: new[] { ":É]ÉìÉr" });
-            var nozombieDef = SampleCards.Creature(0, "z", 1, 1);
+            var zombieDef = SampleCards1.Creature(0, "z", 1, 1, annotations: new[] { ":É]ÉìÉr" });
+            var nozombieDef = SampleCards1.Creature(0, "z", 1, 1);
 
-            var spellDef = SampleCards.SelectDamage;
+            var spellDef = SampleCards1.SelectDamage;
             spellDef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -3755,10 +3537,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task SelectDeathDamage()
         {
-            var testCardDef = SampleCards.SelectDeathDamage;
+            var testCardDef = SampleCards1.SelectDeathDamage;
             testCardDef.Cost = 0;
 
-            var creatureDef = SampleCards.Creature(0, "z", 1, 3);
+            var creatureDef = SampleCards1.Creature(0, "z", 1, 3);
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, creatureDef }, this.output
@@ -3801,10 +3583,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task RunawayMagic()
         {
-            var testCardDef = SampleCards.RunawayMagic;
+            var testCardDef = SampleCards2.RunawayMagic;
             testCardDef.Cost = 0;
 
-            var creatureDef = SampleCards.Creature(0, "z", 1, 3);
+            var creatureDef = SampleCards1.Creature(0, "z", 1, 3);
 
             var c = await TestUtil.InitTest(
                 new[] { testCardDef, creatureDef }, this.output
@@ -3865,11 +3647,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task ZombieMaster()
         {
-            var testCardDef = SampleCards.ZombieMaster;
+            var testCardDef = SampleCards2.ZombieMaster;
             testCardDef.Cost = 0;
 
-            var creatureDef = SampleCards.Creature(0, "z", 1, 3, annotations: new[] { ":É]ÉìÉr" });
-            var damageSpellDef = SampleCards.SelectDeathDamage;
+            var creatureDef = SampleCards1.Creature(0, "z", 1, 3, annotations: new[] { ":É]ÉìÉr" });
+            var damageSpellDef = SampleCards1.SelectDeathDamage;
             damageSpellDef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -3900,11 +3682,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task LivingDead()
         {
-            var testCardDef = SampleCards.LivingDead;
+            var testCardDef = SampleCards2.LivingDead;
             testCardDef.Cost = 0;
 
-            var creatureDef = SampleCards.Creature(0, "z", 1, 3, annotations: new[] { ":É]ÉìÉr" });
-            var damageSpellDef = SampleCards.SelectDeathDamage;
+            var creatureDef = SampleCards1.Creature(0, "z", 1, 3, annotations: new[] { ":É]ÉìÉr" });
+            var damageSpellDef = SampleCards1.SelectDeathDamage;
             damageSpellDef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -3935,13 +3717,13 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task PrinceZombie()
         {
-            var testCardDef = SampleCards.PrinceZombie;
+            var testCardDef = SampleCards2.PrinceZombie;
             testCardDef.Cost = 0;
 
-            var token = SampleCards.ZombieToken;
+            var token = SampleCards2.ZombieToken;
 
-            var creatureDef = SampleCards.Creature(0, "z", 1, 3);
-            var damageSpellDef = SampleCards.SelectDeathDamage;
+            var creatureDef = SampleCards1.Creature(0, "z", 1, 3);
+            var damageSpellDef = SampleCards1.SelectDeathDamage;
             damageSpellDef.Cost = 0;
 
             var c = await TestUtil.InitTest(

@@ -9,7 +9,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task StartTurn_Test()
         {
-            var testCardDef = SampleCards.Goblin;
+            var testCardDef = SampleCards2.Goblin;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
 
@@ -23,7 +23,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task EndTurn_Test()
         {
-            var testCardDef = SampleCards.Goblin;
+            var testCardDef = SampleCards2.Goblin;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
 
@@ -40,7 +40,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task PlayFromHand_MPが不足()
         {
-            var testCardDef = SampleCards.Goblin;
+            var testCardDef = SampleCards2.Goblin;
             testCardDef.Cost = 2;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -56,7 +56,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task PlayFromHand_タフネスが0()
         {
-            var testCardDef = SampleCards.Goblin;
+            var testCardDef = SampleCards2.Goblin;
             testCardDef.Cost = 0;
             testCardDef.Toughness = 0;
 
@@ -76,7 +76,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task クリーチャーでクリーチャーに攻撃する()
         {
-            var testCardDef = SampleCards.Goblin;
+            var testCardDef = SampleCards2.Goblin;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
@@ -118,7 +118,7 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task クリーチャーでプレイヤーに攻撃する()
         {
-            var testCardDef = SampleCards.Goblin;
+            var testCardDef = SampleCards2.Goblin;
             testCardDef.Cost = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });

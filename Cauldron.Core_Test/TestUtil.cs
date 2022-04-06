@@ -91,6 +91,9 @@ namespace Cauldron.Core_Test
             return (testAnswer, func);
         }
 
+        /// <summary>
+        /// 自分に1ダメージ
+        /// </summary>
         public static EffectAction TestEffectAction => new(
             Damage: new(
                 new NumValue(1),
@@ -219,7 +222,7 @@ namespace Cauldron.Core_Test
 
         public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck, GameMasterOptions options, ITestOutputHelper output)
         {
-            options.CardRepository.SetCardPool(new CardPool(new[] { new CardSet(SampleCards.CardsetName, cardpool.ToArray()) }));
+            options.CardRepository.SetCardPool(new CardPool(new[] { new CardSet(SampleCards2.CardsetName, cardpool.ToArray()) }));
 
             TestAnswer testAnswer = null;
             if (options.EventListener.AskCardAction == null)

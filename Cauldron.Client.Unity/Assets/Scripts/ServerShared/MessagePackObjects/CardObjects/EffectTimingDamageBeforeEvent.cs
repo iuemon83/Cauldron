@@ -30,14 +30,14 @@ namespace Cauldron.Shared.MessagePackObjects
         }
 
         public EffectTimingDamageBeforeEvent.TypeValue Type { get; }
-        public PlayerCondition? TakePlayerCondition { get; }
         public CardCondition? SourceCardCondition { get; }
+        public PlayerCondition? TakePlayerCondition { get; }
         public CardCondition? TakeCardCondition { get; }
 
         public EffectTimingDamageBeforeEvent(
             EffectTimingDamageBeforeEvent.TypeValue Type = TypeValue.Any,
-            PlayerCondition? TakePlayerCondition = null,
             CardCondition? SourceCardCondition = null,
+            PlayerCondition? TakePlayerCondition = null,
             CardCondition? TakeCardCondition = null
             )
         {

@@ -20,11 +20,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Cover()
         {
-            var normalcardDef = SampleCards.Goblin;
+            var normalcardDef = SampleCards1.Vanilla;
             normalcardDef.Cost = 0;
             normalcardDef.NumTurnsToCanAttack = 0;
 
-            var testCardDef = SampleCards.Goblin;
+            var testCardDef = SampleCards1.Vanilla;
             testCardDef.Cost = 0;
             testCardDef.Abilities = new[] { CreatureAbility.Cover };
 
@@ -55,8 +55,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Deadly_攻撃する()
         {
-            var normalcardDef = SampleCards.Creature(0, "t", 1, 10);
-            var deadlyCardDef = SampleCards.Creature(0, "t2", 0, 2,
+            var normalcardDef = SampleCards1.Creature(0, "t", 1, 10);
+            var deadlyCardDef = SampleCards1.Creature(0, "t2", 0, 2,
                 abilities: new[] { CreatureAbility.Deadly });
 
             var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef }, this.output);
@@ -82,8 +82,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Deadly_攻撃して自分が破壊される()
         {
-            var normalcardDef = SampleCards.Creature(0, "t", 1, 10);
-            var deadlyCardDef = SampleCards.Creature(0, "t2", 0, 1,
+            var normalcardDef = SampleCards1.Creature(0, "t", 1, 10);
+            var deadlyCardDef = SampleCards1.Creature(0, "t2", 0, 1,
                 abilities: new[] { CreatureAbility.Deadly });
 
             var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef }, this.output);
@@ -110,8 +110,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Deadly_攻撃される()
         {
-            var normalcardDef = SampleCards.Creature(0, "t", 0, 10);
-            var deadlyCardDef = SampleCards.Creature(0, "t2", 0, 1,
+            var normalcardDef = SampleCards1.Creature(0, "t", 0, 10);
+            var deadlyCardDef = SampleCards1.Creature(0, "t2", 0, 1,
                 abilities: new[] { CreatureAbility.Deadly });
 
             var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef }, this.output);
@@ -139,8 +139,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Deadly_攻撃されて破壊される()
         {
-            var normalcardDef = SampleCards.Creature(0, "t", 1, 10);
-            var deadlyCardDef = SampleCards.Creature(0, "t2", 0, 1,
+            var normalcardDef = SampleCards1.Creature(0, "t", 1, 10);
+            var deadlyCardDef = SampleCards1.Creature(0, "t2", 0, 1,
                 abilities: new[] { CreatureAbility.Deadly });
 
             var c = await TestUtil.InitTest(new[] { normalcardDef, deadlyCardDef }, this.output);
@@ -166,12 +166,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Stealth_攻撃対象にならない()
         {
-            var stealthCardDef = SampleCards.Goblin;
+            var stealthCardDef = SampleCards1.Vanilla;
             stealthCardDef.Cost = 0;
             stealthCardDef.Toughness = 10;
             stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
-            var normalcardDef = SampleCards.Goblin;
+            var normalcardDef = SampleCards1.Vanilla;
             normalcardDef.Cost = 0;
             normalcardDef.Toughness = 10;
             normalcardDef.NumTurnsToCanAttack = 0;
@@ -201,12 +201,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Stealth_相手カードの効果の選択対象にならない()
         {
-            var stealthCardDef = SampleCards.Goblin;
+            var stealthCardDef = SampleCards1.Vanilla;
             stealthCardDef.Cost = 0;
             stealthCardDef.Toughness = 10;
             stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
-            var choiceCarddef = SampleCards.SelectDamage;
+            var choiceCarddef = SampleCards1.SelectDamage;
             choiceCarddef.Cost = 0;
 
             Card[] expectedAskCardLsit = Array.Empty<Card>();
@@ -254,12 +254,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Stealth_自分のカードの効果の選択対象になる()
         {
-            var stealthCardDef = SampleCards.Goblin;
+            var stealthCardDef = SampleCards1.Vanilla;
             stealthCardDef.Cost = 0;
             stealthCardDef.Toughness = 10;
             stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
-            var choiceCarddef = SampleCards.SelectDamage;
+            var choiceCarddef = SampleCards1.SelectDamage;
             choiceCarddef.Cost = 0;
 
             Card[] expectedAskCardLsit = default;
@@ -312,12 +312,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Stealth_相手カードのランダム選択の対象になる()
         {
-            var stealthCardDef = SampleCards.Goblin;
+            var stealthCardDef = SampleCards1.Vanilla;
             stealthCardDef.Cost = 0;
             stealthCardDef.Toughness = 10;
             stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
-            var randomChoiceCarddef = SampleCards.RandomDamage;
+            var randomChoiceCarddef = SampleCards1.RandomDamage;
             randomChoiceCarddef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -341,12 +341,12 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Stealth_攻撃後はステルスがなくなる()
         {
-            var stealthCardDef = SampleCards.Goblin;
+            var stealthCardDef = SampleCards1.Vanilla;
             stealthCardDef.Cost = 0;
             stealthCardDef.Toughness = 10;
             stealthCardDef.Abilities = new[] { CreatureAbility.Stealth };
 
-            var normalcardDef = SampleCards.Goblin;
+            var normalcardDef = SampleCards1.Vanilla;
             normalcardDef.Cost = 0;
             normalcardDef.Toughness = 10;
             normalcardDef.NumTurnsToCanAttack = 0;
@@ -400,11 +400,11 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task Stealth_墓地から復活したらステルスも復活する()
         {
-            var stealthCardDef = SampleCards.Creature(0, "a", 1, 1,
+            var stealthCardDef = SampleCards1.Creature(0, "a", 1, 1,
                 abilities: new[] { CreatureAbility.Stealth }
                 );
 
-            var spellDef = SampleCards.SelectDeathDamage;
+            var spellDef = SampleCards1.SelectDeathDamage;
             spellDef.Cost = 0;
 
             var c = await TestUtil.InitTest(

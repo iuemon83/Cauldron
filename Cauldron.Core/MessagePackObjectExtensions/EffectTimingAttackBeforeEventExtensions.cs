@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using Cauldron.Core.Entities.Effect;
+﻿using Cauldron.Core.Entities.Effect;
 
 namespace Cauldron.Shared.MessagePackObjects
 {

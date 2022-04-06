@@ -12,32 +12,44 @@ namespace Cauldron.Core_Test
         [Fact]
         public void DeserializeJson()
         {
-            var testjson = File.ReadAllText("CardSet/read_test.json");
+            static void Assertion(string testJsonName)
+            {
+                var testjson = File.ReadAllText($"CardSet/{testJsonName}");
 
-            var obj = JsonConverter.Deserialize<CardSet>(testjson);
-            Assert.NotNull(obj);
+                var obj = JsonConverter.Deserialize<CardSet>(testjson);
+                Assert.NotNull(obj);
 
-            var actual = JsonConverter.Serialize(obj);
-            Assert.Equal(testjson, actual);
+                var actual = JsonConverter.Serialize(obj);
+                Assert.Equal(testjson, actual);
+            }
+
+            Assertion("read_test1.json");
+            Assertion("read_test2.json");
         }
 
         [Fact]
         public void SerializeJson()
         {
-            var sampleCardType = typeof(SampleCards);
-            var carddefs = sampleCardType
-                .GetProperties(BindingFlags.Static | BindingFlags.Public)
-                .Where(x => x.PropertyType == typeof(CardDef))
-                .Select(x => x.GetValue(sampleCardType, null) as CardDef)
-                .ToArray();
+            static void Assertion<T>(string name, string testJsonName)
+            {
+                var sampleCardType = typeof(T);
+                var carddefs = sampleCardType
+                    .GetProperties(BindingFlags.Static | BindingFlags.Public)
+                    .Where(x => x.PropertyType == typeof(CardDef))
+                    .Select(x => x.GetValue(sampleCardType, null) as CardDef)
+                    .ToArray();
 
-            var test = new CardSet("Sample", carddefs);
+                var test = new CardSet(name, carddefs);
 
-            var actual = JsonConverter.Serialize(test);
-            File.WriteAllText("write_test.json", actual);
-            var expected = File.ReadAllText("CardSet/read_test.json");
+                var actual = JsonConverter.Serialize(test);
+                File.WriteAllText($"{sampleCardType.Name}.json", actual);
+                var expected = File.ReadAllText($"CardSet/{testJsonName}");
 
-            Assert.Equal(expected, actual);
+                Assert.Equal(expected, actual);
+            }
+
+            Assertion<SampleCards1>(SampleCards1.CardsetName, "read_test1.json");
+            Assertion<SampleCards2>(SampleCards2.CardsetName, "read_test2.json");
         }
     }
 }
