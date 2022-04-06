@@ -394,7 +394,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        "あなたが魔法カードをプレイしたとき、あなたの場に「騎兵ゴブリン」1枚を追加する。",
+                        $"あなたが魔法カードをプレイしたとき、あなたの場に「{WarGoblin.Name}」1枚を追加する。",
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
