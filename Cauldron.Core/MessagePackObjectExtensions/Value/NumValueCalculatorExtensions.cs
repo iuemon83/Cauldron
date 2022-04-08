@@ -1,5 +1,4 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects.Value
 {
@@ -8,6 +7,18 @@ namespace Cauldron.Shared.MessagePackObjects.Value
         public static async ValueTask<int> Calculate(this NumValueCalculator _this,
             Card effectOwnerCard, EffectEventArgs effectEventArgs)
         {
+            if (_this.EventContext != NumValueCalculator.EventContextValue.None)
+            {
+                switch (_this.EventContext)
+                {
+                    case NumValueCalculator.EventContextValue.DamageValue:
+                        return effectEventArgs.DamageContext?.Value ?? 0;
+
+                    default:
+                        return 0;
+                }
+            }
+
             if (_this.Random != null)
             {
                 return _this.Random.Calculate();

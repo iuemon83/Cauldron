@@ -314,7 +314,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards2.GoblinFollower;
             testCardDef.Cost = 0;
 
-            var notGoblinCreatureDef = SampleCards2.GoblinCaptureJar;
+            var notGoblinCreatureDef = SampleCards1.Artifact(0, "ゴブリンアーティファクト");
             notGoblinCreatureDef.Cost = 0;
 
             var c = await TestUtil.InitTest(
@@ -1122,9 +1122,9 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task RiderGoblin()
         {
-            var testCardDef = SampleCards2.RiderGoblin;
+            var testCardDef = SampleCards2.MagicRider;
             testCardDef.Cost = 0;
-            var tokenDef = SampleCards2.WarGoblin;
+            var tokenDef = SampleCards2.MagicSoldier;
             var sorceryDef = SampleCards1.RandomDamage;
             sorceryDef.Cost = 0;
 
@@ -1487,10 +1487,10 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task FirstAttack()
         {
-            var testCardDef1 = SampleCards2.FirstAttack;
+            var testCardDef1 = SampleCards2.FirstSpell;
             testCardDef1.Cost = 0;
 
-            var testCardDef2 = SampleCards2.SecondAttack;
+            var testCardDef2 = SampleCards2.SecondSpell;
 
             var creatureDef = SampleCards1.Creature(0, "t", 1, 1);
 
@@ -1727,49 +1727,6 @@ namespace Cauldron.Core_Test
 
                 // 場に3体いるので3ダメージ
                 Assert.Equal(goblin11.BaseToughness - 3, goblin11.Toughness);
-            });
-        }
-
-        [Fact]
-        public async Task GoblinCaptureJar()
-        {
-            var goblinDef = SampleCards2.Goblin;
-            goblinDef.Cost = 0;
-            var notGoblinDef = SampleCards1.Vanilla;
-            notGoblinDef.Name = "スライム";
-            goblinDef.Cost = 0;
-            var testCardDef = SampleCards2.GoblinCaptureJar;
-            testCardDef.Cost = 0;
-
-            var c = await TestUtil.InitTest(new[] { goblinDef, notGoblinDef, testCardDef });
-
-            // 先攻
-            var (goblin1, notGoblin1) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                var goblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                var notGoblin1 = await TestUtil.NewCardAndPlayFromHand(g, pId, notGoblinDef.Id);
-
-                return (goblin1, notGoblin1);
-            });
-
-            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
-            {
-                var goblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
-                var notGoblin2 = await TestUtil.NewCardAndPlayFromHand(g, pId, notGoblinDef.Id);
-
-                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
-
-                // 自軍も敵軍もゴブリンは封印＋パワー1になる
-                Assert.Contains(CreatureAbility.Sealed, goblin1.Abilities);
-                Assert.Equal(1, goblin1.Power);
-                Assert.Contains(CreatureAbility.Sealed, goblin2.Abilities);
-                Assert.Equal(1, goblin2.Power);
-
-                // ゴブリン以外はなにもならない
-                Assert.DoesNotContain(CreatureAbility.Sealed, notGoblin1.Abilities);
-                Assert.Equal(notGoblin1.BasePower, notGoblin1.Power);
-                Assert.DoesNotContain(CreatureAbility.Sealed, notGoblin2.Abilities);
-                Assert.Equal(notGoblin2.BasePower, notGoblin2.Power);
             });
         }
 
@@ -3773,6 +3730,70 @@ namespace Cauldron.Core_Test
                 Assert.Equal(ZoneName.Cemetery, testCard.Zone.ZoneName);
                 // 1体追加されないので場には1体だけ
                 Assert.Equal(1, c.Player1.Field.Count);
+            });
+        }
+
+        [Fact]
+        public async Task MagicBarrier()
+        {
+            var testCardDef = SampleCards2.MagicBarrier;
+            testCardDef.Cost = 0;
+
+            var creatureDef = SampleCards1.Creature(0, "z", 3, 3);
+            var damageSpellDef = SampleCards1.SelectDamage;
+            damageSpellDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, creatureDef, damageSpellDef }, this.output
+                );
+
+            // 先攻
+            var testCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // プレイしたときカウンターが乗る
+                Assert.Equal(5, testCard.CountersByName[":魔導"]);
+
+                return testCard;
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                // クリーチャーに攻撃されたとき
+                var creature = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
+
+                var beforeHp = c.Player1.CurrentHp;
+
+                await g.AttackToPlayer(pId, creature.Id, c.Player1.Id);
+
+                // 攻撃されたがダメージは0になる
+                Assert.Equal(beforeHp, c.Player1.CurrentHp);
+                // カウンターがその分減る
+                Assert.Equal(2, testCard.CountersByName[":魔導"]);
+
+                // 攻撃以外のダメージを受けたとき
+                c.TestAnswer.ChoicePlayerIdList = new[] { c.Player1.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, damageSpellDef.Id);
+
+                // 攻撃されたがダメージは0になる
+                Assert.Equal(beforeHp, c.Player1.CurrentHp);
+                // カウンターがその分減る
+                Assert.Equal(1, testCard.CountersByName[":魔導"]);
+
+                // カウンターが0になると破壊される
+                // 超過ダメージはうける
+                var creature2 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureDef.Id);
+
+                await g.AttackToPlayer(pId, creature2.Id, c.Player1.Id);
+
+                // 超過ダメージはうける
+                Assert.Equal(beforeHp - 2, c.Player1.CurrentHp);
+                // カウンターがその分減る
+                Assert.False(testCard.CountersByName.ContainsKey(":魔導"));
+                // カウンターが0になるので破壊される
+                Assert.Equal(ZoneName.Cemetery, testCard.Zone.ZoneName);
             });
         }
     }
