@@ -19,16 +19,6 @@ namespace Cauldron.Web.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    builder =>
-                    {
-                        builder.WithOrigins("http://localhost:3000")
-                            .SetIsOriginAllowedToAllowWildcardSubdomains();
-                    });
-            });
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -44,6 +34,11 @@ namespace Cauldron.Web.Server
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cauldron.Web.Server v1"));
+
+                app.UseCors(builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
             }
 
             app.UseHttpsRedirection();
