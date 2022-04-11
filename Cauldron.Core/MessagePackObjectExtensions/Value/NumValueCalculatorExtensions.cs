@@ -9,14 +9,12 @@ namespace Cauldron.Shared.MessagePackObjects.Value
         {
             if (_this.EventContext != NumValueCalculator.EventContextValue.None)
             {
-                switch (_this.EventContext)
+                return _this.EventContext switch
                 {
-                    case NumValueCalculator.EventContextValue.DamageValue:
-                        return effectEventArgs.DamageContext?.Value ?? 0;
-
-                    default:
-                        return 0;
-                }
+                    NumValueCalculator.EventContextValue.DamageValue
+                        => effectEventArgs.DamageContext?.Value ?? 0,
+                    _ => 0,
+                };
             }
 
             if (_this.Random != null)

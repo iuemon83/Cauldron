@@ -1,5 +1,6 @@
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,13 +23,27 @@ public class CardDefDetailController : MonoBehaviour
     private TextMeshProUGUI powerText = default;
     [SerializeField]
     private TextMeshProUGUI toughnessText = default;
+    [SerializeField]
+    private TextMeshProUGUI otherText = default;
 
     protected CardDef source;
+    private bool requireUpdate;
+
+    private void Start()
+    {
+        this.cardNameText.text = "";
+        this.effectText.text = "";
+        this.costText.text = "";
+        this.otherText.text = "";
+
+        this.powerSpace.gameObject.SetActive(false);
+        this.toughnessSpace.gameObject.SetActive(false);
+    }
 
     // Update is called once per frame
     void Update()
     {
-        if (this.source == null)
+        if (this.source == null || !this.requireUpdate)
         {
             return;
         }
@@ -36,6 +51,7 @@ public class CardDefDetailController : MonoBehaviour
         this.cardNameText.text = this.source.Name;
         this.effectText.text = this.source.EffectDescription;
         this.costText.text = this.source.Cost.ToString();
+        this.otherText.text = this.OtherText(this.source);
 
         switch (this.source.Type)
         {
@@ -53,8 +69,34 @@ public class CardDefDetailController : MonoBehaviour
         }
     }
 
+    private string OtherText(CardDef cardDef)
+    {
+        var annnotationsText = cardDef.Annotations.Count == 0
+            ? "Ç»Çµ"
+            : string.Join(",", cardDef.Annotations);
+
+        var abilitiesText = cardDef.Abilities.Count == 0
+            ? "Ç»Çµ"
+            : string.Join(",", cardDef.Abilities);
+
+        var result =
+$@"{cardDef.Type.ToString()}
+{annnotationsText}
+{abilitiesText}";
+
+        if (cardDef.Type == CardType.Creature)
+        {
+            result += Environment.NewLine +
+$@"çUåÇâÒêî | {cardDef.NumAttacksLimitInTurn}
+çUåÇâ¬î\Ç‹Ç≈ÇÃÉ^Å[Éì | {cardDef.NumTurnsToCanAttack}";
+        }
+
+        return result;
+    }
+
     public void SetCard(CardDef cardDef)
     {
         this.source = cardDef;
+        this.requireUpdate = true;
     }
 }
