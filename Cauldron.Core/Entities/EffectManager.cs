@@ -140,7 +140,7 @@ namespace Cauldron.Core.Entities
                 if (done)
                 {
                     newEffectEventArgs = args;
-                    this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {playedCard.Name}");
+                    this.logger.LogInformation("効果: {GameEvent} {Name}", effectEventArgs.GameEvent, playedCard.Name);
 
                     await effectEventArgs.GameMaster.DestroyDeadCards();
                 }
@@ -171,7 +171,7 @@ namespace Cauldron.Core.Entities
                 if (done)
                 {
                     newEffectEventArgs = args;
-                    this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {owner.Name}");
+                    this.logger.LogInformation("効果: {GameEvent} {Name}", effectEventArgs.GameEvent, owner.Name);
 
                     await effectEventArgs.GameMaster.DestroyDeadCards();
                 }
@@ -188,7 +188,7 @@ namespace Cauldron.Core.Entities
                     if (done)
                     {
                         newEffectEventArgs = args;
-                        this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {card.Name}");
+                        this.logger.LogInformation("効果: {GameEvent} {Name}", effectEventArgs.GameEvent, card.Name);
 
                         await effectEventArgs.GameMaster.DestroyDeadCards();
                     }
@@ -208,7 +208,7 @@ namespace Cauldron.Core.Entities
                         if (done)
                         {
                             newEffectEventArgs = args;
-                            this.logger.LogInformation($"効果: {effectEventArgs.GameEvent} {card.Name}");
+                            this.logger.LogInformation("効果: {GameEvent} {Name}", effectEventArgs.GameEvent, card.Name);
 
                             await effectEventArgs.GameMaster.DestroyDeadCards();
                         }

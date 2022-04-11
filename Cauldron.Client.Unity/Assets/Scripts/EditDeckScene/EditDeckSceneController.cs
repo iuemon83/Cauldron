@@ -173,11 +173,16 @@ public class EditDeckSceneController : MonoBehaviour
             return;
         }
 
+        var currentNumCards = this.deckListByDefId.TryGetValue(cardDef.Id, out var deckListNodeController)
+            ? deckListNodeController.CurrentDeckCount
+            : 0;
+
         var node = Instantiate(this.listNodePrefab, this.cardPoolListContent.transform);
         var controller = node.GetComponent<EditDeckScene_ListNodeController>();
         controller.Init(
             cardDef,
             limit,
+            currentNumCards,
             () => this.AddToDeck(cardDef),
             () => this.RemoveFromDeck(cardDef.Id),
             this.cardDefDetailController.SetCard
@@ -219,6 +224,7 @@ public class EditDeckSceneController : MonoBehaviour
             deckListNodeController.Init(
                 cardDef,
                 limit,
+                0,
                 () => this.AddToDeck(cardDef),
                 () => this.RemoveFromDeck(cardDef.Id),
                 this.cardDefDetailController.SetCard

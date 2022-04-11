@@ -30,7 +30,8 @@ public class EditDeckScene_ListNodeController : MonoBehaviour, IPointerEnterHand
 
     public CardDef Source { get; set; }
 
-    public void Init(CardDef source, int limit, Action AddToDeckAction, Action RemoveFromDeckAction, Action<CardDef> ShowDetailAction)
+    public void Init(CardDef source, int limit, int currentNum,
+        Action AddToDeckAction, Action RemoveFromDeckAction, Action<CardDef> ShowDetailAction)
     {
         this.Source = source;
         this.AddToDeckAction = AddToDeckAction;
@@ -41,7 +42,7 @@ public class EditDeckScene_ListNodeController : MonoBehaviour, IPointerEnterHand
         this.cardStatsText.text = this.Source.Type == CardType.Creature
             ? $"{this.Source.Cost}/{this.Source.Power}/{this.Source.Toughness}"
             : $"{this.Source.Cost}/-/-";
-        this.currentDeckCountText.text = "0";
+        this.currentDeckCountText.text = currentNum.ToString();
         this.limitDeckCountText.text = limit.ToString();
     }
 
