@@ -28,7 +28,7 @@ namespace Cauldron.Core_Test
                                         ZoneCondition: new(new(new[]{ ZonePrettyName.YouField }))
                                     )))),
                             While: new(new(EndTurn: new(
-                                OrPlayerCondition: new[]
+                                OrPlayerConditions: new[]
                                 {
                                     new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })),
@@ -96,12 +96,12 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new(new(StartTurn: new(
-                                OrPlayerCondition: new[]
+                                OrPlayerConditions: new[]
                                 {
                                     new PlayerCondition(PlayerCondition.ContextValue.You)
                                 }))),
                             While: new(new(StartTurn: new(
-                                OrPlayerCondition: new[]
+                                OrPlayerConditions: new[]
                                 {
                                     new PlayerCondition(PlayerCondition.ContextValue.You)
                                 })),
@@ -160,12 +160,12 @@ namespace Cauldron.Core_Test
                             ByNotPlay: new(
                                 ZonePrettyName.YouField,
                                 new(new(EndTurn: new(
-                                    OrPlayerCondition: new[]
+                                    OrPlayerConditions: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     }))),
                                 While: new(new(EndTurn: new(
-                                    OrPlayerCondition: new[]
+                                    OrPlayerConditions: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })),
@@ -225,12 +225,12 @@ namespace Cauldron.Core_Test
                             ByNotPlay: new(
                                 ZonePrettyName.YouField,
                                 new(new(StartTurn: new(
-                                    OrPlayerCondition: new[]
+                                    OrPlayerConditions: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     }))),
                                 While: new(new(StartTurn: new(
-                                    OrPlayerCondition: new[]
+                                    OrPlayerConditions: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })), 2, 1)

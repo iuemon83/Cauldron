@@ -200,7 +200,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             new(new(Destroy: new(
-                                OrCardCondition: new[]
+                                OrCardConditions: new[]
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 })))
@@ -283,7 +283,7 @@ namespace Cauldron.Core_Test
                             ByNotPlay: new(
                                 ZonePrettyName.YouField,
                                 new(new(Destroy: new(
-                                    OrCardCondition: new[]
+                                    OrCardConditions: new[]
                                     {
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     })))
@@ -359,7 +359,7 @@ namespace Cauldron.Core_Test
                             ByNotPlay: new(
                                 ZonePrettyName.YouField,
                                 new(new(Destroy: new(
-                                    OrCardCondition: new[]
+                                    OrCardConditions: new[]
                                     {
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     })))
@@ -436,7 +436,7 @@ namespace Cauldron.Core_Test
                             ByNotPlay: new(
                                 ZonePrettyName.YouField,
                                 new(new(StartTurn: new(
-                                    OrPlayerCondition: new[]
+                                    OrPlayerConditions: new[]
                                     {
                                         new PlayerCondition()
                                     })))

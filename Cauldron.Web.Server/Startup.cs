@@ -40,12 +40,15 @@ namespace Cauldron.Web.Server
                     .AllowAnyHeader()
                     .AllowAnyMethod());
             }
+            else
+            {
+                app.UseCors(builder => builder
+                    .WithOrigins("https://iuemon83.github.io"));
+            }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            app.UseCors();
 
             app.UseAuthorization();
 

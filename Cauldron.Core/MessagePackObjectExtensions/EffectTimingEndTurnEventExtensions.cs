@@ -12,12 +12,12 @@ namespace Cauldron.Shared.MessagePackObjects
                 return false;
             }
 
-            if (_this.OrPlayerCondition.Length == 0)
+            if (_this.OrPlayerConditions.Length == 0)
             {
                 return true;
             }
 
-            foreach (var cond in _this.OrPlayerCondition)
+            foreach (var cond in _this.OrPlayerConditions)
             {
                 var matched = cond.IsMatch(ownerCard, args, args.SourcePlayer);
                 if (matched)

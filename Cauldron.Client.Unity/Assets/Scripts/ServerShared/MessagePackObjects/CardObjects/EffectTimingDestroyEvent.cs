@@ -5,11 +5,11 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTimingDestroyEvent
     {
-        public CardCondition[] OrCardCondition { get; }
+        public CardCondition[] OrCardConditions { get; }
 
-        public EffectTimingDestroyEvent(CardCondition[] OrCardCondition)
+        public EffectTimingDestroyEvent(CardCondition[] OrCardConditions)
         {
-            this.OrCardCondition = OrCardCondition;
+            this.OrCardConditions = OrCardConditions;
         }
     }
 }

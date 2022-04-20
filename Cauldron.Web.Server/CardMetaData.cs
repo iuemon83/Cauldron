@@ -43,16 +43,47 @@ namespace Cauldron.Web.Server
         public MetaDataElm[] ChoiceHowList { get; } = Convert<Choice.HowValue>();
         public MetaDataElm[] ChoiceSourceHowList { get; } = Convert<ChoiceSource.HowValue>();
         public MetaDataElm[] NumConditionCompares { get; } = Convert<NumCompare.CompareValue>();
-        public MetaDataElm[] NumValueCalculatorForCardValueTypes { get; } = Convert<NumValueCalculatorForCard.TypeValue>();
+        public MetaDataElm[] NumValueCalculatorEventContexts { get; } = Convert<NumValueCalculator.EventContextValue>();
+        public MetaDataElm[] NumValueCalculatorForCardTypes { get; } = Convert<NumValueCalculatorForCard.TypeValue>();
+        public MetaDataElm[] NumValueCalculatorForPlayerTypes { get; } = Convert<NumValueCalculatorForPlayer.TypeValue>();
         public MetaDataElm[] NumValueModifierOperators { get; } = Convert<NumValueModifier.OperatorValue>();
         public MetaDataElm[] TextConditionCompares { get; } = Convert<TextCompare.CompareValue>();
         public MetaDataElm[] TextValueCalculatorValueTypes { get; } = Convert<TextValueCalculator.TypeValue>();
         public MetaDataElm[] ZoneNames { get; } = Convert<ZonePrettyName>();
-        public MetaDataElm[] CardConditionContexts { get; } = Convert<CardCondition.ContextConditionValue>();
+        public MetaDataElm[] OutZoneNames { get; } = Convert<OutZonePrettyName>();
+        public MetaDataElm[] CardConditionContexts { get; }
+            = Convert<CardCondition.ContextConditionValue>();
+        public MetaDataElm[] CardConditionDamageEventContextConditions { get; }
+            = Convert<CardCondition.DamageEventContextConditionValue>();
+        public MetaDataElm[] CardConditionBattleEventContextConditions { get; }
+            = Convert<CardCondition.BattleEventContextConditionValue>();
         public MetaDataElm[] OwnerConditionValues { get; } = Convert<CardCondition.OwnerConditionValue>();
         public MetaDataElm[] PositionTypeValues { get; } = Convert<InsertCardPosition.PositionTypeValue>();
         public MetaDataElm[] PlayerConditionContexts { get; } = Convert<PlayerCondition.ContextValue>();
-        public MetaDataElm[] PlayerConditionTypes { get; } = Convert<PlayerCondition.ContextValue>();
         public MetaDataElm[] CardSetConditionTypes { get; } = Convert<CardSetCondition.TypeValue>();
+        public MetaDataElm[] ActionContextCountersOfModifyCounterTypes { get; }
+            = Convert<ActionContextCountersOfModifyCounter.TypeValue>();
+        public MetaDataElm[] ActionContextCardsOfAddCardTypes { get; }
+            = Convert<ActionContextCardsOfAddCard.TypeValue>();
+        public MetaDataElm[] ActionContextCardsOfAddEffectTypes { get; }
+            = Convert<ActionContextCardsOfAddEffect.TypeValue>();
+        public MetaDataElm[] ActionContextCardsOfDamageTypes { get; }
+            = Convert<ActionContextCardsOfDamage.TypeValue>();
+        public MetaDataElm[] ActionContextCardsOfDestroyCardTypes { get; }
+            = Convert<ActionContextCardsOfDestroyCard.TypeValue>();
+        public MetaDataElm[] ActionContextCardsOfDrawCardTypes { get; }
+            = Convert<ActionContextCardsOfDrawCard.TypeValue>();
+        public MetaDataElm[] ActionContextCardsOfExcludeCardTypes { get; }
+            = Convert<ActionContextCardsOfExcludeCard.TypeValue>();
+        public MetaDataElm[] ActionContextCardsOfModifyCardTypes { get; }
+            = Convert<ActionContextCardsOfModifyCard.TypeValue>();
+        public MetaDataElm[] ActionContextCardsOfModifyCounterTypes { get; }
+            = Convert<ActionContextCardsOfModifyCounter.TypeValue>();
+        public MetaDataElm[] ActionContextCardsOfMoveCardTypes { get; }
+            = Convert<ActionContextCardsOfMoveCard.TypeValue>();
+        public MetaDataElm[] CreatureAbilityModifierOperators { get; }
+            = Convert<CreatureAbilityModifier.OperatorValue>();
+        public MetaDataElm[] AnnotationsModifierOperators { get; }
+            = Convert<AnnotationsModifier.OperatorValue>();
     }
 }

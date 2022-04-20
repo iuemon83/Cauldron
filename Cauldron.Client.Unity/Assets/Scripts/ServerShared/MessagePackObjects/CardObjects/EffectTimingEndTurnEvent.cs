@@ -8,11 +8,11 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTimingEndTurnEvent
     {
-        public PlayerCondition[] OrPlayerCondition { get; }
+        public PlayerCondition[] OrPlayerConditions { get; }
 
-        public EffectTimingEndTurnEvent(PlayerCondition[]? OrPlayerCondition = null)
+        public EffectTimingEndTurnEvent(PlayerCondition[]? OrPlayerConditions = null)
         {
-            this.OrPlayerCondition = OrPlayerCondition ?? Array.Empty<PlayerCondition>();
+            this.OrPlayerConditions = OrPlayerConditions ?? Array.Empty<PlayerCondition>();
         }
     }
 }

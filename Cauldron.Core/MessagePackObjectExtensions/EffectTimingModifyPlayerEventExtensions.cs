@@ -12,7 +12,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 return false;
             }
 
-            foreach (var cond in _this.OrPlayerCondition)
+            foreach (var cond in _this.OrPlayerConditions)
             {
                 var matched = cond.IsMatch(ownerCard, args, args.SourcePlayer);
                 if (matched)

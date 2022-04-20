@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -10,6 +11,7 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public enum TypeValue
         {
+            [DisplayText("破壊されたカード")]
             DestroyedCards
         }
 

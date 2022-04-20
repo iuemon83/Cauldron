@@ -910,12 +910,12 @@ namespace Cauldron.Core_Test
                                         new EffectConditionWrap(Reserve: new(
                                             new EffectWhen(new EffectTiming(
                                                 EndTurn: new(
-                                                    OrPlayerCondition: new[]
+                                                    OrPlayerConditions: new[]
                                                     {
                                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                                     }))),
                                             While: new(new EffectTiming(EndTurn: new(
-                                                OrPlayerCondition: new[]
+                                                OrPlayerConditions: new[]
                                                 {
                                                     new PlayerCondition(PlayerCondition.ContextValue.You)
                                                 }))
@@ -1161,7 +1161,7 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouCemetery,
                             new EffectWhen(new EffectTiming(
                                 Destroy: new(
-                                    OrCardCondition: new[]
+                                    OrCardConditions: new[]
                                     {
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     }))))),
@@ -1252,13 +1252,13 @@ namespace Cauldron.Core_Test
                                             Reserve: new(
                                                 When: new(new EffectTiming(
                                                     StartTurn: new(
-                                                        OrPlayerCondition: new[]
+                                                        OrPlayerConditions: new[]
                                                         {
                                                             new PlayerCondition(PlayerCondition.ContextValue.You),
                                                         }))),
                                                 While: new(new(
                                                     StartTurn: new(
-                                                        OrPlayerCondition: new[]
+                                                        OrPlayerConditions: new[]
                                                         {
                                                             new PlayerCondition(PlayerCondition.ContextValue.You),
                                                         })),
@@ -1296,7 +1296,7 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 StartTurn: new(
-                                    OrPlayerCondition: new[]
+                                    OrPlayerConditions: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     }))))),
@@ -1394,7 +1394,7 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 StartTurn: new(
-                                    OrPlayerCondition: new[]
+                                    OrPlayerConditions: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     }))))),
@@ -1464,7 +1464,7 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(
                                 EndTurn: new(
-                                    OrPlayerCondition: new[]
+                                    OrPlayerConditions: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     }))))),
@@ -1746,13 +1746,13 @@ namespace Cauldron.Core_Test
                                                         })))
                                         })
                                     ),
-                                ZonePrettyName.YouCemetery
+                                ZonePrettyName.OwnerCemetery
                                 )),
                             new EffectAction(ReserveEffect: new(
                                 new[]
                                 {
                                     new CardEffect(
-                                        "",
+                                        "相手のドローしたパワー4以上のクリーチャーを墓地へ移動する。",
                                         new EffectConditionWrap(Reserve: new(
                                             new EffectWhen(new EffectTiming(
                                                 MoveCard: new(
@@ -1766,7 +1766,7 @@ namespace Cauldron.Core_Test
                                                     ZonePrettyName.OpponentDeck,
                                                     ZonePrettyName.OpponentHand))),
                                             While: new(new EffectTiming(EndTurn: new(
-                                                OrPlayerCondition: new[]
+                                                OrPlayerConditions: new[]
                                                 {
                                                     new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                                                 })),
@@ -1781,7 +1781,7 @@ namespace Cauldron.Core_Test
                                                             new CardCondition(
                                                                 CardCondition.ContextConditionValue.EventSource)
                                                         })),
-                                                ZonePrettyName.YouCemetery
+                                                ZonePrettyName.OwnerCemetery
                                                 )
                                             )
                                         }
@@ -1886,7 +1886,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(
                             ByNotPlay: new(ZonePrettyName.YouField,
                                 new(new(EndTurn: new(
-                                    OrPlayerCondition: new[]
+                                    OrPlayerConditions: new[]
                                     {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     }))),
@@ -2005,7 +2005,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(StartTurn: new(
-                                OrPlayerCondition: new[]
+                                OrPlayerConditions: new[]
                                 {
                                     new PlayerCondition(PlayerCondition.ContextValue.You)
                                 }))))),
@@ -2070,7 +2070,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(StartTurn: new(
-                                OrPlayerCondition: new[]
+                                OrPlayerConditions: new[]
                                 {
                                     new PlayerCondition(PlayerCondition.ContextValue.You)
                                 }))))),
@@ -2232,7 +2232,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouCemetery,
                             new(new(Destroy: new (
-                                OrCardCondition: new[]
+                                OrCardConditions: new[]
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 })))
@@ -2379,7 +2379,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new (
                             ZonePrettyName.YouField,
                             new EffectWhen(new EffectTiming(EndTurn: new(
-                                OrPlayerCondition: new[]
+                                OrPlayerConditions: new[]
                                 {
                                     new PlayerCondition(PlayerCondition.ContextValue.You)
                                 }))))),
@@ -2522,7 +2522,7 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouCemetery,
                             new EffectWhen(new EffectTiming(
                                 Destroy: new(
-                                    OrCardCondition: new[]
+                                    OrCardConditions: new[]
                                     {
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     }))))),

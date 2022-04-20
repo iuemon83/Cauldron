@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects.Value
 {
@@ -7,8 +8,11 @@ namespace Cauldron.Shared.MessagePackObjects.Value
     {
         public enum OperatorValue
         {
+            [DisplayText("追加")]
             Add,
+            [DisplayText("削除")]
             Remove,
+            [DisplayText("全削除")]
             Clear
         }
 

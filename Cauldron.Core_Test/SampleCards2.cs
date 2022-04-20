@@ -407,7 +407,7 @@ namespace Cauldron.Core_Test
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     }),
                                 StartTurn: new (
-                                    OrPlayerCondition : new[] {
+                                    OrPlayerConditions : new[] {
                                         new PlayerCondition(PlayerCondition.ContextValue.You)
                                     })
                                 )))),
@@ -1966,7 +1966,7 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouCemetery,
                             When: new(new EffectTiming(Destroy: new(
-                                OrCardCondition: new[]
+                                OrCardConditions: new[]
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 })))

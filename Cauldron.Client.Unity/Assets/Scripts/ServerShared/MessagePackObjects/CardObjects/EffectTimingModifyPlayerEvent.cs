@@ -5,7 +5,7 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectTimingModifyPlayerEvent
     {
-        public PlayerCondition[] OrPlayerCondition { get; }
+        public PlayerCondition[] OrPlayerConditions { get; }
 
         public bool ModifyMaxHp { get; }
         public bool ModifyHp { get; }
@@ -13,14 +13,14 @@ namespace Cauldron.Shared.MessagePackObjects
         public bool ModifyMp { get; }
 
         public EffectTimingModifyPlayerEvent(
-            PlayerCondition[] OrPlayerCondition,
+            PlayerCondition[] OrPlayerConditions,
             bool ModifyMaxHp,
             bool ModifyHp,
             bool ModifyMaxMp,
             bool ModifyMp
             )
         {
-            this.OrPlayerCondition = OrPlayerCondition;
+            this.OrPlayerConditions = OrPlayerConditions;
             this.ModifyMaxHp = ModifyMaxHp;
             this.ModifyHp = ModifyHp;
             this.ModifyMaxMp = ModifyMaxMp;

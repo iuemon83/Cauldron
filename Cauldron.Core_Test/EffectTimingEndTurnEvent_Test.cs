@@ -41,7 +41,7 @@ namespace Cauldron.Core_Test
             var noYouCard = new Card(TestUtil.CardDef(""));
 
             var test = new EffectTimingEndTurnEvent(
-                OrPlayerCondition: new[]
+                OrPlayerConditions: new[]
                 {
                     new PlayerCondition(PlayerCondition.ContextValue.You)
                 });
@@ -84,7 +84,7 @@ namespace Cauldron.Core_Test
             var noYouCard = new Card(TestUtil.CardDef(""));
 
             var test = new EffectTimingEndTurnEvent(
-                OrPlayerCondition: new[]
+                OrPlayerConditions: new[]
                 {
                     new PlayerCondition(PlayerCondition.ContextValue.Opponent)
                 });
