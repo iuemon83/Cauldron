@@ -40,6 +40,8 @@ namespace Cauldron.Web.Server
             = Convert<EffectTimingDamageAfterEvent.TypeValue>();
         public MetaDataElm[] EffectTimingDamageBeforeDamageTypes { get; }
             = Convert<EffectTimingDamageBeforeEvent.TypeValue>();
+        public MetaDataElm[] EffectTimingModifyCounterOnCardEventOperators { get; }
+            = Convert<EffectTimingModifyCounterOnCardEvent.OperatorValue>();
         public MetaDataElm[] ChoiceHowList { get; } = Convert<Choice.HowValue>();
         public MetaDataElm[] ChoiceSourceHowList { get; } = Convert<ChoiceSource.HowValue>();
         public MetaDataElm[] NumConditionCompares { get; } = Convert<NumCompare.CompareValue>();
