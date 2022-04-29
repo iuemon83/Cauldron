@@ -62,7 +62,9 @@ namespace Cauldron.Shared.MessagePackObjects
                     ?? ValueTask.FromResult(true)))
                 && (await (_this.NameCondition?.IsMatch(effectOwnerCard, effectEventArgs, cardDefToMatch.Name)
                     ?? ValueTask.FromResult(true)))
-                && (_this.TypeCondition?.IsMatch(cardDefToMatch.Type) ?? true);
+                && (_this.TypeCondition?.IsMatch(cardDefToMatch.Type) ?? true)
+                && (_this.AnnotationCondition?.IsMatch(cardDefToMatch.Annotations) ?? true)
+                ;
         }
     }
 }

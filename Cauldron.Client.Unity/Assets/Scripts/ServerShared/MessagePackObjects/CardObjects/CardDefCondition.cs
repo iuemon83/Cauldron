@@ -15,6 +15,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public CardSetCondition? CardSetCondition { get; }
         public TextCompare? NameCondition { get; }
         public CardTypeCondition? TypeCondition { get; }
+        public CardAnnotationCondition? AnnotationCondition { get; }
 
         public CardDefCondition(
             OutZoneCondition OutZoneCondition,
@@ -23,7 +24,8 @@ namespace Cauldron.Shared.MessagePackObjects
             NumCompare? ToughnessCondition = default,
             CardSetCondition? CardSetCondition = default,
             TextCompare? NameCondition = default,
-            CardTypeCondition? TypeCondition = default
+            CardTypeCondition? TypeCondition = default,
+            CardAnnotationCondition? AnnotationCondition = default
             )
         {
             this.OutZoneCondition = OutZoneCondition;
@@ -33,6 +35,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.CardSetCondition = CardSetCondition;
             this.NameCondition = NameCondition;
             this.TypeCondition = TypeCondition;
+            this.AnnotationCondition = AnnotationCondition;
         }
     }
 }
