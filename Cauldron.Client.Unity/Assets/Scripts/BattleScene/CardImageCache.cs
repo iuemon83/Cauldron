@@ -6,6 +6,8 @@ class CardImageCache
 {
     private static readonly Dictionary<string, Sprite> cache = new Dictionary<string, Sprite>();
 
+    private static readonly string[] cardImageFileExtensions = new[] { "png", "jpg" };
+
     public static (bool, Sprite) GetOrInit(string cardName)
     {
         if (!cache.TryGetValue(cardName, out var sprite))
@@ -26,7 +28,21 @@ class CardImageCache
 
     private static Sprite InitCardImage(string cardName)
     {
-        var cardImageFilePath = Path.Combine(Config.CardImagesDirectoryPath, $"{cardName}.png");
+        foreach (var extension in cardImageFileExtensions)
+        {
+            var s = InitCardImage(cardName, extension);
+            if (s != null)
+            {
+                return s;
+            }
+        }
+
+        return null;
+    }
+
+    private static Sprite InitCardImage(string cardName, string extension)
+    {
+        var cardImageFilePath = Path.Combine(Config.CardImagesDirectoryPath, $"{cardName}.{extension}");
 
         if (!File.Exists(cardImageFilePath))
         {
