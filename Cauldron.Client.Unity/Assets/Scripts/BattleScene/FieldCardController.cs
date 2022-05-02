@@ -72,7 +72,10 @@ public class FieldCardController : CardController, IPointerClickHandler
             else
             {
                 // é©ï™ÇÃÉJÅ[Éh
-                BattleSceneController.Instance.ToggleAttackCard(this);
+                if (this.Card.OwnerId == BattleSceneController.Instance.YouId)
+                {
+                    BattleSceneController.Instance.ToggleAttackCard(this);
+                }
             }
         }
     }
