@@ -1,4 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 
 namespace Cauldron.Core.MessagePackObjectExtensions
@@ -12,7 +13,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             this._this = _this;
         }
 
-        public ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
+        public ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, CardEffectId effectId, EffectEventArgs args)
         {
             args.GameMaster.ReserveEffect(effectOwnerCard, _this.EffectsToReserve);
 

@@ -173,6 +173,27 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Init(cardDef);
         }
 
+        private void Init(CardDef cardDef)
+        {
+            this.Init(
+                this.Id,
+                cardDef.Id,
+                cardDef.Cost,
+                cardDef.IsToken,
+                cardDef.Type,
+                cardDef.CardSetName,
+                cardDef.Name,
+                cardDef.FlavorText,
+                cardDef.Annotations.ToList(),
+                cardDef.Power,
+                cardDef.Toughness,
+                cardDef.Abilities.ToList(),
+                cardDef.Effects.Select(x => x.CloneWithNewId()).ToList(),
+                cardDef.NumTurnsToCanAttack ?? default,
+                cardDef.NumAttacksLimitInTurn ?? default
+                );
+        }
+
         private void Init(
             CardId Id,
             CardDefId CardDefId,
@@ -208,27 +229,6 @@ namespace Cauldron.Shared.MessagePackObjects
             this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;
 
             this.Zone = Zone.Empty;
-        }
-
-        private void Init(CardDef cardDef)
-        {
-            this.Init(
-                this.Id,
-                cardDef.Id,
-                cardDef.Cost,
-                cardDef.IsToken,
-                cardDef.Type,
-                cardDef.CardSetName,
-                cardDef.Name,
-                cardDef.FlavorText,
-                cardDef.Annotations.ToList(),
-                cardDef.Power,
-                cardDef.Toughness,
-                cardDef.Abilities.ToList(),
-                cardDef.Effects.ToList(),
-                cardDef.NumTurnsToCanAttack ?? default,
-                cardDef.NumAttacksLimitInTurn ?? default
-                );
         }
 
         public void Reset()

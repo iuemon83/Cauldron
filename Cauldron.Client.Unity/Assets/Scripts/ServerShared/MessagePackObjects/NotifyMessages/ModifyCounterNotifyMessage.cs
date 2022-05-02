@@ -15,13 +15,15 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public Card? TargetCard { get; }
         public Card? EffectOwnerCard { get; }
+        public CardEffectId? EffectId { get; }
 
         public ModifyCounterNotifyMessage(
             string CounterName,
             int NumCounters,
             PlayerId TargetPlayerId = default,
             Card? TargetCard = default,
-            Card? EffectOwnerCard = default
+            Card? EffectOwnerCard = default,
+            CardEffectId? EffectId = default
             )
         {
             this.CounterName = CounterName;
@@ -29,6 +31,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.TargetPlayerId = TargetPlayerId;
             this.TargetCard = TargetCard;
             this.EffectOwnerCard = EffectOwnerCard;
+            this.EffectId = EffectId;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 
@@ -13,7 +14,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             this._this = _this;
         }
 
-        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, CardEffectId effectId, EffectEventArgs args)
         {
             // 対象のプレイヤー一覧
             // 順序はアクティブプレイヤー優先
@@ -33,7 +34,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
 
                 var numCards = await _this.NumCards.Calculate(effectOwnerCard, newArgs);
 
-                var (status, cards) = await args.GameMaster.Draw(p.Id, numCards, effectOwnerCard);
+                var (status, cards) = await args.GameMaster.Draw(p.Id, numCards, effectOwnerCard, effectId);
                 drawnCards.AddRange(cards);
             }
 

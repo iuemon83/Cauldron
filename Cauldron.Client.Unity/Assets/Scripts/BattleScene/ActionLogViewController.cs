@@ -1,3 +1,5 @@
+using Cauldron.Shared;
+using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,14 +20,24 @@ public class ActionLogViewController : MonoBehaviour
 
     private Transform actionLogListContent;
 
+    private CardEffectId previousEffectId = default;
+
     public void Start()
     {
         this.actionLogListContent = this.ActionLogList.transform.Find("Viewport").transform.Find("Content");
     }
 
-    public async UniTask AddLog(ActionLog actionLog, bool isChild)
+    public async UniTask AddLog(ActionLog actionLog, Card effectOwnerCard = default, CardEffectId? effectId = default)
     {
-        await this.AddListNode(actionLog, isChild);
+        if (effectOwnerCard?.Id != null
+            && effectId != default
+            && effectId != previousEffectId)
+        {
+            this.previousEffectId = effectId.Value;
+            await this.AddListNode(new ActionLog("”­“®", effectOwnerCard), false);
+        }
+
+        await this.AddListNode(actionLog, effectOwnerCard != default);
     }
 
     public void OnCloseButtonClick()

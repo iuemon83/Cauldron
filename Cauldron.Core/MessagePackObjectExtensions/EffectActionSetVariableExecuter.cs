@@ -1,4 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 
@@ -13,7 +14,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             this._this = _this;
         }
 
-        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, CardEffectId effectId, EffectEventArgs args)
         {
             if (_this.NumValue != null)
             {

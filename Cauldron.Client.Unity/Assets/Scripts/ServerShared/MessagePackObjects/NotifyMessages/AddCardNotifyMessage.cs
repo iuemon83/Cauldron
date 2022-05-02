@@ -11,16 +11,19 @@ namespace Cauldron.Shared.MessagePackObjects
         public Zone ToZone { get; }
         public int Index { get; }
         public Card? EffectOwnerCard { get; }
+        public CardEffectId? EffectId { get; }
 
         public AddCardNotifyMessage(
             CardId CardId, Zone ToZone, int Index,
-            Card? EffectOwnerCard = default
+            Card? EffectOwnerCard = default,
+            CardEffectId? EffectId = default
             )
         {
             this.CardId = CardId;
             this.ToZone = ToZone;
             this.Index = Index;
             this.EffectOwnerCard = EffectOwnerCard;
+            this.EffectId = EffectId;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 
@@ -13,7 +14,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             this._this = _this;
         }
 
-        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, CardEffectId effectId, EffectEventArgs args)
         {
             if (_this.NumCountersModifier == null)
             {
@@ -40,7 +41,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
 
                 var modifyNum = await _this.NumCountersModifier.Modify(effectOwnerCard, args, beforeNumCounters)
                     - beforeNumCounters;
-                await args.GameMaster.ModifyCounter(player.Id, _this.CounterName, modifyNum, effectOwnerCard);
+                await args.GameMaster.ModifyCounter(player.Id, _this.CounterName, modifyNum, effectOwnerCard, effectId);
 
                 totalNumAfterCounters += modifyNum;
             }
@@ -58,7 +59,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
 
                 var modifyNum = await _this.NumCountersModifier.Modify(effectOwnerCard, newArgs, beforeNumCounters)
                     - beforeNumCounters;
-                await args.GameMaster.ModifyCounter(card, _this.CounterName, modifyNum, effectOwnerCard);
+                await args.GameMaster.ModifyCounter(card, _this.CounterName, modifyNum, effectOwnerCard, effectId);
 
                 totalNumAfterCounters += modifyNum;
             }

@@ -1,4 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 
 namespace Cauldron.Core.MessagePackObjectExtensions
@@ -12,7 +13,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             this._this = _this;
         }
 
-        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs effectEventArgs)
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, CardEffectId effectId, EffectEventArgs effectEventArgs)
         {
             var choiceResult = await effectEventArgs.GameMaster
                 .Choice(effectOwnerCard, _this.Choice, effectEventArgs);
@@ -20,7 +21,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             var excludedCardList = new List<Card>();
             foreach (var cardToExclude in choiceResult.CardList)
             {
-                var excluded = await effectEventArgs.GameMaster.ExcludeCard(cardToExclude, effectOwnerCard);
+                var excluded = await effectEventArgs.GameMaster.ExcludeCard(cardToExclude, effectOwnerCard, effectId);
                 if (excluded)
                 {
                     excludedCardList.Add(cardToExclude);

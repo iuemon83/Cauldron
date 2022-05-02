@@ -1,4 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 
@@ -13,7 +14,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             this._this = _this;
         }
 
-        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs effectEventArgs)
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, CardEffectId effectId, EffectEventArgs effectEventArgs)
         {
             var (exists, owner) = effectEventArgs.GameMaster.playerRepository.TryGet(effectOwnerCard.OwnerId);
             if (!exists || owner == null)
@@ -52,7 +53,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             {
                 foreach (var cd in Enumerable.Repeat(cardDef, _this.NumOfAddCards))
                 {
-                    var card = await effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, _this.InsertCardPosition, effectOwnerCard);
+                    var card = await effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, _this.InsertCardPosition, effectOwnerCard, effectId);
                     if (card == null)
                     {
                         // カードの生成に失敗

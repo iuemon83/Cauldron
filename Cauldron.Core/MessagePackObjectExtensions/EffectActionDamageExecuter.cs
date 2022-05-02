@@ -1,4 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 
@@ -13,7 +14,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             this._this = _this;
         }
 
-        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, CardEffectId effectId, EffectEventArgs args)
         {
             var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.Choice, args);
 
@@ -36,7 +37,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                     GuardPlayer: guardPlayer
                     );
 
-                await args.GameMaster.DamagePlayer(damageContext, effectOwnerCard);
+                await args.GameMaster.DamagePlayer(damageContext, effectOwnerCard, effectId);
 
                 done = true;
             }
@@ -55,7 +56,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                     Value: damageValue,
                     GuardCard: card
                     );
-                await args.GameMaster.DamageCreature(damageContext, effectOwnerCard);
+                await args.GameMaster.DamageCreature(damageContext, effectOwnerCard, effectId);
 
                 done = true;
             }

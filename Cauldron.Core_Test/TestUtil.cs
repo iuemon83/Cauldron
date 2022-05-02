@@ -175,7 +175,7 @@ namespace Cauldron.Core_Test
 
         public static async ValueTask<Card> NewCardAndPlayFromHand(GameMaster testGameMaster, PlayerId playerId, CardDefId cardDefId)
         {
-            var newCard = await testGameMaster.GenerateNewCard(cardDefId, new Zone(playerId, ZoneName.Hand), null, default);
+            var newCard = await testGameMaster.GenerateNewCard(cardDefId, new Zone(playerId, ZoneName.Hand), null, default, default);
             if (newCard == null)
             {
                 throw new Exception("カードの生成に失敗");

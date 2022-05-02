@@ -35,7 +35,7 @@ namespace Cauldron.Shared.MessagePackObjects
             var newArgs = args;
             foreach (var action in _this.Actions)
             {
-                var (done2, newArgs2) = await action.Execute(effectOwnerCard, newArgs);
+                var (done2, newArgs2) = await action.Execute(effectOwnerCard, _this.Id, newArgs);
 
                 done = done || done2;
                 newArgs = newArgs2;
@@ -62,7 +62,7 @@ namespace Cauldron.Shared.MessagePackObjects
             var newArgs = args;
             foreach (var action in _this.Actions)
             {
-                var (done2, newArgs2) = await action.Execute(effectOwnerCard, newArgs);
+                var (done2, newArgs2) = await action.Execute(effectOwnerCard, _this.Id, newArgs);
 
                 done = done || done2;
                 newArgs = newArgs2;
@@ -85,7 +85,7 @@ namespace Cauldron.Shared.MessagePackObjects
             var newArgs = args;
             foreach (var action in _this.Actions)
             {
-                var (done2, newArgs2) = await action.Execute(effectOwnerCard, newArgs);
+                var (done2, newArgs2) = await action.Execute(effectOwnerCard, _this.Id, newArgs);
 
                 done = done || done2;
                 newArgs = newArgs2;

@@ -10,16 +10,19 @@ namespace Cauldron.Shared.MessagePackObjects
         public Card Card { get; }
         public Zone FromZone { get; }
         public Card? EffectOwnerCard { get; }
+        public CardEffectId? EffectId { get; }
 
         public ExcludeCardNotifyMessage(
             Card Card,
             Zone FromZone,
-            Card? EffectOwnerCard = default
+            Card? EffectOwnerCard = default,
+            CardEffectId? EffectId = default
             )
         {
             this.Card = Card;
             this.FromZone = FromZone;
             this.EffectOwnerCard = EffectOwnerCard;
+            this.EffectId = EffectId;
         }
     }
 }

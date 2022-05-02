@@ -1,8 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
 using Cauldron.Core.MessagePackObjectExtensions;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -14,7 +11,7 @@ namespace Cauldron.Shared.MessagePackObjects
         /// <param name="effectEventArgs"></param>
         /// <returns></returns>
         public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectAction _this,
-            Card ownerCard, EffectEventArgs effectEventArgs)
+            Card ownerCard, CardEffectId effectId, EffectEventArgs effectEventArgs)
         {
             //TODO この順番もけっこう重要
             var actions = new IEffectActionExecuter?[]
@@ -41,7 +38,7 @@ namespace Cauldron.Shared.MessagePackObjects
             var done = false;
             foreach (var action in actions)
             {
-                var (done2, result2) = await action.Execute(ownerCard, result);
+                var (done2, result2) = await action.Execute(ownerCard, effectId, result);
 
                 done = done || done2;
                 result = result2;

@@ -8,6 +8,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public CardId AttackCardId { get; }
         public PlayerId GuardPlayerId { get; }
         public CardId GuardCardId { get; }
+        public CardEffectId? EffectId { get; }
 
         public BattleNotifyMessage(
             CardId AttackCardId,
@@ -17,6 +18,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.AttackCardId = AttackCardId;
             this.GuardPlayerId = GuardPlayerId;
             this.GuardCardId = GuardCardId;
+            this.EffectId = EffectId;
         }
     }
 }

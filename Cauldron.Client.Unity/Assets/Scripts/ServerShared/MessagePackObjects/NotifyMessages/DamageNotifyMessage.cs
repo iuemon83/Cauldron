@@ -30,6 +30,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public CardId GuardCardId { get; }
         public int Damage { get; }
         public Card? EffectOwnerCard { get; }
+        public CardEffectId? EffectId { get; }
 
         public DamageNotifyMessage(
             ReasonValue Reason,
@@ -37,7 +38,8 @@ namespace Cauldron.Shared.MessagePackObjects
             CardId SourceCardId = default,
             PlayerId GuardPlayerId = default,
             CardId GuardCardId = default,
-            Card? EffectOwnerCard = default
+            Card? EffectOwnerCard = default,
+            CardEffectId? EffectId = default
             )
         {
             this.Reason = Reason;
@@ -46,6 +48,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.GuardCardId = GuardCardId;
             this.Damage = Damage;
             this.EffectOwnerCard = EffectOwnerCard;
+            this.EffectId = EffectId;
         }
     }
 }

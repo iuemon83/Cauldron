@@ -1,4 +1,5 @@
 ﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 
 namespace Cauldron.Core.MessagePackObjectExtensions
@@ -12,7 +13,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
             this._this = _this;
         }
 
-        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, EffectEventArgs args)
+        public async ValueTask<(bool, EffectEventArgs)> Execute(Card effectOwnerCard, CardEffectId effectId, EffectEventArgs args)
         {
             var choiceResult = await args.GameMaster.Choice(effectOwnerCard, _this.CardsChoice, args);
             var targets = choiceResult.CardList;
@@ -28,7 +29,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                 if (success)
                 {
                     var moveContext = new MoveCardContext(card.Zone, toZone, _this.InsertCardPosition);
-                    await args.GameMaster.MoveCard(card.Id, moveContext, effectOwnerCard);
+                    await args.GameMaster.MoveCard(card.Id, moveContext, effectOwnerCard, effectId);
                     done = true;
                 }
             }
