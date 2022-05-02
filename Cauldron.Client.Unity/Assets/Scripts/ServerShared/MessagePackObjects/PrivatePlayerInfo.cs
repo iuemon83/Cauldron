@@ -7,11 +7,17 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public PublicPlayerInfo PublicPlayerInfo { get; }
         public Card[] Hands { get; }
+        public CardId[] PlayableCards { get; }
 
-        public PrivatePlayerInfo(PublicPlayerInfo PublicPlayerInfo, Card[] Hands)
+        public PrivatePlayerInfo(
+            PublicPlayerInfo PublicPlayerInfo,
+            Card[] Hands,
+            CardId[] PlayableCards
+            )
         {
             this.PublicPlayerInfo = PublicPlayerInfo;
             this.Hands = Hands;
+            this.PlayableCards = PlayableCards;
         }
     }
 }

@@ -11,6 +11,8 @@ public class HandCardController : CardController, IPointerClickHandler
     [SerializeField]
     private Image destroyIcon = default;
     [SerializeField]
+    private Image outlineImage = default;
+    [SerializeField]
     private Image backgroundImage = default;
     [SerializeField]
     private Button playButton = default;
@@ -26,7 +28,21 @@ public class HandCardController : CardController, IPointerClickHandler
         this.setPlayTargetHand = setPlayTargetHand;
     }
 
-    public  void OnPointerClick(PointerEventData eventData)
+    protected override void Update()
+    {
+        base.Update();
+
+        this.UpdateOutlineColorByTime();
+    }
+
+    public void UpdateOutlineColorByTime()
+    {
+        var color = this.outlineImage.color;
+        color.a = Mathf.Sin(2 * Mathf.PI * 0.5f * Time.time) * 0.5f + 0.5f;
+        this.outlineImage.color = color;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
     {
         this.displaySmallCardDetail?.Invoke(this.Card);
         this.setPlayTargetHand?.Invoke(this);
@@ -63,5 +79,10 @@ public class HandCardController : CardController, IPointerClickHandler
     public async void OnPlayButtonClick()
     {
         await BattleSceneController.Instance.PlayFromHand(this);
+    }
+
+    public void SetCanPlay(bool value)
+    {
+        this.outlineImage.gameObject.SetActive(value);
     }
 }

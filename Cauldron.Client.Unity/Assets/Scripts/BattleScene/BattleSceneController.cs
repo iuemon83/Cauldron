@@ -518,7 +518,7 @@ public class BattleSceneController : MonoBehaviour
             foreach (var handIndex in Enumerable.Range(0, Mathf.Min(youHands.Length, MaxNumHands)))
             {
                 var handCard = youHands[handIndex];
-                this.GetOrCreateHandCardObject(handCard.Id, handCard, handIndex);
+                this.GetOrCreateHandCardObject(handCard.Id, handCard, handIndex, this.currentGameContext.You.PlayableCards);
             }
 
             var youFieldCards = publicInfo.Field;
@@ -598,7 +598,7 @@ public class BattleSceneController : MonoBehaviour
         await UniTask.Delay(TimeSpan.FromSeconds(0.3));
     }
 
-    private HandCardController GetOrCreateHandCardObject(CardId cardId, Card card, int index)
+    private HandCardController GetOrCreateHandCardObject(CardId cardId, Card card, int index, IReadOnlyList<CardId> playableCardIdList)
     {
         if (!handCardObjectsByCardId.TryGetValue(cardId, out var controller))
         {
@@ -611,6 +611,9 @@ public class BattleSceneController : MonoBehaviour
         controller.Init(card, this.DisplaySmallCardDetailSimple, this.SetPlayTargetHand);
 
         controller.transform.position = this.youHandSpaces[index].transform.position;
+
+        var canPlay = playableCardIdList.Contains(cardId);
+        controller.SetCanPlay(canPlay);
 
         return controller;
     }
@@ -816,7 +819,7 @@ public class BattleSceneController : MonoBehaviour
                 case ZoneName.Hand:
                     if (message.ToZone.PlayerId == this.YouId)
                     {
-                        this.GetOrCreateHandCardObject(card.Id, card, message.Index);
+                        this.GetOrCreateHandCardObject(card.Id, card, message.Index, gameContext.You.PlayableCards);
                     }
                     break;
 

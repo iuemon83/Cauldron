@@ -812,11 +812,17 @@ namespace Cauldron.Core.Entities
                 this.ActivePlayer?.Id ?? default,
                 this.temporaryCards.ToArray(),
                 this.GetOpponent(playerId).PublicPlayerInfo,
-                player.PrivatePlayerInfo,
+                PrivatePlayerInfo(player),
                 this.RuleBook,
                 this.GameOver
                 );
         }
+
+        private static PrivatePlayerInfo PrivatePlayerInfo(Player player) => new(
+            player.PublicPlayerInfo,
+            player.Hands.AllCards.ToArray(),
+            player.Hands.AllCards.Where(c => IsPlayable(player, c)).Select(c => c.Id).ToArray()
+            );
 
         public async ValueTask<GameMasterStatusCode> Discard(PlayerId playerId, IEnumerable<CardId> handCardId, Card effectOwnerCard, CardEffectId effectId)
         {
