@@ -10,7 +10,7 @@ class Config
     public static readonly string CardImagesDirectoryPath = Path.Combine(Application.dataPath, "CardImages");
 
     /// <summary>
-    /// カードの画像を格納するディレクトリのパス
+    /// カードのSEを格納するディレクトリのパス
     /// </summary>
-    public static readonly string DeckListFielPath = Path.Combine(Application.dataPath, "deck_list.json");
+    public static readonly string CardAudiosDirectoryPath = Path.Combine(Application.dataPath, "CardAudios");
 }
