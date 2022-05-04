@@ -17,6 +17,8 @@ public class ListGameSceneController : MonoBehaviour
     private Canvas canvas = default;
     [SerializeField]
     private ConfirmDialogController confirmDialogController = default;
+    [SerializeField]
+    private AudioSource audioSource = default;
 
     private Transform listContent;
 
@@ -64,6 +66,8 @@ public class ListGameSceneController : MonoBehaviour
 
     public void OnOpenNewGameButtonClick()
     {
+        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+
         this.SelectDeckDialog.ShowDialog("Select your deck",
             async deck =>
             {
@@ -110,19 +114,35 @@ public class ListGameSceneController : MonoBehaviour
 
     public async void OnDeckButtonClick()
     {
+        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }
 
     public void OnVsAiButtonClick()
     {
+        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+
         this.SelectDeckDialog.ShowDialog("Select your deck",
             myDeck =>
             {
+                this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+
                 this.SelectDeckDialog.ShowDialog("Select AI deck",
                     aiDeck =>
                     {
+                        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+
                         this.BattleAi(myDeck, aiDeck);
+                    },
+                    () =>
+                    {
+                        this.PlayAudio(SeAudioCache.SeAudioType.Cancel);
                     });
+            },
+            () =>
+            {
+                this.PlayAudio(SeAudioCache.SeAudioType.Cancel);
             });
     }
 
@@ -151,5 +171,14 @@ public class ListGameSceneController : MonoBehaviour
             var aiClientController = FindObjectOfType<AiClientController>();
             await aiClientController.StartClient(gameId, aiDeck);
         });
+    }
+
+    private void PlayAudio(SeAudioCache.SeAudioType audioType)
+    {
+        var (b, a) = SeAudioCache.GetOrInit(audioType);
+        if (b)
+        {
+            this.audioSource.PlayOneShot(a);
+        }
     }
 }

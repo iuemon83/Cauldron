@@ -15,6 +15,8 @@ public class TitleSceneController : MonoBehaviour
     private InputField playerNameText = default;
     [SerializeField]
     private Button startButton = default;
+    [SerializeField]
+    private AudioSource audioSource = default;
 
     private Text startButtonText;
 
@@ -32,6 +34,9 @@ public class TitleSceneController : MonoBehaviour
     public async void OnStartButtonClick()
     {
         this.startButton.interactable = false;
+
+        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+
         this.startButtonText.text = "Loading...";
 
         var isValid = await this.DoValidation();
@@ -76,5 +81,14 @@ public class TitleSceneController : MonoBehaviour
     private void ShowErrorMessage(string message)
     {
         this.errorMessageText.text = message;
+    }
+
+    private void PlayAudio(SeAudioCache.SeAudioType audioType)
+    {
+        var (b, a) = SeAudioCache.GetOrInit(audioType);
+        if (b)
+        {
+            this.audioSource.PlayOneShot(a);
+        }
     }
 }

@@ -12,7 +12,9 @@ class SeAudioCache
         Draw,
         Exclude,
         Damage,
+        AddField,
         Ok,
+        Cancel,
     }
 
     private static readonly Dictionary<SeAudioType, AudioClip> cache = new Dictionary<SeAudioType, AudioClip>();

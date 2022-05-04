@@ -24,6 +24,8 @@ public class EditDeckSceneController : MonoBehaviour
     private CardDefDetailController cardDefDetailController = default;
     [SerializeField]
     private InputField searchKeywordInputField = default;
+    [SerializeField]
+    private AudioSource audioSource = default;
 
     public IDeck DeckToEdit { get; set; }
 
@@ -76,6 +78,8 @@ public class EditDeckSceneController : MonoBehaviour
 
     public void OnSearchButtonClick()
     {
+        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+
         var keyword = this.searchKeywordInputField.text;
         this.SearchCardPool(keyword);
     }
@@ -128,6 +132,8 @@ public class EditDeckSceneController : MonoBehaviour
 
     public async void OnSaveButtonClick()
     {
+        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+
         var deckName = this.deckNameInputField.text;
         if (string.IsNullOrWhiteSpace(deckName))
         {
@@ -158,6 +164,8 @@ public class EditDeckSceneController : MonoBehaviour
 
     public async void OnCancelButtonClick()
     {
+        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }
 
@@ -308,5 +316,14 @@ public class EditDeckSceneController : MonoBehaviour
         this.deckCountText.color = this.IsValidNumCards()
             ? Color.white
             : Color.red;
+    }
+
+    private void PlayAudio(SeAudioCache.SeAudioType audioType)
+    {
+        var (b, a) = SeAudioCache.GetOrInit(audioType);
+        if (b)
+        {
+            this.audioSource.PlayOneShot(a);
+        }
     }
 }
