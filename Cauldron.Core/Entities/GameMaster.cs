@@ -1390,11 +1390,12 @@ namespace Cauldron.Core.Entities
 
         public async ValueTask<ChoiceResult> Choice(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
         {
-            var numPicks = await choice.NumPicks.Calculate(effectOwnerCard, eventArgs);
+            var numPicks = choice.How == Shared.MessagePackObjects.Choice.HowValue.All
+                ? 1
+                : await choice.NumPicks.Calculate(effectOwnerCard, eventArgs);
 
-            var choiceCandidates = await choice.Source
-                .ChoiceCandidates(effectOwnerCard, eventArgs, this.playerRepository,
-                this.cardRepository, choice.How, numPicks);
+            var choiceCandidates = await choice.Source.ChoiceCandidates(
+                effectOwnerCard, eventArgs, this.playerRepository, this.cardRepository, choice.How, numPicks);
 
             ChoiceResult All() => new(
                 choiceCandidates.PlayerIdList,

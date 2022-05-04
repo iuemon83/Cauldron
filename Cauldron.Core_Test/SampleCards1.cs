@@ -817,7 +817,13 @@ namespace Cauldron.Core_Test
                                                 new CardCondition(
                                                     ZoneCondition: new(new(new[]{ ZonePrettyName.YouHand }))
                                                 )
-                                            })),
+                                            },
+                                            how: ChoiceSource.HowValue.All,
+                                            numPicks: new NumValue(0)
+                                            ),
+                                        how: Choice.HowValue.All,
+                                        numPicks: new NumValue(0)
+                                        ),
                                     ZonePrettyName.YouCemetery,
                                     Name: "discard")
                                 ),
@@ -1135,15 +1141,22 @@ namespace Cauldron.Core_Test
                         new[]
                         {
                             new EffectAction(AddCard: new(
-                                new Choice(new ChoiceSource(
-                                    OrCardDefConditions: new[]
-                                    {
-                                        new CardDefCondition(
-                                            new(new[]{ OutZonePrettyName.CardPool }),
-                                            NameCondition: new(
-                                                new TextValue(Shielder.Name),
-                                                TextCompare.CompareValue.Equality))
-                                    })),
+                                new Choice(
+                                    new ChoiceSource(
+                                        OrCardDefConditions: new[]
+                                        {
+                                            new CardDefCondition(
+                                                new(new[]{ OutZonePrettyName.CardPool }),
+                                                NameCondition: new(
+                                                    new TextValue(Shielder.Name),
+                                                    TextCompare.CompareValue.Equality))
+                                        },
+                                        how: ChoiceSource.HowValue.All,
+                                        numPicks: new NumValue(0)
+                                        ),
+                                    how: Choice.HowValue.All,
+                                    numPicks: new NumValue(0)
+                                    ),
                                 new ZoneValue(new[]{ ZonePrettyName.YouField }),
                                 NumOfAddCards: 2
                                 ))
