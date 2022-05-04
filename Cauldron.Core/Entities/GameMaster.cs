@@ -380,6 +380,8 @@ namespace Cauldron.Core.Entities
                         ?? card.Abilities.ToArray();
                 var newAnnotations = effectActionModifyCard.Annotations?.Modify(card.Annotations)
                         ?? card.Annotations.ToArray();
+                var newNumTurnsToCanAttack = await (effectActionModifyCard.NumTurnsToCanAttack?.Modify(effectOwnerCard, effectEventArgs, card.NumTurnsToCanAttack)
+                        ?? ValueTask.FromResult(card.NumTurnsToCanAttack));
 
                 var newPowerBuff = newPower - card.BasePower;
                 if (newPowerBuff != card.PowerBuff)
@@ -397,6 +399,7 @@ namespace Cauldron.Core.Entities
 
                 card.Abilities = newAbilities.ToList();
                 card.Annotations = newAnnotations.ToList();
+                card.NumTurnsToCanAttack = newNumTurnsToCanAttack;
             }
 
             // notify
