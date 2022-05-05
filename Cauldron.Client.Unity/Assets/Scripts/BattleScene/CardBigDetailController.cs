@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using System;
@@ -28,7 +29,7 @@ public class CardBigDetailController : MonoBehaviour
 
         var abilitiesText = card.Abilities.Count == 0
             ? "‚È‚µ"
-            : string.Join(",", card.Abilities);
+            : string.Join(",", card.Abilities.Select(Utility.DisplayText));
 
         var result =
 $@"{card.Cost} / {card.Power} / {card.Toughness}

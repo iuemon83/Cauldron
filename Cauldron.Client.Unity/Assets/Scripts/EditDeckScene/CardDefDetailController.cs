@@ -1,6 +1,8 @@
+using Assets.Scripts;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -77,10 +79,10 @@ public class CardDefDetailController : MonoBehaviour
 
         var abilitiesText = cardDef.Abilities.Count == 0
             ? "‚È‚µ"
-            : string.Join(",", cardDef.Abilities);
+            : string.Join(",", cardDef.Abilities.Select(Utility.DisplayText));
 
         var result =
-$@"{cardDef.Type.ToString()}
+$@"{Utility.DisplayText(cardDef.Type)}
 {annnotationsText}
 {abilitiesText}";
 

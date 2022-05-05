@@ -103,5 +103,24 @@ namespace Assets.Scripts
 
             await SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
         }
+
+        public static string DisplayText(CardType value) => value switch
+        {
+            CardType.Creature => "クリーチャー",
+            CardType.Artifact => "アーティファクト",
+            CardType.Sorcery => "魔法",
+            _ => "",
+        };
+
+        public static string DisplayText(CreatureAbility value) => value switch
+        {
+            CreatureAbility.None => "なし",
+            CreatureAbility.Cover => "守護",
+            CreatureAbility.Stealth => "潜伏",
+            CreatureAbility.CantAttack => "攻撃不可",
+            CreatureAbility.Deadly => "必殺",
+            CreatureAbility.Sealed => "封印",
+            _ => "",
+        };
     }
 }
