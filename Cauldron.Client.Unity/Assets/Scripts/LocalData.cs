@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.IO;
+using UnityEngine;
 
 namespace Assets.Scripts
 {
@@ -6,20 +8,77 @@ namespace Assets.Scripts
     {
         public static string ServerAddress
         {
-            get => PlayerPrefs.GetString(nameof(ServerAddress));
-            set => PlayerPrefs.SetString(nameof(ServerAddress), value);
+            get
+            {
+                return LoadFromFile().ServerAddress;
+            }
+
+            set => LoadFromFile().ServerAddress = value;
         }
 
         public static string PlayerName
         {
-            get => PlayerPrefs.GetString(nameof(PlayerName));
-            set => PlayerPrefs.SetString(nameof(PlayerName), value);
+            get
+            {
+                return LoadFromFile().PlayerName;
+            }
+            set => LoadFromFile().PlayerName = value;
         }
 
         public static string DeckListJson
         {
-            get => PlayerPrefs.GetString(nameof(DeckListJson));
-            set => PlayerPrefs.SetString(nameof(DeckListJson), value);
+            get
+            {
+                return LoadFromFile().DeckListJson;
+            }
+            set => LoadFromFile().DeckListJson = value;
         }
+
+        private static string SettingsFilePath => Path.Combine(Application.dataPath, "settings.json");
+
+        private static ApplicationSettings applicationSettingsCache = default;
+        private static ApplicationSettings LoadFromFile()
+        {
+            try
+            {
+                if (applicationSettingsCache == default)
+                {
+                    if (File.Exists(SettingsFilePath))
+                    {
+                        var json = File.ReadAllText(SettingsFilePath);
+                        applicationSettingsCache = JsonUtility.FromJson<ApplicationSettings>(json) ?? new ApplicationSettings();
+                    }
+                    else
+                    {
+                        applicationSettingsCache = new ApplicationSettings();
+                    }
+                }
+            }
+            catch
+            {
+                applicationSettingsCache = new ApplicationSettings();
+            }
+
+            return applicationSettingsCache;
+        }
+
+        public static void SaveToFile()
+        {
+            if (applicationSettingsCache == default)
+            {
+                return;
+            }
+
+            var json = JsonUtility.ToJson(applicationSettingsCache);
+            File.WriteAllText(SettingsFilePath, json);
+        }
+    }
+
+    [Serializable]
+    class ApplicationSettings
+    {
+        public string ServerAddress = "";
+        public string PlayerName = "";
+        public string DeckListJson = "";
     }
 }

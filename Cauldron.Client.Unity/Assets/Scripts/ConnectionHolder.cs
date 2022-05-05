@@ -63,5 +63,10 @@ namespace Assets.Scripts
             this.Client?.Destroy();
             this.channel?.ShutdownAsync();
         }
+
+        private void OnApplicationQuit()
+        {
+            LocalData.SaveToFile();
+        }
     }
 }
