@@ -715,13 +715,14 @@ public class BattleSceneController : MonoBehaviour
     public void ShowEndGameDialog(EndGameNotifyMessage notify)
     {
         var title = "ゲーム終了";
-        var winOrLoseText = notify.WinnerPlayerId == this.youPlayerController.PlayerId
+        var isWin = notify.WinnerPlayerId == this.youPlayerController.PlayerId;
+        var winOrLoseText = isWin
             ? "Win !"
             : "Lose...";
 
         var reasonText = notify.EndGameReason switch
         {
-            EndGameReason.HpIsZero => "HPが0になりました。",
+            EndGameReason.HpIsZero => $"{(isWin ? "相手" : "あなた")}のHPが0になりました。",
             EndGameReason.CardEffect => $"「{notify.EffectOwnerCard?.Name ?? ""}」の効果でゲームが終了しました。",
             EndGameReason.Surrender => "降参しました。",
             _ => throw new NotImplementedException($"正しくない値が指定されました。EndGameReason={notify.EndGameReason}"),
