@@ -993,7 +993,12 @@ public class BattleSceneController : MonoBehaviour
                         {
                             await fieldCardController.BounceHandEffect(targetPlayer);
                         }
-                        var fieldCard = this.GetOrCreateHandCardObject(message.Card.Id, message.Card, message.Index, gameContext.You.PlayableCards);
+
+                        if (message.ToZone.PlayerId == this.YouId)
+                        {
+                            this.GetOrCreateHandCardObject(message.Card.Id, message.Card, message.Index, gameContext.You.PlayableCards);
+                        }
+
                         break;
                     }
 
