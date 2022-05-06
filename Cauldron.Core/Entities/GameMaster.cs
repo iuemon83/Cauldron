@@ -799,7 +799,8 @@ namespace Cauldron.Core.Entities
 
             // カードの移動イベント
             this.effectManager.OnMoveCard(card);
-            await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: card, MoveCardContext: moveCardContext));
+            await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: card,
+                MoveCardContext: moveCardContext));
         }
 
         public GameContext CreateGameContext(PlayerId playerId)

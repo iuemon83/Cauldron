@@ -2593,5 +2593,69 @@ namespace Cauldron.Core_Test
                                     ))
                         })
                 });
+
+        public static CardDef UnluckyStatue
+            => SampleCards1.Artifact(1, "追撃の像",
+                effects: new[]
+                {
+                    new CardEffect(
+                        "相手がダメージを受けたときに発動する。相手に1ダメージを与える。",
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            When: new(new EffectTiming(DamageAfter: new(
+                                TakePlayerCondition: new PlayerCondition(
+                                    PlayerCondition.ContextValue.Opponent
+                                    )
+                                )))
+                            )),
+                        new[]
+                        {
+                            new EffectAction(
+                                Damage: new(
+                                    new NumValue(1),
+                                    new Choice(
+                                        new ChoiceSource(
+                                            orPlayerConditions: new[]
+                                            {
+                                                new PlayerCondition(PlayerCondition.ContextValue.Opponent)
+                                            })
+                                        )
+                                    )
+                            )
+                        }
+                    )
+                });
+
+        public static CardDef Disturber
+            => SampleCards1.Artifact(1, "邪魔者",
+                effects: new[]
+                {
+                    new CardEffect(
+                        "このカードがあなたの場に出たときに発動する。このカードを相手の場に移動する。",
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            When: new(new EffectTiming(MoveCard: new(
+                                OrCardConditions: new[]
+                                {
+                                    new CardCondition(CardCondition.ContextConditionValue.This)
+                                }
+                                )))
+                            )),
+                        new[]
+                        {
+                            new EffectAction(MoveCard: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(CardCondition.ContextConditionValue.This)
+                                        }
+                                        )
+                                    ),
+                                ZonePrettyName.OpponentField
+                                ))
+                        }
+                    )
+                });
     }
 }

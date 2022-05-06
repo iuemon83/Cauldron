@@ -13,6 +13,16 @@ namespace Cauldron.Core.Entities
 
         private readonly Dictionary<GameEvent, Dictionary<(Card, EffectWhile), int>> effectWhileCounter = new();
 
+        /// <summary>
+        /// 発動中の一番最初の効果のID
+        /// </summary>
+        private CardEffectId TopEffectId = default;
+
+        /// <summary>
+        /// このイベント中にすでに発動した効果のID
+        /// </summary>
+        private readonly List<CardEffectId> usedEffectIdList = new();
+
         public EffectManager(ILogger logger)
         {
             this.logger = logger;
@@ -159,60 +169,92 @@ namespace Cauldron.Core.Entities
 
             var newEffectEventArgs = effectEventArgs;
 
-            // anyZoneEffect
-            foreach (var (ef, owner) in this.reservedEffectsByGameEvent[effectEventArgs.GameEvent])
+            static async ValueTask<IReadOnlyList<(Card card, CardEffect effect)>> CandidateCards(EffectEventArgs effectEventArgs)
             {
-                var (done, args) = await ef.DoReservedEffectIfMatched(owner, newEffectEventArgs);
+                var candidateCards = getCards(effectEventArgs.GameMaster.ActivePlayer)
+                    .Concat(effectEventArgs.GameMaster.NonActivePlayers.SelectMany(p => getCards(p)))
+                    .SelectMany(card => card.Effects.Select(e => (card, effect: e)));
 
-                if (done)
+                var list = new List<(Card, CardEffect)>();
+                foreach (var x in candidateCards)
                 {
-                    newEffectEventArgs = args;
-                    this.logger.LogInformation("効果: {GameEvent} {Name}", effectEventArgs.GameEvent, owner.Name);
-
-                    await effectEventArgs.GameMaster.DestroyDeadCards();
+                    if (await x.effect.IsMatched(x.card, effectEventArgs))
+                    {
+                        list.Add(x);
+                    }
                 }
+
+                return list;
+            }
+
+            // イベント発火時に発動条件を満たしていないとダメ
+            // アクティブプレイヤーの領域→ノンアクティブプレイヤーの領域、のように途中で領域を移動されると、途中で条件を満たすようになる可能性がある
+            var candidateCards = await CandidateCards(newEffectEventArgs);
+
+            // anyZoneEffect
+            foreach (var (ef, owner) in this.reservedEffectsByGameEvent[newEffectEventArgs.GameEvent])
+            {
+                newEffectEventArgs = await this.DoEffectInLoop(ef, owner, newEffectEventArgs, this.logger);
             }
 
             // アクティブプレイヤー
-            var activePlayerCards = getCards(newEffectEventArgs.GameMaster.ActivePlayer);
-            foreach (var card in activePlayerCards)
-            {
-                foreach (var ef in card.Effects)
-                {
-                    var (done, args) = await ef.DoIfMatched(card, newEffectEventArgs);
-
-                    if (done)
-                    {
-                        newEffectEventArgs = args;
-                        this.logger.LogInformation("効果: {GameEvent} {Name}", effectEventArgs.GameEvent, card.Name);
-
-                        await effectEventArgs.GameMaster.DestroyDeadCards();
-                    }
-                }
-            }
-
             // 相手プレイヤー
-            foreach (var player in newEffectEventArgs.GameMaster.NonActivePlayers)
+            foreach (var (card, effect) in candidateCards)
             {
-                var nonActivePlayerCards = getCards(player);
-                foreach (var card in nonActivePlayerCards)
-                {
-                    foreach (var ef in card.Effects)
-                    {
-                        var (done, args) = await ef.DoIfMatched(card, newEffectEventArgs);
-
-                        if (done)
-                        {
-                            newEffectEventArgs = args;
-                            this.logger.LogInformation("効果: {GameEvent} {Name}", effectEventArgs.GameEvent, card.Name);
-
-                            await effectEventArgs.GameMaster.DestroyDeadCards();
-                        }
-                    }
-                }
+                newEffectEventArgs = await this.DoEffectInLoop(effect, card, newEffectEventArgs, this.logger);
             }
 
             return newEffectEventArgs;
+        }
+
+        private async ValueTask<EffectEventArgs> DoEffectInLoop(
+            CardEffect ef, Card owner, EffectEventArgs args, ILogger logger)
+        {
+            if (this.usedEffectIdList.Contains(ef.Id))
+            {
+                // すでに発火されている効果をもう一度発火しない
+                // ループ対策
+                return args;
+            }
+
+            if (!await ef.IsMatched(owner, args))
+            {
+                return args;
+            }
+
+            if (this.TopEffectId == default)
+            {
+                this.TopEffectId = ef.Id;
+            }
+
+            this.usedEffectIdList.Add(ef.Id);
+
+            var (done, newArgs) = await ef.DoEffect(owner, args);
+
+            if (!done)
+            {
+                // ほぼありえないはず？
+                // choiceの対象がいないとか？
+
+                if (this.TopEffectId == ef.Id)
+                {
+                    this.TopEffectId = default;
+                    this.usedEffectIdList.Clear();
+                }
+
+                return args;
+            }
+
+            logger.LogInformation("効果: {GameEvent} {Name}", args.GameEvent, owner.Name);
+            await args.GameMaster.DestroyDeadCards();
+
+            if (this.TopEffectId == ef.Id)
+            {
+                this.TopEffectId = default;
+                this.usedEffectIdList.Clear();
+            }
+
+            return newArgs;
         }
     }
 }

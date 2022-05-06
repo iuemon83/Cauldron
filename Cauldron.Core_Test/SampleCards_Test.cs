@@ -2244,7 +2244,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards1.Faceless;
             testCardDef.Cost = 0;
 
-            var c = await TestUtil.InitTest(new[] { testCardDef });
+            var c = await TestUtil.InitTest(new[] { testCardDef }, this.output);
 
             // æU
             await TestUtil.Turn(c.GameMaster, (g, pId) =>
@@ -3803,6 +3803,59 @@ namespace Cauldron.Core_Test
                 Assert.False(testCard.CountersByName.ContainsKey("–‚“±"));
                 // ƒJƒEƒ“ƒ^[‚ª0‚É‚È‚é‚Ì‚Å”j‰ó‚³‚ê‚é
                 Assert.Equal(ZoneName.Cemetery, testCard.Zone.ZoneName);
+            });
+        }
+
+        [Fact]
+        public async Task UnluckyStatue()
+        {
+            var testCardDef = SampleCards1.UnluckyStatue;
+            testCardDef.Cost = 0;
+
+            var damageSpellDef = SampleCards1.SelectDamage;
+            damageSpellDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, damageSpellDef }, this.output
+                );
+
+            // æU
+            var testCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var beforeHp = c.Player2.CurrentHp;
+
+                // ƒ_ƒ[ƒW‚ğ—^‚¦‚é
+                c.TestAnswer.ChoicePlayerIdList = new[] { c.Player2.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, damageSpellDef.Id);
+
+                // ƒ_ƒ[ƒW‚ğ—^‚¦‚é‚ÆA‚³‚ç‚É1—^‚¦‚é
+                Assert.Equal(beforeHp - 2, c.Player2.CurrentHp);
+
+                return testCard;
+            });
+        }
+
+        [Fact]
+        public async Task Disturber()
+        {
+            var testCardDef = SampleCards1.Disturber;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, }, this.output
+                );
+
+            // æU
+            var testCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // ‘Šè‚Ìê‚ÉˆÚ“®‚µ‚Ä‚¢‚é
+                Assert.Equal(c.Player2.Id, testCard.Zone.PlayerId);
+
+                return testCard;
             });
         }
     }
