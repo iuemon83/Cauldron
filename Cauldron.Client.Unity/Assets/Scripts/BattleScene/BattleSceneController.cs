@@ -724,7 +724,7 @@ public class BattleSceneController : MonoBehaviour
         {
             EndGameReason.HpIsZero => $"{(isWin ? "相手" : "あなた")}のHPが0になりました。",
             EndGameReason.CardEffect => $"「{notify.EffectOwnerCard?.Name ?? ""}」の効果でゲームが終了しました。",
-            EndGameReason.Surrender => "降参しました。",
+            EndGameReason.Surrender => $"{(isWin ? "相手" : "あなた")}が降参しました。",
             _ => throw new NotImplementedException($"正しくない値が指定されました。EndGameReason={notify.EndGameReason}"),
         };
 
