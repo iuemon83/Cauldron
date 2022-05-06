@@ -730,6 +730,8 @@ public class BattleSceneController : MonoBehaviour
 
         var message = winOrLoseText + Environment.NewLine + reasonText;
 
+        this.PlayAudio(isWin ? SeAudioCache.SeAudioType.Win : SeAudioCache.SeAudioType.Lose);
+
         var dialog = Instantiate(this.confirmDialogPrefab);
         dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
             onOkAction: async () =>
