@@ -1336,7 +1336,7 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        "このカードをプレイしたとき、このカードに:魔導カウンターを5つ置く。",
+                        "このカードをプレイしたとき、このカードに魔導カウンターを5つ置く。",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
@@ -1350,7 +1350,7 @@ namespace Cauldron.Core_Test
                                                 )
                                         })
                                     ),
-                                ":魔導",
+                                "魔導",
                                 new NumValueModifier(
                                     NumValueModifier.OperatorValue.Add,
                                     new NumValue(5)
@@ -1358,7 +1358,7 @@ namespace Cauldron.Core_Test
                                 )),
                         }),
                     new CardEffect(
-                        "場にあるこのカードの:魔導カウンターが0になったとき、このカードを破壊する。",
+                        "場にあるこのカードの魔導カウンターが0になったとき、このカードを破壊する。",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             When: new(new EffectTiming(ModifyCounter: new(
@@ -1366,12 +1366,12 @@ namespace Cauldron.Core_Test
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
-                                ":魔導",
+                                "魔導",
                                 EffectTimingModifyCounterOnCardEvent.OperatorValue.Remove
                                 ))),
                             If: new(new ConditionWrap(NumCondition: new(
                                 new NumValue(NumValueCalculator: new(ForCounter: new(
-                                    ":魔導",
+                                    "魔導",
                                     new Choice(
                                         new ChoiceSource(
                                             orCardConditions: new[]
@@ -1399,8 +1399,8 @@ namespace Cauldron.Core_Test
                                 ))
                         }),
                     new CardEffect(
-                        "あなたがダメージを受ける前に、このカードの:魔導カウンターをX個取り除く。X=受けるダメージ" +
-                        "あなたが受けるダメージをY減少する。Y=取り除いた:魔導カウンターの数",
+                        "あなたがダメージを受ける前に、このカードの魔導カウンターをX個取り除く。X=受けるダメージ" +
+                        "あなたが受けるダメージをY減少する。Y=取り除いた魔導カウンターの数",
                         new EffectConditionWrap(ByNotPlay: new(
                             ZonePrettyName.YouField,
                             When: new(new EffectTiming(DamageBefore: new(
@@ -1418,7 +1418,7 @@ namespace Cauldron.Core_Test
                                             new CardCondition(CardCondition.ContextConditionValue.This)
                                         })
                                     ),
-                                ":魔導",
+                                "魔導",
                                 new NumValueModifier(
                                     NumValueModifier.OperatorValue.Sub,
                                     new NumValue(NumValueCalculator: new(NumValueCalculator.EventContextValue.DamageValue))
@@ -1429,7 +1429,7 @@ namespace Cauldron.Core_Test
                                 new NumValueModifier(
                                     NumValueModifier.OperatorValue.Sub,
                                     new NumValue(NumValueCalculator: new(ForCounter: new(
-                                        CounterName: ":魔導",
+                                        CounterName: "魔導",
                                         ActionContextCounters: new(new ActionContextCountersOfModifyCounter(
                                             "modifycounter",
                                             ActionContextCountersOfModifyCounter.TypeValue.Modified))

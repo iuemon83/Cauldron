@@ -1,0 +1,16 @@
+{
+  "initialMp": 1,
+  "maxLimitMp": 10,
+  "minMp": 0,
+  "limitMpToIncrease": 1,
+  "initialNumHands": 5,
+  "maxNumHands": 10,
+  "initialPlayerHp": 10,
+  "maxPlayerHp": 10,
+  "minPlayerHp": 0,
+  "maxNumDeckCards": 40,
+  "minNumDeckCards": 10,
+  "maxNumFieldCards": 5,
+  "defaultNumTurnsToCanAttack": 1,
+  "defaultNumAttacksLimitInTurn": 1
+}

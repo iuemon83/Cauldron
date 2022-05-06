@@ -101,23 +101,7 @@ public class Client
     {
         this.LogInfo("OpenNewGame: " + this.PlayerName);
 
-        var ruleBook = new RuleBook(
-            InitialMp: 1,
-            MaxLimitMp: 10,
-            MinMp: 0,
-            LimitMpToIncrease: 1,
-            InitialNumHands: 5,
-            MaxNumHands: 10,
-            InitialPlayerHp: 10,
-            MaxPlayerHp: 10,
-            MinPlayerHp: 0,
-            MaxNumDeckCards: 40,
-            MinNumDeckCards: 10,
-            MaxNumFieldCards: 5,
-            DefaultNumTurnsToCanAttack: 1,
-            DefaultNumAttacksLimitInTurn: 1
-        );
-
+        var ruleBook = await this.GetRuleBook();
         var reply = await this.magiconionClient.OpenNewGame(new OpenNewGameRequest(ruleBook));
 
         this.GameId = reply.GameId;

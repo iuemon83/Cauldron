@@ -58,23 +58,6 @@ namespace Cauldron.Server.Services
 
         private static readonly ConcurrentDictionary<GameId, int> numOfReadiesByGameId = new();
 
-        private static readonly RuleBook defaultRulebook = new(
-            InitialMp: 1,
-            MaxLimitMp: 10,
-            MinMp: 0,
-            LimitMpToIncrease: 1,
-            InitialNumHands: 5,
-            MaxNumHands: 10,
-            InitialPlayerHp: 10,
-            MaxPlayerHp: 10,
-            MinPlayerHp: 0,
-            MaxNumDeckCards: 40,
-            MinNumDeckCards: 10,
-            MaxNumFieldCards: 5,
-            DefaultNumTurnsToCanAttack: 1,
-            DefaultNumAttacksLimitInTurn: 1
-        );
-
         private readonly IConfiguration configuration;
         private readonly ILogger<CauldronHub> _logger;
 
@@ -138,7 +121,7 @@ namespace Cauldron.Server.Services
         [FromTypeFilter(typeof(LoggingAttribute))]
         Task<CardDef[]> ICauldronHub.GetCardPool()
         {
-            var cardRepository = new CardRepository(defaultRulebook);
+            var cardRepository = new CardRepository(RuleBookInitializer.RuleBookSingleton);
             cardRepository.SetCardPool(CardPoolInitializer.CardPoolSingleton);
 
             return Task.FromResult(cardRepository.CardPool.ToArray());
@@ -147,7 +130,7 @@ namespace Cauldron.Server.Services
         [FromTypeFilter(typeof(LoggingAttribute))]
         Task<RuleBook> ICauldronHub.GetRuleBook()
         {
-            return Task.FromResult(defaultRulebook);
+            return Task.FromResult(RuleBookInitializer.RuleBookSingleton);
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]

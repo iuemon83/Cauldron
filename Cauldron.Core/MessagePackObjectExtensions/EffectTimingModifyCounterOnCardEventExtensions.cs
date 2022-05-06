@@ -1,6 +1,4 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {

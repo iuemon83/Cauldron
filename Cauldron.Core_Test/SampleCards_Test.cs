@@ -3762,7 +3762,7 @@ namespace Cauldron.Core_Test
                 var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // プレイしたときカウンターが乗る
-                Assert.Equal(5, testCard.CountersByName[":魔導"]);
+                Assert.Equal(5, testCard.CountersByName["魔導"]);
 
                 return testCard;
             });
@@ -3780,7 +3780,7 @@ namespace Cauldron.Core_Test
                 // 攻撃されたがダメージは0になる
                 Assert.Equal(beforeHp, c.Player1.CurrentHp);
                 // カウンターがその分減る
-                Assert.Equal(2, testCard.CountersByName[":魔導"]);
+                Assert.Equal(2, testCard.CountersByName["魔導"]);
 
                 // 攻撃以外のダメージを受けたとき
                 c.TestAnswer.ChoicePlayerIdList = new[] { c.Player1.Id };
@@ -3789,7 +3789,7 @@ namespace Cauldron.Core_Test
                 // 攻撃されたがダメージは0になる
                 Assert.Equal(beforeHp, c.Player1.CurrentHp);
                 // カウンターがその分減る
-                Assert.Equal(1, testCard.CountersByName[":魔導"]);
+                Assert.Equal(1, testCard.CountersByName["魔導"]);
 
                 // カウンターが0になると破壊される
                 // 超過ダメージはうける
@@ -3800,7 +3800,7 @@ namespace Cauldron.Core_Test
                 // 超過ダメージはうける
                 Assert.Equal(beforeHp - 2, c.Player1.CurrentHp);
                 // カウンターがその分減る
-                Assert.False(testCard.CountersByName.ContainsKey(":魔導"));
+                Assert.False(testCard.CountersByName.ContainsKey("魔導"));
                 // カウンターが0になるので破壊される
                 Assert.Equal(ZoneName.Cemetery, testCard.Zone.ZoneName);
             });

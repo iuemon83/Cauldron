@@ -32,6 +32,7 @@ namespace Cauldron.Server
                 app.UseDeveloperExceptionPage();
             }
 
+            RuleBookInitializer.Init(this.Configuration["RuleBookFilePath"]);
             CardPoolInitializer.Init(this.Configuration["CardSetDirectoryPath"]);
 
             app.UseRouting();

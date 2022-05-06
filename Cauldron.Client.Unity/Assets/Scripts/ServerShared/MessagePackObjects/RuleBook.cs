@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using System.IO;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
