@@ -98,6 +98,7 @@ public class FieldCardController : CardController, IPointerClickHandler
             .DOMove(new Vector3(0, -20, 0), 0.5f)
             .SetRelative(true);
         this.damageText.gameObject.SetActive(false);
+        this.damageText.gameObject.transform.localPosition = Vector3.zero;
     }
 
     public async UniTask DestroyEffect()
