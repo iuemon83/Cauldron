@@ -91,6 +91,9 @@ public class BattleSceneController : MonoBehaviour
     private CardBigDetailController cardDetailViewController = default;
 
     [SerializeField]
+    private Button endTurnButton = default;
+
+    [SerializeField]
     private Button choiceCardButton = default;
     [SerializeField]
     private TextMeshProUGUI numPicksText = default;
@@ -98,6 +101,7 @@ public class BattleSceneController : MonoBehaviour
     private TextMeshProUGUI numPicksLimitText = default;
     [SerializeField]
     private GameObject pickUiGroup = default;
+
     [SerializeField]
     private AudioSource audioSource = default;
 
@@ -792,6 +796,7 @@ public class BattleSceneController : MonoBehaviour
 
                 this.youPlayerController.SetActiveTurn(true);
                 this.opponentPlayerController.SetActiveTurn(false);
+                this.endTurnButton.interactable = true;
                 await this.Client.StartTurn();
             }
             else
@@ -800,6 +805,7 @@ public class BattleSceneController : MonoBehaviour
 
                 this.youPlayerController.SetActiveTurn(false);
                 this.opponentPlayerController.SetActiveTurn(true);
+                this.endTurnButton.interactable = false;
             }
         });
     }

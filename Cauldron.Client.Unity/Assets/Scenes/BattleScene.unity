@@ -6568,6 +6568,7 @@ MonoBehaviour:
   handCardsContainer: {fileID: 1312123208}
   playTargetHandCardsContainer: {fileID: 1570608861}
   cardDetailViewController: {fileID: 2127111781}
+  endTurnButton: {fileID: 1347686166}
   choiceCardButton: {fileID: 969926887}
   numPicksText: {fileID: 184255256}
   numPicksLimitText: {fileID: 1831169285}
@@ -6836,7 +6837,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1347686167}
   m_OnClick:
     m_PersistentCalls:
