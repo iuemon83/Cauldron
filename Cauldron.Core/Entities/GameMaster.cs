@@ -140,22 +140,6 @@ namespace Cauldron.Core.Entities
 
         public (bool Exists, CardDef CardDef) TryGet(CardDefId id) => this.cardRepository.TryGetCardDefById(id);
 
-        public (GameMasterStatusCode, CardId[]) ListPlayableCardId(PlayerId playerId)
-        {
-            var (exists, player) = this.playerRepository.TryGet(playerId);
-            if (!exists || player == null)
-            {
-                return (GameMasterStatusCode.PlayerNotExists, Array.Empty<CardId>());
-            }
-
-            var playableCardIdList = player.Hands.AllCards
-                .Where(hand => IsPlayable(player, hand))
-                .Select(c => c.Id)
-                .ToArray();
-
-            return (GameMasterStatusCode.OK, playableCardIdList);
-        }
-
         public static bool IsPlayable(Player player, Card card)
         {
             // フィールドに出すカードはフィールドに空きがないとプレイできない
@@ -822,11 +806,24 @@ namespace Cauldron.Core.Entities
                 );
         }
 
-        private static PrivatePlayerInfo PrivatePlayerInfo(Player player) => new(
+        private PrivatePlayerInfo PrivatePlayerInfo(Player player) => new(
             player.PublicPlayerInfo,
             player.Hands.AllCards.ToArray(),
-            player.Hands.AllCards.Where(c => IsPlayable(player, c)).Select(c => c.Id).ToArray()
+            this.ListPlayableCardId(player)
             );
+
+        private CardId[] ListPlayableCardId(Player player)
+        {
+            if (this.ActivePlayer?.Id != player.Id)
+            {
+                return Array.Empty<CardId>();
+            }
+
+            return player.Hands.AllCards
+                .Where(hand => IsPlayable(player, hand))
+                .Select(c => c.Id)
+                .ToArray();
+        }
 
         public async ValueTask<GameMasterStatusCode> Discard(PlayerId playerId, IEnumerable<CardId> handCardId, Card effectOwnerCard, CardEffectId effectId)
         {

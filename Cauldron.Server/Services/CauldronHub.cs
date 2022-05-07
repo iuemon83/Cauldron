@@ -328,7 +328,7 @@ namespace Cauldron.Server.Services
             // ふたりとも準備完了なら開始
             this.Broadcast(this.room).OnStartGame();
 
-            // 先行プレイヤー
+            // 先行プレイヤーはランダムで選択する
             var firstPlayerId = this.storage.AllValues.OrderBy(_ => Guid.NewGuid()).First().Id;
 
             try
@@ -514,27 +514,6 @@ namespace Cauldron.Server.Services
                 statusCode.ToString(),
                 CreateGameContext(request.GameId, request.PlayerId)
             );
-        }
-
-        [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<(GameMasterStatusCode, CardId[])> ICauldronHub.ListPlayableCardId(GameId gameId)
-        {
-            var playableStatus = IsPlayable(gameId, this.self.Id);
-            if (playableStatus != GameMasterStatusCode.OK)
-            {
-                this._logger.LogWarning("result={playableStatus}", playableStatus);
-                return Task.FromResult((playableStatus, default(CardId[])));
-            }
-
-            var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);
-            if (!found)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
-            }
-
-            var ListPlayableCardIdResult = gameMaster.ListPlayableCardId(this.self.Id);
-
-            return Task.FromResult(ListPlayableCardIdResult);
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]

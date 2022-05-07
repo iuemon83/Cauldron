@@ -56,6 +56,8 @@ public class Client
         .Select(c => c.Id)
         .ToArray();
 
+    public CardId[] PlayableCardIdList => this.currentContext.You.PlayableCards;
+
     private Client(Grpc.Core.Channel channel, string playerName, GameId gameId,
         Action<string> logInfo, Action<string> logError)
     {
@@ -201,11 +203,6 @@ public class Client
 
             this.currentContext = reply.GameContext;
         });
-    }
-
-    public async UniTask<(GameMasterStatusCode, CardId[])> ListPlayableCardId()
-    {
-        return await this.magiconionClient.ListPlayableCardId(this.GameId);
     }
 
     public async UniTask Attack(CardId attackCardId, CardId guardCardId)

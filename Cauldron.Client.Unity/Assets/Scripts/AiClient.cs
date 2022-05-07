@@ -67,14 +67,7 @@ public class AiClient
     {
         while (true)
         {
-            var (status, candidateCardIdList) = await this.client.ListPlayableCardId();
-            if (status != GameMasterStatusCode.OK)
-            {
-                this.LoggingError($"PlayFromHand に失敗！！ status={status}");
-                return;
-            }
-
-            var cardId = Utility.RandomPick(candidateCardIdList);
+            var cardId = Utility.RandomPick(this.client.PlayableCardIdList);
 
             if (cardId == default)
             {

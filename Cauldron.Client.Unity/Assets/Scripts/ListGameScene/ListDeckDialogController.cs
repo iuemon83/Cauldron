@@ -16,7 +16,15 @@ public class ListDeckDialogController : MonoBehaviour
     private TextMeshProUGUI titleText = default;
 
     [SerializeField]
+    private Image titleBackground = default;
+
+    [SerializeField]
     private Button okButton = default;
+
+    [SerializeField]
+    private Color youColor = default;
+    [SerializeField]
+    private Color opponentColor = default;
 
     private Transform deckListContent;
     private ListDeckNodeController selectedNode;
@@ -69,9 +77,10 @@ public class ListDeckDialogController : MonoBehaviour
         this.okButton.interactable = true;
     }
 
-    public void ShowDialog(string title, Action<IDeck> onOkButtonClickAction, Action onCancelButtonClickAction = null)
+    public void ShowDialog(bool isYou, Action<IDeck> onOkButtonClickAction, Action onCancelButtonClickAction = null)
     {
-        this.titleText.text = title;
+        this.titleText.text = isYou ? "Select Your Deck" : "Select AI Deck";
+        this.titleBackground.color = isYou ? this.youColor : this.opponentColor;
         this.onOkButtonClickAction = onOkButtonClickAction;
         this.onCancelButtonClickAction = onCancelButtonClickAction;
 

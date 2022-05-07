@@ -35,8 +35,6 @@ namespace Cauldron.Shared.Services
 
         Task<AttackToPlayerReply> AttackToPlayer(AttackToPlayerRequest request);
 
-        Task<(GameMasterStatusCode, CardId[])> ListPlayableCardId(GameId gameId);
-
         Task<(GameMasterStatusCode, (PlayerId[], CardId[]))> ListAttackTargets(GameId gameId, CardId cardId);
     }
 }

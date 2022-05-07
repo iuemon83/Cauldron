@@ -53,7 +53,7 @@ public class ListGameSceneController : MonoBehaviour
         var controller = node.GetComponent<GameListNodeController>();
         controller.Set(gameOutline, () =>
         {
-            this.SelectDeckDialog.ShowDialog("Select your deck",
+            this.SelectDeckDialog.ShowDialog(false,
                 async deck =>
                 {
                     var holder = ConnectionHolder.Find();
@@ -68,7 +68,7 @@ public class ListGameSceneController : MonoBehaviour
     {
         this.PlayAudio(SeAudioCache.SeAudioType.Ok);
 
-        this.SelectDeckDialog.ShowDialog("Select your deck",
+        this.SelectDeckDialog.ShowDialog(true,
             async deck =>
             {
                 var holder = ConnectionHolder.Find();
@@ -123,12 +123,12 @@ public class ListGameSceneController : MonoBehaviour
     {
         this.PlayAudio(SeAudioCache.SeAudioType.Ok);
 
-        this.SelectDeckDialog.ShowDialog("Select your deck",
+        this.SelectDeckDialog.ShowDialog(true,
             myDeck =>
             {
                 this.PlayAudio(SeAudioCache.SeAudioType.Ok);
 
-                this.SelectDeckDialog.ShowDialog("Select AI deck",
+                this.SelectDeckDialog.ShowDialog(false,
                     aiDeck =>
                     {
                         this.PlayAudio(SeAudioCache.SeAudioType.Ok);
