@@ -1054,25 +1054,6 @@ public class BattleSceneController : MonoBehaviour
                 message.EffectOwnerCard, message.EffectId
                 );
 
-            static async UniTask HealOrDamageEffect(PlayerController playerController, int oldHp, int newHp)
-            {
-                if (playerController == null) return;
-
-                var diffHp = newHp - oldHp;
-
-                if (diffHp != 0)
-                {
-                    if (diffHp > 0)
-                    {
-                        await playerController.HealEffect(diffHp);
-                    }
-                    else
-                    {
-                        await playerController.DamageEffect(diffHp);
-                    }
-                }
-            }
-
             if (this.youPlayerController.PlayerId == message.PlayerId)
             {
                 await HealOrDamageEffect(this.youPlayerController,
@@ -1088,6 +1069,26 @@ public class BattleSceneController : MonoBehaviour
 
             await this.UpdateGameContext(gameContext);
         });
+    }
+
+    private async UniTask HealOrDamageEffect(PlayerController playerController, int oldHp, int newHp)
+    {
+        if (playerController == null) return;
+
+        var diffHp = newHp - oldHp;
+
+        if (diffHp != 0)
+        {
+            if (diffHp > 0)
+            {
+                await this.PlayAudio("", CardAudioCache.CardAudioType.Heal);
+                await playerController.HealEffect(diffHp);
+            }
+            else
+            {
+                await playerController.DamageEffect(diffHp);
+            }
+        }
     }
 
     void OnModifyCounter(GameContext gameContext, ModifyCounterNotifyMessage message)

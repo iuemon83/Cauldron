@@ -13,6 +13,7 @@ class CardAudioCache
         Draw,
         Exclude,
         Damage,
+        Heal,
         AddField,
     }
 
@@ -87,6 +88,7 @@ class CardAudioCache
         CardAudioType.Draw => SeAudioCache.SeAudioType.Draw,
         CardAudioType.Exclude => SeAudioCache.SeAudioType.Exclude,
         CardAudioType.Damage => SeAudioCache.SeAudioType.Damage,
+        CardAudioType.Heal => SeAudioCache.SeAudioType.Heal,
         CardAudioType.AddField => SeAudioCache.SeAudioType.AddField,
         _ => throw new System.NotImplementedException(),
     };

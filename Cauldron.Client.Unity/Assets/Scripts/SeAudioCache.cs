@@ -12,6 +12,7 @@ class SeAudioCache
         Draw,
         Exclude,
         Damage,
+        Heal,
         AddField,
         Ok,
         Cancel,
