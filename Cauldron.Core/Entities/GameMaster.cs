@@ -353,7 +353,6 @@ namespace Cauldron.Core.Entities
 
             card.CostBuff = newCost - card.BaseCost;
 
-            var isModified = false;
             if (card.Type == CardType.Creature)
             {
                 var newPower = await (effectActionModifyCard.Power?.Modify(effectOwnerCard, effectEventArgs, card.Power)
@@ -368,18 +367,10 @@ namespace Cauldron.Core.Entities
                         ?? ValueTask.FromResult(card.NumTurnsToCanAttack));
 
                 var newPowerBuff = newPower - card.BasePower;
-                if (newPowerBuff != card.PowerBuff)
-                {
-                    card.PowerBuff = newPowerBuff;
-                    isModified = true;
-                }
+                card.PowerBuff = newPowerBuff;
 
                 var newToubhnessBuff = newToughness - card.BaseToughness;
-                if (newToubhnessBuff != card.ToughnessBuff)
-                {
-                    card.ToughnessBuff = newToubhnessBuff;
-                    isModified = true;
-                }
+                card.ToughnessBuff = newToubhnessBuff;
 
                 card.Abilities = newAbilities.ToList();
                 card.Annotations = newAnnotations.ToList();
@@ -387,19 +378,16 @@ namespace Cauldron.Core.Entities
             }
 
             // notify
-            if (isModified)
+            var isPublic = card.Zone.IsPublic();
+            foreach (var p in this.playerRepository.AllPlayers)
             {
-                var isPublic = card.Zone.IsPublic();
-                foreach (var p in this.playerRepository.AllPlayers)
-                {
-                    this.EventListener?.OnModifyCard?.Invoke(p.Id,
-                        this.CreateGameContext(p.Id),
-                        new ModifyCardNotifyMessage(
-                            (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden(),
-                            effectOwnerCard,
-                            effectId
-                            ));
-                }
+                this.EventListener?.OnModifyCard?.Invoke(p.Id,
+                    this.CreateGameContext(p.Id),
+                    new ModifyCardNotifyMessage(
+                        (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden(),
+                        effectOwnerCard,
+                        effectId
+                        ));
             }
         }
 
