@@ -306,6 +306,11 @@ public class BattleSceneController : MonoBehaviour
                 return;
             }
 
+            if (!fieldCardController.Card.CanAttack)
+            {
+                return;
+            }
+
             this.attackCardController = fieldCardController;
             this.attackCardController.VisibleAttackIcon(true);
 

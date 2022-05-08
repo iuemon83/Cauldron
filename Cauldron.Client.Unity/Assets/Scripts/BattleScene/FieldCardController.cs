@@ -85,9 +85,16 @@ public class FieldCardController : CardController, IPointerClickHandler
         this.attackTargetIcon.SetActive(value);
     }
 
-    public void VisibleAttackIcon(bool value)
+    public async void VisibleAttackIcon(bool value)
     {
-        this.selectedIcon.SetActive(value);
+        if (value)
+        {
+            await this.gameObject.transform.DOScale(1.2f, 0.3f);
+        }
+        else
+        {
+            await this.gameObject.transform.DOScale(1f, 0.3f);
+        }
     }
 
     public async UniTask DamageEffect(int value)
@@ -104,6 +111,8 @@ public class FieldCardController : CardController, IPointerClickHandler
     public async UniTask DestroyEffect()
     {
         this.destroyIcon.gameObject.SetActive(true);
+
+        this.outlineImage.gameObject.SetActive(false);
 
         await DOTween.Sequence()
             .Append(this.destroyIcon.transform
