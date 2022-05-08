@@ -901,7 +901,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: reload
+  m_Text: Reload
 --- !u!222 &529483936
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1195,7 +1195,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: new game
+  m_Text: New Game
 --- !u!222 &820342136
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1381,7 +1381,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: solo
+  m_Text: Solo
 --- !u!222 &919630305
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1761,7 +1761,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: deck
+  m_Text: Deck
 --- !u!222 &1174250833
 CanvasRenderer:
   m_ObjectHideFlags: 0

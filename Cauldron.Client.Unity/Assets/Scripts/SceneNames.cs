@@ -6,6 +6,7 @@
         ListGameScene,
         ListDeckScene,
         EditDeckScene,
-        BattleScene
+        BattleScene,
+        DisplayLicenseScene,
     }
 }
