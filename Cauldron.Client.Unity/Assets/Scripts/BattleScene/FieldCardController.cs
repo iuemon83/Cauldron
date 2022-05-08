@@ -10,8 +10,6 @@ using UnityEngine.UI;
 public class FieldCardController : CardController, IPointerClickHandler
 {
     [SerializeField]
-    private GameObject selectedIcon = default;
-    [SerializeField]
     private GameObject attackTargetIcon = default;
     [SerializeField]
     private TextMeshProUGUI damageText = default;
