@@ -26,7 +26,6 @@ class ZoneIconCache
         {
             value = zoneName switch
             {
-                ZoneName.None => throw new NotImplementedException(),
                 ZoneName.CardPool => CardPoolIcon.Value,
                 ZoneName.Field => FieldIcon.Value,
                 ZoneName.Hand => HandIcon.Value,

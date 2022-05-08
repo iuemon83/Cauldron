@@ -419,22 +419,24 @@ namespace Cauldron.Core.Entities
             var drawnCards = new List<Card>();
             foreach (var _ in Enumerable.Range(0, Math.Max(numCards, 0)))
             {
-                var (success, drawCard) = player.Draw();
+                var (success, drawCard) = player.Deck.TryDraw();
 
                 if (drawCard != default)
                 {
                     drawnCards.Add(drawCard);
                 }
 
-                var isDrawed = success;
-                var isDiscarded = !success && drawCard != default;
-                var deckIsEmpty = !success && drawCard == default;
+                var isDrawed = success && (player.Hands.Count != this.RuleBook.MaxNumHands);
+                var isDiscarded = success && (player.Hands.Count == this.RuleBook.MaxNumHands);
+                var deckIsEmpty = !success;
 
                 if (drawCard == default)
                 {
                     if (deckIsEmpty)
                     {
                         this.logger.LogInformation("デッキが0: {playername}", player.Name);
+
+                        player.Damage(1);
 
                         // notify
                         foreach (var p in this.playerRepository.AllPlayers)
@@ -455,56 +457,27 @@ namespace Cauldron.Core.Entities
                     {
                         this.logger.LogInformation("手札が一杯で墓地へ: {playername}: {cardname}", player.Name, drawCard.Name);
 
-                        // notify
-                        foreach (var p in this.playerRepository.AllPlayers)
-                        {
-                            this.EventListener?.OnMoveCard?.Invoke(p.Id,
-                                this.CreateGameContext(p.Id),
-                                new MoveCardNotifyMessage(
-                                    p.Id == drawCard.OwnerId ? drawCard : drawCard.AsHidden(),
-                                    new Zone(
-                                        playerId,
-                                        ZoneName.Deck
-                                    ),
-                                    new Zone(
-                                        playerId,
-                                        ZoneName.Cemetery
-                                    ),
-                                    0));
-                        }
-
-                        // event
-                        // デッキから直接墓地
-                        await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
-                              MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Cemetery))));
+                        await this.MoveCard(drawCard.Id, new MoveCardContext(
+                            new Zone(drawCard.OwnerId, ZoneName.Deck),
+                            new Zone(drawCard.OwnerId, ZoneName.Cemetery)
+                            ),
+                            default,
+                            default
+                            );
                     }
                     else if (isDrawed)
                     {
                         this.logger.LogInformation("ドロー: {playername}: {cardname}", player.Name, drawCard.Name);
 
-                        foreach (var p in this.playerRepository.AllPlayers)
-                        {
-                            this.EventListener?.OnMoveCard?.Invoke(p.Id,
-                                this.CreateGameContext(p.Id),
-                                new MoveCardNotifyMessage(
-                                    p.Id == drawCard.OwnerId ? drawCard : drawCard.AsHidden(),
-                                    new Zone(
-                                        playerId,
-                                        ZoneName.Deck
-                                    ),
-                                    new Zone(
-                                        playerId,
-                                        ZoneName.Hand
-                                    ),
-                                    0,
-                                    effectOwnerCard,
-                                    effectId
-                                    ));
-                        }
+                        await this.MoveCard(drawCard.Id, new MoveCardContext(
+                            new Zone(drawCard.OwnerId, ZoneName.Deck),
+                            new Zone(drawCard.OwnerId, ZoneName.Hand)
+                            ),
+                            default,
+                            default
+                            );
 
                         await this.FireEvent(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
-                        await this.FireEvent(new EffectEventArgs(GameEvent.OnMoveCard, this, SourceCard: drawCard,
-                              MoveCardContext: new(new(playerId, ZoneName.Deck), new(playerId, ZoneName.Hand))));
                     }
                 }
             }
