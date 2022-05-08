@@ -33,7 +33,7 @@ public class CardBigDetailController : MonoBehaviour
 
         var result =
 $@"{card.Cost} / {card.Power} / {card.Toughness}
-アノテーション | {annnotationsText}
+タグ | {annnotationsText}
 アビリティ | {abilitiesText}";
 
         if (card.Type == CardType.Creature)
