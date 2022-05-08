@@ -53,7 +53,7 @@ public class ListGameSceneController : MonoBehaviour
         var controller = node.GetComponent<GameListNodeController>();
         controller.Set(gameOutline, () =>
         {
-            this.SelectDeckDialog.ShowDialog(false,
+            this.SelectDeckDialog.ShowDialog(true,
                 async deck =>
                 {
                     var holder = ConnectionHolder.Find();
