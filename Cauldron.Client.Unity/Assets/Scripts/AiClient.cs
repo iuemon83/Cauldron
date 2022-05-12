@@ -74,7 +74,12 @@ public class AiClient
                 return;
             }
 
-            await this.client.PlayFromHand(cardId);
+            var playResult = await this.client.PlayFromHand(cardId);
+            if (!playResult)
+            {
+                // 勝負がついている
+                return;
+            }
         }
     }
 

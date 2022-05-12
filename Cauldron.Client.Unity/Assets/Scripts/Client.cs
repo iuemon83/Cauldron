@@ -189,9 +189,9 @@ public class Client
         });
     }
 
-    public async UniTask PlayFromHand(CardId cardId)
+    public async UniTask<bool> PlayFromHand(CardId cardId)
     {
-        await this.PlayAction(async () =>
+        return await this.PlayAction(async () =>
         {
             var reply = await this.magiconionClient.PlayFromHand(new PlayFromHandRequest(this.GameId, this.PlayerId, cardId));
 
