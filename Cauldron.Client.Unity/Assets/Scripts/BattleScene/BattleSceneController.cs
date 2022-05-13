@@ -911,7 +911,7 @@ public class BattleSceneController : MonoBehaviour
             var ownerName = Utility.GetPlayerName(gameContext, message.Card.OwnerId);
 
             await this.AddActionLog(
-                new ActionLog($"{message.FromZone.ZoneName}Å®èúäO", message.Card)
+                new ActionLog($"{Utility.DisplayText(message.FromZone.ZoneName)}Å®èúäO", message.Card)
                 , message.EffectOwnerCard, message.EffectId);
 
             await this.PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Exclude);
@@ -949,7 +949,7 @@ public class BattleSceneController : MonoBehaviour
             var playerName = Utility.GetPlayerName(gameContext, message.ToZone.PlayerId);
 
             await this.AddActionLog(
-                new ActionLog($"à⁄ìÆ {message.FromZone.ZoneName}Å®{message.ToZone.ZoneName}", message.Card),
+                new ActionLog($"à⁄ìÆ {Utility.DisplayText(message.FromZone.ZoneName)}Å®{Utility.DisplayText(message.ToZone.ZoneName)}", message.Card),
                 message.EffectOwnerCard, message.EffectId
                 );
 

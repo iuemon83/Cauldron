@@ -122,5 +122,18 @@ namespace Assets.Scripts
             CreatureAbility.Sealed => "封印",
             _ => "",
         };
+
+        public static string DisplayText(ZoneName value) => value switch
+        {
+            ZoneName.None => "なし",
+            ZoneName.CardPool => "カードプール",
+            ZoneName.Field => "場",
+            ZoneName.Hand => "手札",
+            ZoneName.Deck => "デッキ",
+            ZoneName.Cemetery => "墓地",
+            ZoneName.Excluded => "除外",
+            ZoneName.Temporary => "場",
+            _ => "",
+        };
     }
 }
