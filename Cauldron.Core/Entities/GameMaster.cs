@@ -409,7 +409,7 @@ namespace Cauldron.Core.Entities
             {
                 var (success, drawCard) = player.Deck.TryDraw();
 
-                if (drawCard != default)
+                if (success)
                 {
                     drawnCards.Add(drawCard);
                 }
@@ -418,55 +418,44 @@ namespace Cauldron.Core.Entities
                 var isDiscarded = success && (player.Hands.Count == this.RuleBook.MaxNumHands);
                 var deckIsEmpty = !success;
 
-                if (drawCard == default)
+                if (deckIsEmpty)
                 {
-                    if (deckIsEmpty)
-                    {
-                        this.logger.LogInformation("デッキが0: {playername}", player.Name);
+                    this.logger.LogInformation("デッキが0: {playername}", player.Name);
 
-                        player.Damage(1);
-
-                        // notify
-                        foreach (var p in this.playerRepository.AllPlayers)
-                        {
-                            this.EventListener?.OnDamage?.Invoke(p.Id,
-                                this.CreateGameContext(p.Id),
-                                new DamageNotifyMessage(
-                                    DamageNotifyMessage.ReasonValue.DrawDeath,
-                                    1,
-                                    GuardPlayerId: playerId
-                                    ));
-                        }
-                    }
+                    await this.DamagePlayer(new DamageContext(
+                        DamageNotifyMessage.ReasonValue.DrawDeath,
+                        default,
+                        1,
+                        GuardPlayer: player),
+                        default,
+                        default
+                        );
                 }
-                else
+                if (isDiscarded)
                 {
-                    if (isDiscarded)
-                    {
-                        this.logger.LogInformation("手札が一杯で墓地へ: {playername}: {cardname}", player.Name, drawCard.Name);
+                    this.logger.LogInformation("手札が一杯で墓地へ: {playername}: {cardname}", player.Name, drawCard.Name);
 
-                        await this.MoveCard(drawCard.Id, new MoveCardContext(
-                            new Zone(drawCard.OwnerId, ZoneName.Deck),
-                            new Zone(drawCard.OwnerId, ZoneName.Cemetery)
-                            ),
-                            default,
-                            default
-                            );
-                    }
-                    else if (isDrawed)
-                    {
-                        this.logger.LogInformation("ドロー: {playername}: {cardname}", player.Name, drawCard.Name);
+                    await this.MoveCard(drawCard.Id, new MoveCardContext(
+                        new Zone(drawCard.OwnerId, ZoneName.Deck),
+                        new Zone(drawCard.OwnerId, ZoneName.Cemetery)
+                        ),
+                        default,
+                        default
+                        );
+                }
+                else if (isDrawed)
+                {
+                    this.logger.LogInformation("ドロー: {playername}: {cardname}", player.Name, drawCard.Name);
 
-                        await this.MoveCard(drawCard.Id, new MoveCardContext(
-                            new Zone(drawCard.OwnerId, ZoneName.Deck),
-                            new Zone(drawCard.OwnerId, ZoneName.Hand)
-                            ),
-                            default,
-                            default
-                            );
+                    await this.MoveCard(drawCard.Id, new MoveCardContext(
+                        new Zone(drawCard.OwnerId, ZoneName.Deck),
+                        new Zone(drawCard.OwnerId, ZoneName.Hand)
+                        ),
+                        default,
+                        default
+                        );
 
-                        await this.FireEvent(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
-                    }
+                    await this.FireEvent(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
                 }
             }
 
@@ -1124,10 +1113,10 @@ namespace Cauldron.Core.Entities
             }
 
             var damageContext = new DamageContext(
+                DamageNotifyMessage.ReasonValue.Attack,
                 DamageSourceCard: newArgs.BattleContext.AttackCard,
                 GuardPlayer: newArgs.BattleContext.GuardPlayer,
-                Value: newArgs.BattleContext.AttackCard.Power,
-                IsBattle: true
+                Value: newArgs.BattleContext.AttackCard.Power
             );
             await this.DamagePlayer(damageContext, default, default);
 
@@ -1174,17 +1163,20 @@ namespace Cauldron.Core.Entities
 
             newDamageContext.GuardPlayer.Damage(newDamageContext.Value);
 
+            if (newDamageContext?.GuardPlayer == default)
+            {
+                return;
+            }
+
             // 各プレイヤーに通知
             foreach (var player in this.playerRepository.AllPlayers)
             {
                 this.EventListener?.OnDamage?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
                     new DamageNotifyMessage(
-                        newDamageContext.IsBattle
-                            ? DamageNotifyMessage.ReasonValue.Attack
-                            : DamageNotifyMessage.ReasonValue.Effect,
+                        newDamageContext.Reason,
                         newDamageContext.Value,
-                        SourceCardId: newDamageContext.DamageSourceCard.Id,
+                        SourceCardId: newDamageContext.DamageSourceCard?.Id ?? default,
                         GuardPlayerId: newDamageContext.GuardPlayer.Id,
                         EffectOwnerCard: effectOwnerCard,
                         EffectId: effectId
@@ -1257,19 +1249,19 @@ namespace Cauldron.Core.Entities
             {
                 // お互いにダメージを受ける
                 var damageContext = new DamageContext(
+                    DamageNotifyMessage.ReasonValue.Attack,
                     DamageSourceCard: newArgs.BattleContext.AttackCard,
                     GuardCard: newArgs.BattleContext.GuardCard,
-                    Value: newArgs.BattleContext.AttackCard.Power,
-                    IsBattle: true
+                    Value: newArgs.BattleContext.AttackCard.Power
                 );
                 await this.DamageCreature(damageContext, default, default);
 
                 // 反撃ダメージは戦闘イベントとして扱わない
                 var damageContext2 = new DamageContext(
+                    DamageNotifyMessage.ReasonValue.Attack,
                     DamageSourceCard: newArgs.BattleContext.GuardCard,
                     GuardCard: newArgs.BattleContext.AttackCard,
-                    Value: newArgs.BattleContext.GuardCard.Power,
-                    IsBattle: true
+                    Value: newArgs.BattleContext.GuardCard.Power
                 );
                 await this.DamageCreature(damageContext2, default, default);
             }
@@ -1336,11 +1328,9 @@ namespace Cauldron.Core.Entities
                 this.EventListener?.OnDamage?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
                     new DamageNotifyMessage(
-                        newDamageContext.IsBattle
-                            ? DamageNotifyMessage.ReasonValue.Attack
-                            : DamageNotifyMessage.ReasonValue.Effect,
+                        newDamageContext.Reason,
                         newDamageContext.Value,
-                        SourceCardId: newDamageContext.DamageSourceCard.Id,
+                        SourceCardId: newDamageContext.DamageSourceCard?.Id ?? default,
                         GuardCardId: newDamageContext.GuardCard.Id,
                         EffectOwnerCard: effectOwnerCard,
                         EffectId: effectId

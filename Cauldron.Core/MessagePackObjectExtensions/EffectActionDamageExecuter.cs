@@ -32,6 +32,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                 var damageValue = await _this.Value.Calculate(effectOwnerCard, newArgs);
 
                 var damageContext = new DamageContext(
+                    DamageNotifyMessage.ReasonValue.Effect,
                     effectOwnerCard,
                     Value: damageValue,
                     GuardPlayer: guardPlayer
@@ -52,6 +53,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                 var damageValue = await _this.Value.Calculate(effectOwnerCard, newArgs);
 
                 var damageContext = new DamageContext(
+                    DamageNotifyMessage.ReasonValue.Effect,
                     effectOwnerCard,
                     Value: damageValue,
                     GuardCard: card

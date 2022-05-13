@@ -76,7 +76,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 {
                     if (effectEventArgs.DamageContext != null)
                     {
-                        return effectEventArgs.DamageContext.IsBattle
+                        return effectEventArgs.DamageContext.Reason == DamageNotifyMessage.ReasonValue.Attack
                             && cardToMatch.Id == effectEventArgs.DamageContext.DamageSourceCard?.Id;
                     }
                     else if (effectEventArgs.BattleContext != null)
@@ -91,7 +91,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 {
                     if (effectEventArgs.DamageContext != null)
                     {
-                        return effectEventArgs.DamageContext.IsBattle
+                        return effectEventArgs.DamageContext.Reason == DamageNotifyMessage.ReasonValue.Attack
                             && cardToMatch.Id == effectEventArgs.DamageContext.GuardCard?.Id;
                     }
                     else if (effectEventArgs.BattleContext != null)

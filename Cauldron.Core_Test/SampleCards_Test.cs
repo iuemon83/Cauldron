@@ -702,11 +702,15 @@ namespace Cauldron.Core_Test
                 await assert(0);
 
                 // HP差があるのでドローできる
-                await g.DamagePlayer(new(c.Player1.Hands.AllCards[0], 1, GuardPlayer: c.Player1), default, default);
+                await g.DamagePlayer(
+                    new(DamageNotifyMessage.ReasonValue.Effect, c.Player1.Hands.AllCards[0], 1, GuardPlayer: c.Player1),
+                    default, default);
                 await assert(1);
 
                 // HP差があっても相手HPのほうが低いとドローできない
-                await g.DamagePlayer(new(c.Player1.Hands.AllCards[0], 2, GuardPlayer: c.Player2), default, default);
+                await g.DamagePlayer(
+                    new(DamageNotifyMessage.ReasonValue.Effect, c.Player1.Hands.AllCards[0], 2, GuardPlayer: c.Player2),
+                    default, default);
                 await assert(0);
             });
         }
@@ -951,7 +955,9 @@ namespace Cauldron.Core_Test
                 var testcard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // ダメージ軽減される
-                await g.DamageCreature(new(testcard, 3, testcard), default, default);
+                await g.DamageCreature(
+                    new(DamageNotifyMessage.ReasonValue.Effect, testcard, 3, testcard),
+                    default, default);
                 Assert.Equal(testcard.BaseToughness - 1, testcard.Toughness);
 
                 // ほかクリーチャーの攻撃が強化される
@@ -3388,10 +3394,11 @@ namespace Cauldron.Core_Test
 
                 // 自分のHPが5以下なので、自分が回復
                 await g.DamagePlayer(new Core.Entities.Effect.DamageContext(
+                    DamageNotifyMessage.ReasonValue.Effect,
                     default,
                     5,
-                    GuardPlayer: p,
-                    IsBattle: false),
+                    GuardPlayer: p
+                    ),
                     default, default
                     );
                 Assert.Equal(5, p.CurrentHp);

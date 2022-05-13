@@ -13,13 +13,13 @@ namespace Cauldron.Shared.MessagePackObjects
             }
 
             if (_this.Type == EffectTimingDamageBeforeEvent.TypeValue.Battle
-                && !eventArgs.DamageContext.IsBattle)
+                && eventArgs.DamageContext.Reason != DamageNotifyMessage.ReasonValue.Attack)
             {
                 return false;
             }
 
             if (_this.Type == EffectTimingDamageBeforeEvent.TypeValue.NonBattle
-                && eventArgs.DamageContext.IsBattle)
+                && eventArgs.DamageContext.Reason == DamageNotifyMessage.ReasonValue.Attack)
             {
                 return false;
             }

@@ -21,6 +21,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
                         1
                     )
@@ -40,6 +41,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
                         0
                     )
@@ -60,9 +62,9 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
-                        1,
-                        IsBattle: false
+                        1
                     )
                 ));
 
@@ -74,9 +76,9 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Attack,
                         default,
-                        1,
-                        IsBattle: true
+                        1
                     )
                 ));
 
@@ -95,9 +97,9 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
-                        1,
-                        IsBattle: false
+                        1
                     )
                 ));
 
@@ -109,9 +111,9 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Attack,
                         default,
-                        1,
-                        IsBattle: true
+                        1
                     )
                 ));
 
@@ -134,6 +136,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
                         1,
                         GuardPlayer: new(
@@ -155,6 +158,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
                         1,
                         GuardCard: new(TestUtil.CardDef(""))
@@ -181,6 +185,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
                         1,
                         GuardPlayer: new(
@@ -202,6 +207,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
                         1,
                         GuardCard: new(TestUtil.CardDef(""))
@@ -231,6 +237,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
                         1,
                         GuardPlayer: new(
@@ -252,6 +259,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
                         1,
                         GuardCard: new(TestUtil.CardDef(""))
@@ -280,6 +288,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         testCard,
                         1,
                         GuardCard: new Card(TestUtil.CardDef(""))
@@ -295,6 +304,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         new(TestUtil.CardDef("")),
                         1,
                         GuardCard: new(TestUtil.CardDef(""))
@@ -323,6 +333,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         new Card(TestUtil.CardDef("")),
                         1,
                         GuardCard: testCard
@@ -338,6 +349,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         new(TestUtil.CardDef("")),
                         1,
                         GuardCard: new(TestUtil.CardDef(""))
@@ -366,6 +378,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         new Card(TestUtil.CardDef("")),
                         1,
                         GuardCard: testCard
@@ -381,6 +394,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnDamageBefore,
                     default,
                     DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         new(TestUtil.CardDef("")),
                         1,
                         GuardCard: new(TestUtil.CardDef(""))
