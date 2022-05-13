@@ -229,6 +229,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;
 
             this.Zone = Zone.Empty;
+            this.CountersByName.Clear();
         }
 
         public void Reset()

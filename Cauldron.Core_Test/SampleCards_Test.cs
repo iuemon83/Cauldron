@@ -3803,6 +3803,16 @@ namespace Cauldron.Core_Test
                 Assert.False(testCard.CountersByName.ContainsKey("魔導"));
                 // カウンターが0になるので破壊される
                 Assert.Equal(ZoneName.Cemetery, testCard.Zone.ZoneName);
+
+
+                // --- 墓地に行ったらカウンターが0になる ---
+                var testCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(5, testCard2.GetCounter("魔導"));
+
+                await g.DestroyCard(testCard2, default, default);
+
+                Assert.Equal(0, testCard2.GetCounter("魔導"));
             });
         }
 
