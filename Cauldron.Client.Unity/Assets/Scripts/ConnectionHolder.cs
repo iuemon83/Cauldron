@@ -58,10 +58,17 @@ namespace Assets.Scripts
             this.Client = await Client.Factory(this.channel, playerName, this.Receiver, Debug.Log, Debug.LogError);
         }
 
-        private void OnDestroy()
+        private async void OnDestroy()
         {
-            this.Client?.Destroy();
-            this.channel?.ShutdownAsync();
+            if (this.Client != null)
+            {
+                await this.Client.Destroy();
+            }
+
+            if (this.channel != null)
+            {
+                await this.channel.ShutdownAsync();
+            }
         }
 
         private void OnApplicationQuit()
