@@ -45,7 +45,19 @@ public class HandCardController : CardController, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         this.displaySmallCardDetail?.Invoke(this.Card);
-        this.setPlayTargetHand?.Invoke(this);
+
+        if (this.IsPicked)
+        {
+            BattleSceneController.Instance.UnPick(this);
+        }
+        else if (this.IsPickCandidate)
+        {
+            BattleSceneController.Instance.Pick(this);
+        }
+        else
+        {
+            this.setPlayTargetHand?.Invoke(this);
+        }
     }
 
     public void DisablePlayTarget()

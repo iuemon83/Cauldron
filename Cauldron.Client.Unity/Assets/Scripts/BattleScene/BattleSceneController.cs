@@ -1315,6 +1315,11 @@ public class BattleSceneController : MonoBehaviour
                 {
                     fieldCardController.VisiblePickCandidateIcon(true);
                 }
+
+                if (this.handCardObjectsByCardId.TryGetValue(card.Id, out var handCardController))
+                {
+                    handCardController.VisiblePickCandidateIcon(true);
+                }
             }
 
             this.pickUiGroup.SetActive(true);
