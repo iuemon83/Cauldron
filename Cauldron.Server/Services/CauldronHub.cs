@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,6 +18,8 @@ namespace Cauldron.Server.Services
 {
     public class CauldronHub : StreamingHubBase<ICauldronHub, ICauldronHubReceiver>, ICauldronHub
     {
+        public readonly static int GiveUpAnswerTimeInSecondes = 300;
+
         private static GameContext CreateGameContext(GameId gameId, PlayerId PlayerId)
         {
             var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);
@@ -92,25 +95,40 @@ namespace Cauldron.Server.Services
                     );
             }
 
-            try
-            {
-                this._logger.LogInformation("called {name}: questionId={currentQuestionId}, choiceCandidates={choiceCandidates}", nameof(AskCard), currentQuestionId, choiceCandidates);
-                this.BroadcastTo(this.room, playerId.Value).OnAsk(new AskMessage(
-                    currentQuestionId,
-                    choiceCandidates,
-                    numPicks));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            this._logger.LogInformation("called {name}: questionId={currentQuestionId}, choiceCandidates={choiceCandidates}", nameof(AskCard), currentQuestionId, choiceCandidates);
+            this.BroadcastTo(this.room, playerId.Value).OnAsk(new AskMessage(
+                currentQuestionId,
+                choiceCandidates,
+                numPicks));
 
-            var answer = await Task.Run(() =>
+            var answer = await Task.Run(async () =>
             {
-                ChoiceAnswer answer;
-                while (!QuestionManager.TryGetAnswer(currentQuestionId, out answer)) ;
+                var s = new Stopwatch();
 
-                return answer;
+                try
+                {
+                    s.Start();
+
+                    ChoiceAnswer answer;
+                    while (!QuestionManager.TryGetAnswer(currentQuestionId, out answer))
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(0.2));
+
+                        //TODO エラー飛ばすけどクライアント側で処理してない
+                        // エラーになると、このカードのPlayFromHandが失敗する。（クライアント側が選択して送ってきても何も起きない）
+                        // その後に、なにかアクションすると再接続して、処理が続行される
+                        if (s.Elapsed >= TimeSpan.FromSeconds(GiveUpAnswerTimeInSecondes))
+                        {
+                            throw new InvalidOperationException("give up recieve answer");
+                        }
+                    }
+
+                    return answer;
+                }
+                finally
+                {
+                    s.Stop();
+                }
             });
 
             // 答えが来た
