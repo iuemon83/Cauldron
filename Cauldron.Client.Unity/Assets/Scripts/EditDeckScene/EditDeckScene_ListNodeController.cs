@@ -19,6 +19,7 @@ public class EditDeckScene_ListNodeController : MonoBehaviour, IPointerEnterHand
     private Action AddToDeckAction { get; set; }
     private Action RemoveFromDeckAction { get; set; }
     private Action<CardDef> ShowDetailAction { get; set; }
+    private Action<CardDef> ShowFlaverTextAction { get; set; }
 
     public int CurrentDeckCount => int.TryParse(this.currentDeckCountText.text, out var intValue) ? intValue : 0;
 
@@ -31,12 +32,16 @@ public class EditDeckScene_ListNodeController : MonoBehaviour, IPointerEnterHand
     public CardDef Source { get; set; }
 
     public void Init(CardDef source, int limit, int currentNum,
-        Action AddToDeckAction, Action RemoveFromDeckAction, Action<CardDef> ShowDetailAction)
+        Action AddToDeckAction, Action RemoveFromDeckAction,
+        Action<CardDef> ShowDetailAction,
+        Action<CardDef> ShowFlaverTextAction
+        )
     {
         this.Source = source;
         this.AddToDeckAction = AddToDeckAction;
         this.RemoveFromDeckAction = RemoveFromDeckAction;
         this.ShowDetailAction = ShowDetailAction;
+        this.ShowFlaverTextAction = ShowFlaverTextAction;
 
         this.cardNameText.text = $"{this.Source.Name}";
         this.cardStatsText.text = this.Source.Type == CardType.Creature
@@ -64,6 +69,13 @@ public class EditDeckScene_ListNodeController : MonoBehaviour, IPointerEnterHand
         Debug.Log("remove button click! ");
 
         this.RemoveFromDeckAction();
+    }
+
+    public void OnShowFlaverTextButtonClick()
+    {
+        Debug.Log("show flaver text button click! ");
+
+        this.ShowFlaverTextAction(this.Source);
     }
 
     public void AddOne()

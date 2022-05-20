@@ -26,6 +26,8 @@ public class EditDeckSceneController : MonoBehaviour
     private InputField searchKeywordInputField = default;
     [SerializeField]
     private AudioSource audioSource = default;
+    [SerializeField]
+    private FlaverTextViewerController flaverTextViewerController = default;
 
     public IDeck DeckToEdit { get; set; }
 
@@ -194,7 +196,8 @@ public class EditDeckSceneController : MonoBehaviour
             currentNumCards,
             () => this.AddToDeck(cardDef),
             () => this.RemoveFromDeck(cardDef.Id),
-            this.cardDefDetailController.SetCard
+            this.cardDefDetailController.SetCard,
+            this.flaverTextViewerController.Open
             );
 
         this.cardPoolListByDefId.Add(cardDef.Id, controller);
@@ -236,7 +239,8 @@ public class EditDeckSceneController : MonoBehaviour
                 0,
                 () => this.AddToDeck(cardDef),
                 () => this.RemoveFromDeck(cardDef.Id),
-                this.cardDefDetailController.SetCard
+                this.cardDefDetailController.SetCard,
+                this.flaverTextViewerController.Open
                 );
 
             this.deckListByDefId.Add(cardDef.Id, deckListNodeController);
