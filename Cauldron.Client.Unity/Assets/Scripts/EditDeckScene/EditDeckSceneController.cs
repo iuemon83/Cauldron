@@ -103,7 +103,8 @@ public class EditDeckSceneController : MonoBehaviour
     {
         return cardDef.Name.Contains(keyword)
             || cardDef.EffectDescription.Contains(keyword)
-            || cardDef.Annotations.Contains(keyword)
+            || cardDef.Annotations.Any(a => a.Contains(keyword))
+            || cardDef.Abilities.Any(a => Utility.DisplayText(a).Contains(keyword))
             || cardDef.FlavorText.Contains(keyword)
             ;
     }
