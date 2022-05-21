@@ -17,12 +17,15 @@ public class TitleSceneController : MonoBehaviour
     private Button startButton = default;
     [SerializeField]
     private AudioSource audioSource = default;
+    [SerializeField]
+    private TextMeshProUGUI versionText = default;
 
     private Text startButtonText;
 
     private void Start()
     {
         this.startButtonText = this.startButton.GetComponentInChildren<Text>();
+        this.versionText.text = $"ver.{Config.Version}";
 
         this.ipOrHostNameText.text = LocalData.ServerAddress;
         this.playerNameText.text = LocalData.PlayerName;

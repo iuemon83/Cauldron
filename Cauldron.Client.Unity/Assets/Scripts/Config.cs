@@ -1,9 +1,10 @@
-﻿using Cauldron.Shared.MessagePackObjects;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 
 class Config
 {
+    public static readonly string Version = "20220521.1";
+
     /// <summary>
     /// カードの画像を格納するディレクトリのパス
     /// </summary>
