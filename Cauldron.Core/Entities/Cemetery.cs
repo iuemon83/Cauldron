@@ -17,7 +17,6 @@ namespace Cauldron.Core.Entities
 
         public void Add(Card card)
         {
-            card.Reset();
             this.Cards.Add(card);
         }
 

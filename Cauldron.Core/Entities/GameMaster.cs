@@ -628,11 +628,17 @@ namespace Cauldron.Core.Entities
             switch (moveCardContext.To.ZoneName)
             {
                 case ZoneName.Cemetery:
+                    card.Reset();
                     toPlayer.Cemetery.Add(card);
                     toIndex = toPlayer.Cemetery.Count - 1;
                     break;
 
                 case ZoneName.Deck:
+                    // 場→デッキならリセット
+                    if (moveCardContext.From.ZoneName == ZoneName.Field)
+                    {
+                        card.Reset();
+                    }
                     var index = CalcIndex(moveCardContext.InsertCardPosition, 0, toPlayer.Deck.Count);
                     toPlayer.Deck.Insert(index, card);
                     break;
@@ -664,6 +670,12 @@ namespace Cauldron.Core.Entities
                         await this.MoveCard(card.Id,
                             new(moveCardContext.From, new Zone(toPlayer.Id, ZoneName.Cemetery)), effectOwnerCard, effectId);
                         return;
+                    }
+
+                    // 場→手札ならリセット
+                    if (moveCardContext.From.ZoneName == ZoneName.Field)
+                    {
+                        card.Reset();
                     }
 
                     toPlayer.Hands.Add(card);

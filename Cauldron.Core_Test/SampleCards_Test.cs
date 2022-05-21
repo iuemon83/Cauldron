@@ -401,8 +401,11 @@ namespace Cauldron.Core_Test
                 var (_, p) = g.playerRepository.TryGet(pid);
                 var op = g.GetOpponent(pid);
 
+                p1TestCard.ToughnessBuff = 1;
+
                 // UŒ‚‚³‚ê‚é‚ÆUŒ‚‚µ‚½ƒJ[ƒh‚ğ‚¿å‚ÌèD‚É–ß‚·
                 var p2Goblin = await TestUtil.NewCardAndPlayFromHand(g, pid, goblinDef.Id);
+                p2Goblin.PowerBuff = 1;
 
                 var beforpHandsIdList = p.Hands.AllCards.Select(c => c.Id).ToArray();
 
@@ -418,6 +421,9 @@ namespace Cauldron.Core_Test
 
                 Assert.Single(diffHandsIdList);
                 Assert.Equal(p2Goblin.Id, diffHandsIdList[0]);
+
+                // ƒoƒt‚àÁ‚¦‚é
+                Assert.Equal(p2Goblin.BasePower, p2Goblin.Power);
 
                 // UŒ‚‚µ‚½‚Æ‚«‚ÍŒø‰Ê‚ª”­“®‚µ‚È‚¢
                 await g.DestroyCard(p1TestCard, default, default);
