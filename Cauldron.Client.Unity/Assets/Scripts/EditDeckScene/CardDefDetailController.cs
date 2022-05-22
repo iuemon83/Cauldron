@@ -51,7 +51,7 @@ public class CardDefDetailController : MonoBehaviour
         }
 
         this.cardNameText.text = this.source.Name;
-        this.effectText.text = this.source.EffectDescription;
+        this.effectText.text = this.EffectDescription(this.source);
         this.costText.text = this.source.Cost.ToString();
         this.otherText.text = this.OtherText(this.source);
 
@@ -69,6 +69,26 @@ public class CardDefDetailController : MonoBehaviour
                 this.toughnessSpace.gameObject.SetActive(false);
                 break;
         }
+    }
+
+    private string EffectDescription(CardDef cardDef)
+    {
+        var v = "";
+        var v1 = Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value);
+        if (v1 != "")
+        {
+            v += v1 + Environment.NewLine;
+        }
+
+        var v2 = Utility.DisplayTextForNumTurnsToCanAttack(cardDef.NumTurnsToCanAttack.Value);
+        if (v2 != "")
+        {
+            v += v2 + Environment.NewLine;
+        }
+
+        v += cardDef.EffectDescription;
+
+        return v;
     }
 
     private string OtherText(CardDef cardDef)

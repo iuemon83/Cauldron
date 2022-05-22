@@ -28,7 +28,6 @@ class AbilityIconCache
                 CreatureAbility.Stealth => StealthIcon.Value,
                 CreatureAbility.Deadly => DeadlyIcon.Value,
                 CreatureAbility.Sealed => SealedIcon.Value,
-                CreatureAbility.CantAttack => CantattackIcon.Value,
                 _ => null
             };
 

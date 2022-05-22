@@ -20,12 +20,6 @@ namespace Cauldron.Shared
         Stealth,
 
         /// <summary>
-        /// 攻撃不能
-        /// </summary>
-        [DisplayText("攻撃不能")]
-        CantAttack,
-
-        /// <summary>
         /// 必殺
         /// </summary>
         [DisplayText("必殺")]

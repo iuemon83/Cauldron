@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using System;
@@ -42,7 +43,7 @@ public class CardDetailController : MonoBehaviour
         if (this.card != null)
         {
             this.cardNameText.text = this.card.Name;
-            this.effectText.text = this.card.EffectDescription;
+            this.effectText.text = this.EffectDescription(this.card);
             this.costText.text = this.card.Cost.ToString();
 
             switch (this.card.Type)
@@ -63,7 +64,7 @@ public class CardDetailController : MonoBehaviour
         else if (this.cardDef != null)
         {
             this.cardNameText.text = this.cardDef.Name;
-            this.effectText.text = this.cardDef.EffectDescription;
+            this.effectText.text = this.EffectDescription(this.cardDef);
             this.costText.text = this.cardDef.Cost.ToString();
 
             switch (this.cardDef.Type)
@@ -81,6 +82,46 @@ public class CardDetailController : MonoBehaviour
                     break;
             }
         }
+    }
+
+    private string EffectDescription(Card card)
+    {
+        var v = "";
+        var v1 = Utility.DisplayTextForNumAttacksLimitInTurn(card.NumAttacksLimitInTurn);
+        if (v1 != "")
+        {
+            v += v1 + Environment.NewLine;
+        }
+
+        var v2 = Utility.DisplayTextForNumTurnsToCanAttack(card.NumTurnsToCanAttack);
+        if (v2 != "")
+        {
+            v += v2 + Environment.NewLine;
+        }
+
+        v += card.EffectDescription;
+
+        return v;
+    }
+
+    private string EffectDescription(CardDef cardDef)
+    {
+        var v = "";
+        var v1 = Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value);
+        if (v1 != "")
+        {
+            v += v1 + Environment.NewLine;
+        }
+
+        var v2 = Utility.DisplayTextForNumTurnsToCanAttack(cardDef.NumTurnsToCanAttack.Value);
+        if (v2 != "")
+        {
+            v += v2 + Environment.NewLine;
+        }
+
+        v += cardDef.EffectDescription;
+
+        return v;
     }
 
     public void SetCard(Card card)

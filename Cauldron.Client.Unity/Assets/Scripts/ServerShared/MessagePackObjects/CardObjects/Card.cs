@@ -122,8 +122,6 @@ namespace Cauldron.Shared.MessagePackObjects
             && this.Zone.ZoneName == ZoneName.Field
             // 召喚酔いでない
             && this.NumTurnsToCanAttack <= this.NumTurnsInField
-            // 攻撃不能状態でない
-            && !this.EnableAbility(CreatureAbility.CantAttack)
             // 1ターン中に攻撃可能な回数を超えていない
             && this.NumAttacksLimitInTurn > this.NumAttacksInTurn
             ;

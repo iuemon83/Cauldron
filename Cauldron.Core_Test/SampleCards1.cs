@@ -94,7 +94,9 @@ namespace Cauldron.Core_Test
 
         public static CardDef BigShielder
             => SampleCards1.Creature(3, "大盾持ち", 1, 4, flavorText: "攻撃できない",
-                abilities: new[] { CreatureAbility.Cover, CreatureAbility.CantAttack });
+                abilities: new[] { CreatureAbility.Cover },
+                numAttacksInTurn: 0
+                );
 
         public static CardDef Assassin
             => SampleCards1.Creature(3, "暗殺者", 1, 1,
@@ -1468,7 +1470,8 @@ namespace Cauldron.Core_Test
 
         public static CardDef Firelord
             => SampleCards1.Creature(8, "炎の王",
-                8, 8, abilities: new[] { CreatureAbility.CantAttack },
+                8, 8,
+                numAttacksInTurn: 0,
                 effects: new[]
                 {
                     new CardEffect(

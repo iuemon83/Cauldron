@@ -117,7 +117,6 @@ namespace Assets.Scripts
             CreatureAbility.None => "なし",
             CreatureAbility.Cover => "守護",
             CreatureAbility.Stealth => "潜伏",
-            CreatureAbility.CantAttack => "攻撃不可",
             CreatureAbility.Deadly => "必殺",
             CreatureAbility.Sealed => "封印",
             _ => "",
@@ -135,5 +134,19 @@ namespace Assets.Scripts
             ZoneName.Temporary => "場",
             _ => "",
         };
+
+        public static string DisplayTextForNumAttacksLimitInTurn(int value)
+        {
+            return value == 0
+                ? "攻撃不能"
+                : value == 1 ? "" : $"攻撃回数({value})";
+        }
+
+        public static string DisplayTextForNumTurnsToCanAttack(int value)
+        {
+            return value == 0
+                ? "速攻"
+                : value == 1 ? "" : $"鈍足({value})";
+        }
     }
 }
