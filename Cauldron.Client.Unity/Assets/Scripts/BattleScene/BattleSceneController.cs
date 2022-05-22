@@ -821,6 +821,18 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(() =>
         {
+            // êÌì¨åãâ ÇÃÉçÉOÇí«â¡
+            var localdata = LocalData.LoadLocalData();
+            localdata.AddBattleLog(LocalBattleLog.Create(
+                this.Client.GameId,
+                this.currentGameContext.You.PublicPlayerInfo.Id,
+                this.currentGameContext.You.PublicPlayerInfo.Name,
+                this.currentGameContext.Opponent.Name,
+                message.WinnerPlayerId == this.youPlayerController.PlayerId
+            ));
+
+            LocalData.SaveLocalData();
+
             this.ShowEndGameDialog(message);
 
             return UniTask.CompletedTask;

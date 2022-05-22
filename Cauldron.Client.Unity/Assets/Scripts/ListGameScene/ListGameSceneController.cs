@@ -64,6 +64,11 @@ public class ListGameSceneController : MonoBehaviour
         });
     }
 
+    public async void OnBattleLogButtonClick()
+    {
+        await Utility.LoadAsyncScene(SceneNames.ListBattleLogsScene);
+    }
+
     public void OnOpenNewGameButtonClick()
     {
         this.PlayAudio(SeAudioCache.SeAudioType.Ok);

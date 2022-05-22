@@ -5,6 +5,7 @@
         TitleScene,
         ListGameScene,
         ListDeckScene,
+        ListBattleLogsScene,
         EditDeckScene,
         BattleScene,
         DisplayLicenseScene,

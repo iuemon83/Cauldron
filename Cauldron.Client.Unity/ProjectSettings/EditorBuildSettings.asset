@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/ListGameScene.unity
     guid: 291379c2b0a24c04eac7490730836bf0
   - enabled: 1
+    path: Assets/Scenes/ListBattleLogsScene.unity
+    guid: 124e3eb0b52028a4aa6fd8b4845f46f1
+  - enabled: 1
     path: Assets/Scenes/ListDeckScene.unity
     guid: de4460b9112772644961ee6f6ed868f0
   - enabled: 1
