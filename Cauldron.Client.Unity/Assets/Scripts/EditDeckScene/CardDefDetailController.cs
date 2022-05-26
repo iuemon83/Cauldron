@@ -73,22 +73,16 @@ public class CardDefDetailController : MonoBehaviour
 
     private string EffectDescription(CardDef cardDef)
     {
-        var v = "";
-        var v1 = Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value);
-        if (v1 != "")
-        {
-            v += v1 + Environment.NewLine;
-        }
-
-        var v2 = Utility.DisplayTextForNumTurnsToCanAttack(cardDef.NumTurnsToCanAttack.Value);
-        if (v2 != "")
-        {
-            v += v2 + Environment.NewLine;
-        }
-
-        v += cardDef.EffectDescription;
-
-        return v;
+        return string.Join(Environment.NewLine,
+            new[]
+            {
+                cardDef.IsToken ? "<color=\"red\">ÉgÅ[ÉNÉì</color>" : "",
+                Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value),
+                Utility.DisplayTextForNumTurnsToCanAttack(cardDef.NumTurnsToCanAttack.Value),
+                cardDef.EffectDescription
+            }
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            );
     }
 
     private string OtherText(CardDef cardDef)

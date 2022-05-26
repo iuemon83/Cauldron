@@ -47,8 +47,9 @@ public class EditDeckScene_ListNodeController : MonoBehaviour, IPointerEnterHand
         this.cardStatsText.text = this.Source.Type == CardType.Creature
             ? $"{this.Source.Cost}/{this.Source.Power}/{this.Source.Toughness}"
             : $"{this.Source.Cost}/-/-";
-        this.currentDeckCountText.text = currentNum.ToString();
+
         this.limitDeckCountText.text = limit.ToString();
+        this.UpdateCurrentDeckCount(currentNum);
     }
 
     /// <summary>
@@ -80,12 +81,21 @@ public class EditDeckScene_ListNodeController : MonoBehaviour, IPointerEnterHand
 
     public void AddOne()
     {
-        this.currentDeckCountText.text = Math.Min(this.LimitDeckCount, this.CurrentDeckCount + 1).ToString();
+        this.UpdateCurrentDeckCount(Math.Min(this.LimitDeckCount, this.CurrentDeckCount + 1));
     }
 
     public void RemoveOne()
     {
-        this.currentDeckCountText.text = Math.Max(0, this.CurrentDeckCount - 1).ToString();
+        this.UpdateCurrentDeckCount(Math.Max(0, this.CurrentDeckCount - 1));
+    }
+
+    private void UpdateCurrentDeckCount(int x)
+    {
+        this.currentDeckCountText.text = x.ToString();
+
+        this.currentDeckCountText.color = this.CurrentDeckCount >= this.LimitDeckCount
+            ? Color.red
+            : Color.black;
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
