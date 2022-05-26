@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class EditDeckSceneController : MonoBehaviour
 {
@@ -17,13 +16,13 @@ public class EditDeckSceneController : MonoBehaviour
     [SerializeField]
     private GameObject listNodePrefab = default;
     [SerializeField]
-    private InputField deckNameInputField = default;
+    private TMP_InputField deckNameInputField = default;
     [SerializeField]
     private TextMeshProUGUI deckCountText = default;
     [SerializeField]
     private CardDefDetailController cardDefDetailController = default;
     [SerializeField]
-    private InputField searchKeywordInputField = default;
+    private TMP_InputField searchKeywordInputField = default;
     [SerializeField]
     private AudioSource audioSource = default;
     [SerializeField]
@@ -56,6 +55,8 @@ public class EditDeckSceneController : MonoBehaviour
         this.cardPoolListContent = this.cardPoolList.transform.Find("Viewport").transform.Find("Content");
         this.deckListContent = this.deckList.transform.Find("Viewport").transform.Find("Content");
 
+        this.searchKeywordInputField.onEndEdit.AddListener(this.SearchKeyWordInputFieldIfPushEnter);
+
         var holder = ConnectionHolder.Find();
         this.ruleBook = await holder.Client.GetRuleBook();
         this.allCards = holder.CardPool.Values
@@ -76,6 +77,14 @@ public class EditDeckSceneController : MonoBehaviour
         }
 
         this.UpdateDeckTotalCountText();
+    }
+
+    private void SearchKeyWordInputFieldIfPushEnter(string a)
+    {
+        if (Input.GetKey(KeyCode.Return))
+        {
+            this.OnSearchButtonClick();
+        }
     }
 
     public void OnSearchButtonClick()
