@@ -1196,9 +1196,10 @@ namespace Cauldron.Core_Test
         {
             var testCardDef = SampleCards1.Bomb;
             testCardDef.IsToken = false;
+            testCardDef.LimitNumCardsInDeck = 99;
             testCardDef.Cost = 0;
 
-            var c = await TestUtil.InitTest(new[] { testCardDef, });
+            var c = await TestUtil.InitTest(new[] { testCardDef, }, this.output);
 
             // æU
             await TestUtil.Turn(c.GameMaster, async (g, pId) =>
@@ -2223,6 +2224,7 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards1.VictoryStatue;
             testCardDef.Cost = 0;
             testCardDef.IsToken = false;
+            testCardDef.LimitNumCardsInDeck = 99;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
 

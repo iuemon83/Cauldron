@@ -50,6 +50,11 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public int? NumAttacksLimitInTurn { get; set; }
 
+        /// <summary>
+        /// デッキに入れることのできる枚数
+        /// </summary>
+        public int? LimitNumCardsInDeck { get; set; }
+
         public string EffectDescription => string.Join(Environment.NewLine, this.Effects.Select(x => x.Description));
 
         public CardDef()
@@ -71,7 +76,8 @@ namespace Cauldron.Shared.MessagePackObjects
             IReadOnlyList<CreatureAbility> Abilities,
             IReadOnlyList<CardEffect> Effects,
             int? NumTurnsToCanAttack,
-            int? NumAttacksLimitInTurn
+            int? NumAttacksLimitInTurn,
+            int? LimitNumCardsInDeck
             )
         {
             this.Id = Id;
@@ -88,6 +94,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Effects = Effects;
             this.NumTurnsToCanAttack = NumTurnsToCanAttack;
             this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;
+            this.LimitNumCardsInDeck = LimitNumCardsInDeck;
         }
     }
 }

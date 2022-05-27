@@ -15,6 +15,7 @@ namespace Cauldron.Core_Test
             IEnumerable<string> annotations = null,
             string flavorText = "",
             int? numTurnsToCanAttack = null, int? numAttacksInTurn = null, bool isToken = false,
+            int? limitNumInDeck = null,
             IEnumerable<CreatureAbility> abilities = null,
             IEnumerable<CardEffect> effects = null)
         {
@@ -28,6 +29,7 @@ namespace Cauldron.Core_Test
             t.NumTurnsToCanAttack = numTurnsToCanAttack;
             t.NumAttacksLimitInTurn = numAttacksInTurn;
             t.IsToken = isToken;
+            t.LimitNumCardsInDeck = isToken ? 0 : limitNumInDeck;
             t.Abilities = abilities?.ToArray() ?? Array.Empty<CreatureAbility>();
             t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
 
@@ -37,6 +39,7 @@ namespace Cauldron.Core_Test
         }
 
         public static CardDef Artifact(int cost, string name, bool isToken = false,
+            int? limitNumInDeck = null,
             IEnumerable<string> annotations = null,
             string flavorText = "",
             IEnumerable<CardEffect> effects = null)
@@ -46,6 +49,7 @@ namespace Cauldron.Core_Test
             t.IsToken = isToken;
             t.Type = CardType.Artifact;
             t.Name = name;
+            t.LimitNumCardsInDeck = isToken ? 0 : limitNumInDeck;
             t.Annotations = annotations?.ToArray() ?? Array.Empty<string>();
             t.FlavorText = flavorText;
             t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
@@ -54,6 +58,7 @@ namespace Cauldron.Core_Test
         }
 
         public static CardDef Sorcery(int cost, string name, bool isToken = false,
+            int? limitNumInDeck = null,
             IEnumerable<string> annotations = null,
             string flavorText = "",
             IEnumerable<CardEffect> effects = null)
@@ -63,6 +68,7 @@ namespace Cauldron.Core_Test
             t.IsToken = isToken;
             t.Type = CardType.Sorcery;
             t.Name = name;
+            t.LimitNumCardsInDeck = isToken ? 0 : limitNumInDeck;
             t.Annotations = annotations?.ToArray() ?? Array.Empty<string>();
             t.FlavorText = flavorText;
             t.Effects = effects?.ToArray() ?? Array.Empty<CardEffect>();
@@ -72,6 +78,10 @@ namespace Cauldron.Core_Test
 
         public static CardDef Vanilla
             => SampleCards1.Creature(1, "バニラ", 1, 2, flavorText: "なんの能力もない");
+
+        public static CardDef Rare
+            => SampleCards1.Creature(1, "レア", 1, 2, flavorText: "このカードはデッキに1枚しか入れられない",
+                limitNumInDeck: 1);
 
         public static CardDef Quick
             => SampleCards1.Creature(1, "速攻", 1, 1,

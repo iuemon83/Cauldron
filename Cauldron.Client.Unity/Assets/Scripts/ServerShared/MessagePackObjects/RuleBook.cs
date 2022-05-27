@@ -20,6 +20,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public int MaxNumFieldCards { get; }
         public int DefaultNumTurnsToCanAttack { get; }
         public int DefaultNumAttacksLimitInTurn { get; }
+        public int DefaultLimitNumCardsInDeck { get; }
 
         public RuleBook(
             int InitialPlayerHp,
@@ -35,7 +36,8 @@ namespace Cauldron.Shared.MessagePackObjects
             int LimitMpToIncrease,
             int MaxNumFieldCards,
             int DefaultNumTurnsToCanAttack,
-            int DefaultNumAttacksLimitInTurn
+            int DefaultNumAttacksLimitInTurn,
+            int DefaultLimitNumCardsInDeck
             )
         {
             this.InitialPlayerHp = InitialPlayerHp;
@@ -52,6 +54,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.MaxNumFieldCards = MaxNumFieldCards;
             this.DefaultNumTurnsToCanAttack = DefaultNumTurnsToCanAttack;
             this.DefaultNumAttacksLimitInTurn = DefaultNumAttacksLimitInTurn;
+            this.DefaultLimitNumCardsInDeck = DefaultLimitNumCardsInDeck;
         }
     }
 }

@@ -64,7 +64,7 @@ public class EditDeckSceneController : MonoBehaviour
             .ThenBy(c => c.FullName)
             .ToArray();
 
-        this.numCardsLimitListByCardDefId = this.allCards.ToDictionary(c => c.Id, c => c.IsToken ? 0 : 3);
+        this.numCardsLimitListByCardDefId = this.allCards.ToDictionary(c => c.Id, c => c.LimitNumCardsInDeck.Value);
 
         foreach (var card in this.allCards)
         {

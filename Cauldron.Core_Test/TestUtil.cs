@@ -21,7 +21,8 @@ namespace Cauldron.Core_Test
             InitialMp: 1, MaxLimitMp: 10, MinMp: 1, LimitMpToIncrease: 1,
             MaxNumFieldCards: 5,
             DefaultNumTurnsToCanAttack: 0,
-            DefaultNumAttacksLimitInTurn: 1
+            DefaultNumAttacksLimitInTurn: 1,
+            DefaultLimitNumCardsInDeck: 99
             );
 
         public static CardDef CardDef(string name)

@@ -246,7 +246,17 @@ namespace Cauldron.Core.Entities
 
             if (invalidNumCards)
             {
-                this.logger.LogError("invalid number of deck cards");
+                this.logger.LogError("invalid total number of deck cards");
+                return false;
+            }
+
+            // デッキに投入できる枚数を超えている
+            var existsInvalidNumCardsInDeck = deckCardDefList
+                .GroupBy(x => x.Id)
+                .Any(x => x.ElementAt(0).LimitNumCardsInDeck < x.Count());
+            if (existsInvalidNumCardsInDeck)
+            {
+                this.logger.LogError("invalid number of cards in deck");
                 return false;
             }
 

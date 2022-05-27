@@ -1,8 +1,6 @@
 ﻿using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Cauldron.Core.Entities
 {
@@ -32,6 +30,7 @@ namespace Cauldron.Core.Entities
                     cardDef.CardSetName = cardset.Name;
                     cardDef.NumTurnsToCanAttack ??= this.ruleBook.DefaultNumTurnsToCanAttack;
                     cardDef.NumAttacksLimitInTurn ??= this.ruleBook.DefaultNumAttacksLimitInTurn;
+                    cardDef.LimitNumCardsInDeck ??= this.ruleBook.DefaultLimitNumCardsInDeck;
 
                     this.CardDefListById.TryAdd(cardDef.Id, cardDef);
                 }

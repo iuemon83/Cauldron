@@ -85,6 +85,7 @@ public class ListGameSceneController : MonoBehaviour
                 }
                 catch (RpcException e)
                 {
+                    //TODO 不正なデッキだったらここに来るか？
                     Debug.LogWarning(e);
                     return;
                 }
@@ -164,6 +165,7 @@ public class ListGameSceneController : MonoBehaviour
         }
         catch (RpcException e)
         {
+            //TODO 不正なデッキだったらここに来るか？
             Debug.LogWarning(e);
             return;
         }
