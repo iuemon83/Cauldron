@@ -28,7 +28,15 @@ namespace Cauldron.Core.Entities
         public int MaxHp { get; private set; }
         public int UsedHp { get; private set; }
         public int CurrentHp => Math.Max(0, this.MaxHp - this.UsedHp);
+
+        /// <summary>
+        /// ゲーム中のMPの上限値
+        /// </summary>
         public int MaxLimitMp { get; private set; }
+
+        /// <summary>
+        /// 現時点でのMPの上限値
+        /// </summary>
         public int MaxMp { get; private set; }
         public int UsedMp { get; private set; }
         public int CurrentMp => Math.Max(0, this.MaxMp - this.UsedMp);
@@ -48,7 +56,7 @@ namespace Cauldron.Core.Entities
             this.MaxHp = this.RuleBook.MaxPlayerHp;
             this.UsedHp = this.MaxHp - this.RuleBook.InitialPlayerHp;
             this.MaxLimitMp = this.RuleBook.MaxLimitMp;
-            this.MaxMp = this.RuleBook.InitialMp;
+            this.MaxMp = isFirst ? this.RuleBook.FirstPlayerStartMp : this.RuleBook.SecondPlayerStartMp;
             this.Deck = new Deck(deck);
             this.Hands = new Hands(this.RuleBook);
             this.Field = new Field(this.RuleBook);

@@ -57,9 +57,14 @@ namespace Cauldron.Shared.MessagePackObjects
         public int SecondPlayerNumDrawsInFirstTurn { get; }
 
         /// <summary>
-        /// ゲーム開始時点のMP
+        /// 先攻のゲーム開始時点のMP
         /// </summary>
-        public int InitialMp { get; }
+        public int FirstPlayerStartMp { get; }
+
+        /// <summary>
+        /// 後攻のゲーム開始時点のMP
+        /// </summary>
+        public int SecondPlayerStartMp { get; }
 
         /// <summary>
         /// ゲーム中のMPの上限値
@@ -107,7 +112,8 @@ namespace Cauldron.Shared.MessagePackObjects
             int NumDraws,
             int FirstPlayerNumDrawsInFirstTurn,
             int SecondPlayerNumDrawsInFirstTurn,
-            int InitialMp,
+            int FirstPlayerStartMp,
+            int SecondPlayerStartMp,
             int MaxLimitMp,
             int MinMp,
             int LimitMpToIncrease,
@@ -127,7 +133,8 @@ namespace Cauldron.Shared.MessagePackObjects
             this.NumDraws = NumDraws;
             this.FirstPlayerNumDrawsInFirstTurn = FirstPlayerNumDrawsInFirstTurn;
             this.SecondPlayerNumDrawsInFirstTurn = SecondPlayerNumDrawsInFirstTurn;
-            this.InitialMp = InitialMp;
+            this.FirstPlayerStartMp = FirstPlayerStartMp;
+            this.SecondPlayerStartMp = SecondPlayerStartMp;
             this.MaxLimitMp = MaxLimitMp;
             this.MinMp = MinMp;
             this.LimitMpToIncrease = LimitMpToIncrease;

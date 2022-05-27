@@ -1,5 +1,6 @@
 {
-  "initialMp": 1,
+  "firstPlayerStartMp": 1,
+  "secondPlayerStartMp": 2,
   "maxLimitMp": 10,
   "minMp": 0,
   "limitMpToIncrease": 1,
