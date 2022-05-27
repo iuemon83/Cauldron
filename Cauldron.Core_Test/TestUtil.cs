@@ -18,6 +18,8 @@ namespace Cauldron.Core_Test
             InitialPlayerHp: 10, MaxPlayerHp: 99, MinPlayerHp: 0,
             MaxNumDeckCards: 99, MinNumDeckCards: 1,
             InitialNumHands: 5, MaxNumHands: 10,
+            NumDraws: 1,
+            FirstPlayerNumDrawsInFirstTurn: 1, SecondPlayerNumDrawsInFirstTurn: 1,
             InitialMp: 1, MaxLimitMp: 10, MinMp: 1, LimitMpToIncrease: 1,
             MaxNumFieldCards: 5,
             DefaultNumTurnsToCanAttack: 0,

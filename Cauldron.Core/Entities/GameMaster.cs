@@ -278,18 +278,18 @@ namespace Cauldron.Core.Entities
 
                 foreach (var playerDef in this.PlayerDefsById.Values)
                 {
-                    var ifFirst = playerDef.Id == firstPlayerId;
+                    var isFirst = playerDef.Id == firstPlayerId;
 
                     var deckCards = playerDef.DeckIdList
                         .Select(id => this.cardRepository.CreateNew(id))
                         .OfType<Card>()
                         .ToArray();
 
-                    var player = this.playerRepository.CreateNew(playerDef, this.RuleBook, deckCards, ifFirst);
+                    var player = this.playerRepository.CreateNew(playerDef, this.RuleBook, deckCards, isFirst);
 
                     this.PlayerTurnCountById.TryAdd(player.Id, 0);
 
-                    if (ifFirst)
+                    if (isFirst)
                     {
                         this.ActivePlayer = player;
                     }
@@ -437,8 +437,8 @@ namespace Cauldron.Core.Entities
                         default,
                         1,
                         GuardPlayer: player),
-                        default,
-                        default
+                        effectOwnerCard,
+                        effectId
                         );
                 }
                 if (isDiscarded)
@@ -449,8 +449,8 @@ namespace Cauldron.Core.Entities
                         new Zone(drawCard.OwnerId, ZoneName.Deck),
                         new Zone(drawCard.OwnerId, ZoneName.Cemetery)
                         ),
-                        default,
-                        default
+                        effectOwnerCard,
+                        effectId
                         );
                 }
                 else if (isDrawed)
@@ -461,8 +461,8 @@ namespace Cauldron.Core.Entities
                         new Zone(drawCard.OwnerId, ZoneName.Deck),
                         new Zone(drawCard.OwnerId, ZoneName.Hand)
                         ),
-                        default,
-                        default
+                        effectOwnerCard,
+                        effectId
                         );
 
                     await this.FireEvent(new EffectEventArgs(GameEvent.OnDraw, this, SourceCard: drawCard));
@@ -866,9 +866,27 @@ namespace Cauldron.Core.Entities
 
             await this.FireEvent(new EffectEventArgs(GameEvent.OnStartTurn, this, SourcePlayer: this.ActivePlayer));
 
-            await this.Draw(this.ActivePlayer.Id, 1, default, default);
+            var numDraws = this.NumDrawsAtStartTurn();
+
+            await this.Draw(this.ActivePlayer.Id, numDraws, default, default);
 
             return GameMasterStatusCode.OK;
+        }
+
+        /// <summary>
+        /// ターン開始時のドロー枚数
+        /// </summary>
+        /// <returns></returns>
+        private int NumDrawsAtStartTurn()
+        {
+            if (this.PlayerTurnCountById[this.ActivePlayer.Id] == 1)
+            {
+                return this.ActivePlayer.IsFirst
+                    ? this.RuleBook.FirstPlayerNumDrawsInFirstTurn
+                    : this.RuleBook.SecondPlayerNumDrawsInFirstTurn;
+            }
+
+            return this.RuleBook.NumDraws;
         }
 
         public async ValueTask<GameMasterStatusCode> EndTurn()
