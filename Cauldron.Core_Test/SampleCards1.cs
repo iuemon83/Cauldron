@@ -1224,7 +1224,6 @@ namespace Cauldron.Core_Test
                         new EffectConditionWrap(
                             ByPlay: new EffectConditionByPlaying()),
                         new[]{
-                            // 効果を付与したカードを破壊する
                             new EffectAction(DestroyCard: new(
                                 new Choice(
                                     new ChoiceSource(

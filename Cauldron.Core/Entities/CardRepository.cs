@@ -30,7 +30,7 @@ namespace Cauldron.Core.Entities
                     cardDef.CardSetName = cardset.Name;
                     cardDef.NumTurnsToCanAttack ??= this.ruleBook.DefaultNumTurnsToCanAttack;
                     cardDef.NumAttacksLimitInTurn ??= this.ruleBook.DefaultNumAttacksLimitInTurn;
-                    cardDef.LimitNumCardsInDeck ??= this.ruleBook.DefaultLimitNumCardsInDeck;
+                    cardDef.LimitNumCardsInDeck ??= cardDef.IsToken ? 0 : this.ruleBook.DefaultLimitNumCardsInDeck;
 
                     this.CardDefListById.TryAdd(cardDef.Id, cardDef);
                 }
