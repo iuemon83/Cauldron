@@ -2731,5 +2731,74 @@ namespace Cauldron.Core_Test
                                 ))
                         }),
                 });
+
+        public static CardDef Angel
+            => SampleCards1.Creature(6, "天使", 5, 4,
+                effects: new[]
+                {
+                    new CardEffect(
+                        $"あなたの場のクリーチャー1つを選択して、+3/+3する。選択したクリーチャーが「{Vanilla.Name}」だった場合、さらに+2/+2する。",
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(ModifyCard: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ZoneCondition: new(new ZoneValue(new[]
+                                                {
+                                                    ZonePrettyName.YouField
+                                                })),
+                                                TypeCondition: new CardTypeCondition(new[]
+                                                {
+                                                    CardType.Creature
+                                                })
+                                                )
+                                        }
+                                        ),
+                                    Choice.HowValue.Choose,
+                                    numPicks: new NumValue(1)
+                                    ),
+                                Power: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(3)
+                                    ),
+                                Toughness: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(3)
+                                    ),
+                                Name: "modify_cards"
+                                )),
+                            new EffectAction(ModifyCard: new(
+                                new Choice(
+                                    new ChoiceSource(
+                                        orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ActionContext: new(ModifyCard: new(
+                                                    "modify_cards",
+                                                    ActionContextCardsOfModifyCard.TypeValue.Modified
+                                                    )),
+                                                NameCondition: new(
+                                                    new TextValue(Vanilla.Name),
+                                                    TextCompare.CompareValue.Equality
+                                                    )
+                                                )
+                                        }
+                                        )
+                                    ),
+                                Power: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(2)
+                                    ),
+                                Toughness: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(2)
+                                    )
+                                )),
+                        })
+                });
     }
 }

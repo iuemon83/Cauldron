@@ -3912,5 +3912,45 @@ namespace Cauldron.Core_Test
                 return testCard;
             });
         }
+
+        [Fact]
+        public async Task Angel()
+        {
+            var testCardDef = SampleCards1.Angel;
+            testCardDef.Cost = 0;
+
+            var vDef = SampleCards1.Vanilla;
+            vDef.Cost = 0;
+
+            var v2Def = SampleCards1.Quick;
+            v2Def.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, vDef, v2Def }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var v1 = await TestUtil.NewCardAndPlayFromHand(g, pId, vDef.Id);
+                var v2 = await TestUtil.NewCardAndPlayFromHand(g, pId, v2Def.Id);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { v1.Id };
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // バニラを選択しているので+5/+5する
+                Assert.Equal(5, v1.PowerBuff);
+                Assert.Equal(5, v1.ToughnessBuff);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { v2.Id };
+                var testCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // バニラじゃないので+3/+3する
+                Assert.Equal(3, v2.PowerBuff);
+                Assert.Equal(3, v2.ToughnessBuff);
+
+                return testCard;
+            });
+        }
     }
 }
