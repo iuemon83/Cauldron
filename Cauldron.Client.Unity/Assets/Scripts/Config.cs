@@ -3,7 +3,7 @@ using UnityEngine;
 
 class Config
 {
-    public static readonly string Version = "20220525.1";
+    public static readonly string Version = "20220529.1";
 
     /// <summary>
     /// カードの画像を格納するディレクトリのパス
