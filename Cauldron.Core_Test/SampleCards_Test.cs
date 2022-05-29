@@ -3883,5 +3883,34 @@ namespace Cauldron.Core_Test
                 return testCard;
             });
         }
+
+        [Fact]
+        public async Task Mutation2()
+        {
+            var testCardDef = SampleCards1.Mutation2;
+            testCardDef.Cost = 0;
+
+            var v = SampleCards1.Vanilla;
+            v.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, v }, this.output
+                );
+
+            // æU
+            var testCard = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var v1 = await TestUtil.NewCardAndPlayFromHand(g, pId, v.Id);
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // œŠO‚³‚ê‚é
+                Assert.Equal(0, c.Player1.Field.Count);
+
+                // ‘Šè‚Ìê‚É’Ç‰Á‚³‚ê‚Ä‚é
+                Assert.Equal(1, c.Player2.Field.Count);
+
+                return testCard;
+            });
+        }
     }
 }

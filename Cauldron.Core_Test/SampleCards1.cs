@@ -2669,5 +2669,67 @@ namespace Cauldron.Core_Test
                         }
                     )
                 });
+
+        public static CardDef Mutation2
+            => SampleCards1.Sorcery(1, "変異2",
+                effects: new[]
+                {
+                    new CardEffect(
+                        "1",
+                        new EffectConditionWrap(ByPlay: new()),
+                        new[]
+                        {
+                            new EffectAction(ExcludeCard: new(
+                                new Choice(new ChoiceSource(
+                                    orCardConditions: new[]
+                                    {
+                                        new CardCondition(
+                                            ZoneCondition: new(new(new[]
+                                            {
+                                                ZonePrettyName.YouField
+                                            })))
+                                    }),
+                                    Choice.HowValue.Random,
+                                    new NumValue(1)
+                                    ),
+                                "exclude_cards")),
+                            new EffectAction(AddCard: new(
+                                new Choice(new ChoiceSource(
+                                    OrCardDefConditions: new[]
+                                    {
+                                        new CardDefCondition(
+                                            new OutZoneCondition(new[]
+                                            {
+                                                OutZonePrettyName.CardPool
+                                            }),
+                                            NameCondition: new(
+                                                new TextValue(Vanilla.Name),
+                                                TextCompare.CompareValue.Equality)
+                                            )
+                                    }
+                                    ),
+                                    numPicks: new NumValue(NumValueCalculator: new(ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(new ChoiceSource(
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    ActionContext: new(ExcludeCard: new(
+                                                        "exclude_cards",
+                                                        ActionContextCardsOfExcludeCard.TypeValue.Excluded
+                                                        ))
+                                                    )
+                                            }
+                                            ))
+                                        )))
+                                    ),
+                                new ZoneValue(new[]
+                                {
+                                    ZonePrettyName.OpponentField
+                                }
+                                )
+                                ))
+                        }),
+                });
     }
 }
