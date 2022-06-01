@@ -7,10 +7,6 @@ namespace Cauldron.Server
     {
         public static void Main(string[] args)
         {
-            //CardPool.WriteToFile(@"CardSet/sample_cardset_.json");
-            //var a = CardPool.ReadFromFile(@"CardSet/sample_cardset.json");
-            //return;
-
             CreateHostBuilder(args).Build().Run();
         }
 

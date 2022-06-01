@@ -10,7 +10,12 @@ namespace Cauldron.Server
     {
         public SqliteConnection Connection()
         {
-            var filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BattleLogs.sqlite");
+            var filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "BattleLogs.sqlite");
+            if (!Directory.Exists(Path.GetDirectoryName(filepath)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(filepath));
+            }
+
             return new SqliteConnection("Data Source=" + filepath);
         }
 
@@ -47,6 +52,7 @@ values(@game_id, @winner_player_id, @game_event)
 
             command.ExecuteNonQuery();
         }
+
         public void CreateBattlePlayersTableIfNotExists(SqliteConnection con)
         {
             using var command = con.CreateCommand();
