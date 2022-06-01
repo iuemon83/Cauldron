@@ -6,6 +6,7 @@ using Cauldron.Shared.Services;
 using Grpc.Core;
 using MagicOnion.Server;
 using MagicOnion.Server.Hubs;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -69,15 +70,34 @@ namespace Cauldron.Server.Services
         private GameId gameId;
         private IInMemoryStorage<PlayerDef> storage;
 
+        private SqliteConnection dbConnection;
+
         public CauldronHub(IConfiguration configuration, ILogger<CauldronHub> logger)
         {
             this.configuration = configuration;
             this._logger = logger;
         }
 
+        protected override async ValueTask OnConnecting()
+        {
+            // handle connection if needed.
+            Console.WriteLine($"client connected {this.Context.ContextId}");
+
+            this.dbConnection = new BattleLogDb().Connection();
+            await this.dbConnection.OpenAsync();
+        }
+
         protected override async ValueTask OnDisconnected()
         {
+            // handle disconnection if needed.
+            // on disconnecting, if automatically removed this connection from group.
+
             await (this as ICauldronHub).LeaveGame(this.gameId);
+
+            if (this.dbConnection != null)
+            {
+                await this.dbConnection.DisposeAsync();
+            }
 
             await CompletedTask;
         }
@@ -225,11 +245,20 @@ namespace Cauldron.Server.Services
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnEndGame(gameContext, message);
                         this._logger.LogInformation($"OnEndGame:");
+
+                        if (playerId == this.self.Id)
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                new BattleLog(this.gameId, gameContext.WinnerPlayerId, GameEvent.OnEndGame));
+                        }
                     },
                     AskCardAction: this.AskCard
                 ));
 
             this.gameId = gameMasterRepository.Add(options);
+
+            new BattleLogDb().Add(this.dbConnection,
+                new BattleLog(this.gameId, new PlayerId(Guid.Empty), GameEvent.OnStartGame));
 
             return Task.FromResult(new OpenNewGameReply(this.gameId));
         }
@@ -252,6 +281,7 @@ namespace Cauldron.Server.Services
             if (numPlayers == 0)
             {
                 gameMasterRepository.Delete(gameId);
+                numOfReadiesByGameId.TryRemove(gameId, out var _);
             }
 
             this.room = null;
@@ -349,18 +379,27 @@ namespace Cauldron.Server.Services
             // 先行プレイヤーはランダムで選択する
             var firstPlayerId = this.storage.AllValues.OrderBy(_ => Guid.NewGuid()).First().Id;
 
-            try
+            var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
+            if (!found)
             {
-                var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
-                if (!found)
-                {
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
-                }
-                await gameMaster.StartGame(firstPlayerId);
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
             }
-            catch (Exception e)
+
+            await gameMaster.StartGame(firstPlayerId);
+
+            var logs = gameMaster.playerRepository.AllPlayers
+                .Select(p =>
+                {
+                    var playOrder = firstPlayerId == p.Id ? 1 : 2;
+                    var cardNamesInDeck = p.Hands.AllCards.Concat(p.Deck.AllCards).Select(c => c.Name).ToArray();
+                    //var ip = this.Context.CallContext.GetHttpContext().Connection.RemoteIpAddress?.ToString() ?? "";
+
+                    return new BattlePlayer(request.GameId, p.Id, p.Name, cardNamesInDeck, playOrder, "");
+                });
+
+            foreach (var log in logs)
             {
-                Console.WriteLine(e);
+                new BattleLogDb().Add(this.dbConnection, log);
             }
         }
 

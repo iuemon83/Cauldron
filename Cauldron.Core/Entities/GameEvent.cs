@@ -66,5 +66,15 @@
         /// カウンターの変更時
         /// </summary>
         OnModifyCounter,
+
+        /// <summary>
+        /// ゲーム開始
+        /// </summary>
+        OnStartGame,
+
+        /// <summary>
+        /// ゲーム終了
+        /// </summary>
+        OnEndGame
     }
 }

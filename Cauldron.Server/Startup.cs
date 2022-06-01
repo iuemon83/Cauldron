@@ -35,6 +35,13 @@ namespace Cauldron.Server
             RuleBookInitializer.Init(this.Configuration["RuleBookFilePath"]);
             CardPoolInitializer.Init(this.Configuration["CardSetDirectoryPath"]);
 
+            // ログdbの初期化
+            var battleLogsDb = new BattleLogDb();
+            using var dbConnection = battleLogsDb.Connection();
+            dbConnection.Open();
+            battleLogsDb.CreateBattleLogsTableIfNotExists(dbConnection);
+            battleLogsDb.CreateBattlePlayersTableIfNotExists(dbConnection);
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
