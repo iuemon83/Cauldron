@@ -1,6 +1,8 @@
 ﻿using Cauldron.Core.Entities;
 using Cauldron.Shared.MessagePackObjects;
 using Microsoft.Data.Sqlite;
+using System;
+using System.IO;
 
 namespace Cauldron.Server
 {
@@ -8,7 +10,8 @@ namespace Cauldron.Server
     {
         public SqliteConnection Connection()
         {
-            return new SqliteConnection("Data Source=BattleLogs.sqlite");
+            var filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BattleLogs.sqlite");
+            return new SqliteConnection("Data Source=" + filepath);
         }
 
         public void CreateBattleLogsTableIfNotExists(SqliteConnection con)
@@ -17,7 +20,7 @@ namespace Cauldron.Server
 
             command.CommandText = @"
 create table if not exists battle_logs(
-    id text primary key,
+    id integer primary key AUTOINCREMENT,
     game_id text not null,
     winner_player_id text not null,
     game_event text not null,
