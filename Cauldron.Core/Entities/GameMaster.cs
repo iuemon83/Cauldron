@@ -365,7 +365,9 @@ namespace Cauldron.Core.Entities
                         ?? card.Abilities.ToArray();
                 var newAnnotations = effectActionModifyCard.Annotations?.Modify(card.Annotations)
                         ?? card.Annotations.ToArray();
-                var newNumTurnsToCanAttack = await (effectActionModifyCard.NumTurnsToCanAttack?.Modify(effectOwnerCard, effectEventArgs, card.NumTurnsToCanAttackToCreature)
+                var newNumTurnsToCanAttackToCreature = await (effectActionModifyCard.NumTurnsToCanAttackToCreature?.Modify(effectOwnerCard, effectEventArgs, card.NumTurnsToCanAttackToCreature)
+                        ?? ValueTask.FromResult(card.NumTurnsToCanAttackToCreature));
+                var newNumTurnsToCanAttackToPlayer = await (effectActionModifyCard.NumTurnsToCanAttackToPlayer?.Modify(effectOwnerCard, effectEventArgs, card.NumTurnsToCanAttackToCreature)
                         ?? ValueTask.FromResult(card.NumTurnsToCanAttackToCreature));
 
                 var newPowerBuff = newPower - card.BasePower;
@@ -376,7 +378,8 @@ namespace Cauldron.Core.Entities
 
                 card.Abilities = newAbilities.ToList();
                 card.Annotations = newAnnotations.ToList();
-                card.NumTurnsToCanAttackToCreature = newNumTurnsToCanAttack;
+                card.NumTurnsToCanAttackToCreature = newNumTurnsToCanAttackToCreature;
+                card.NumTurnsToCanAttackToPlayer = newNumTurnsToCanAttackToPlayer;
             }
 
             // notify

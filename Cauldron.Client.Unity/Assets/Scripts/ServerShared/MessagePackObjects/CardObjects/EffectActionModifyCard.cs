@@ -13,7 +13,8 @@ namespace Cauldron.Shared.MessagePackObjects
         public NumValueModifier? Toughness { get; }
         public CreatureAbilityModifier? Ability { get; }
         public AnnotationsModifier? Annotations { get; }
-        public NumValueModifier? NumTurnsToCanAttack { get; }
+        public NumValueModifier? NumTurnsToCanAttackToCreature { get; }
+        public NumValueModifier? NumTurnsToCanAttackToPlayer { get; }
         public Choice Choice { get; }
 
         public string? Name { get; } = null;
@@ -25,7 +26,8 @@ namespace Cauldron.Shared.MessagePackObjects
             NumValueModifier? Toughness = null,
             CreatureAbilityModifier? Ability = null,
             AnnotationsModifier? Annotations = null,
-            NumValueModifier? NumTurnsToCanAttack = null,
+            NumValueModifier? NumTurnsToCanAttackToCreature = null,
+            NumValueModifier? NumTurnsToCanAttackToPlayer = null,
             string? Name = null
             )
         {
@@ -35,7 +37,8 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Ability = Ability;
             this.Annotations = Annotations;
             this.Choice = Choice;
-            this.NumTurnsToCanAttack = NumTurnsToCanAttack;
+            this.NumTurnsToCanAttackToCreature = NumTurnsToCanAttackToCreature;
+            this.NumTurnsToCanAttackToPlayer = NumTurnsToCanAttackToPlayer;
             this.Name = Name;
         }
     }

@@ -3981,5 +3981,61 @@ namespace Cauldron.Core_Test
                 return testCard;
             });
         }
+
+        [Fact]
+        public async Task ModifyQuick()
+        {
+            var testCardDef = SampleCards1.ModifyQuick;
+            testCardDef.Cost = 0;
+
+            var vDef = SampleCards1.Vanilla;
+            vDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, vDef }, this.output
+                );
+
+            // æU
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var v1 = await TestUtil.NewCardAndPlayFromHand(g, pId, vDef.Id);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { v1.Id };
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(0, v1.NumTurnsToCanAttackToCreature);
+                Assert.Equal(0, v1.NumTurnsToCanAttackToPlayer);
+
+                return testCard;
+            });
+        }
+
+        [Fact]
+        public async Task ModifyCrash()
+        {
+            var testCardDef = SampleCards1.ModifyCrash;
+            testCardDef.Cost = 0;
+
+            var vDef = SampleCards1.Vanilla;
+            vDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, vDef }, this.output
+                );
+
+            // æU
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var v1 = await TestUtil.NewCardAndPlayFromHand(g, pId, vDef.Id);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { v1.Id };
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(0, v1.NumTurnsToCanAttackToCreature);
+                Assert.Equal(1, v1.NumTurnsToCanAttackToPlayer);
+
+                return testCard;
+            });
+        }
     }
 }

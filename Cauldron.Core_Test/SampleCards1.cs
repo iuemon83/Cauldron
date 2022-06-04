@@ -2815,5 +2815,85 @@ namespace Cauldron.Core_Test
                                 )),
                         })
                 });
+
+        public static CardDef ModifyQuick => SampleCards1.Sorcery(
+            0, "付与:速攻",
+            effects: new[]
+            {
+                new CardEffect(
+                    "選択したクリーチャー1体に「速攻」を付与",
+                    new EffectConditionWrap(ByPlay: new()),
+                    new[]
+                    {
+                        new EffectAction(ModifyCard: new(
+                            new Choice(
+                                new ChoiceSource(orCardConditions: new[]
+                                {
+                                    new CardCondition(
+                                        ZoneCondition: new(new ZoneValue(new[]
+                                        {
+                                            ZonePrettyName.YouField
+                                        })),
+                                        TypeCondition: new(new[]
+                                        {
+                                            CardType.Creature
+                                        })
+                                        )
+                                }),
+                                Choice.HowValue.Choose,
+                                new NumValue(1)
+                                ),
+                            NumTurnsToCanAttackToCreature: new(
+                                NumValueModifier.OperatorValue.Replace,
+                                new NumValue(0)
+                                ),
+                            NumTurnsToCanAttackToPlayer: new(
+                                NumValueModifier.OperatorValue.Replace,
+                                new NumValue(0)
+                                )
+                            ))
+                    }
+                    )
+            });
+
+        public static CardDef ModifyCrash => SampleCards1.Sorcery(
+            0, "付与:突進",
+            effects: new[]
+            {
+                new CardEffect(
+                    "選択したクリーチャー1体に「突進」を付与",
+                    new EffectConditionWrap(ByPlay: new()),
+                    new[]
+                    {
+                        new EffectAction(ModifyCard: new(
+                            new Choice(
+                                new ChoiceSource(orCardConditions: new[]
+                                {
+                                    new CardCondition(
+                                        ZoneCondition: new(new ZoneValue(new[]
+                                        {
+                                            ZonePrettyName.YouField
+                                        })),
+                                        TypeCondition: new(new[]
+                                        {
+                                            CardType.Creature
+                                        })
+                                        )
+                                }),
+                                Choice.HowValue.Choose,
+                                new NumValue(1)
+                                ),
+                            NumTurnsToCanAttackToCreature: new(
+                                NumValueModifier.OperatorValue.Replace,
+                                new NumValue(0)
+                                ),
+                            NumTurnsToCanAttackToPlayer: new(
+                                NumValueModifier.OperatorValue.Replace,
+                                new NumValue(1)
+                                )
+                            ))
+                    }
+                    )
+            });
     }
 }
