@@ -11,6 +11,8 @@ namespace Cauldron.Shared.MessagePackObjects.Value
             None,
             [DisplayText("カウント")]
             Count,
+            [DisplayText("種類のカウント")]
+            DefCount,
             [DisplayText("カードのコスト")]
             CardCost,
             [DisplayText("カードの元々のコスト")]

@@ -1,7 +1,4 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects.Value
 {
@@ -16,6 +13,7 @@ namespace Cauldron.Shared.MessagePackObjects.Value
                 return _this.Type switch
                 {
                     NumValueCalculatorForCard.TypeValue.Count => await CalculateCount(_this, effectOwnerCard, effectEventArgs),
+                    NumValueCalculatorForCard.TypeValue.DefCount => await DefCalculateCount(_this, effectOwnerCard, effectEventArgs),
                     NumValueCalculatorForCard.TypeValue.CardCost => await CalculateCardCost(_this, effectOwnerCard, effectEventArgs),
                     NumValueCalculatorForCard.TypeValue.CardBaseCost => await CalculateCardBaseCost(_this, effectOwnerCard, effectEventArgs),
                     NumValueCalculatorForCard.TypeValue.CardPower => await CalculateCardPower(_this, effectOwnerCard, effectEventArgs),
@@ -29,7 +27,14 @@ namespace Cauldron.Shared.MessagePackObjects.Value
                 {
                     var picked = await effectEventArgs.GameMaster
                         .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
-                    return picked.PlayerIdList.Length + picked.CardList.Length + picked.CardDefList.Length;
+                    return picked.CardList.Length + picked.CardDefList.Length;
+                }
+
+                static async ValueTask<int> DefCalculateCount(NumValueCalculatorForCard numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
+                {
+                    var picked = await effectEventArgs.GameMaster
+                        .Choice(effectOwnerCard, numValueCalculator.CardsChoice, effectEventArgs);
+                    return picked.CardList.DistinctBy(c => c.CardDefId).Count() + picked.CardDefList.Length;
                 }
 
                 static async ValueTask<int> CalculateCardCost(NumValueCalculatorForCard numValueCalculator, Card effectOwnerCard, EffectEventArgs effectEventArgs)
