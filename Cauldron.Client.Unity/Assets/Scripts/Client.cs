@@ -210,17 +210,16 @@ public class Client
         await this.magiconionClient.AttackToCreature(new AttackToCreatureRequest(this.GameId, this.PlayerId, attackCardId, guardCardId));
     }
 
-    public async UniTask<(PlayerId[], CardId[])> ListAttackTargets(CardId cardId)
+    public AttackTarget ListAttackTargets(CardId cardId)
     {
-        var (status, (pList, cList)) = await this.magiconionClient.ListAttackTargets(this.GameId, cardId);
-
-        if (status != GameMasterStatusCode.OK)
+        if (this.currentContext == null)
         {
-            this.LogError(status.ToString());
-            return (Array.Empty<PlayerId>(), Array.Empty<CardId>());
+            return new AttackTarget(Array.Empty<PlayerId>(), Array.Empty<CardId>());
         }
 
-        return (pList, cList);
+        return this.currentContext.You.PublicPlayerInfo.AttackableCardIdList.TryGetValue(cardId, out var targets)
+            ? targets
+            : new AttackTarget(Array.Empty<PlayerId>(), Array.Empty<CardId>());
     }
 
     public async UniTask AttackToOpponentPlayer(CardId attackCardId)

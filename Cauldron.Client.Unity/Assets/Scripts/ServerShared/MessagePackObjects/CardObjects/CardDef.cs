@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 namespace Cauldron.Shared.MessagePackObjects
 {
     [MessagePackObject(true)]
-    public class CardDef
+    public class CardDef : ICardDef
     {
         public static CardDef Empty => new CardDef();
 
@@ -41,9 +41,14 @@ namespace Cauldron.Shared.MessagePackObjects
         public IReadOnlyList<CardEffect> Effects { get; set; } = Array.Empty<CardEffect>();
 
         /// <summary>
-        /// 攻撃可能となるまでのターン数
+        /// クリーチャーへ攻撃可能となるまでのターン数
         /// </summary>
-        public int? NumTurnsToCanAttack { get; set; }
+        public int? NumTurnsToCanAttackToCreature { get; set; }
+
+        /// <summary>
+        /// プレイヤーへ攻撃可能となるまでのターン数
+        /// </summary>
+        public int? NumTurnsToCanAttackToPlayer { get; set; }
 
         /// <summary>
         /// 1ターン中に攻撃可能な回数
@@ -75,7 +80,8 @@ namespace Cauldron.Shared.MessagePackObjects
             int Toughness,
             IReadOnlyList<CreatureAbility> Abilities,
             IReadOnlyList<CardEffect> Effects,
-            int? NumTurnsToCanAttack,
+            int? NumTurnsToCanAttackToCreature,
+            int? NumTurnsToCanAttackToPlayer,
             int? NumAttacksLimitInTurn,
             int? LimitNumCardsInDeck
             )
@@ -92,7 +98,8 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Toughness = Toughness;
             this.Abilities = Abilities;
             this.Effects = Effects;
-            this.NumTurnsToCanAttack = NumTurnsToCanAttack;
+            this.NumTurnsToCanAttackToCreature = NumTurnsToCanAttackToCreature;
+            this.NumTurnsToCanAttackToPlayer = NumTurnsToCanAttackToPlayer;
             this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;
             this.LimitNumCardsInDeck = LimitNumCardsInDeck;
         }

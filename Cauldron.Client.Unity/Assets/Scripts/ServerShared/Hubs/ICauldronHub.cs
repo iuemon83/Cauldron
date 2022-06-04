@@ -34,7 +34,5 @@ namespace Cauldron.Shared.Services
         Task<AttackToCreatureReply> AttackToCreature(AttackToCreatureRequest request);
 
         Task<AttackToPlayerReply> AttackToPlayer(AttackToPlayerRequest request);
-
-        Task<(GameMasterStatusCode, (PlayerId[], CardId[]))> ListAttackTargets(GameId gameId, CardId cardId);
     }
 }

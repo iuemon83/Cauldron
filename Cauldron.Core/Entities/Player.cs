@@ -111,21 +111,6 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public PublicPlayerInfo PublicPlayerInfo => new(
-            this.Id,
-            this.Name,
-            this.Field.AllCardsWithIndex.ToArray(),
-            this.Deck.Count,
-            this.Cemetery.AllCards.ToArray(),
-            this.Excludes.ToArray(),
-            this.Hands.Count,
-            this.MaxHp,
-            this.CurrentHp,
-            this.MaxMp,
-            this.CurrentMp,
-            this.IsFirst
-            );
-
         public void ModifyCounter(string name, int addValue)
         {
             if (!this.CountersByName.TryGetValue(name, out var num))

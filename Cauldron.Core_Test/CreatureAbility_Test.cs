@@ -22,13 +22,13 @@ namespace Cauldron.Core_Test
         {
             var normalcardDef = SampleCards1.Vanilla;
             normalcardDef.Cost = 0;
-            normalcardDef.NumTurnsToCanAttack = 0;
+            normalcardDef.NumTurnsToCanAttackToCreature = 0;
 
             var testCardDef = SampleCards1.Vanilla;
             testCardDef.Cost = 0;
             testCardDef.Abilities = new[] { CreatureAbility.Cover };
 
-            var c = await TestUtil.InitTest(new[] { normalcardDef, testCardDef });
+            var c = await TestUtil.InitTest(new[] { normalcardDef, testCardDef }, this.output);
 
             var (normal, test) = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
             {
@@ -174,7 +174,7 @@ namespace Cauldron.Core_Test
             var normalcardDef = SampleCards1.Vanilla;
             normalcardDef.Cost = 0;
             normalcardDef.Toughness = 10;
-            normalcardDef.NumTurnsToCanAttack = 0;
+            normalcardDef.NumTurnsToCanAttackToCreature = 0;
 
             var c = await TestUtil.InitTest(
                 new[] { normalcardDef, stealthCardDef, });
@@ -349,7 +349,7 @@ namespace Cauldron.Core_Test
             var normalcardDef = SampleCards1.Vanilla;
             normalcardDef.Cost = 0;
             normalcardDef.Toughness = 10;
-            normalcardDef.NumTurnsToCanAttack = 0;
+            normalcardDef.NumTurnsToCanAttackToCreature = 0;
 
             var c = await TestUtil.InitTest(
                 new[] { normalcardDef, stealthCardDef, });

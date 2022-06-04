@@ -38,11 +38,40 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
+        public async Task Crash()
+        {
+            var testCardDef = SampleCards1.Crash;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(new[] { testCardDef });
+
+            //æU
+            var testcard = await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                return await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+            });
+
+            //ŒãU
+            await TestUtil.Turn(c.GameMaster, async (g, pid) =>
+            {
+                // ƒNƒŠ[ƒ`ƒƒ[‚É‚ÍUŒ‚‚Å‚«‚é
+                var t1 = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+                var status1 = await g.AttackToCreature(pid, t1.Id, testcard.Id);
+                Assert.Equal(GameMasterStatusCode.OK, status1);
+
+                // ƒvƒŒƒCƒ„[‚É‚ÍUŒ‚‚Å‚«‚È‚¢
+                var t2 = await TestUtil.NewCardAndPlayFromHand(g, pid, testCardDef.Id);
+                var status2 = await g.AttackToPlayer(pid, t2.Id, c.Player2.Id);
+                Assert.Equal(GameMasterStatusCode.CantAttack, status2);
+            });
+        }
+
+        [Fact]
         public async Task Twin()
         {
             var testCardDef = SampleCards1.Twin;
             testCardDef.Cost = 0;
-            testCardDef.NumTurnsToCanAttack = 0;
+            testCardDef.NumTurnsToCanAttackToCreature = 0;
 
             var c = await TestUtil.InitTest(new[] { testCardDef });
 
@@ -117,7 +146,7 @@ namespace Cauldron.Core_Test
         {
             var testCardDef = SampleCards2.DoubleStrikeGoblin;
             testCardDef.Cost = 0;
-            testCardDef.NumTurnsToCanAttack = 0;
+            testCardDef.NumTurnsToCanAttackToCreature = 0;
 
             var goblinT1Def = SampleCards1.Vanilla;
             goblinT1Def.Cost = 0;
@@ -164,7 +193,7 @@ namespace Cauldron.Core_Test
         {
             var testCardDef = SampleCards2.DoubleStrikeGoblin;
             testCardDef.Cost = 0;
-            testCardDef.NumTurnsToCanAttack = 0;
+            testCardDef.NumTurnsToCanAttackToCreature = 0;
 
             var goblinT1Def = SampleCards1.Vanilla;
             goblinT1Def.Cost = 0;
@@ -947,7 +976,7 @@ namespace Cauldron.Core_Test
         {
             var goblinDef = SampleCards2.Goblin;
             goblinDef.Cost = 0;
-            goblinDef.NumTurnsToCanAttack = 0;
+            goblinDef.NumTurnsToCanAttackToCreature = 0;
 
             var testCardDef = SampleCards2.BraveGoblin;
             testCardDef.Cost = 0;

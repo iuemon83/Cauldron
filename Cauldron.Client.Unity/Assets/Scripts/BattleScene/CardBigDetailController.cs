@@ -40,13 +40,15 @@ $@"{card.Cost} / {card.Power} / {card.Toughness}
         {
             result += Environment.NewLine +
 $@"攻撃回数 | {card.NumAttacksLimitInTurn}
-攻撃可能までのターン | {card.NumTurnsToCanAttack}";
+攻撃可能までのターン
+  → クリーチャー | {card.NumTurnsToCanAttackToCreature}
+  → プレイヤー | {card.NumTurnsToCanAttackToPlayer}";
         }
 
         if (card.Zone.ZoneName == ZoneName.Field)
         {
             result += Environment.NewLine +
-$@"場に出てからのターン数 | {card.NumTurnsInField + 1}";
+$@"場に出てからの経過ターン数 | {card.NumTurnsInField}";
         }
 
         var counterText = card.CountersByName.Count == 0

@@ -1684,7 +1684,10 @@ namespace Cauldron.Core_Test
                 });
 
         public static CardDef ZombieDog
-            => SampleCards1.Creature(2, "ゾンビ犬", 1, 1, annotations: new[] { ":ゾンビ" }, numTurnsToCanAttack: 0);
+            => SampleCards1.Creature(2, "ゾンビ犬", 1, 1, annotations: new[] { ":ゾンビ" },
+                numTurnsToCanAttackToCreature: 0,
+                numTurnsToCanAttackToPlayer: 0
+                );
 
         public static CardDef ZombieKiller
             => SampleCards1.Creature(2, "ゾンビキラー", 2, 2,

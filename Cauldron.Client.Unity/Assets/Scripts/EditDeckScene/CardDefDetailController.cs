@@ -78,7 +78,7 @@ public class CardDefDetailController : MonoBehaviour
             {
                 cardDef.IsToken ? "<color=\"red\">トークン</color>" : "",
                 Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value),
-                Utility.DisplayTextForNumTurnsToCanAttack(cardDef.NumTurnsToCanAttack.Value),
+                Utility.DisplayTextForNumTurnsToCanAttack(cardDef),
                 cardDef.EffectDescription
             }
             .Where(x => !string.IsNullOrWhiteSpace(x))
@@ -104,7 +104,9 @@ $@"{Utility.DisplayText(cardDef.Type)}
         {
             result += Environment.NewLine +
 $@"攻撃回数 | {cardDef.NumAttacksLimitInTurn}
-攻撃可能までのターン | {cardDef.NumTurnsToCanAttack}";
+攻撃可能までのターン
+  → クリーチャー | {cardDef.NumTurnsToCanAttackToCreature}
+  → プレイヤー | {cardDef.NumTurnsToCanAttackToPlayer}";
         }
 
         return result;

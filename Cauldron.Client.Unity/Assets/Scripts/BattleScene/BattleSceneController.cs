@@ -276,7 +276,7 @@ public class BattleSceneController : MonoBehaviour
         this.UnSelectAttackCard();
     }
 
-    public async void ToggleAttackCard(FieldCardController attackCardController)
+    public void ToggleAttackCard(FieldCardController attackCardController)
     {
         // 選択モードでは機能させない
         if (this.askMessage != null)
@@ -306,7 +306,7 @@ public class BattleSceneController : MonoBehaviour
                 return;
             }
 
-            if (!fieldCardController.Card.CanAttack)
+            if (!this.CanAttack(fieldCardController.Card.Id))
             {
                 return;
             }
@@ -314,17 +314,36 @@ public class BattleSceneController : MonoBehaviour
             this.attackCardController = fieldCardController;
             this.attackCardController.VisibleAttackIcon(true);
 
-            await this.MarkingAttackTargets();
+            this.MarkingAttackTargets();
         }
     }
 
-    public async UniTask MarkingAttackTargets()
+    private bool CanAttack(CardId cardid)
     {
-        var targets = await this.Client.ListAttackTargets(this.attackCardController.CardId);
+        if (this.currentGameContext == null)
+        {
+            return false;
+        }
+
+        return (this.currentGameContext.You.PublicPlayerInfo.AttackableCardIdList.TryGetValue(cardid, out var youTargets)
+            && youTargets.Any)
+            ||
+            (this.currentGameContext.Opponent.AttackableCardIdList.TryGetValue(cardid, out var opTargets)
+                && opTargets.Any);
+    }
+
+    public void MarkingAttackTargets()
+    {
+        if (this.attackCardController == null)
+        {
+            return;
+        }
+
+        var targets = this.currentGameContext.You.PublicPlayerInfo.AttackableCardIdList[this.attackCardController.CardId];
 
         this.ResetAttackTargets();
 
-        foreach (var targetPlayerId in targets.Item1)
+        foreach (var targetPlayerId in targets.PlayerIdList)
         {
             foreach (var player in new[] { this.opponentPlayerController, this.youPlayerController })
             {
@@ -332,7 +351,7 @@ public class BattleSceneController : MonoBehaviour
             }
         }
 
-        foreach (var targetCardId in targets.Item2)
+        foreach (var targetCardId in targets.CardIdList)
         {
             if (fieldCardControllersByCardId.TryGetValue(targetCardId, out var fieldCardController))
             {
@@ -662,7 +681,7 @@ public class BattleSceneController : MonoBehaviour
             : this.opponentFieldSpaces[index].transform.position;
 
         var canAttack = this.currentGameContext.ActivePlayerId == card.OwnerId
-            && card.CanAttack;
+            && this.CanAttack(card.Id);
         cardController.SetCanAttack(canAttack);
 
         return cardController;

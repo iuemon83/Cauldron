@@ -90,24 +90,24 @@ public class AiClient
 
         foreach (var attackCardId in allCreatures)
         {
-            var (attackTargetPlayerIdList, attackTargetCardIdList) = await this.client.ListAttackTargets(attackCardId);
+            var attackTarget = this.client.ListAttackTargets(attackCardId);
 
-            if (!attackTargetPlayerIdList.Any() && !attackTargetCardIdList.Any())
+            if (!attackTarget.Any)
             {
                 this.Logging($"攻撃できないか攻撃対象なし！！");
                 continue;
             }
 
             // 敵のモンスターがいる
-            if (attackTargetCardIdList.Any() && UnityEngine.Random.Range(0, 100) > 40)
+            if (attackTarget.CardIdList.Any() && UnityEngine.Random.Range(0, 100) > 40)
             {
-                var index = UnityEngine.Random.Range(0, attackTargetCardIdList.Length);
+                var index = UnityEngine.Random.Range(0, attackTarget.CardIdList.Length);
 
-                var opponentCardId = attackTargetCardIdList[index];
+                var opponentCardId = attackTarget.CardIdList[index];
 
                 await this.client.Attack(attackCardId, opponentCardId);
             }
-            else if (attackTargetPlayerIdList.Any())
+            else if (attackTarget.PlayerIdList.Any())
             {
                 await this.client.AttackToOpponentPlayer(attackCardId);
             }

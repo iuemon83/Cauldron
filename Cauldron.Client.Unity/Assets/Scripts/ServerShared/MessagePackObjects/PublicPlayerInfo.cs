@@ -1,9 +1,26 @@
 ﻿#nullable enable
 
 using MessagePack;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
+    [MessagePackObject(true)]
+    public class AttackTarget
+    {
+        public PlayerId[] PlayerIdList { get; }
+        public CardId[] CardIdList { get; }
+
+        public AttackTarget(PlayerId[] playerIdList, CardId[] cardIdList)
+        {
+            PlayerIdList = playerIdList;
+            CardIdList = cardIdList;
+        }
+
+        public bool Any => this.PlayerIdList.Any() || this.CardIdList.Any();
+    }
+
     /// <summary>
     /// プレイヤーの公開情報
     /// </summary>
@@ -22,6 +39,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public int MaxMp { get; }
         public int CurrentMp { get; }
         public bool IsFirst { get; }
+        public Dictionary<CardId, AttackTarget> AttackableCardIdList { get; }
 
         public PublicPlayerInfo(
             PlayerId Id,
@@ -35,7 +53,8 @@ namespace Cauldron.Shared.MessagePackObjects
             int CurrentHp,
             int MaxMp,
             int CurrentMp,
-            bool IsFirst
+            bool IsFirst,
+            Dictionary<CardId, AttackTarget> AttackableCardIdList
             )
         {
             this.Id = Id;
@@ -50,6 +69,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.MaxMp = MaxMp;
             this.CurrentMp = CurrentMp;
             this.IsFirst = IsFirst;
+            this.AttackableCardIdList = AttackableCardIdList;
         }
     }
 }

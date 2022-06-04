@@ -574,27 +574,6 @@ namespace Cauldron.Server.Services
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<(GameMasterStatusCode, (PlayerId[], CardId[]))> ICauldronHub.ListAttackTargets(GameId gameId, CardId cardId)
-        {
-            var playableStatus = IsPlayable(gameId, this.self.Id);
-            if (playableStatus != GameMasterStatusCode.OK)
-            {
-                this._logger.LogWarning("result={playableStatus}", playableStatus);
-                return Task.FromResult((playableStatus, default((PlayerId[], CardId[]))));
-            }
-
-            var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);
-            if (!found)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
-            }
-
-            var attackTargetsResult = gameMaster.ListAttackTargets(cardId);
-
-            return Task.FromResult(attackTargetsResult);
-        }
-
-        [FromTypeFilter(typeof(LoggingAttribute))]
         Task<GameMasterStatusCode> ICauldronHub.Surrender(GameId gameId)
         {
             var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);

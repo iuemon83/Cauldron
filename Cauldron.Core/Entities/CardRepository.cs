@@ -28,7 +28,8 @@ namespace Cauldron.Core.Entities
                 foreach (var cardDef in cardset.Cards)
                 {
                     cardDef.CardSetName = cardset.Name;
-                    cardDef.NumTurnsToCanAttack ??= this.ruleBook.DefaultNumTurnsToCanAttack;
+                    cardDef.NumTurnsToCanAttackToCreature ??= this.ruleBook.DefaultNumTurnsToCanAttack;
+                    cardDef.NumTurnsToCanAttackToPlayer ??= this.ruleBook.DefaultNumTurnsToCanAttack;
                     cardDef.NumAttacksLimitInTurn ??= this.ruleBook.DefaultNumAttacksLimitInTurn;
                     cardDef.LimitNumCardsInDeck ??= cardDef.IsToken ? 0 : this.ruleBook.DefaultLimitNumCardsInDeck;
 

@@ -104,7 +104,7 @@ namespace Cauldron.Core_Test
         public async Task 自分のクリーチャーすべて()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var testChoice = new Choice(
                 new ChoiceSource(
@@ -176,7 +176,7 @@ namespace Cauldron.Core_Test
         public async Task カードプールから名前指定で一枚()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var fairy = SampleCards1.Creature(0, "フェアリー", 1, 1, isToken: true);
 
@@ -257,7 +257,7 @@ namespace Cauldron.Core_Test
         public async Task カードプールから名前指定で2枚()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var fairy = SampleCards1.Creature(0, "フェアリー", 1, 1, isToken: true);
 
@@ -340,7 +340,7 @@ namespace Cauldron.Core_Test
         public async Task 相手プレイヤーが選択される()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var testChoice = new Choice(
                 new ChoiceSource(
@@ -416,7 +416,7 @@ namespace Cauldron.Core_Test
         public async Task ターン中のプレイヤーが選択される()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var testChoice = new Choice(
                 new ChoiceSource(
@@ -518,7 +518,7 @@ namespace Cauldron.Core_Test
         public async Task ランダムな相手クリーチャー一体()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var testChoice = new Choice(
                 new ChoiceSource(
@@ -579,7 +579,7 @@ namespace Cauldron.Core_Test
         public async Task 相手プレイヤーかランダムな相手クリーチャー1体()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var testChoice = new Choice(
                 new ChoiceSource(
@@ -645,7 +645,7 @@ namespace Cauldron.Core_Test
         public async Task 対象の相手クリーチャー1体()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var testChoice = new Choice(
                 new ChoiceSource(
@@ -726,7 +726,7 @@ namespace Cauldron.Core_Test
         public async Task 対象の自分クリーチャー1体()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var testChoice = new Choice(
                 new ChoiceSource(
@@ -811,7 +811,7 @@ namespace Cauldron.Core_Test
         public async Task 自分自身を選択する()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var testChoice = new Choice(
                 new ChoiceSource(
@@ -865,7 +865,7 @@ namespace Cauldron.Core_Test
         public async Task イベントソースを選択する()
         {
             var goblin = SampleCards1.Creature(0, "ゴブリン", 1, 2);
-            goblin.NumTurnsToCanAttack = 0;
+            goblin.NumTurnsToCanAttackToCreature = 0;
 
             var testChoice = new Choice(
                 new ChoiceSource(

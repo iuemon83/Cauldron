@@ -93,7 +93,7 @@ public class CardDetailController : MonoBehaviour
             v += v1 + Environment.NewLine;
         }
 
-        var v2 = Utility.DisplayTextForNumTurnsToCanAttack(card.NumTurnsToCanAttack);
+        var v2 = Utility.DisplayTextForNumTurnsToCanAttack(card);
         if (v2 != "")
         {
             v += v2 + Environment.NewLine;
@@ -113,7 +113,7 @@ public class CardDetailController : MonoBehaviour
             v += v1 + Environment.NewLine;
         }
 
-        var v2 = Utility.DisplayTextForNumTurnsToCanAttack(cardDef.NumTurnsToCanAttack.Value);
+        var v2 = Utility.DisplayTextForNumTurnsToCanAttack(cardDef);
         if (v2 != "")
         {
             v += v2 + Environment.NewLine;

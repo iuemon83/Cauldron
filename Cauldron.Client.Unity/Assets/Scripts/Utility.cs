@@ -142,11 +142,26 @@ namespace Assets.Scripts
                 : value == 1 ? "" : $"攻撃回数({value})";
         }
 
-        public static string DisplayTextForNumTurnsToCanAttack(int value)
+        public static string DisplayTextForNumTurnsToCanAttack(ICardDef cardDef)
         {
-            return value == 0
-                ? "速攻"
-                : value == 1 ? "" : $"鈍足({value})";
+            return cardDef.NumTurnsToCanAttackToCreature == 0
+                ? cardDef.NumTurnsToCanAttackToPlayer == 0
+                    ? "速攻"
+                    : "突進"
+                : cardDef.NumTurnsToCanAttackToCreature == 1
+                    ? ""
+                    : $"鈍足({cardDef.NumTurnsToCanAttackToCreature})";
+        }
+
+        public static string DisplayTextForNumTurnsToCanAttack(Card card)
+        {
+            return card.NumTurnsToCanAttackToCreature == 0
+                ? card.NumTurnsToCanAttackToPlayer == 0
+                    ? "速攻"
+                    : "突進"
+                : card.NumTurnsToCanAttackToCreature == 1
+                    ? ""
+                    : $"鈍足({card.NumTurnsToCanAttackToCreature})";
         }
     }
 }

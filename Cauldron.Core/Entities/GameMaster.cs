@@ -12,6 +12,20 @@ namespace Cauldron.Core.Entities
     public class GameMaster
     {
         /// <summary>
+        /// 攻撃可能な状態か
+        /// </summary>
+        /// <param name="attackCard"></param>
+        /// <returns></returns>
+        public static bool CanAttack(Card attackCard) =>
+            // クリーチャーでなければ攻撃できない
+            attackCard.Type == CardType.Creature
+            // 場にいなければ攻撃できない
+            && attackCard.Zone.ZoneName == ZoneName.Field
+            // 1ターン中に攻撃可能な回数を超えていない
+            && attackCard.NumAttacksLimitInTurn > attackCard.NumAttacksInTurn
+            ;
+
+        /// <summary>
         /// 指定したカードが、指定したプレイヤーに攻撃可能か
         /// </summary>
         /// <param name="attackCard"></param>
@@ -24,7 +38,9 @@ namespace Cauldron.Core.Entities
 
             return
                 // 攻撃可能なカード
-                attackCard.CanAttack
+                CanAttack(attackCard)
+                // 召喚酔いでない
+                && attackCard.NumTurnsToCanAttackToPlayer <= attackCard.NumTurnsInField
                 // 持ち主には攻撃できない
                 && attackCard.OwnerId != guardPlayer.Id
                 // カバーされていない
@@ -39,22 +55,20 @@ namespace Cauldron.Core.Entities
         /// <param name="guardCard"></param>
         /// <param name="environment"></param>
         /// <returns></returns>
-        public static bool CanAttack(Card attackCard, Card guardCard, GameContext environment)
+        public static bool CanAttack(Card attackCard, Card guardCard, IReadOnlyList<Card> guardFieldCards)
         {
-            static bool ExistsOtherCover(Card guardCard, GameContext environment)
+            static bool ExistsOtherCover(Card guardCard, IReadOnlyList<Card> guardFieldCards)
             {
-                var guardPlayer = environment.You.PublicPlayerInfo.Id == guardCard.OwnerId
-                    ? environment.You.PublicPlayerInfo
-                    : environment.Opponent;
-
-                return guardPlayer.Field
+                return guardFieldCards
                     .OfType<Card>()
                     .Any(c => c.EnableAbility(CreatureAbility.Cover));
             }
 
             return
                 // 攻撃可能なカード
-                attackCard.CanAttack
+                CanAttack(attackCard)
+                // 召喚酔いでない
+                && attackCard.NumTurnsToCanAttackToCreature <= attackCard.NumTurnsInField
                 // 自分自信のカードには攻撃できない
                 && attackCard.OwnerId != guardCard.OwnerId
                 // クリーチャー以外には攻撃できない
@@ -65,7 +79,7 @@ namespace Cauldron.Core.Entities
                 && !guardCard.EnableAbility(CreatureAbility.Stealth)
                 // 自分がカバー or 他にカバーがいない
                 && (guardCard.EnableAbility(CreatureAbility.Cover)
-                    || !ExistsOtherCover(guardCard, environment))
+                    || !ExistsOtherCover(guardCard, guardFieldCards))
                 ;
         }
 
@@ -156,28 +170,6 @@ namespace Cauldron.Core.Entities
             }
 
             return true;
-        }
-
-        public (GameMasterStatusCode, (PlayerId[], CardId[])) ListAttackTargets(CardId cardId)
-        {
-            var (exists, card) = this.cardRepository.TryGetById(cardId);
-            if (!exists)
-            {
-                return (GameMasterStatusCode.CardNotExists, default);
-            }
-
-            var playerIdList = this.playerRepository.AllPlayers
-                .Where(p => CanAttack(card, p))
-                .Select(p => p.Id)
-                .ToArray();
-
-            var context = this.CreateGameContext(card.OwnerId);
-            var cardIdList = this.GetOpponent(card.OwnerId).Field.AllCards
-                .Where(c => CanAttack(card, c, context))
-                .Select(c => c.Id)
-                .ToArray();
-
-            return (GameMasterStatusCode.OK, (playerIdList, cardIdList));
         }
 
         public bool IsMatchedWhile(EffectWhile effectWhile, Card owner)
@@ -373,8 +365,8 @@ namespace Cauldron.Core.Entities
                         ?? card.Abilities.ToArray();
                 var newAnnotations = effectActionModifyCard.Annotations?.Modify(card.Annotations)
                         ?? card.Annotations.ToArray();
-                var newNumTurnsToCanAttack = await (effectActionModifyCard.NumTurnsToCanAttack?.Modify(effectOwnerCard, effectEventArgs, card.NumTurnsToCanAttack)
-                        ?? ValueTask.FromResult(card.NumTurnsToCanAttack));
+                var newNumTurnsToCanAttack = await (effectActionModifyCard.NumTurnsToCanAttack?.Modify(effectOwnerCard, effectEventArgs, card.NumTurnsToCanAttackToCreature)
+                        ?? ValueTask.FromResult(card.NumTurnsToCanAttackToCreature));
 
                 var newPowerBuff = newPower - card.BasePower;
                 card.PowerBuff = newPowerBuff;
@@ -384,7 +376,7 @@ namespace Cauldron.Core.Entities
 
                 card.Abilities = newAbilities.ToList();
                 card.Annotations = newAnnotations.ToList();
-                card.NumTurnsToCanAttack = newNumTurnsToCanAttack;
+                card.NumTurnsToCanAttackToCreature = newNumTurnsToCanAttack;
             }
 
             // notify
@@ -771,7 +763,7 @@ namespace Cauldron.Core.Entities
                 this.WinnerId,
                 this.ActivePlayer?.Id ?? default,
                 this.temporaryCards.ToArray(),
-                this.GetOpponent(playerId).PublicPlayerInfo,
+                this.PublicPlayerInfo(this.GetOpponent(playerId)),
                 PrivatePlayerInfo(player),
                 this.RuleBook,
                 this.GameOver
@@ -779,7 +771,7 @@ namespace Cauldron.Core.Entities
         }
 
         private PrivatePlayerInfo PrivatePlayerInfo(Player player) => new(
-            player.PublicPlayerInfo,
+            this.PublicPlayerInfo(player),
             player.Hands.AllCards.ToArray(),
             this.ListPlayableCardId(player)
             );
@@ -795,6 +787,50 @@ namespace Cauldron.Core.Entities
                 .Where(hand => IsPlayable(player, hand))
                 .Select(c => c.Id)
                 .ToArray();
+        }
+
+        private PublicPlayerInfo PublicPlayerInfo(Player player) => new(
+            player.Id,
+            player.Name,
+            player.Field.AllCardsWithIndex.ToArray(),
+            player.Deck.Count,
+            player.Cemetery.AllCards.ToArray(),
+            player.Excludes.ToArray(),
+            player.Hands.Count,
+            player.MaxHp,
+            player.CurrentHp,
+            player.MaxMp,
+            player.CurrentMp,
+            player.IsFirst,
+            this.ListAttackableCardId(player)
+            );
+
+        private Dictionary<CardId, AttackTarget> ListAttackableCardId(Player player)
+        {
+            return player.Field.AllCards
+                .ToDictionary(c => c.Id, c => this.ListAttackTargets(c.Id));
+        }
+
+        private AttackTarget ListAttackTargets(CardId cardId)
+        {
+            var (exists, attackCard) = this.cardRepository.TryGetById(cardId);
+            if (!exists)
+            {
+                return new AttackTarget(Array.Empty<PlayerId>(), Array.Empty<CardId>());
+            }
+
+            var playerIdList = this.playerRepository.AllPlayers
+                .Where(p => CanAttack(attackCard, p))
+                .Select(p => p.Id)
+                .ToArray();
+
+            var opponentFieldCards = this.GetOpponent(attackCard.OwnerId).Field.AllCards;
+            var cardIdList = opponentFieldCards
+                .Where(opCard => CanAttack(attackCard, opCard, opponentFieldCards))
+                .Select(c => c.Id)
+                .ToArray();
+
+            return new AttackTarget(playerIdList, cardIdList);
         }
 
         public async ValueTask<GameMasterStatusCode> Discard(PlayerId playerId, IEnumerable<CardId> handCardId, Card effectOwnerCard, CardEffectId effectId)
@@ -1262,7 +1298,7 @@ namespace Cauldron.Core.Entities
             this.logger.LogInformation("アタック（クリーチャー）：{card}({playername}) > {card}({playername})",
                 attackCard, attackPlayer.Name, guardCard, guardPlayer.Name);
 
-            if (!CanAttack(attackCard, guardCard, this.CreateGameContext(playerId)))
+            if (!CanAttack(attackCard, guardCard, guardPlayer.Field.AllCards))
             {
                 return GameMasterStatusCode.CantAttack;
             }
@@ -1285,7 +1321,7 @@ namespace Cauldron.Core.Entities
                 return GameMasterStatusCode.OK;
             }
 
-            if (CanAttack(attackCard, guardCard, this.CreateGameContext(playerId)))
+            if (CanAttack(attackCard, guardCard, guardPlayer.Field.AllCards))
             {
                 // お互いにダメージを受ける
                 var damageContext = new DamageContext(

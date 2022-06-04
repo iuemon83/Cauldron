@@ -14,7 +14,9 @@ namespace Cauldron.Core_Test
         public static CardDef Creature(int cost, string name, int power, int toughness,
             IEnumerable<string> annotations = null,
             string flavorText = "",
-            int? numTurnsToCanAttack = null, int? numAttacksInTurn = null, bool isToken = false,
+            int? numTurnsToCanAttackToCreature = null, int? numTurnsToCanAttackToPlayer = null,
+            int? numAttacksInTurn = null,
+            bool isToken = false,
             int? limitNumInDeck = null,
             IEnumerable<CreatureAbility> abilities = null,
             IEnumerable<CardEffect> effects = null)
@@ -26,7 +28,8 @@ namespace Cauldron.Core_Test
             t.Toughness = toughness;
             t.Annotations = annotations?.ToArray() ?? Array.Empty<string>();
             t.FlavorText = flavorText;
-            t.NumTurnsToCanAttack = numTurnsToCanAttack;
+            t.NumTurnsToCanAttackToCreature = numTurnsToCanAttackToCreature;
+            t.NumTurnsToCanAttackToPlayer = numTurnsToCanAttackToPlayer;
             t.NumAttacksLimitInTurn = numAttacksInTurn;
             t.IsToken = isToken;
             t.LimitNumCardsInDeck = isToken ? 0 : limitNumInDeck;
@@ -86,17 +89,29 @@ namespace Cauldron.Core_Test
         public static CardDef Quick
             => SampleCards1.Creature(1, "速攻", 1, 1,
                 flavorText: "すぐに攻撃できる",
-                numTurnsToCanAttack: 0);
+                numTurnsToCanAttackToCreature: 0,
+                numTurnsToCanAttackToPlayer: 0
+                );
+
+        public static CardDef Crash
+            => SampleCards1.Creature(1, "突進", 1, 1,
+                flavorText: "クリーチャーにはすぐに攻撃できる",
+                numTurnsToCanAttackToCreature: 0,
+                numTurnsToCanAttackToPlayer: 1
+                );
 
         public static CardDef SlowStarter
             => SampleCards1.Creature(4, "スロースターター", 7, 4,
                 flavorText: "攻撃できるまでが長い",
-                numTurnsToCanAttack: 2);
+                numTurnsToCanAttackToCreature: 2,
+                numTurnsToCanAttackToPlayer: 2
+                );
 
         public static CardDef Twin
             => SampleCards1.Creature(2, "双子", 1, 1,
                 flavorText: "二回攻撃できる",
-                numAttacksInTurn: 2);
+                numAttacksInTurn: 2
+                );
 
         public static CardDef Shielder
             => SampleCards1.Creature(2, "盾持ち", 1, 2, flavorText: "味方の盾になる",

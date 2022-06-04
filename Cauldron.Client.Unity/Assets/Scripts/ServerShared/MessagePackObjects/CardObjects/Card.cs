@@ -52,9 +52,14 @@ namespace Cauldron.Shared.MessagePackObjects
         public int ToughnessBuff { get; set; }
 
         /// <summary>
-        /// 攻撃可能となるまでのターン数
+        /// クリーチャーへ攻撃可能となるまでのターン数
         /// </summary>
-        public int NumTurnsToCanAttack { get; set; }
+        public int NumTurnsToCanAttackToCreature { get; set; }
+
+        /// <summary>
+        /// プレイヤーへ攻撃可能となるまでのターン数
+        /// </summary>
+        public int NumTurnsToCanAttackToPlayer { get; set; }
 
         /// <summary>
         /// 1ターン中に攻撃可能な回数
@@ -110,22 +115,6 @@ namespace Cauldron.Shared.MessagePackObjects
             };
         }
 
-        /// <summary>
-        /// 攻撃可能な状態か
-        /// </summary>
-        /// <param name="attackCard"></param>
-        /// <returns></returns>
-        public bool CanAttack =>
-            // クリーチャーでなければ攻撃できない
-            this.Type == CardType.Creature
-            // 場にいなければ攻撃できない
-            && this.Zone.ZoneName == ZoneName.Field
-            // 召喚酔いでない
-            && this.NumTurnsToCanAttack <= this.NumTurnsInField
-            // 1ターン中に攻撃可能な回数を超えていない
-            && this.NumAttacksLimitInTurn > this.NumAttacksInTurn
-            ;
-
         public Card(
             CardId Id,
             CardDefId CardDefId,
@@ -140,7 +129,8 @@ namespace Cauldron.Shared.MessagePackObjects
             int BaseToughness,
             IReadOnlyList<CreatureAbility> Abilities,
             IReadOnlyList<CardEffect> Effects,
-            int NumTurnsToCanAttack,
+            int NumTurnsToCanAttackToCreature,
+            int NumTurnsToCanAttackToPlayer,
             int NumAttacksLimitInTurn
             )
         {
@@ -158,7 +148,8 @@ namespace Cauldron.Shared.MessagePackObjects
                 BaseToughness,
                 Abilities.ToList(),
                 Effects.ToList(),
-                NumTurnsToCanAttack,
+                NumTurnsToCanAttackToCreature,
+                NumTurnsToCanAttackToPlayer,
                 NumAttacksLimitInTurn
                 );
         }
@@ -187,7 +178,8 @@ namespace Cauldron.Shared.MessagePackObjects
                 cardDef.Toughness,
                 cardDef.Abilities.ToList(),
                 cardDef.Effects.Select(x => x.CloneWithNewId()).ToList(),
-                cardDef.NumTurnsToCanAttack ?? default,
+                cardDef.NumTurnsToCanAttackToCreature ?? default,
+                cardDef.NumTurnsToCanAttackToPlayer ?? default,
                 cardDef.NumAttacksLimitInTurn ?? default
                 );
         }
@@ -206,7 +198,8 @@ namespace Cauldron.Shared.MessagePackObjects
             int BaseToughness,
             IReadOnlyList<CreatureAbility> Abilities,
             IReadOnlyList<CardEffect> Effects,
-            int NumTurnsToCanAttack,
+            int NumTurnsToCanAttackToCreature,
+            int NumTurnsToCanAttackToPlayer,
             int NumAttacksLimitInTurn
             )
         {
@@ -223,7 +216,8 @@ namespace Cauldron.Shared.MessagePackObjects
             this.BaseToughness = BaseToughness;
             this.Abilities = Abilities.ToList();
             this.Effects = Effects.ToList();
-            this.NumTurnsToCanAttack = NumTurnsToCanAttack;
+            this.NumTurnsToCanAttackToCreature = NumTurnsToCanAttackToCreature;
+            this.NumTurnsToCanAttackToPlayer = NumTurnsToCanAttackToPlayer;
             this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;
 
             this.Zone = Zone.Empty;
@@ -296,6 +290,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 default,
                 Array.Empty<CreatureAbility>(),
                 Array.Empty<CardEffect>(),
+                default,
                 default,
                 default
                 )
