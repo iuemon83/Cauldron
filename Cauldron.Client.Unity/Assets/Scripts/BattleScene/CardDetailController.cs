@@ -2,6 +2,7 @@ using Assets.Scripts;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -86,42 +87,46 @@ public class CardDetailController : MonoBehaviour
 
     private string EffectDescription(Card card)
     {
-        var v = "";
-        var v1 = Utility.DisplayTextForNumAttacksLimitInTurn(card.NumAttacksLimitInTurn);
-        if (v1 != "")
-        {
-            v += v1 + Environment.NewLine;
-        }
-
-        var v2 = Utility.DisplayTextForNumTurnsToCanAttack(card);
-        if (v2 != "")
-        {
-            v += v2 + Environment.NewLine;
-        }
-
-        v += card.EffectDescription;
-
-        return v;
+        return string.Join(Environment.NewLine,
+            new[]
+            {
+                card.IsToken ? "<color=\"red\">トークン</color>" : "",
+                string.Join(",", card.Annotations),
+                string.Join(",",
+                    card.Abilities.Select(Utility.DisplayText)
+                    .Concat(new[]
+                    {
+                        Utility.DisplayTextForNumAttacksLimitInTurn(card.NumAttacksLimitInTurn),
+                        Utility.DisplayTextForNumTurnsToCanAttack(card),
+                    })
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    ),
+                card.EffectDescription
+            }
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            );
     }
 
     private string EffectDescription(CardDef cardDef)
     {
-        var v = "";
-        var v1 = Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value);
-        if (v1 != "")
-        {
-            v += v1 + Environment.NewLine;
-        }
-
-        var v2 = Utility.DisplayTextForNumTurnsToCanAttack(cardDef);
-        if (v2 != "")
-        {
-            v += v2 + Environment.NewLine;
-        }
-
-        v += cardDef.EffectDescription;
-
-        return v;
+        return string.Join(Environment.NewLine,
+            new[]
+            {
+                cardDef.IsToken ? "<color=\"red\">トークン</color>" : "",
+                string.Join(",", cardDef.Annotations),
+                string.Join(",",
+                    cardDef.Abilities.Select(Utility.DisplayText)
+                    .Concat(new[]
+                    {
+                        Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value),
+                        Utility.DisplayTextForNumTurnsToCanAttack(cardDef),
+                    })
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    ),
+                cardDef.EffectDescription
+            }
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            );
     }
 
     public void SetCard(Card card)

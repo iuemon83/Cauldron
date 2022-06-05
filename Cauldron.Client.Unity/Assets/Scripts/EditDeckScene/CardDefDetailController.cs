@@ -77,8 +77,16 @@ public class CardDefDetailController : MonoBehaviour
             new[]
             {
                 cardDef.IsToken ? "<color=\"red\">ÉgÅ[ÉNÉì</color>" : "",
-                Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value),
-                Utility.DisplayTextForNumTurnsToCanAttack(cardDef),
+                string.Join(",", cardDef.Annotations),
+                string.Join(",",
+                    cardDef.Abilities.Select(Utility.DisplayText)
+                    .Concat(new[]
+                    {
+                        Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value),
+                        Utility.DisplayTextForNumTurnsToCanAttack(cardDef),
+                    })
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    ),
                 cardDef.EffectDescription
             }
             .Where(x => !string.IsNullOrWhiteSpace(x))
@@ -87,18 +95,7 @@ public class CardDefDetailController : MonoBehaviour
 
     private string OtherText(CardDef cardDef)
     {
-        var annnotationsText = cardDef.Annotations.Count == 0
-            ? "Ç»Çµ"
-            : string.Join(",", cardDef.Annotations);
-
-        var abilitiesText = cardDef.Abilities.Count == 0
-            ? "Ç»Çµ"
-            : string.Join(",", cardDef.Abilities.Select(Utility.DisplayText));
-
-        var result =
-$@"{Utility.DisplayText(cardDef.Type)}
-{annnotationsText}
-{abilitiesText}";
+        var result = Utility.DisplayText(cardDef.Type);
 
         if (cardDef.Type == CardType.Creature)
         {
