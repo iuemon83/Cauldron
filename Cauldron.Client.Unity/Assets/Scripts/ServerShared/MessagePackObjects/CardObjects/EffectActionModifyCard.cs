@@ -15,6 +15,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public AnnotationsModifier? Annotations { get; }
         public NumValueModifier? NumTurnsToCanAttackToCreature { get; }
         public NumValueModifier? NumTurnsToCanAttackToPlayer { get; }
+        public NumValueModifier? NumAttacksLimitInTurn { get; }
         public Choice Choice { get; }
 
         public string? Name { get; } = null;
@@ -28,6 +29,7 @@ namespace Cauldron.Shared.MessagePackObjects
             AnnotationsModifier? Annotations = null,
             NumValueModifier? NumTurnsToCanAttackToCreature = null,
             NumValueModifier? NumTurnsToCanAttackToPlayer = null,
+            NumValueModifier? NumAttacksLimitInTurn = null,
             string? Name = null
             )
         {
@@ -39,6 +41,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Choice = Choice;
             this.NumTurnsToCanAttackToCreature = NumTurnsToCanAttackToCreature;
             this.NumTurnsToCanAttackToPlayer = NumTurnsToCanAttackToPlayer;
+            this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;
             this.Name = Name;
         }
     }

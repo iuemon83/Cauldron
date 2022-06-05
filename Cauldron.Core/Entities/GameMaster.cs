@@ -365,10 +365,15 @@ namespace Cauldron.Core.Entities
                         ?? card.Abilities.ToArray();
                 var newAnnotations = effectActionModifyCard.Annotations?.Modify(card.Annotations)
                         ?? card.Annotations.ToArray();
-                var newNumTurnsToCanAttackToCreature = await (effectActionModifyCard.NumTurnsToCanAttackToCreature?.Modify(effectOwnerCard, effectEventArgs, card.NumTurnsToCanAttackToCreature)
+                var newNumTurnsToCanAttackToCreature = await (effectActionModifyCard.NumTurnsToCanAttackToCreature
+                    ?.Modify(effectOwnerCard, effectEventArgs, card.NumTurnsToCanAttackToCreature)
                         ?? ValueTask.FromResult(card.NumTurnsToCanAttackToCreature));
-                var newNumTurnsToCanAttackToPlayer = await (effectActionModifyCard.NumTurnsToCanAttackToPlayer?.Modify(effectOwnerCard, effectEventArgs, card.NumTurnsToCanAttackToCreature)
-                        ?? ValueTask.FromResult(card.NumTurnsToCanAttackToCreature));
+                var newNumTurnsToCanAttackToPlayer = await (effectActionModifyCard.NumTurnsToCanAttackToPlayer
+                    ?.Modify(effectOwnerCard, effectEventArgs, card.NumTurnsToCanAttackToPlayer)
+                        ?? ValueTask.FromResult(card.NumTurnsToCanAttackToPlayer));
+                var newNumAttacksLimitInTurn = await (effectActionModifyCard.NumAttacksLimitInTurn
+                    ?.Modify(effectOwnerCard, effectEventArgs, card.NumAttacksLimitInTurn)
+                        ?? ValueTask.FromResult(card.NumAttacksLimitInTurn));
 
                 var newPowerBuff = newPower - card.BasePower;
                 card.PowerBuff = newPowerBuff;
@@ -380,6 +385,7 @@ namespace Cauldron.Core.Entities
                 card.Annotations = newAnnotations.ToList();
                 card.NumTurnsToCanAttackToCreature = newNumTurnsToCanAttackToCreature;
                 card.NumTurnsToCanAttackToPlayer = newNumTurnsToCanAttackToPlayer;
+                card.NumAttacksLimitInTurn = newNumAttacksLimitInTurn;
             }
 
             // notify
