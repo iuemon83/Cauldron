@@ -19,7 +19,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 _ => throw new InvalidOperationException($"不正な入力値です: {_this.Compare}")
             };
 
-            return result;
+            return result ^ _this.Not;
         }
     }
 }

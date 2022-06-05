@@ -24,14 +24,17 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public TextValue Value { get; }
         public CompareValue Compare { get; }
+        public bool Not { get; }
 
         public TextCompare(
             TextValue Value,
-            CompareValue Compare
+            CompareValue Compare,
+            bool Not = false
             )
         {
             this.Value = Value;
             this.Compare = Compare;
+            this.Not = Not;
         }
     }
 }
