@@ -2895,5 +2895,41 @@ namespace Cauldron.Core_Test
                     }
                     )
             });
+
+        public static CardDef Bigfoot => SampleCards1.Creature(
+            0, "ビッグフット", 1, 1,
+            effects: new[]
+            {
+                new CardEffect("",
+                    new EffectConditionWrap(ByPlay: new()),
+                    new[]
+                    {
+                        new EffectAction(SetVariable: new("X",
+                            new NumValue(NumValueCalculator: new(
+                                ForCard:new(NumValueCalculatorForCard.TypeValue.Count,
+                                    new Choice(new ChoiceSource(orCardConditions: new[]
+                                    {
+                                        new CardCondition(
+                                            NameCondition: new(
+                                                new TextValue(Vanilla.Name),
+                                                TextCompare.CompareValue.Equality
+                                                )
+                                            )
+                                    }))
+                                    )
+                                ))
+                            )),
+                        new EffectAction(ModifyCard: new(
+                            new Choice(new ChoiceSource(orCardConditions: new[]
+                            {
+                                new CardCondition(CardCondition.ContextConditionValue.This)
+                            })),
+                            Power: new(NumValueModifier.OperatorValue.Add,
+                                new NumValue(NumVariable: new("X"))
+                                )
+                            ))
+                    }
+                    )
+            });
     }
 }

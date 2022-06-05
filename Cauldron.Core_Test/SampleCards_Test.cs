@@ -4037,5 +4037,43 @@ namespace Cauldron.Core_Test
                 return testCard;
             });
         }
+
+        [Fact]
+        public async Task Bigfoot()
+        {
+            var testCardDef = SampleCards1.Bigfoot;
+            testCardDef.Cost = 0;
+
+            var vDef = SampleCards1.Vanilla;
+            vDef.Cost = 0;
+
+            var qDef = SampleCards1.Quick;
+            vDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, vDef, qDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var testCard = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // ほかにカードがないので+0
+                Assert.Equal(0, testCard.PowerBuff);
+
+                var v1 = await TestUtil.NewCardAndPlayFromHand(g, pId, vDef.Id);
+                var testCard2 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // バニラがいるので+1
+                Assert.Equal(1, testCard2.PowerBuff);
+
+                var q1 = await TestUtil.NewCardAndPlayFromHand(g, pId, qDef.Id);
+                var testCard3 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // バニラ以外は対象にならない
+                Assert.Equal(1, testCard3.PowerBuff);
+            });
+        }
     }
 }
