@@ -59,13 +59,14 @@ values(@game_id, @winner_player_id, @game_event)
 
             command.CommandText = @"
 create table if not exists battle_players(
-    player_id text primary key,
+    player_id text,
     game_id text not null,
     name text not null,
     card_names_in_deck_json text not null,
     play_order INTEGER not null,
     ip string not null,
-    created_at text not null default (datetime(CURRENT_TIMESTAMP, 'localtime'))
+    created_at text not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),
+    primary key(player_id, game_id)
 )
 ";
             command.ExecuteNonQuery();
