@@ -248,8 +248,15 @@ namespace Cauldron.Server.Services
 
                         if (playerId == this.self.Id)
                         {
-                            new BattleLogDb().Add(this.dbConnection,
-                                new BattleLog(this.gameId, gameContext.WinnerPlayerId, GameEvent.OnEndGame));
+                            try
+                            {
+                                new BattleLogDb().Add(this.dbConnection,
+                                    new BattleLog(this.gameId, gameContext.WinnerPlayerId, GameEvent.OnEndGame));
+                            }
+                            catch (Exception e)
+                            {
+                                this._logger.LogError(e, "db error");
+                            }
                         }
                     },
                     AskCardAction: this.AskCard
@@ -257,8 +264,15 @@ namespace Cauldron.Server.Services
 
             this.gameId = gameMasterRepository.Add(options);
 
-            new BattleLogDb().Add(this.dbConnection,
-                new BattleLog(this.gameId, new PlayerId(Guid.Empty), GameEvent.OnStartGame));
+            try
+            {
+                new BattleLogDb().Add(this.dbConnection,
+                    new BattleLog(this.gameId, new PlayerId(Guid.Empty), GameEvent.OnStartGame));
+            }
+            catch (Exception e)
+            {
+                this._logger.LogError(e, "db error");
+            }
 
             return Task.FromResult(new OpenNewGameReply(this.gameId));
         }
@@ -399,7 +413,14 @@ namespace Cauldron.Server.Services
 
             foreach (var log in logs)
             {
-                new BattleLogDb().Add(this.dbConnection, log);
+                try
+                {
+                    new BattleLogDb().Add(this.dbConnection, log);
+                }
+                catch (Exception e)
+                {
+                    this._logger.LogError(e, "db error");
+                }
             }
         }
 
