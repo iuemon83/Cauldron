@@ -1,5 +1,6 @@
 using Assets.Scripts;
 using Assets.Scripts.ServerShared.MessagePackObjects;
+using Cauldron.Shared.MessagePackObjects;
 using Grpc.Core;
 using System;
 using UniRx;
@@ -57,7 +58,15 @@ public class ListGameSceneController : MonoBehaviour
                 async deck =>
                 {
                     var holder = ConnectionHolder.Find();
-                    await holder.Client.EnterGame(gameOutline.GameId, deck);
+                    var reply = await holder.Client.EnterGame(gameOutline.GameId, deck);
+                    if (reply.StatusCode != EnterGameReply.StatusCodeValue.Ok)
+                    {
+                        // ゲーム開始前にエラー
+                        await holder.Client.LeaveGame();
+
+                        this.DisplayEnterGameErrorDialog(reply.StatusCode);
+                        return;
+                    }
 
                     await Utility.LoadAsyncScene(SceneNames.BattleScene);
                 });
@@ -79,14 +88,13 @@ public class ListGameSceneController : MonoBehaviour
                 var holder = ConnectionHolder.Find();
                 await holder.Client.OpenNewGame();
 
-                try
+                var reply = await holder.Client.EnterGame(deck);
+                if (reply.StatusCode != EnterGameReply.StatusCodeValue.Ok)
                 {
-                    await holder.Client.EnterGame(deck);
-                }
-                catch (RpcException e)
-                {
-                    //TODO 不正なデッキだったらここに来るか？
-                    Debug.LogWarning(e);
+                    // ゲーム開始前にエラー
+                    await holder.Client.LeaveGame();
+
+                    this.DisplayEnterGameErrorDialog(reply.StatusCode);
                     return;
                 }
 
@@ -109,6 +117,26 @@ public class ListGameSceneController : MonoBehaviour
                     });
                 dialog.transform.SetParent(this.canvas.transform, false);
             });
+    }
+
+    private void DisplayEnterGameErrorDialog(EnterGameReply.StatusCodeValue statusCode)
+    {
+        var title = "エラーが発生しました。";
+        var message = statusCode switch
+        {
+            EnterGameReply.StatusCodeValue.RoomIsFull => "部屋に入れませんでした。",
+            EnterGameReply.StatusCodeValue.InvalidDeck => @"選択したデッキの内容が正しくありません。デッキ編集画面より確認してください。
+・デッキ枚数が足りない or 超えている。
+・1種類のカードをデッキに入れられる枚数を超過している。",
+            _ => throw new NotImplementedException()
+        };
+
+        var dialog = Instantiate(this.confirmDialogController);
+        dialog.Init(title, message, ConfirmDialogController.DialogType.OnlyCancel,
+            onCancelAction: () =>
+            {
+            });
+        dialog.transform.SetParent(this.canvas.transform, false);
     }
 
     public void OnReloadButtonClick()
@@ -159,14 +187,13 @@ public class ListGameSceneController : MonoBehaviour
         var holder = ConnectionHolder.Find();
         var gameId = await holder.Client.OpenNewGame();
 
-        try
+        var reply = await holder.Client.EnterGame(myDeck);
+        if (reply.StatusCode != EnterGameReply.StatusCodeValue.Ok)
         {
-            await holder.Client.EnterGame(myDeck);
-        }
-        catch (RpcException e)
-        {
-            //TODO 不正なデッキだったらここに来るか？
-            Debug.LogWarning(e);
+            // ゲーム開始前にエラー
+            await holder.Client.LeaveGame();
+
+            this.DisplayEnterGameErrorDialog(reply.StatusCode);
             return;
         }
 

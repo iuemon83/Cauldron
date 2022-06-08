@@ -37,7 +37,7 @@ namespace Assets.Scripts
 
         private static string SettingsFilePath => Path.Combine(Application.dataPath, "settings.json");
 
-        private static string localDataPath = Path.Combine(Application.persistentDataPath, "data.json");
+        private static readonly string localDataPath = Path.Combine(Application.persistentDataPath, "data.json");
 
         private static ApplicationSettings applicationSettingsCache = default;
         private static ApplicationSettings LoadFromFile()

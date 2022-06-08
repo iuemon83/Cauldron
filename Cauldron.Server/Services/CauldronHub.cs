@@ -178,7 +178,7 @@ namespace Cauldron.Server.Services
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<OpenNewGameReply> ICauldronHub.OpenNewGame(OpenNewGameRequest request)
+        async Task<OpenNewGameReply> ICauldronHub.OpenNewGame(OpenNewGameRequest request)
         {
             var ruleBook = request.RuleBook;
             var cardRepository = new CardRepository(ruleBook);
@@ -262,6 +262,11 @@ namespace Cauldron.Server.Services
                     AskCardAction: this.AskCard
                 ));
 
+            if (this.gameId != default)
+            {
+                await (this as ICauldronHub).LeaveGame(this.gameId);
+            }
+
             this.gameId = gameMasterRepository.Add(options);
 
             try
@@ -274,7 +279,7 @@ namespace Cauldron.Server.Services
                 this._logger.LogError(e, "db error");
             }
 
-            return Task.FromResult(new OpenNewGameReply(this.gameId));
+            return new OpenNewGameReply(this.gameId);
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
@@ -349,17 +354,17 @@ namespace Cauldron.Server.Services
                     if (success)
                     {
                         this.BroadcastExceptSelf(this.room).OnJoinGame();
+                        return new EnterGameReply(newPlayerId, EnterGameReply.StatusCodeValue.Ok);
                     }
                     else
                     {
                         //TODO 追加したプレイヤーを削除
-                        throw new RpcException(new Status(StatusCode.InvalidArgument, "room is full"));
+                        return new EnterGameReply(newPlayerId, EnterGameReply.StatusCodeValue.RoomIsFull);
                     }
 
-                    return new EnterGameReply(newPlayerId);
 
                 case GameMasterStatusCode.InvalidDeck:
-                    throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid deck"));
+                    return new EnterGameReply(newPlayerId, EnterGameReply.StatusCodeValue.InvalidDeck);
 
                 default:
                     throw new RpcException(new Status(StatusCode.Unknown, "unknown error"));

@@ -121,7 +121,7 @@ public class Client
         return await this.magiconionClient.GetCardPool();
     }
 
-    public UniTask<PlayerId> EnterGame(IDeck deck)
+    public UniTask<EnterGameReply> EnterGame(IDeck deck)
     {
         if (this.GameId == default)
         {
@@ -131,7 +131,7 @@ public class Client
         return this.EnterGame(this.GameId, deck);
     }
 
-    public async UniTask<PlayerId> EnterGame(GameId gameId, IDeck deck)
+    public async UniTask<EnterGameReply> EnterGame(GameId gameId, IDeck deck)
     {
         this.currentContext = null;
         this.GameId = gameId;
@@ -152,7 +152,7 @@ public class Client
 
         this.PlayerId = reply.PlayerId;
 
-        return this.PlayerId;
+        return reply;
     }
 
     public async UniTask LeaveGame()
@@ -169,8 +169,7 @@ public class Client
     {
         return deck.CardDefNames
             .Select(cardName => cardPool.FirstOrDefault(c => c.FullName == cardName))
-            .Where(cardDef => cardDef != null && !cardDef.IsToken)
-            .Select(cardDef => cardDef.Id);
+            .Select(cardDef => cardDef?.Id ?? default);
     }
 
     public async UniTask ReadyGame()

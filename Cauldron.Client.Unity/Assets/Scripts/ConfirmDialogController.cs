@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,9 +13,9 @@ public class ConfirmDialogController : MonoBehaviour
     }
 
     [SerializeField]
-    private Text titleText = default;
+    private TextMeshProUGUI titleText = default;
     [SerializeField]
-    private Text messageText = default;
+    private TextMeshProUGUI messageText = default;
 
     [SerializeField]
     private Button okButton = default;

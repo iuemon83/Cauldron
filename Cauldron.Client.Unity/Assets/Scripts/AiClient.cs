@@ -4,7 +4,6 @@ using Cauldron.Shared.Services;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Linq;
-using UnityEngine;
 
 public class AiClient
 {
@@ -51,7 +50,13 @@ public class AiClient
 
     public async UniTask Ready(IDeck deck)
     {
-        this.PlayerId = await this.client.EnterGame(this.gameId, deck);
+        var reply = await this.client.EnterGame(this.gameId, deck);
+        if (reply.StatusCode != EnterGameReply.StatusCodeValue.Ok)
+        {
+            //TODO AIのゲーム開始時にエラーが発生した
+        }
+
+        this.PlayerId = reply.PlayerId;
         await this.client.ReadyGame();
     }
 
