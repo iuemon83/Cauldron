@@ -121,6 +121,11 @@ public class Client
         return await this.magiconionClient.GetCardPool();
     }
 
+    public async UniTask<ListAllowedClientVersionsReply> ListAllowedClientVersions()
+    {
+        return await this.magiconionClient.ListAllowedClientVersions();
+    }
+
     public UniTask<EnterGameReply> EnterGame(IDeck deck)
     {
         if (this.GameId == default)

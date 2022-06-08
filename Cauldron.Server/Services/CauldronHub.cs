@@ -172,6 +172,12 @@ namespace Cauldron.Server.Services
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
+        Task<ListAllowedClientVersionsReply> ICauldronHub.ListAllowedClientVersions()
+        {
+            return Task.FromResult(new ListAllowedClientVersionsReply(this.configuration["AllowedClientVersions"].Split(",")));
+        }
+
+        [FromTypeFilter(typeof(LoggingAttribute))]
         Task<GameOutline[]> ICauldronHub.ListOpenGames()
         {
             return Task.FromResult(gameMasterRepository.ListOpenGames());

@@ -1,6 +1,7 @@
 using Assets.Scripts;
 using Cysharp.Threading.Tasks;
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -73,6 +74,15 @@ public class TitleSceneController : MonoBehaviour
         try
         {
             var holder = await ConnectionHolder.Create(this.ipOrHostNameText.text, this.playerNameText.text);
+
+            var reply = await holder.Client.ListAllowedClientVersions();
+            if (!reply?.AllowedClientVersions.Contains(Config.Version) ?? false)
+            {
+                this.ShowErrorMessage(@$"新しいバージョンがリリースされています。
+有効なバージョンは{string.Join(",", reply.AllowedClientVersions)}です。");
+                return false;
+            }
+
             await holder.LoadCardPool();
         }
         catch (Exception e)

@@ -11,6 +11,8 @@ namespace Cauldron.Shared.Services
 
         Task<RuleBook> GetRuleBook();
 
+        Task<ListAllowedClientVersionsReply> ListAllowedClientVersions();
+
         Task<GameOutline[]> ListOpenGames();
 
         Task<OpenNewGameReply> OpenNewGame(OpenNewGameRequest request);
