@@ -75,6 +75,11 @@
         /// <summary>
         /// ゲーム終了
         /// </summary>
-        OnEndGame
+        OnEndGame,
+
+        /// <summary>
+        /// プレイヤーの変更イベント
+        /// </summary>
+        OnModifyPlayer,
     }
 }

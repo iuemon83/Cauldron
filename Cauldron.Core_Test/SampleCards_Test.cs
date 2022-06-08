@@ -4075,5 +4075,37 @@ namespace Cauldron.Core_Test
                 Assert.Equal(1, testCard3.PowerBuff);
             });
         }
+
+        [Fact]
+        public async Task inori()
+        {
+            var testCardDef = SampleCards1.inori;
+            testCardDef.Cost = 0;
+
+            var vDef = SampleCards1.Vanilla;
+            vDef.Cost = 0;
+
+            var healderDef = SampleCards1.Healer;
+            healderDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, vDef, healderDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var v1 = await TestUtil.NewCardAndPlayFromHand(g, pId, vDef.Id);
+
+                Assert.Equal(0, v1.PowerBuff);
+
+                // 回復すると、場のカードが+1/+0される
+                var h = await TestUtil.NewCardAndPlayFromHand(g, pId, healderDef.Id);
+                Assert.Equal(1, v1.PowerBuff);
+                Assert.Equal(1, h.PowerBuff);
+            });
+        }
     }
 }

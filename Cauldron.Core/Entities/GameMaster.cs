@@ -1496,7 +1496,7 @@ namespace Cauldron.Core.Entities
                 return;
             }
 
-            await player.Modify(modifyPlayerContext.PlayerModifier, effectOwnerCard, effectEventArgs);
+            var newContext = player.Modify(modifyPlayerContext);
 
             foreach (var p in this.playerRepository.AllPlayers)
             {
@@ -1508,6 +1508,13 @@ namespace Cauldron.Core.Entities
                         effectId
                         ));
             }
+
+            await this.FireEvent(new EffectEventArgs(
+                GameEvent.OnModifyPlayer,
+                this,
+                SourcePlayer: player,
+                ModifyPlayerContext: newContext
+                ));
         }
 
         public GameMasterStatusCode AddEffect(Card card, IEnumerable<CardEffect> effectToAdd, Card effectOwnerCard, CardEffectId effectId)

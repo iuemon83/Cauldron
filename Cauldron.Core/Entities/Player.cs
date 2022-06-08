@@ -70,15 +70,6 @@ namespace Cauldron.Core.Entities
             }
         }
 
-        public void AddMaxMp(int x)
-        {
-            this.MaxMp = Math.Min(this.MaxMp + x, this.MaxLimitMp);
-        }
-
-        public void UseMp(int x) => this.UsedMp = Math.Min(this.MaxMp, this.UsedMp + x);
-
-        public void GainMp(int x) => this.UsedMp = Math.Max(0, this.UsedMp - x);
-
         /// <summary>
         /// MP を最大値まで回復
         /// </summary>
@@ -86,29 +77,69 @@ namespace Cauldron.Core.Entities
 
         public void Damage(int x) => this.UsedHp = Math.Min(this.MaxHp, this.UsedHp + x);
 
-        public void GainHp(int x) => this.UsedHp = Math.Max(0, this.UsedHp - x);
+        public void UseMp(int x) => this.UsedMp = Math.Min(this.MaxMp, this.UsedMp + x);
 
-        public async ValueTask Modify(PlayerModifier modifier, Card effectOwnerCard, EffectEventArgs effectEventArgs)
+        /// <summary>
+        /// MPの最大値を増加させる
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns>実際に増加した値</returns>
+        public int AddMaxHp(int x)
         {
-            if (modifier.MaxHp != null)
-            {
-                this.MaxHp = await modifier.MaxHp.Modify(effectOwnerCard, effectEventArgs, this.MaxHp);
-            }
+            var prevValue = this.MaxHp;
+            this.MaxHp += x;
 
-            if (modifier.Hp != null)
-            {
-                this.GainHp(await modifier.Hp.Modify(effectOwnerCard, effectEventArgs, this.CurrentHp) - this.CurrentHp);
-            }
+            return this.MaxHp - prevValue;
+        }
 
-            if (modifier.MaxMp != null)
-            {
-                this.MaxMp = await modifier.MaxMp.Modify(effectOwnerCard, effectEventArgs, this.MaxMp);
-            }
+        /// <summary>
+        /// MPの最大値を増加させる
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns>実際に増加した値</returns>
+        public int AddMaxMp(int x)
+        {
+            var prevValue = this.MaxMp;
+            this.MaxMp = Math.Min(this.MaxMp + x, this.MaxLimitMp);
 
-            if (modifier.Mp != null)
-            {
-                this.GainMp(await modifier.Mp.Modify(effectOwnerCard, effectEventArgs, this.CurrentMp) - this.CurrentMp);
-            }
+            return this.MaxMp - prevValue;
+        }
+
+        /// <summary>
+        /// MPを増加させる
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns>実際に増加したMP</returns>
+        public int GainMp(int x)
+        {
+            var prevValue = this.CurrentMp;
+            this.UsedMp = Math.Max(0, this.UsedMp - x);
+
+            return this.CurrentMp - prevValue;
+        }
+
+        /// <summary>
+        /// HPを増加させる
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns>実際に増加したHP</returns>
+        public int GainHp(int x)
+        {
+            var prevValue = this.CurrentHp;
+            this.UsedHp = Math.Max(0, this.UsedHp - x);
+
+            return this.CurrentHp - prevValue;
+        }
+
+        public ModifyPlayerContext Modify(ModifyPlayerContext modifyPlayerContext)
+        {
+            return new ModifyPlayerContext(
+                this.Id,
+                this.AddMaxHp(modifyPlayerContext.DiffMaxHp),
+                this.GainHp(modifyPlayerContext.DiffCurrentHp),
+                this.AddMaxMp(modifyPlayerContext.DiffMaxMp),
+                this.GainMp(modifyPlayerContext.DiffCurrentMp)
+            );
         }
 
         public void ModifyCounter(string name, int addValue)

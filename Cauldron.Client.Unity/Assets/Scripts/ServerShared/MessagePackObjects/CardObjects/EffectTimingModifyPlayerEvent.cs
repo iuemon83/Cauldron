@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -7,24 +9,24 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public PlayerCondition[] OrPlayerConditions { get; }
 
-        public bool ModifyMaxHp { get; }
-        public bool ModifyHp { get; }
-        public bool ModifyMaxMp { get; }
-        public bool ModifyMp { get; }
+        public NumCompare? ModifyMaxHpCondition { get; }
+        public NumCompare? ModifyCurrentHpCondition { get; }
+        public NumCompare? ModifyMaxMpCondition { get; }
+        public NumCompare? ModifyCurrentMpCondition { get; }
 
         public EffectTimingModifyPlayerEvent(
             PlayerCondition[] OrPlayerConditions,
-            bool ModifyMaxHp,
-            bool ModifyHp,
-            bool ModifyMaxMp,
-            bool ModifyMp
+            NumCompare? ModifyMaxHpCondition = default,
+            NumCompare? ModifyCurrentHpCondition = default,
+            NumCompare? ModifyMaxMpCondition = default,
+            NumCompare? ModifyCurrentMpCondition = default
             )
         {
             this.OrPlayerConditions = OrPlayerConditions;
-            this.ModifyMaxHp = ModifyMaxHp;
-            this.ModifyHp = ModifyHp;
-            this.ModifyMaxMp = ModifyMaxMp;
-            this.ModifyMp = ModifyMp;
+            this.ModifyMaxHpCondition = ModifyMaxHpCondition;
+            this.ModifyCurrentHpCondition = ModifyCurrentHpCondition;
+            this.ModifyMaxMpCondition = ModifyMaxMpCondition;
+            this.ModifyCurrentMpCondition = ModifyCurrentMpCondition;
         }
     }
 }

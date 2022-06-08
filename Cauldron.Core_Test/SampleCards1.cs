@@ -2931,5 +2931,51 @@ namespace Cauldron.Core_Test
                     }
                     )
             });
+
+        public static CardDef inori => SampleCards1.Artifact(
+            0, "祈りの像",
+            effects: new[]
+            {
+                new CardEffect(
+                    "あなたのHPが回復したとき、あなたの場にあるクリーチャーを+1/+0する。",
+                    new EffectConditionWrap(ByNotPlay: new(
+                        ZonePrettyName.YouField,
+                        When: new(new EffectTiming(ModifyPlayer: new(
+                            OrPlayerConditions: new[]
+                            {
+                                new PlayerCondition(PlayerCondition.ContextValue.You)
+                            },
+                            ModifyCurrentHpCondition: new(
+                                new NumValue(1),
+                                NumCompare.CompareValue.GreaterThan
+                                )
+                            )))
+                        )),
+                    new[]
+                    {
+                        new EffectAction(ModifyCard: new(
+                            new Choice(new ChoiceSource(
+                                orCardConditions: new[]
+                                {
+                                    new CardCondition(
+                                        ZoneCondition: new(new ZoneValue(new[]
+                                        {
+                                            ZonePrettyName.YouField
+                                        })),
+                                        TypeCondition: new(new[]
+                                        {
+                                            CardType.Creature
+                                        }
+                                        )
+                                        )
+                                })),
+                            Power: new(
+                                NumValueModifier.OperatorValue.Add,
+                                new NumValue(1)
+                                )
+                            ))
+                    }
+                    )
+            });
     }
 }
