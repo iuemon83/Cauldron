@@ -4077,9 +4077,9 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public async Task inori()
+        public async Task Inori()
         {
-            var testCardDef = SampleCards1.inori;
+            var testCardDef = SampleCards1.Inori;
             testCardDef.Cost = 0;
 
             var vDef = SampleCards1.Vanilla;
@@ -4105,6 +4105,44 @@ namespace Cauldron.Core_Test
                 var h = await TestUtil.NewCardAndPlayFromHand(g, pId, healderDef.Id);
                 Assert.Equal(1, v1.PowerBuff);
                 Assert.Equal(1, h.PowerBuff);
+            });
+        }
+
+        [Fact]
+        public async Task DamageForPower()
+        {
+            var testCardDef = SampleCards1.DamageForPower;
+            testCardDef.Cost = 0;
+
+            var vDef = SampleCards1.Vanilla;
+            vDef.Cost = 0;
+            vDef.Power = 1;
+            vDef.Toughness = 3;
+
+            var bigVDef = SampleCards1.Vanilla;
+            bigVDef.Cost = 0;
+            bigVDef.Power = 3;
+            bigVDef.Toughness = 3;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, vDef, bigVDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                // パワー3未満なので1ダメージ
+                var v1 = await TestUtil.NewCardAndPlayFromHand(g, pId, vDef.Id);
+                c.TestAnswer.ChoiceCardIdList = new[] { v1.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(v1.BaseToughness - 1, v1.Toughness);
+
+
+                // パワー3以上なので2ダメージ
+                var bigV = await TestUtil.NewCardAndPlayFromHand(g, pId, bigVDef.Id);
+                c.TestAnswer.ChoiceCardIdList = new[] { bigV.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(bigV.BaseToughness - 2, bigV.Toughness);
             });
         }
     }

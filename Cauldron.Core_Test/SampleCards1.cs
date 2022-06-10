@@ -2932,7 +2932,7 @@ namespace Cauldron.Core_Test
                     )
             });
 
-        public static CardDef inori => SampleCards1.Artifact(
+        public static CardDef Inori => SampleCards1.Artifact(
             0, "祈りの像",
             effects: new[]
             {
@@ -2976,6 +2976,81 @@ namespace Cauldron.Core_Test
                             ))
                     }
                     )
+            });
+
+        public static CardDef DamageForPower => SampleCards1.Sorcery(
+            0, "パワーによるダメージ",
+            effects: new[]
+            {
+                new CardEffect(
+                    "選択したクリーチャーに1ダメージを与える。選択したクリーチャーのパワーが3以上なら、さらに１ダメージを与える。",
+                    new EffectConditionWrap(ByPlay: new()),
+                    new[]
+                    {
+                        new EffectAction(Damage: new(
+                            new NumValue(1),
+                            new Choice(new ChoiceSource(
+                                orCardConditions: new[]
+                                {
+                                    new CardCondition(
+                                        ZoneCondition: new(new ZoneValue(new[]
+                                        {
+                                            ZonePrettyName.YouField,
+                                            ZonePrettyName.OpponentField,
+                                        })),
+                                        TypeCondition: new(new[]
+                                        {
+                                            CardType.Creature
+                                        })
+                                        )
+                                }),
+                                how: Choice.HowValue.Choose,
+                                numPicks: new NumValue(1)
+                                ),
+                            Name: "damage"
+                            )),
+                        new EffectAction(
+                            If: new(new ConditionWrap(
+                                NumCondition: new(
+                                    new NumValue(NumValueCalculator: new(ForCard: new(
+                                        NumValueCalculatorForCard.TypeValue.Count,
+                                        new Choice(new ChoiceSource(orCardConditions: new[]
+                                        {
+                                            new CardCondition(
+                                                ActionContext: new(
+                                                    Damage: new(
+                                                        "damage",
+                                                        ActionContextCardsOfDamage.TypeValue.DamagedCards)
+                                                    ),
+                                                PowerCondition: new(
+                                                    new NumValue(3),
+                                                    NumCompare.CompareValue.GreaterThan
+                                                    )
+                                                )
+                                        }
+                                        ))
+                                    ))),
+                                    new NumCompare(
+                                        new NumValue(1),
+                                        NumCompare.CompareValue.GreaterThan
+                                        )
+                                    )
+                                )),
+                            Damage: new(
+                                new NumValue(1),
+                                new Choice(new ChoiceSource(
+                                    orCardConditions: new[]
+                                    {
+                                        new CardCondition(ActionContext: new(
+                                            Damage: new(
+                                                "damage",
+                                                ActionContextCardsOfDamage.TypeValue.DamagedCards)
+                                            ))
+                                    })
+                                    )
+                                )
+                            )
+                    })
             });
     }
 }

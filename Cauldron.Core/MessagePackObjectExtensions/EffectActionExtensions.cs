@@ -7,12 +7,18 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         /// <summary>
         /// </summary>
-        /// <param name="ownerCard"></param>
-        /// <param name="effectEventArgs"></param>
+        /// <param name="effectOwnerCard"></param>
+        /// <param name="effectArgs"></param>
         /// <returns></returns>
         public static async ValueTask<(bool, EffectEventArgs)> Execute(this EffectAction _this,
-            Card ownerCard, CardEffectId effectId, EffectEventArgs effectEventArgs)
+            Card effectOwnerCard, CardEffectId effectId, EffectEventArgs effectArgs)
         {
+            var isMatched = _this.If == null || await _this.If.IsMatch(effectOwnerCard, effectArgs);
+            if (!isMatched)
+            {
+                return (false, effectArgs);
+            }
+
             //TODO この順番もけっこう重要
             var actions = new IEffectActionExecuter?[]
             {
@@ -34,11 +40,11 @@ namespace Cauldron.Shared.MessagePackObjects
             .OfType<IEffectActionExecuter>()
             .ToArray();
 
-            var result = effectEventArgs;
+            var result = effectArgs;
             var done = false;
             foreach (var action in actions)
             {
-                var (done2, result2) = await action.Execute(ownerCard, effectId, result);
+                var (done2, result2) = await action.Execute(effectOwnerCard, effectId, result);
 
                 done = done || done2;
                 result = result2;

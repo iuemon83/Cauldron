@@ -7,6 +7,14 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class EffectAction
     {
+        /// <summary>
+        /// EffectConditionとの違いは、こっちはActionの処理時に初めて評価される
+        /// EffectConditionはイベント発生時に評価される
+        /// 
+        /// 「～して、そのカードが～なら」のようなときに利用する
+        /// </summary>
+        public EffectIf? If { get; } = null;
+
         public EffectActionDamage? Damage { get; } = null;
         public EffectActionAddCard? AddCard { get; } = null;
         public EffectActionExcludeCard? ExcludeCard { get; } = null;
@@ -23,6 +31,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectActionReserveEffect? ReserveEffect { get; } = null;
 
         public EffectAction(
+            EffectIf? If = null,
             EffectActionDamage? Damage = null,
             EffectActionAddCard? AddCard = null,
             EffectActionExcludeCard? ExcludeCard = null,
@@ -39,6 +48,7 @@ namespace Cauldron.Shared.MessagePackObjects
             EffectActionReserveEffect? ReserveEffect = null
             )
         {
+            this.If = If;
             this.Damage = Damage;
             this.AddCard = AddCard;
             this.ExcludeCard = ExcludeCard;
