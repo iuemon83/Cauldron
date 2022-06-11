@@ -1,7 +1,5 @@
 ﻿using Cauldron.Core.Entities;
 using Cauldron.Core.Entities.Effect;
-using System;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -11,8 +9,10 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             return eventArgs.GameEvent switch
             {
-                GameEvent.OnStartTurn => effectTiming.StartTurn?.IsMatch(effectOwnerCard, eventArgs) ?? false,
-                GameEvent.OnEndTurn => effectTiming.EndTurn?.IsMatch(effectOwnerCard, eventArgs) ?? false,
+                GameEvent.OnStartTurn => effectTiming.StartTurn != null
+                    && await effectTiming.StartTurn.IsMatch(effectOwnerCard, eventArgs),
+                GameEvent.OnEndTurn => effectTiming.EndTurn != null
+                    && await effectTiming.EndTurn.IsMatch(effectOwnerCard, eventArgs),
                 GameEvent.OnPlay => await (effectTiming.Play?.IsMatch(effectOwnerCard, eventArgs)
                     ?? ValueTask.FromResult(false)),
                 GameEvent.OnDestroy => await (effectTiming.Destroy?.IsMatch(effectOwnerCard, eventArgs)

@@ -1,4 +1,5 @@
-﻿using Cauldron.Core.Entities.Effect;
+﻿using Cauldron.Core.Entities;
+using Cauldron.Core.Entities.Effect;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
@@ -18,8 +19,8 @@ namespace Cauldron.Core.MessagePackObjectExtensions
         {
             // 対象のプレイヤー一覧
             // 順序はアクティブプレイヤー優先
-            var targetPlayers = args.GameMaster.playerRepository.AllPlayers
-                .Where(p => _this.PlayerCondition.IsMatch(effectOwnerCard, args, p))
+            var matched = await _this.PlayerCondition.ListMatchedPlayers(effectOwnerCard, args, args.GameMaster.playerRepository);
+            var targetPlayers = matched
                 .OrderBy(p => p.Id == args.GameMaster.ActivePlayer.Id)
                 .ToArray();
 

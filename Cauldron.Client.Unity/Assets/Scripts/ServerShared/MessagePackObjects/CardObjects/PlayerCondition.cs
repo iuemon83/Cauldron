@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+﻿#nullable enable
+
+using Assets.Scripts.ServerShared.MessagePackObjects;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
@@ -41,13 +43,27 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public bool? IsFirst { get; }
 
+        public NumCompare? MaxHpCondition { get; }
+        public NumCompare? CurrentHpCondition { get; }
+        public NumCompare? MaxMpCondition { get; }
+        public NumCompare? CurrentMpCondition { get; }
+
+
         public PlayerCondition(
             PlayerCondition.ContextValue Context = ContextValue.Any,
-            bool? IsFirst = null
+            bool? IsFirst = null,
+            NumCompare? MaxHpCondition = default,
+            NumCompare? CurrentHpCondition = default,
+            NumCompare? MaxMpCondition = default,
+            NumCompare? CurrentMpCondition = default
             )
         {
             this.Context = Context;
             this.IsFirst = IsFirst;
+            this.MaxHpCondition = MaxHpCondition;
+            this.CurrentHpCondition = CurrentHpCondition;
+            this.MaxMpCondition = MaxMpCondition;
+            this.CurrentMpCondition = CurrentMpCondition;
         }
     }
 }

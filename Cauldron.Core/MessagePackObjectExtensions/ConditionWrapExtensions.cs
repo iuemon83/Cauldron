@@ -1,5 +1,4 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -25,7 +24,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             if (_this.PlayerExistsCondition != default)
             {
-                return eventArgs.GameMaster.Exists(_this.PlayerExistsCondition, effectOwnerCard, eventArgs);
+                return await eventArgs.GameMaster.Exists(_this.PlayerExistsCondition, effectOwnerCard, eventArgs);
             }
 
             if (_this.NumCondition != default)

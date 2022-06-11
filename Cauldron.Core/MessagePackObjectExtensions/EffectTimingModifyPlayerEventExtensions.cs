@@ -16,7 +16,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             foreach (var cond in _this.OrPlayerConditions)
             {
-                var matched = cond.IsMatch(effectOwnerCard, effectArgs, effectArgs.SourcePlayer)
+                var matched = await cond.IsMatch(effectOwnerCard, effectArgs, effectArgs.SourcePlayer)
                     && (await (_this.ModifyMaxHpCondition?.IsMatch(modPlayerContext.DiffMaxHp, effectOwnerCard, effectArgs)
                         ?? ValueTask.FromResult(true)))
                     && (await (_this.ModifyCurrentHpCondition?.IsMatch(modPlayerContext.DiffCurrentHp, effectOwnerCard, effectArgs)

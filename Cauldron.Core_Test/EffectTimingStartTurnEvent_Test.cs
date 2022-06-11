@@ -1,5 +1,6 @@
 using Cauldron.Shared.MessagePackObjects;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Cauldron.Core_Test
@@ -10,11 +11,11 @@ namespace Cauldron.Core_Test
     public class EffectTimingStartTurnEvent_Test
     {
         [Fact]
-        public void IsMatch_すべてのターン開始時()
+        public async Task IsMatch_すべてのターン開始時()
         {
             var test = new EffectTimingStartTurnEvent();
 
-            var actual = test.IsMatch(
+            var actual = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
                     Core.Entities.GameEvent.OnStartTurn,
@@ -27,7 +28,7 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public void IsMatch_あなたのターン開始時()
+        public async Task IsMatch_あなたのターン開始時()
         {
             var testPlayer = new Core.Entities.Player(
                 PlayerId.NewId(), "", TestUtil.TestRuleBook, Array.Empty<Card>(), default
@@ -47,7 +48,7 @@ namespace Cauldron.Core_Test
                 });
 
             // あなたのターン開始
-            var actual = test.IsMatch(
+            var actual = await test.IsMatch(
                 youCard,
                 new Core.Entities.Effect.EffectEventArgs(
                     Core.Entities.GameEvent.OnStartTurn,
@@ -58,7 +59,7 @@ namespace Cauldron.Core_Test
             Assert.True(actual);
 
             // あなた以外のターン開始
-            actual = test.IsMatch(
+            actual = await test.IsMatch(
                 noYouCard,
                 new Core.Entities.Effect.EffectEventArgs(
                     Core.Entities.GameEvent.OnStartTurn,
@@ -70,7 +71,7 @@ namespace Cauldron.Core_Test
         }
 
         [Fact]
-        public void IsMatch_相手のターン開始時()
+        public async Task IsMatch_相手のターン開始時()
         {
             var testPlayer = new Core.Entities.Player(
                 PlayerId.NewId(), "", TestUtil.TestRuleBook, Array.Empty<Card>(), default
@@ -90,7 +91,7 @@ namespace Cauldron.Core_Test
                 });
 
             // あなたのターン開始
-            var actual = test.IsMatch(
+            var actual = await test.IsMatch(
                 youCard,
                 new Core.Entities.Effect.EffectEventArgs(
                     Core.Entities.GameEvent.OnStartTurn,
@@ -101,7 +102,7 @@ namespace Cauldron.Core_Test
             Assert.False(actual);
 
             // 相手のターン開始
-            actual = test.IsMatch(
+            actual = await test.IsMatch(
                 noYouCard,
                 new Core.Entities.Effect.EffectEventArgs(
                     Core.Entities.GameEvent.OnStartTurn,

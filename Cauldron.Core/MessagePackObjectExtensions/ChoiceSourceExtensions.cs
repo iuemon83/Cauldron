@@ -9,8 +9,8 @@ namespace Cauldron.Shared.MessagePackObjects
             Card effectOwnerCard, EffectEventArgs effectEventArgs, PlayerRepository playerRepository,
             CardRepository cardRepository, Choice.HowValue choiceHow, int numDuplicates)
         {
-            var playerList = choiceSource
-                .ListMatchedPlayers(effectOwnerCard, effectEventArgs, playerRepository)
+            var playerList = (await choiceSource
+                .ListMatchedPlayers(effectOwnerCard, effectEventArgs, playerRepository))
                 .Select(p => p.Id)
                 .ToArray();
 
@@ -37,12 +37,12 @@ namespace Cauldron.Shared.MessagePackObjects
             );
         }
 
-        public static IEnumerable<Player> ListMatchedPlayers(this ChoiceSource choiceSource, Card effectOwnerCard, EffectEventArgs eventArgs, PlayerRepository playerRepository)
+        public static async ValueTask<IEnumerable<Player>> ListMatchedPlayers(this ChoiceSource choiceSource, Card effectOwnerCard, EffectEventArgs eventArgs, PlayerRepository playerRepository)
         {
             var matchedList = new Dictionary<PlayerId, Player>();
             foreach (var cond in choiceSource.OrPlayerConditions)
             {
-                var players = cond.ListMatchedPlayers(effectOwnerCard, eventArgs, playerRepository);
+                var players = await cond.ListMatchedPlayers(effectOwnerCard, eventArgs, playerRepository);
                 foreach (var p in players)
                 {
                     // 重複はいらない

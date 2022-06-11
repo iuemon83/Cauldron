@@ -57,11 +57,11 @@ namespace Cauldron.Shared.MessagePackObjects
                 }
 
                 // どちらかでも指定されているなら、指定されているほうの条件には合致しないとダメ
-                return TakePlayerIsMatch(_this, effectOwnerCard, eventArgs)
+                return await TakePlayerIsMatch(_this, effectOwnerCard, eventArgs)
                     || await TakeCardIsMatch(_this, effectOwnerCard, eventArgs);
             }
 
-            static bool TakePlayerIsMatch(EffectTimingDamageBeforeEvent _this, Card effectOwnerCard, EffectEventArgs eventArgs)
+            static async ValueTask<bool> TakePlayerIsMatch(EffectTimingDamageBeforeEvent _this, Card effectOwnerCard, EffectEventArgs eventArgs)
             {
                 if (_this.TakePlayerCondition == null)
                 {
@@ -73,7 +73,7 @@ namespace Cauldron.Shared.MessagePackObjects
                     return false;
                 }
 
-                return _this.TakePlayerCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer);
+                return await _this.TakePlayerCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer);
             }
 
             static async ValueTask<bool> TakeCardIsMatch(EffectTimingDamageBeforeEvent _this, Card effectOwnerCard, EffectEventArgs eventArgs)

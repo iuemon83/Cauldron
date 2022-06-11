@@ -5,14 +5,22 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class PlayerConditionExtensions
     {
-        public static Player[] ListMatchedPlayers(this PlayerCondition _this, Card effectOwnerCard, EffectEventArgs eventArgs, PlayerRepository playerRepository)
+        public static async ValueTask<Player[]> ListMatchedPlayers(this PlayerCondition _this, Card effectOwnerCard, EffectEventArgs eventArgs, PlayerRepository playerRepository)
         {
-            return playerRepository.AllPlayers
-                .Where(p => _this.IsMatch(effectOwnerCard, eventArgs, p))
-                .ToArray();
+            var matched = new List<Player>();
+
+            foreach (var p in playerRepository.AllPlayers)
+            {
+                if (await _this.IsMatch(effectOwnerCard, eventArgs, p))
+                {
+                    matched.Add(p);
+                }
+            }
+
+            return matched.ToArray();
         }
 
-        public static bool IsMatch(this PlayerCondition _this, Card effectOwnerCard, EffectEventArgs eventArgs, Player playerToMatch)
+        public static async ValueTask<bool> IsMatch(this PlayerCondition _this, Card effectOwnerCard, EffectEventArgs eventArgs, Player playerToMatch)
         {
             return
                 _this.Context switch
@@ -27,6 +35,10 @@ namespace Cauldron.Shared.MessagePackObjects
                     _ => true
                 }
                 && (_this.IsFirst == null || _this.IsFirst == playerToMatch.IsFirst)
+                && (_this.MaxHpCondition == null || await _this.MaxHpCondition.IsMatch(playerToMatch.MaxHp, effectOwnerCard, eventArgs))
+                && (_this.CurrentHpCondition == null || await _this.CurrentHpCondition.IsMatch(playerToMatch.CurrentHp, effectOwnerCard, eventArgs))
+                && (_this.MaxMpCondition == null || await _this.MaxMpCondition.IsMatch(playerToMatch.MaxMp, effectOwnerCard, eventArgs))
+                && (_this.CurrentMpCondition == null || await _this.CurrentMpCondition.IsMatch(playerToMatch.CurrentMp, effectOwnerCard, eventArgs))
                 ;
         }
     }

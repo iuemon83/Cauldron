@@ -1734,10 +1734,17 @@ namespace Cauldron.Core.Entities
             return (true, GameMasterStatusCode.OK);
         }
 
-        public bool Exists(PlayerCondition playerExistsCondition, Card effectOwnerCard, EffectEventArgs eventArgs)
+        public async ValueTask<bool> Exists(PlayerCondition playerExistsCondition, Card effectOwnerCard, EffectEventArgs eventArgs)
         {
-            return this.playerRepository.AllPlayers
-                .Any(p => playerExistsCondition.IsMatch(effectOwnerCard, eventArgs, p));
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                if (await playerExistsCondition.IsMatch(effectOwnerCard, eventArgs, p))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void ReserveEffect(Card owner, IEnumerable<CardEffect> EffectsToReserve)
