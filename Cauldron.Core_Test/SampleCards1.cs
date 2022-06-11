@@ -3052,5 +3052,73 @@ namespace Cauldron.Core_Test
                             )
                     })
             });
+
+        public static CardDef Coin => SampleCards1.Sorcery(
+            0, "コイン",
+            effects: new[]
+            {
+                new CardEffect(
+                    "あなたがこのゲームの後攻なら、ターン終了時まで利用可能なMPを+1する。",
+                    new EffectConditionWrap(ByPlay: new(
+                        If: new(new ConditionWrap(PlayerExistsCondition: new(
+                            PlayerCondition.ContextValue.You,
+                            IsFirst: false)))
+                        )),
+                    new[]
+                    {
+                        new EffectAction(ModifyPlayer: new(
+                            new Choice(new ChoiceSource(
+                                orPlayerConditions: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                })),
+                            new PlayerModifier(
+                                MaxMp: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(1)),
+                                Mp: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(1))
+                                )
+                            )),
+                        new EffectAction(ReserveEffect: new(new[]
+                        {
+                            new CardEffect(
+                                "",
+                                new EffectConditionWrap(Reserve: new(
+                                    When: new(new EffectTiming(EndTurn: new(
+                                        new[]
+                                        {
+                                            new PlayerCondition(PlayerCondition.ContextValue.You)
+                                        }
+                                        ))),
+                                    While: new(new EffectTiming(EndTurn: new(
+                                        new[]
+                                        {
+                                            new PlayerCondition(PlayerCondition.ContextValue.You)
+                                        }
+                                        )),
+                                        Skip: 0,
+                                        Take: 1)
+                                    )),
+                                new[]
+                                {
+                                    new EffectAction(ModifyPlayer: new(
+                                        new Choice(new ChoiceSource(
+                                            orPlayerConditions: new[]
+                                            {
+                                                new PlayerCondition(PlayerCondition.ContextValue.You)
+                                            })),
+                                        new PlayerModifier(
+                                            MaxMp: new(
+                                                NumValueModifier.OperatorValue.Sub,
+                                                new NumValue(1))
+                                            )
+                                        )),
+                                })
+                        }))
+                    }
+                    )
+            });
     }
 }

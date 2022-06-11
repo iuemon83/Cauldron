@@ -5,17 +5,17 @@ namespace Cauldron.Shared.MessagePackObjects
 {
     public static class PlayerConditionExtensions
     {
-        public static Player[] ListMatchedPlayers(this PlayerCondition playerCondition, Card effectOwnerCard, EffectEventArgs eventArgs, PlayerRepository playerRepository)
+        public static Player[] ListMatchedPlayers(this PlayerCondition _this, Card effectOwnerCard, EffectEventArgs eventArgs, PlayerRepository playerRepository)
         {
             return playerRepository.AllPlayers
-                .Where(p => playerCondition.IsMatch(effectOwnerCard, eventArgs, p))
+                .Where(p => _this.IsMatch(effectOwnerCard, eventArgs, p))
                 .ToArray();
         }
 
-        public static bool IsMatch(this PlayerCondition playerCondition, Card effectOwnerCard, EffectEventArgs eventArgs, Player playerToMatch)
+        public static bool IsMatch(this PlayerCondition _this, Card effectOwnerCard, EffectEventArgs eventArgs, Player playerToMatch)
         {
             return
-                playerCondition.Context switch
+                _this.Context switch
                 {
                     PlayerCondition.ContextValue.EventSource => playerToMatch.Id == eventArgs.SourcePlayer?.Id,
                     PlayerCondition.ContextValue.You => playerToMatch.Id == effectOwnerCard.OwnerId,
@@ -25,7 +25,9 @@ namespace Cauldron.Shared.MessagePackObjects
                     PlayerCondition.ContextValue.ActionTarget => playerToMatch.Id == eventArgs.ActionTargetPlayer?.Id,
                     PlayerCondition.ContextValue.ActionTargetAll => eventArgs.ActionTargetPlayers.Select(x => x.Id).Contains(playerToMatch.Id),
                     _ => true
-                };
+                }
+                && (_this.IsFirst == null || _this.IsFirst == playerToMatch.IsFirst)
+                ;
         }
     }
 }

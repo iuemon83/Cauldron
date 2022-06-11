@@ -4145,5 +4145,42 @@ namespace Cauldron.Core_Test
                 Assert.Equal(bigV.BaseToughness - 2, bigV.Toughness);
             });
         }
+
+        [Fact]
+        public async Task Coin()
+        {
+            var testCardDef = SampleCards1.Coin;
+            testCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                // 先攻なのでMPがプラスされない
+                var beforeMaxMp = c.Player1.MaxMp;
+                var beforeCurrentMp = c.Player1.CurrentMp;
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(beforeMaxMp, c.Player1.MaxMp);
+                Assert.Equal(beforeCurrentMp, c.Player1.CurrentMp);
+            });
+
+            // 後攻
+            var beforeMaxMp = c.Player2.MaxMp;
+            var beforeCurrentMp = c.Player2.CurrentMp;
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                // 後攻なのでMPがプラスされる
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(beforeMaxMp + 1, c.Player2.MaxMp);
+                Assert.Equal(beforeCurrentMp + 1, c.Player2.CurrentMp);
+            });
+
+            // ターン終了後は元に戻る
+            Assert.Equal(beforeMaxMp, c.Player2.MaxMp);
+            Assert.Equal(beforeCurrentMp, c.Player2.CurrentMp);
+        }
     }
 }

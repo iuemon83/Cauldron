@@ -36,10 +36,18 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public PlayerCondition.ContextValue Context { get; }
 
+        /// <summary>
+        /// 先攻ならTrue
+        /// </summary>
+        public bool? IsFirst { get; }
+
         public PlayerCondition(
-            PlayerCondition.ContextValue Context = ContextValue.Any)
+            PlayerCondition.ContextValue Context = ContextValue.Any,
+            bool? IsFirst = null
+            )
         {
             this.Context = Context;
+            this.IsFirst = IsFirst;
         }
     }
 }
