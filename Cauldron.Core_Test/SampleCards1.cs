@@ -590,6 +590,39 @@ namespace Cauldron.Core_Test
                     )
                 });
 
+        public static CardDef Iron
+            => SampleCards1.Artifact(0, "鉄塊",
+                effects: new[]
+                {
+                    new CardEffect(
+                        "場にあるクリーチャーは受けるダメージが0になる。",
+                        new EffectConditionWrap(ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            When: new(new EffectTiming(DamageBefore: new(
+                                TakeCardCondition: new(
+                                    ZoneCondition: new(new ZoneValue(new[]
+                                    {
+                                        ZonePrettyName.YouField,
+                                        ZonePrettyName.OpponentField
+                                    })),
+                                    TypeCondition: new(new[]{
+                                        CardType.Creature
+                                    })
+                                    )
+                                )))
+                            )),
+                        new[]
+                        {
+                            new EffectAction(ModifyDamage: new(
+                                new NumValueModifier(
+                                    NumValueModifier.OperatorValue.Replace,
+                                    new NumValue(0)
+                                    )
+                                ))
+                        }
+                        )
+                });
+
         public static CardDef Salvage
             => SampleCards1.Sorcery(1, "サルベージ",
                 effects: new[]

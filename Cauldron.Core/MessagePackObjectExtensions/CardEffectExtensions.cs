@@ -15,22 +15,6 @@ namespace Cauldron.Shared.MessagePackObjects
             return await _this.Condition.ByPlay.IsMatch(effectOwnerCard, args);
         }
 
-        public static async ValueTask<(bool, EffectEventArgs)> DoActionByPlaying(this CardEffect _this,
-            Card effectOwnerCard, EffectEventArgs args)
-        {
-            var done = false;
-            var newArgs = args;
-            foreach (var action in _this.Actions)
-            {
-                var (done2, newArgs2) = await action.Execute(effectOwnerCard, _this.Id, newArgs);
-
-                done = done || done2;
-                newArgs = newArgs2;
-            }
-
-            return (done, newArgs);
-        }
-
         public static async ValueTask<bool> IsMatched(this CardEffect _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
@@ -45,7 +29,7 @@ namespace Cauldron.Shared.MessagePackObjects
             return await condition.IsMatch(effectOwnerCard, args);
         }
 
-        public static async ValueTask<(bool, EffectEventArgs)> DoEffect(this CardEffect _this,
+        public static async ValueTask<(bool, EffectEventArgs)> DoAction(this CardEffect _this,
             Card effectOwnerCard, EffectEventArgs args)
         {
             var done = false;
@@ -59,39 +43,6 @@ namespace Cauldron.Shared.MessagePackObjects
             }
 
             return (done, newArgs);
-        }
-
-        public static async ValueTask<(bool, EffectEventArgs)> DoIfMatched(this CardEffect _this,
-            Card effectOwnerCard, EffectEventArgs args)
-        {
-            if (!await IsMatched(_this, effectOwnerCard, args))
-            {
-                return (false, args);
-            }
-
-            return await DoEffect(_this, effectOwnerCard, args);
-
-            //var condition = _this.Condition.ByNotPlay
-            //    ?? (EffectCondition?)_this.Condition.Reserve;
-
-            //if (condition == null)
-            //{
-            //    return (false, args);
-            //}
-
-            //if (!await condition.IsMatch(effectOwnerCard, args)) return (false, args);
-
-            //var done = false;
-            //var newArgs = args;
-            //foreach (var action in _this.Actions)
-            //{
-            //    var (done2, newArgs2) = await action.Execute(effectOwnerCard, _this.Id, newArgs);
-
-            //    done = done || done2;
-            //    newArgs = newArgs2;
-            //}
-
-            //return (done, newArgs);
         }
     }
 }

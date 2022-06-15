@@ -141,15 +141,7 @@ namespace Cauldron.Core.Entities
             var newEffectEventArgs = effectEventArgs;
             foreach (var ef in matchedEffectList)
             {
-                var (done, args) = await ef.DoActionByPlaying(playedCard, newEffectEventArgs);
-
-                if (done)
-                {
-                    newEffectEventArgs = args;
-                    this.logger.LogInformation("効果: {GameEvent} {Name}", effectEventArgs.GameEvent, playedCard.Name);
-
-                    await effectEventArgs.GameMaster.DestroyDeadCards();
-                }
+                await this.DoEffectInLoop(ef, playedCard, effectEventArgs, isPlayEvent: true);
             }
 
             return newEffectEventArgs;
@@ -194,21 +186,21 @@ namespace Cauldron.Core.Entities
             // anyZoneEffect
             foreach (var (ef, owner) in this.reservedEffectsByGameEvent[newEffectEventArgs.GameEvent])
             {
-                newEffectEventArgs = await this.DoEffectInLoop(ef, owner, newEffectEventArgs, this.logger);
+                newEffectEventArgs = await this.DoEffectInLoop(ef, owner, newEffectEventArgs, isPlayEvent: false);
             }
 
             // アクティブプレイヤー
             // 相手プレイヤー
             foreach (var (card, effect) in candidateCards)
             {
-                newEffectEventArgs = await this.DoEffectInLoop(effect, card, newEffectEventArgs, this.logger);
+                newEffectEventArgs = await this.DoEffectInLoop(effect, card, newEffectEventArgs, isPlayEvent: false);
             }
 
             return newEffectEventArgs;
         }
 
         private async ValueTask<EffectEventArgs> DoEffectInLoop(
-            CardEffect ef, Card owner, EffectEventArgs args, ILogger logger)
+            CardEffect ef, Card owner, EffectEventArgs args, bool isPlayEvent)
         {
             if (this.usedEffectIdList.Contains(ef.Id))
             {
@@ -217,42 +209,43 @@ namespace Cauldron.Core.Entities
                 return args;
             }
 
-            if (!await ef.IsMatched(owner, args))
+            if (!isPlayEvent)
             {
-                return args;
+                if (!await ef.IsMatched(owner, args))
+                {
+                    return args;
+                }
             }
 
             if (this.TopEffectId == default)
             {
                 this.TopEffectId = ef.Id;
+                this.usedEffectIdList.Clear();
             }
 
             this.usedEffectIdList.Add(ef.Id);
 
-            var (done, newArgs) = await ef.DoEffect(owner, args);
+            var (done, newArgs) = await ef.DoAction(owner, args);
+
+            this.usedEffectIdList.Remove(ef.Id);
+
+            if (this.TopEffectId == ef.Id)
+            {
+                // ルートの効果が処理完了したらぜんぶ削除する。
+                this.TopEffectId = default;
+                this.usedEffectIdList.Clear();
+            }
 
             if (!done)
             {
                 // ほぼありえないはず？
                 // choiceの対象がいないとか？
 
-                if (this.TopEffectId == ef.Id)
-                {
-                    this.TopEffectId = default;
-                    this.usedEffectIdList.Clear();
-                }
-
                 return args;
             }
 
             logger.LogInformation("効果: {GameEvent} {Name}", args.GameEvent, owner.Name);
             await args.GameMaster.DestroyDeadCards();
-
-            if (this.TopEffectId == ef.Id)
-            {
-                this.TopEffectId = default;
-                this.usedEffectIdList.Clear();
-            }
 
             return newArgs;
         }

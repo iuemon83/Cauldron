@@ -4182,5 +4182,45 @@ namespace Cauldron.Core_Test
             Assert.Equal(beforeMaxMp, c.Player2.MaxMp);
             Assert.Equal(beforeCurrentMp, c.Player2.CurrentMp);
         }
+
+        [Fact]
+        public async Task Iron()
+        {
+            var testCardDef = SampleCards1.Iron;
+            testCardDef.Cost = 0;
+
+            var damageCardDef = SampleCards1.FullAttack;
+            damageCardDef.Cost = 0;
+
+            var creatureCardDef = SampleCards1.Vanilla;
+            creatureCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, damageCardDef, creatureCardDef }, this.output
+                );
+
+            // 先攻
+            var (c1, c2, c3) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var c1 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var c2 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var c3 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+
+                return (c1, c2, c3);
+            });
+
+            // 後攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 全体ダメージを与えてもダメージが0になる
+                await TestUtil.NewCardAndPlayFromHand(g, pId, damageCardDef.Id);
+
+                Assert.Equal(c1.BaseToughness, c1.Toughness);
+                Assert.Equal(c2.BaseToughness, c2.Toughness);
+                Assert.Equal(c3.BaseToughness, c3.Toughness);
+            });
+        }
     }
 }
