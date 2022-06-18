@@ -164,6 +164,9 @@ public class BattleSceneController : MonoBehaviour
 
         this.cardDetailController.Init(this.DisplayBigCardDetail, this.DisplayBigCardDefDetail);
 
+        this.youPlayerController.Init(this.choiceService.UnPick, this.choiceService.Pick);
+        this.opponentPlayerController.Init(this.choiceService.UnPick, this.choiceService.Pick);
+
         this.disposableList.AddRange(new[]
         {
             holder.Receiver.OnPlayCard.Subscribe((a) => this.OnPlayCard(a.gameContext, a.message)),
@@ -183,7 +186,7 @@ public class BattleSceneController : MonoBehaviour
 
         this.connectionHolder = ConnectionHolder.Find();
 
-        this.youPlayerController.Init(this.Client.PlayerId, this.choiceService.UnPick, this.choiceService.Pick);
+        this.youPlayerController.Set(this.Client.PlayerId);
 
         await this.Client.ReadyGame();
     }

@@ -65,14 +65,18 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.outlineImage.color = color;
     }
 
-    public void Init(PlayerId playerId,
+    public void Init(
         Action<PlayerController> unPick,
         Action<PlayerController> pick
         )
     {
-        this.PlayerId = playerId;
         this.unPick = unPick;
         this.pick = pick;
+    }
+
+    public void Set(PlayerId playerId)
+    {
+        this.PlayerId = playerId;
     }
 
     public void Set(PublicPlayerInfo publicPlayerInfo)
