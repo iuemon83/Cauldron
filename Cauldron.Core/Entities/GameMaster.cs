@@ -816,6 +816,15 @@ namespace Cauldron.Core.Entities
 
         private Dictionary<CardId, AttackTarget> ListAttackableCardId(Player player)
         {
+            if (player.Id != this.ActivePlayer.Id)
+            {
+                return player.Field.AllCards
+                    .ToDictionary(
+                        c => c.Id,
+                        c => new AttackTarget(Array.Empty<PlayerId>(), Array.Empty<CardId>())
+                        );
+            }
+
             return player.Field.AllCards
                 .ToDictionary(c => c.Id, c => this.ListAttackTargets(c.Id));
         }
