@@ -44,7 +44,7 @@ public class CardDetailController : MonoBehaviour
         if (this.card != null)
         {
             this.cardNameText.text = this.card.Name;
-            this.effectText.text = this.EffectDescription(this.card);
+            this.effectText.text = Utility.EffectDescription(this.card);
             this.costText.text = this.card.Cost.ToString();
 
             switch (this.card.Type)
@@ -65,7 +65,7 @@ public class CardDetailController : MonoBehaviour
         else if (this.cardDef != null)
         {
             this.cardNameText.text = this.cardDef.Name;
-            this.effectText.text = this.EffectDescription(this.cardDef);
+            this.effectText.text = Utility.EffectDescription(this.cardDef);
             this.costText.text = this.cardDef.Cost.ToString();
 
             switch (this.cardDef.Type)
@@ -83,50 +83,6 @@ public class CardDetailController : MonoBehaviour
                     break;
             }
         }
-    }
-
-    private string EffectDescription(Card card)
-    {
-        return string.Join(Environment.NewLine,
-            new[]
-            {
-                card.IsToken ? "<color=\"red\">トークン</color>" : "",
-                string.Join(",", card.Annotations),
-                string.Join(",",
-                    card.Abilities.Select(Utility.DisplayText)
-                    .Concat(new[]
-                    {
-                        Utility.DisplayTextForNumAttacksLimitInTurn(card.NumAttacksLimitInTurn),
-                        Utility.DisplayTextForNumTurnsToCanAttack(card),
-                    })
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    ),
-                card.EffectDescription
-            }
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            );
-    }
-
-    private string EffectDescription(CardDef cardDef)
-    {
-        return string.Join(Environment.NewLine,
-            new[]
-            {
-                cardDef.IsToken ? "<color=\"red\">トークン</color>" : "",
-                string.Join(",", cardDef.Annotations),
-                string.Join(",",
-                    cardDef.Abilities.Select(Utility.DisplayText)
-                    .Concat(new[]
-                    {
-                        Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value),
-                        Utility.DisplayTextForNumTurnsToCanAttack(cardDef),
-                    })
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    ),
-                cardDef.EffectDescription
-            }
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            );
     }
 
     public void SetCard(Card card)

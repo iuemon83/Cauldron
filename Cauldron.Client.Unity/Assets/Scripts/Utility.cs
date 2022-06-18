@@ -163,5 +163,50 @@ namespace Assets.Scripts
                     ? ""
                     : $"鈍足({card.NumTurnsToCanAttackToCreature})";
         }
+
+        public static string EffectDescription(CardDef cardDef)
+        {
+            return string.Join(Environment.NewLine,
+                new[]
+                {
+                cardDef.IsToken ? "<color=\"red\">トークン</color>" : "",
+                string.Join(",", cardDef.Annotations),
+                string.Join(",",
+                    cardDef.Abilities.Select(Utility.DisplayText)
+                    .Concat(new[]
+                    {
+                        Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value),
+                        Utility.DisplayTextForNumTurnsToCanAttack(cardDef),
+                    })
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    ),
+                cardDef.EffectDescription
+                }
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                );
+        }
+
+        public static string EffectDescription(Card card)
+        {
+            return string.Join(Environment.NewLine,
+                new[]
+                {
+                card.IsToken ? "<color=\"red\">トークン</color>" : "",
+                string.Join(",", card.Annotations),
+                string.Join(",",
+                    card.Abilities.Select(Utility.DisplayText)
+                    .Concat(new[]
+                    {
+                        Utility.DisplayTextForNumAttacksLimitInTurn(card.NumAttacksLimitInTurn),
+                        Utility.DisplayTextForNumTurnsToCanAttack(card),
+                    })
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    ),
+                card.EffectDescription
+                }
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                );
+        }
+
     }
 }

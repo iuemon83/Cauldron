@@ -112,12 +112,22 @@ public class EditDeckSceneController : MonoBehaviour
 
     private bool IsMatchedByKeyword(string keyword, CardDef cardDef)
     {
-        return cardDef.Name.Contains(keyword)
-            || cardDef.EffectDescription.Contains(keyword)
-            || cardDef.Annotations.Any(a => a.Contains(keyword))
-            || cardDef.Abilities.Any(a => Utility.DisplayText(a).Contains(keyword))
-            || cardDef.FlavorText.Contains(keyword)
+        var lowerKeyword = this.NormalizeForKeyword(keyword);
+
+        return this.NormalizeForKeyword(cardDef.Name).Contains(lowerKeyword)
+            || this.NormalizeForKeyword(Utility.EffectDescription(cardDef)).Contains(lowerKeyword)
+            || cardDef.Annotations.Any(a => this.NormalizeForKeyword(a).Contains(lowerKeyword))
+            || cardDef.Abilities.Any(a => this.NormalizeForKeyword(Utility.DisplayText(a)).Contains(lowerKeyword))
             ;
+    }
+
+    private string NormalizeForKeyword(string value)
+    {
+        return value
+            .ToLower()
+            .Replace(" ", "")
+            .Replace("Å@", "")
+            .Replace(".", "");
     }
 
     /// <summary>

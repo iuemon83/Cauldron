@@ -51,7 +51,7 @@ public class CardDefDetailController : MonoBehaviour
         }
 
         this.cardNameText.text = this.source.Name;
-        this.effectText.text = this.EffectDescription(this.source);
+        this.effectText.text = Utility.EffectDescription(this.source);
         this.costText.text = this.source.Cost.ToString();
         this.otherText.text = this.OtherText(this.source);
 
@@ -71,27 +71,6 @@ public class CardDefDetailController : MonoBehaviour
         }
     }
 
-    private string EffectDescription(CardDef cardDef)
-    {
-        return string.Join(Environment.NewLine,
-            new[]
-            {
-                cardDef.IsToken ? "<color=\"red\">ÉgÅ[ÉNÉì</color>" : "",
-                string.Join(",", cardDef.Annotations),
-                string.Join(",",
-                    cardDef.Abilities.Select(Utility.DisplayText)
-                    .Concat(new[]
-                    {
-                        Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value),
-                        Utility.DisplayTextForNumTurnsToCanAttack(cardDef),
-                    })
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    ),
-                cardDef.EffectDescription
-            }
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            );
-    }
 
     private string OtherText(CardDef cardDef)
     {
