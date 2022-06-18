@@ -20,14 +20,22 @@ public class FieldCardController : CardController, IPointerClickHandler
     [SerializeField]
     private Image destroyIcon = default;
 
+    private Action<FieldCardController> unPick;
+    private Action<FieldCardController> pick;
     private Action<Card> displaySmallCardDetail;
 
     public bool IsAttackTarget => this.attackTargetIcon.activeSelf;
 
-    public void Init(Card card, Action<Card> displaySmallCardDetail)
+    public void Init(Card card,
+        Action<Card> displaySmallCardDetail,
+        Action<FieldCardController> unPick,
+        Action<FieldCardController> pick
+        )
     {
         this.Init(card);
 
+        this.unPick = unPick;
+        this.pick = pick;
         this.displaySmallCardDetail = displaySmallCardDetail;
     }
 
@@ -57,11 +65,11 @@ public class FieldCardController : CardController, IPointerClickHandler
         {
             if (this.IsPicked)
             {
-                BattleSceneController.Instance.UnPick(this);
+                this.unPick(this);
             }
             else if (this.IsPickCandidate)
             {
-                BattleSceneController.Instance.Pick(this);
+                this.pick(this);
             }
             else if (this.IsAttackTarget)
             {

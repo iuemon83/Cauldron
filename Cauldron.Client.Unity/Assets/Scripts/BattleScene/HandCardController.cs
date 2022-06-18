@@ -18,13 +18,20 @@ public class HandCardController : CardController, IPointerClickHandler
     private Button playButton = default;
 
     private Action<Card> displaySmallCardDetail;
-    Action<HandCardController> setPlayTargetHand;
+    private Action<HandCardController> unPick;
+    private Action<HandCardController> pick;
+    private Action<HandCardController> setPlayTargetHand;
 
-    public void Init(Card card, Action<Card> displaySmallCardDetail, Action<HandCardController> setPlayTargetHand)
+    public void Init(Card card, Action<Card> displaySmallCardDetail,
+        Action<HandCardController> unPick,
+        Action<HandCardController> pick,
+        Action<HandCardController> setPlayTargetHand)
     {
         this.Init(card);
 
         this.displaySmallCardDetail = displaySmallCardDetail;
+        this.unPick = unPick;
+        this.pick = pick;
         this.setPlayTargetHand = setPlayTargetHand;
     }
 
@@ -48,11 +55,11 @@ public class HandCardController : CardController, IPointerClickHandler
 
         if (this.IsPicked)
         {
-            BattleSceneController.Instance.UnPick(this);
+            this.unPick(this);
         }
         else if (this.IsPickCandidate)
         {
-            BattleSceneController.Instance.Pick(this);
+            this.pick(this);
         }
         else
         {

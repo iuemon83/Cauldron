@@ -1,6 +1,6 @@
 ﻿using Assets.Scripts.ServerShared.MessagePackObjects;
 
-namespace Cauldron.Shared
+namespace Cauldron.Shared.MessagePackObjects
 {
     public enum CardType
     {

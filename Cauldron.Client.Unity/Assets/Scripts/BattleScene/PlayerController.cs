@@ -1,6 +1,7 @@
 using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -37,6 +38,9 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
 
     public PlayerId PlayerId { get; private set; }
 
+    private Action<PlayerController> unPick;
+    private Action<PlayerController> pick;
+
     public bool IsPickCandidate => this.pickCandidateIcon.activeSelf || this.IsPicked;
     public bool IsPicked => this.pickedIcon.activeSelf;
 
@@ -61,9 +65,14 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.outlineImage.color = color;
     }
 
-    public void Set(PlayerId playerId)
+    public void Init(PlayerId playerId,
+        Action<PlayerController> unPick,
+        Action<PlayerController> pick
+        )
     {
         this.PlayerId = playerId;
+        this.unPick = unPick;
+        this.pick = pick;
     }
 
     public void Set(PublicPlayerInfo publicPlayerInfo)
@@ -91,11 +100,11 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     {
         if (this.IsPicked)
         {
-            BattleSceneController.Instance.UnPick(this);
+            this.unPick(this);
         }
         else if (this.IsPickCandidate)
         {
-            BattleSceneController.Instance.Pick(this);
+            this.pick(this);
         }
         else if (this.IsAttackTarget)
         {

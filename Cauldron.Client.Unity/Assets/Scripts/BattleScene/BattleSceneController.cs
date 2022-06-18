@@ -105,10 +105,6 @@ public class BattleSceneController : MonoBehaviour
     [SerializeField]
     private AudioSource audioSource = default;
 
-    private readonly List<PlayerId> pickedPlayerIdList = new List<PlayerId>();
-    private readonly List<CardId> pickedCardIdList = new List<CardId>();
-    private readonly List<CardDefId> pickedCardDefIdList = new List<CardDefId>();
-
     private readonly Dictionary<CardId, HandCardController> handCardObjectsByCardId = new Dictionary<CardId, HandCardController>();
     private readonly Dictionary<CardId, FieldCardController> fieldCardControllersByCardId = new Dictionary<CardId, FieldCardController>();
 
@@ -117,8 +113,6 @@ public class BattleSceneController : MonoBehaviour
     private ConnectionHolder connectionHolder;
 
     private Client Client => this.connectionHolder.Client;
-
-    private AskMessage askMessage;
 
     private bool updating;
 
@@ -132,14 +126,14 @@ public class BattleSceneController : MonoBehaviour
 
     private bool IsPlayable(CardId cardId) => this.currentGameContext?.You?.PlayableCards?.Contains(cardId) ?? false;
 
+    private readonly ChoiceService choiceService = new ChoiceService();
+
     private int NumPicks
     {
-        get { return int.Parse(this.numPicksText.text); }
         set
         {
             this.numPicksText.text = value.ToString();
-            if (value != 0
-                && this.NumPicks >= this.NumPicksLimit)
+            if (this.choiceService.IsLimit)
             {
                 this.numPicksText.color = Color.red;
             }
@@ -151,7 +145,6 @@ public class BattleSceneController : MonoBehaviour
     }
     private int NumPicksLimit
     {
-        get { return int.Parse(this.numPicksLimitText.text); }
         set { this.numPicksLimitText.text = value.ToString(); }
     }
 
@@ -188,7 +181,7 @@ public class BattleSceneController : MonoBehaviour
 
         this.connectionHolder = ConnectionHolder.Find();
 
-        this.youPlayerController.Set(this.Client.PlayerId);
+        this.youPlayerController.Init(this.Client.PlayerId, this.choiceService.UnPick, this.choiceService.Pick);
 
         await this.Client.ReadyGame();
     }
@@ -216,6 +209,12 @@ public class BattleSceneController : MonoBehaviour
 
     private void SetPlayTargetHand(HandCardController target)
     {
+        // 選択モードでは機能させない
+        if (this.choiceService.IsChoiceMode)
+        {
+            return;
+        }
+
         if (!this.IsPlayable(target.CardId))
         {
             return;
@@ -247,6 +246,12 @@ public class BattleSceneController : MonoBehaviour
 
     public async UniTask AttackToOpponentPlayerIfSelectedAttackCard()
     {
+        // 選択モードでは機能させない
+        if (this.choiceService.IsChoiceMode)
+        {
+            return;
+        }
+
         if (this.attackCardController == null)
         {
             return;
@@ -260,6 +265,12 @@ public class BattleSceneController : MonoBehaviour
 
     public async void AttackToCardIfSelectedAttackCard(FieldCardController guardFieldCardController)
     {
+        // 選択モードでは機能させない
+        if (this.choiceService.IsChoiceMode)
+        {
+            return;
+        }
+
         if (this.attackCardController == null)
         {
             // 攻撃元のカードが選択されていない
@@ -279,7 +290,7 @@ public class BattleSceneController : MonoBehaviour
     public void ToggleAttackCard(FieldCardController attackCardController)
     {
         // 選択モードでは機能させない
-        if (this.askMessage != null)
+        if (this.choiceService.IsChoiceMode)
         {
             return;
         }
@@ -452,12 +463,12 @@ public class BattleSceneController : MonoBehaviour
 
     private async UniTask<bool> DoAnswer(ChoiceAnswer answer)
     {
-        if (!this.ValidChoiceAnwser(answer))
+        if (!this.choiceService.ValidChoiceAnwser(answer))
         {
             return false;
         }
 
-        var result = await this.Client.AnswerChoice(this.askMessage.QuestionId, answer);
+        var result = await this.Client.AnswerChoice(this.choiceService.AskMessage.QuestionId, answer);
         if (result != GameMasterStatusCode.OK)
         {
             Debug.Log($"result: {result}");
@@ -471,7 +482,7 @@ public class BattleSceneController : MonoBehaviour
         this.NumPicks = 0;
         this.NumPicksLimit = 0;
 
-        this.askMessage = null;
+        this.choiceService.Reset();
 
         return true;
     }
@@ -479,7 +490,7 @@ public class BattleSceneController : MonoBehaviour
     private void ShowChoiceDialog()
     {
         var dialog = Instantiate(this.choiceDialogPrefab);
-        dialog.Init(this.askMessage, async answer =>
+        dialog.Init(this.choiceService.AskMessage, async answer =>
         {
             this.PlayAudio(SeAudioCache.SeAudioType.Ok);
 
@@ -507,7 +518,7 @@ public class BattleSceneController : MonoBehaviour
 
         this.PlayAudio(SeAudioCache.SeAudioType.Ok);
 
-        var answer = this.Answer;
+        var answer = this.choiceService.Answer;
 
         var result = await this.DoAnswer(answer);
         if (result)
@@ -522,21 +533,6 @@ public class BattleSceneController : MonoBehaviour
         }
     }
 
-    private ChoiceAnswer Answer => new ChoiceAnswer(
-        this.pickedPlayerIdList.ToArray(),
-        this.pickedCardIdList.ToArray(),
-        this.pickedCardDefIdList.ToArray()
-        );
-
-    private bool ValidChoiceAnwser(ChoiceAnswer answer)
-    {
-        if (this.askMessage.NumPicks < answer.Count())
-        {
-            return false;
-        }
-
-        return true;
-    }
 
     private async UniTask UpdateGameContext(GameContext gameContext)
     {
@@ -655,7 +651,11 @@ public class BattleSceneController : MonoBehaviour
             handCardObjectsByCardId.Add(cardId, controller);
         }
 
-        controller.Init(card, this.DisplaySmallCardDetailSimple, this.SetPlayTargetHand);
+        controller.Init(card, this.DisplaySmallCardDetailSimple,
+            this.choiceService.UnPick,
+            this.choiceService.Pick,
+            this.SetPlayTargetHand
+            );
 
         controller.transform.position = this.youHandSpaces[index].transform.position;
 
@@ -674,7 +674,10 @@ public class BattleSceneController : MonoBehaviour
             fieldCardControllersByCardId.Add(card.Id, cardController);
         }
 
-        cardController.Init(card, this.DisplaySmallCardDetailSimple);
+        cardController.Init(card, this.DisplaySmallCardDetailSimple,
+            this.choiceService.UnPick,
+            this.choiceService.Pick
+            );
 
         cardController.transform.position = playerId == this.YouId
             ? this.youFieldSpaces[index].transform.position
@@ -1316,11 +1319,7 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(() =>
         {
-            this.pickedPlayerIdList.Clear();
-            this.pickedCardIdList.Clear();
-            this.pickedCardDefIdList.Clear();
-
-            this.askMessage = message;
+            this.choiceService.Init(message);
 
             // ダイアログで選択させるか、フィールドから選択させるかの判定
             var choiceFromDialog = message.ChoiceCandidates.CardDefList.Length != 0
@@ -1356,7 +1355,7 @@ public class BattleSceneController : MonoBehaviour
             this.pickUiGroup.SetActive(true);
             this.choiceCardButton.interactable = true;
             this.NumPicks = 0;
-            this.NumPicksLimit = this.askMessage.NumPicks;
+            this.NumPicksLimit = this.choiceService.LimitNumPicks;
 
             return UniTask.CompletedTask;
         });
@@ -1384,37 +1383,6 @@ public class BattleSceneController : MonoBehaviour
         this.cardDetailViewController.Open(cardDef);
     }
 
-    public void Pick(PlayerController playerController)
-    {
-        this.pickedPlayerIdList.Add(playerController.PlayerId);
-        playerController.ResetAllIcon();
-        playerController.VisiblePickedIcon(true);
-        this.NumPicks += 1;
-    }
-
-    public void UnPick(PlayerController playerController)
-    {
-        this.pickedPlayerIdList.Remove(playerController.PlayerId);
-        playerController.ResetAllIcon();
-        playerController.VisiblePickCandidateIcon(true);
-        this.NumPicks -= 1;
-    }
-
-    public void Pick(CardController cardController)
-    {
-        this.pickedCardIdList.Add(cardController.CardId);
-        cardController.ResetAllIcon();
-        cardController.VisiblePickedIcon(true);
-        this.NumPicks += 1;
-    }
-
-    public void UnPick(CardController cardController)
-    {
-        this.pickedCardIdList.Remove(cardController.CardId);
-        cardController.ResetAllIcon();
-        cardController.VisiblePickCandidateIcon(true);
-        this.NumPicks -= 1;
-    }
 
     public void ResetAllMarks()
     {
@@ -1432,9 +1400,8 @@ public class BattleSceneController : MonoBehaviour
         this.youPlayerController.ResetAllIcon();
 
         this.attackCardController = null;
-        this.pickedCardDefIdList.Clear();
-        this.pickedCardIdList.Clear();
-        this.pickedPlayerIdList.Clear();
+
+        this.choiceService.Reset();
 
         if (this.playTargetHand != null)
         {

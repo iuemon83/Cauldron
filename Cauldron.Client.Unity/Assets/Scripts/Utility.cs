@@ -175,7 +175,7 @@ namespace Assets.Scripts
                     cardDef.Abilities.Select(Utility.DisplayText)
                     .Concat(new[]
                     {
-                        Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn.Value),
+                        Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn ?? default),
                         Utility.DisplayTextForNumTurnsToCanAttack(cardDef),
                     })
                     .Where(x => !string.IsNullOrWhiteSpace(x))

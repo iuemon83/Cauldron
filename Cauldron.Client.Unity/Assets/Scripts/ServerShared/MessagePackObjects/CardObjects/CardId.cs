@@ -1,7 +1,7 @@
 ﻿using MessagePack;
 using System;
 
-namespace Cauldron.Shared
+namespace Cauldron.Shared.MessagePackObjects
 {
     [MessagePackObject(true)]
     public struct CardId : IComparable<CardId>, IEquatable<CardId>
