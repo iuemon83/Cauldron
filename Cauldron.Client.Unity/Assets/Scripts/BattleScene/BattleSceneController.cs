@@ -92,6 +92,8 @@ public class BattleSceneController : MonoBehaviour
 
     [SerializeField]
     private Button endTurnButton = default;
+    [SerializeField]
+    private Button surrenderButton = default;
 
     [SerializeField]
     private Button choiceCardButton = default;
@@ -526,6 +528,8 @@ public class BattleSceneController : MonoBehaviour
             // ƒŠƒZƒbƒg
             this.pickUiGroup.SetActive(false);
             this.ResetAllMarks();
+            this.endTurnButton.interactable = true;
+            this.surrenderButton.interactable = true;
         }
         else
         {
@@ -1351,6 +1355,9 @@ public class BattleSceneController : MonoBehaviour
                     handCardController.VisiblePickCandidateIcon(true);
                 }
             }
+
+            this.endTurnButton.interactable = false;
+            this.surrenderButton.interactable = false;
 
             this.pickUiGroup.SetActive(true);
             this.choiceCardButton.interactable = true;

@@ -6434,6 +6434,7 @@ MonoBehaviour:
   playTargetHandCardsContainer: {fileID: 1570608861}
   cardDetailViewController: {fileID: 2127111781}
   endTurnButton: {fileID: 1347686166}
+  surrenderButton: {fileID: 1542599288}
   choiceCardButton: {fileID: 969926887}
   numPicksText: {fileID: 184255256}
   numPicksLimitText: {fileID: 1831169285}
