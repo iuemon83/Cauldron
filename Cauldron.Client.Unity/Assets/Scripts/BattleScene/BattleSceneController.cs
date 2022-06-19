@@ -137,11 +137,11 @@ public class BattleSceneController : MonoBehaviour
             this.numPicksText.text = value.ToString();
             if (this.choiceService.IsLimit)
             {
-                this.numPicksText.color = Color.red;
+                this.numPicksText.color = ChoiceService.LimitSelectedColor;
             }
             else
             {
-                this.numPicksText.color = Color.white;
+                this.numPicksText.color = ChoiceService.NoLimitSelectedColor;
             }
         }
     }
@@ -164,8 +164,8 @@ public class BattleSceneController : MonoBehaviour
 
         this.cardDetailController.Init(this.DisplayBigCardDetail, this.DisplayBigCardDefDetail);
 
-        this.youPlayerController.Init(this.choiceService.UnPick, this.choiceService.Pick);
-        this.opponentPlayerController.Init(this.choiceService.UnPick, this.choiceService.Pick);
+        this.youPlayerController.Init(this.UnPick, this.Pick);
+        this.opponentPlayerController.Init(this.UnPick, this.Pick);
 
         this.disposableList.AddRange(new[]
         {
@@ -210,6 +210,30 @@ public class BattleSceneController : MonoBehaviour
                 this.updating = false;
             }
         }
+    }
+
+    public void Pick(PlayerController controller)
+    {
+        this.choiceService.Pick(controller);
+        this.NumPicks = this.choiceService.CurrentNumPicks;
+    }
+
+    public void UnPick(PlayerController controller)
+    {
+        this.choiceService.UnPick(controller);
+        this.NumPicks = this.choiceService.CurrentNumPicks;
+    }
+
+    public void Pick(CardController controller)
+    {
+        this.choiceService.Pick(controller);
+        this.NumPicks = this.choiceService.CurrentNumPicks;
+    }
+
+    public void UnPick(CardController controller)
+    {
+        this.choiceService.UnPick(controller);
+        this.NumPicks = this.choiceService.CurrentNumPicks;
     }
 
     private void SetPlayTargetHand(HandCardController target)
@@ -466,6 +490,11 @@ public class BattleSceneController : MonoBehaviour
         this.ShowConfirmSurrenderDialog();
     }
 
+    private async UniTask AddActionLog(ActionLog actionLog, Card effectOwnerCard = default, CardEffectId? effectId = default)
+    {
+        await this.actionLogViewController.AddLog(actionLog, effectOwnerCard, effectId);
+    }
+
     private async UniTask<bool> DoAnswer(ChoiceAnswer answer)
     {
         if (!this.choiceService.ValidChoiceAnwser(answer))
@@ -482,12 +511,7 @@ public class BattleSceneController : MonoBehaviour
         }
 
         // リセット
-        this.ResetAllMarks();
-
-        this.NumPicks = 0;
-        this.NumPicksLimit = 0;
-
-        this.choiceService.Reset();
+        this.FinishChoiceMode();
 
         return true;
     }
@@ -509,11 +533,6 @@ public class BattleSceneController : MonoBehaviour
         dialog.transform.SetParent(this.canvas.transform, false);
     }
 
-    private async UniTask AddActionLog(ActionLog actionLog, Card effectOwnerCard = default, CardEffectId? effectId = default)
-    {
-        await this.actionLogViewController.AddLog(actionLog, effectOwnerCard, effectId);
-    }
-
     /// <summary>
     /// 選択完了ボタンのクリックイベント
     /// </summary>
@@ -526,18 +545,37 @@ public class BattleSceneController : MonoBehaviour
         var answer = this.choiceService.Answer;
 
         var result = await this.DoAnswer(answer);
-        if (result)
-        {
-            // リセット
-            this.pickUiGroup.SetActive(false);
-            this.ResetAllMarks();
-            this.endTurnButton.interactable = true;
-            this.surrenderButton.interactable = true;
-        }
-        else
+        if (!result)
         {
             this.choiceCardButton.interactable = true;
         }
+    }
+
+    private void StartChoiceMode(AskMessage askMessage)
+    {
+        // カード選択に必要なボタンだけを有効にする
+        this.ResetAllMarks();
+        this.endTurnButton.interactable = false;
+        this.surrenderButton.interactable = false;
+
+        this.pickUiGroup.SetActive(true);
+        this.choiceCardButton.interactable = true;
+        this.NumPicks = 0;
+
+        this.choiceService.Init(askMessage);
+        this.NumPicksLimit = this.choiceService.LimitNumPicks;
+    }
+
+    private void FinishChoiceMode()
+    {
+        this.NumPicksLimit = 0;
+        this.NumPicks = 0;
+        this.choiceCardButton.interactable = false;
+        this.pickUiGroup.SetActive(false);
+
+        this.endTurnButton.interactable = true;
+        this.surrenderButton.interactable = true;
+        this.ResetAllMarks();
     }
 
 
@@ -659,8 +697,8 @@ public class BattleSceneController : MonoBehaviour
         }
 
         controller.Init(card, this.DisplaySmallCardDetailSimple,
-            this.choiceService.UnPick,
-            this.choiceService.Pick,
+            this.UnPick,
+            this.Pick,
             this.SetPlayTargetHand
             );
 
@@ -682,8 +720,8 @@ public class BattleSceneController : MonoBehaviour
         }
 
         cardController.Init(card, this.DisplaySmallCardDetailSimple,
-            this.choiceService.UnPick,
-            this.choiceService.Pick
+            this.UnPick,
+            this.Pick
             );
 
         cardController.transform.position = playerId == this.YouId
@@ -1326,7 +1364,7 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(() =>
         {
-            this.choiceService.Init(message);
+            this.StartChoiceMode(message);
 
             // ダイアログで選択させるか、フィールドから選択させるかの判定
             var choiceFromDialog = message.ChoiceCandidates.CardDefList.Length != 0
@@ -1358,14 +1396,6 @@ public class BattleSceneController : MonoBehaviour
                     handCardController.VisiblePickCandidateIcon(true);
                 }
             }
-
-            this.endTurnButton.interactable = false;
-            this.surrenderButton.interactable = false;
-
-            this.pickUiGroup.SetActive(true);
-            this.choiceCardButton.interactable = true;
-            this.NumPicks = 0;
-            this.NumPicksLimit = this.choiceService.LimitNumPicks;
 
             return UniTask.CompletedTask;
         });

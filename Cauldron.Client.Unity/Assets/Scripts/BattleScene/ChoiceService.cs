@@ -1,8 +1,11 @@
 ﻿using Cauldron.Shared.MessagePackObjects;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class ChoiceService
 {
+    public static Color LimitSelectedColor = Color.red;
+    public static Color NoLimitSelectedColor = Color.black;
 
     private readonly List<PlayerId> pickedPlayerIdList = new List<PlayerId>();
     private readonly List<CardId> pickedCardIdList = new List<CardId>();
@@ -10,12 +13,13 @@ public class ChoiceService
 
     public AskMessage AskMessage { get; private set; }
 
-    private bool CanPick => this.Answer.Count() + 1 <= this.AskMessage.NumPicks;
+    private bool CanPick => this.CurrentNumPicks + 1 <= this.AskMessage.NumPicks;
 
     public bool IsChoiceMode => this.AskMessage != null;
 
-    public bool IsLimit => this.Answer.Count() >= this.LimitNumPicks;
+    public bool IsLimit => this.CurrentNumPicks >= this.LimitNumPicks;
     public int LimitNumPicks => this.AskMessage?.NumPicks ?? 0;
+    public int CurrentNumPicks => this.Answer.Count();
 
     public ChoiceAnswer Answer => new ChoiceAnswer(
         this.pickedPlayerIdList.ToArray(),
@@ -43,7 +47,6 @@ public class ChoiceService
         this.pickedPlayerIdList.Add(playerController.PlayerId);
         playerController.ResetAllIcon();
         playerController.VisiblePickedIcon(true);
-        //this.NumPicks += 1;
     }
 
     public void UnPick(PlayerController playerController)
@@ -51,7 +54,6 @@ public class ChoiceService
         this.pickedPlayerIdList.Remove(playerController.PlayerId);
         playerController.ResetAllIcon();
         playerController.VisiblePickCandidateIcon(true);
-        //this.NumPicks -= 1;
     }
 
     public void Pick(CardController cardController)
@@ -64,7 +66,6 @@ public class ChoiceService
         this.pickedCardIdList.Add(cardController.CardId);
         cardController.ResetAllIcon();
         cardController.VisiblePickedIcon(true);
-        //this.NumPicks += 1;
     }
 
     public void UnPick(CardController cardController)
@@ -72,7 +73,6 @@ public class ChoiceService
         this.pickedCardIdList.Remove(cardController.CardId);
         cardController.ResetAllIcon();
         cardController.VisiblePickCandidateIcon(true);
-        //this.NumPicks -= 1;
     }
 
     public void Init(AskMessage askMessage)
@@ -83,10 +83,6 @@ public class ChoiceService
 
     public void Reset()
     {
-        // リセット
-        //this.NumPicks = 0;
-        //this.NumPicksLimit = 0;
-
         this.AskMessage = null;
         this.pickedCardDefIdList.Clear();
         this.pickedCardIdList.Clear();
