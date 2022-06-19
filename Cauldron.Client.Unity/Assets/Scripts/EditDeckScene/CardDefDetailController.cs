@@ -1,8 +1,6 @@
 using Assets.Scripts;
-using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using System;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,6 +18,8 @@ public class CardDefDetailController : MonoBehaviour
     private Image toughnessSpace = default;
 
     [SerializeField]
+    private TextMeshProUGUI cardTypeText = default;
+    [SerializeField]
     private TextMeshProUGUI costText = default;
     [SerializeField]
     private TextMeshProUGUI powerText = default;
@@ -28,7 +28,7 @@ public class CardDefDetailController : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI otherText = default;
 
-    protected CardDef source;
+    protected CardBridge source;
     private bool requireUpdate;
 
     private void Start()
@@ -52,8 +52,10 @@ public class CardDefDetailController : MonoBehaviour
 
         this.cardNameText.text = this.source.Name;
         this.effectText.text = Utility.EffectDescription(this.source);
+        this.cardTypeText.text = Utility.CardTypeIconUnicode(this.source.Type);
+
         this.costText.text = this.source.Cost.ToString();
-        this.otherText.text = this.OtherText(this.source);
+        this.otherText.text = this.OtherText();
 
         switch (this.source.Type)
         {
@@ -72,17 +74,17 @@ public class CardDefDetailController : MonoBehaviour
     }
 
 
-    private string OtherText(CardDef cardDef)
+    private string OtherText()
     {
-        var result = Utility.DisplayText(cardDef.Type);
+        var result = Utility.DisplayText(this.source.Type);
 
-        if (cardDef.Type == CardType.Creature)
+        if (this.source.Type == CardType.Creature)
         {
             result += Environment.NewLine +
-$@"攻撃回数 | {cardDef.NumAttacksLimitInTurn}
+$@"攻撃回数 | {this.source.NumAttacksLimitInTurn}
 攻撃可能までのターン
-  → クリーチャー | {cardDef.NumTurnsToCanAttackToCreature}
-  → プレイヤー | {cardDef.NumTurnsToCanAttackToPlayer}";
+  → クリーチャー | {this.source.NumTurnsToCanAttackToCreature}
+  → プレイヤー | {this.source.NumTurnsToCanAttackToPlayer}";
         }
 
         return result;
@@ -90,7 +92,7 @@ $@"攻撃回数 | {cardDef.NumAttacksLimitInTurn}
 
     public void SetCard(CardDef cardDef)
     {
-        this.source = cardDef;
+        this.source = new CardBridge(cardDef, default);
         this.requireUpdate = true;
     }
 }

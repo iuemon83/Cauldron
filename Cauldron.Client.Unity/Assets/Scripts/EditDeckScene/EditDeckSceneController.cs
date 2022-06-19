@@ -1,5 +1,4 @@
 using Assets.Scripts;
-using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
@@ -115,7 +114,7 @@ public class EditDeckSceneController : MonoBehaviour
         var lowerKeyword = this.NormalizeForKeyword(keyword);
 
         return this.NormalizeForKeyword(cardDef.Name).Contains(lowerKeyword)
-            || this.NormalizeForKeyword(Utility.EffectDescription(cardDef)).Contains(lowerKeyword)
+            || this.NormalizeForKeyword(Utility.EffectDescription(new CardBridge(cardDef, default))).Contains(lowerKeyword)
             || cardDef.Annotations.Any(a => this.NormalizeForKeyword(a).Contains(lowerKeyword))
             || cardDef.Abilities.Any(a => this.NormalizeForKeyword(Utility.DisplayText(a)).Contains(lowerKeyword))
             ;

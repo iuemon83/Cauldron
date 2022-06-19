@@ -20,92 +20,64 @@ public class CardDetailController : MonoBehaviour
     private Image toughnessSpace = default;
 
     [SerializeField]
+    private TextMeshProUGUI cardTypeText = default;
+    [SerializeField]
     private TextMeshProUGUI costText = default;
     [SerializeField]
     private TextMeshProUGUI powerText = default;
     [SerializeField]
     private TextMeshProUGUI toughnessText = default;
 
-    protected Card card;
-    protected CardDef cardDef;
+    protected CardBridge source;
 
-    private Action<Card> displayBigCardDetail;
-    private Action<CardDef> displayBigCardDefDetail;
+    private Action<CardBridge> displayBigCardDetail;
 
-    public void Init(Action<Card> displayBigCardDetail, Action<CardDef> displayBigCardDefDetail)
+    public void Init(Action<CardBridge> displayBigCardDetail)
     {
-        this.displayBigCardDefDetail = displayBigCardDefDetail;
         this.displayBigCardDetail = displayBigCardDetail;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (this.card != null)
+        if (this.source == null)
         {
-            this.cardNameText.text = this.card.Name;
-            this.effectText.text = Utility.EffectDescription(this.card);
-            this.costText.text = this.card.Cost.ToString();
-
-            switch (this.card.Type)
-            {
-                case CardType.Creature:
-                    this.powerText.text = this.card.Power.ToString();
-                    this.toughnessText.text = this.card.Toughness.ToString();
-                    this.powerSpace.gameObject.SetActive(true);
-                    this.toughnessSpace.gameObject.SetActive(true);
-                    break;
-
-                default:
-                    this.powerSpace.gameObject.SetActive(false);
-                    this.toughnessSpace.gameObject.SetActive(false);
-                    break;
-            }
+            return;
         }
-        else if (this.cardDef != null)
+
+        this.cardNameText.text = this.source.Name;
+        this.effectText.text = Utility.EffectDescription(this.source);
+        this.cardTypeText.text = Utility.CardTypeIconUnicode(this.source.Type);
+        this.costText.text = this.source.Cost.ToString();
+
+        switch (this.source.Type)
         {
-            this.cardNameText.text = this.cardDef.Name;
-            this.effectText.text = Utility.EffectDescription(this.cardDef);
-            this.costText.text = this.cardDef.Cost.ToString();
+            case CardType.Creature:
+                this.powerText.text = this.source.Power.ToString();
+                this.toughnessText.text = this.source.Toughness.ToString();
+                this.powerSpace.gameObject.SetActive(true);
+                this.toughnessSpace.gameObject.SetActive(true);
+                break;
 
-            switch (this.cardDef.Type)
-            {
-                case CardType.Creature:
-                    this.powerText.text = this.cardDef.Power.ToString();
-                    this.toughnessText.text = this.cardDef.Toughness.ToString();
-                    this.powerSpace.gameObject.SetActive(true);
-                    this.toughnessSpace.gameObject.SetActive(true);
-                    break;
-
-                default:
-                    this.powerSpace.gameObject.SetActive(false);
-                    this.toughnessSpace.gameObject.SetActive(false);
-                    break;
-            }
+            default:
+                this.powerSpace.gameObject.SetActive(false);
+                this.toughnessSpace.gameObject.SetActive(false);
+                break;
         }
     }
 
     public void SetCard(Card card)
     {
-        this.cardDef = null;
-        this.card = card;
+        this.source = new CardBridge(default, card);
     }
 
     public void SetCardDef(CardDef cardDef)
     {
-        this.card = null;
-        this.cardDef = cardDef;
+        this.source = new CardBridge(cardDef, default);
     }
 
     public void OnInfoButtonClick()
     {
-        if (this.cardDef != null)
-        {
-            this.displayBigCardDefDetail(this.cardDef);
-        }
-        else if (this.card != null)
-        {
-            this.displayBigCardDetail(this.card);
-        }
+        this.displayBigCardDetail(this.source);
     }
 }

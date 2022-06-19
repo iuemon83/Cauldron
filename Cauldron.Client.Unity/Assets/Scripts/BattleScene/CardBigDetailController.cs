@@ -21,7 +21,7 @@ public class CardBigDetailController : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI effectText = default;
 
-    private string OtherText(Card card)
+    private string OtherText(CardBridge card)
     {
         var annnotationsText = card.Annotations.Count == 0
             ? "なし"
@@ -32,7 +32,8 @@ public class CardBigDetailController : MonoBehaviour
             : string.Join(",", card.Abilities.Select(Utility.DisplayText));
 
         var result =
-$@"{card.Cost} / {card.Power} / {card.Toughness}
+$@"{Utility.DisplayText(card.Type)}
+{card.Cost} / {card.Power} / {card.Toughness}
 タグ | {annnotationsText}
 アビリティ | {abilitiesText}";
 
@@ -45,7 +46,7 @@ $@"攻撃回数 | {card.NumAttacksLimitInTurn}
   → プレイヤー | {card.NumTurnsToCanAttackToPlayer}";
         }
 
-        if (card.Zone.ZoneName == ZoneName.Field)
+        if (card.Zone?.ZoneName == ZoneName.Field)
         {
             result += Environment.NewLine +
 $@"場に出てからの経過ターン数 | {card.NumTurnsInField}";
@@ -61,7 +62,7 @@ $@"カウンター | {counterText}";
         return result;
     }
 
-    public void Open(Card card)
+    public void Open(CardBridge card)
     {
         this.cardNameText.text = card.Name;
 
@@ -77,26 +78,6 @@ $@"カウンター | {counterText}";
 
         this.otherDetailText.text = this.OtherText(card);
         this.effectText.text = card.EffectDescription;
-
-        this.gameObject.SetActive(true);
-    }
-
-    public void Open(CardDef cardDef)
-    {
-        this.cardNameText.text = cardDef.Name;
-
-        var (success, cardImageSprite) = CardImageCache.GetOrInit(cardDef.Name);
-        if (success)
-        {
-            this.CardIllustrationImage.sprite = cardImageSprite;
-        }
-        else
-        {
-            this.CardIllustrationImage.sprite = default;
-        }
-
-        this.otherDetailText.text = "";
-        this.effectText.text = cardDef.EffectDescription;
 
         this.gameObject.SetActive(true);
     }

@@ -162,7 +162,7 @@ public class BattleSceneController : MonoBehaviour
         this.youExcludedCardListViewController.InitAsYou("Excluded");
         this.opponentExcludedCardListViewController.InitAsOpponent("Excluded");
 
-        this.cardDetailController.Init(this.DisplayBigCardDetail, this.DisplayBigCardDefDetail);
+        this.cardDetailController.Init(this.DisplayBigCardDetail);
 
         this.youPlayerController.Init(this.UnPick, this.Pick);
         this.opponentPlayerController.Init(this.UnPick, this.Pick);
@@ -1413,16 +1413,10 @@ public class BattleSceneController : MonoBehaviour
         await cardDetailController.transform.DOScale(1f, 0.5f);
     }
 
-    private void DisplayBigCardDetail(Card card)
+    private void DisplayBigCardDetail(CardBridge card)
     {
         this.cardDetailViewController.Open(card);
     }
-
-    private void DisplayBigCardDefDetail(CardDef cardDef)
-    {
-        this.cardDetailViewController.Open(cardDef);
-    }
-
 
     public void ResetAllMarks()
     {

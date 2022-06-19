@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts
 {
-    enum SceneNames
+    public enum SceneNames
     {
         TitleScene,
         ListGameScene,

@@ -10,8 +10,12 @@ using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts
 {
-    static class Utility
+    public static class Utility
     {
+        public static string CreatureCardTypeIconUnicode = "\uf007";
+        public static string SorceryCardTypeIconUnicode = "\uf7e4";
+        public static string ArtifactCardTypeIconUnicode = "\uf19c";
+
         public static T RandomPick<T>(IReadOnlyList<T> source) => source.Any()
             ? source[UnityEngine.Random.Range(0, source.Count)]
             : default!;
@@ -142,71 +146,45 @@ namespace Assets.Scripts
                 : value == 1 ? "" : $"攻撃回数({value})";
         }
 
-        public static string DisplayTextForNumTurnsToCanAttack(ICardDef cardDef)
+        public static string DisplayTextForNumTurnsToCanAttack(CardBridge c)
         {
-            return cardDef.NumTurnsToCanAttackToCreature == 0
-                ? cardDef.NumTurnsToCanAttackToPlayer == 0
+            return c.NumTurnsToCanAttackToCreature == 0
+                ? c.NumTurnsToCanAttackToPlayer == 0
                     ? "速攻"
                     : "突進"
-                : cardDef.NumTurnsToCanAttackToCreature == 1
+                : c.NumTurnsToCanAttackToCreature == 1
                     ? ""
-                    : $"鈍足({cardDef.NumTurnsToCanAttackToCreature})";
+                    : $"鈍足({c.NumTurnsToCanAttackToCreature})";
         }
 
-        public static string DisplayTextForNumTurnsToCanAttack(Card card)
-        {
-            return card.NumTurnsToCanAttackToCreature == 0
-                ? card.NumTurnsToCanAttackToPlayer == 0
-                    ? "速攻"
-                    : "突進"
-                : card.NumTurnsToCanAttackToCreature == 1
-                    ? ""
-                    : $"鈍足({card.NumTurnsToCanAttackToCreature})";
-        }
-
-        public static string EffectDescription(CardDef cardDef)
+        public static string EffectDescription(CardBridge c)
         {
             return string.Join(Environment.NewLine,
                 new[]
                 {
-                cardDef.IsToken ? "<color=\"red\">トークン</color>" : "",
-                string.Join(",", cardDef.Annotations),
+                c.IsToken ? "<color=\"red\">トークン</color>" : "",
+                string.Join(",", c.Annotations),
                 string.Join(",",
-                    cardDef.Abilities.Select(Utility.DisplayText)
+                    c.Abilities.Select(Utility.DisplayText)
                     .Concat(new[]
                     {
-                        Utility.DisplayTextForNumAttacksLimitInTurn(cardDef.NumAttacksLimitInTurn ?? default),
-                        Utility.DisplayTextForNumTurnsToCanAttack(cardDef),
+                        Utility.DisplayTextForNumAttacksLimitInTurn(c.NumAttacksLimitInTurn),
+                        Utility.DisplayTextForNumTurnsToCanAttack(c),
                     })
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     ),
-                cardDef.EffectDescription
+                c.EffectDescription
                 }
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 );
         }
 
-        public static string EffectDescription(Card card)
+        public static string CardTypeIconUnicode(CardType cardType) => cardType switch
         {
-            return string.Join(Environment.NewLine,
-                new[]
-                {
-                card.IsToken ? "<color=\"red\">トークン</color>" : "",
-                string.Join(",", card.Annotations),
-                string.Join(",",
-                    card.Abilities.Select(Utility.DisplayText)
-                    .Concat(new[]
-                    {
-                        Utility.DisplayTextForNumAttacksLimitInTurn(card.NumAttacksLimitInTurn),
-                        Utility.DisplayTextForNumTurnsToCanAttack(card),
-                    })
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    ),
-                card.EffectDescription
-                }
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                );
-        }
-
+            CardType.Creature => Utility.CreatureCardTypeIconUnicode,
+            CardType.Artifact => Utility.ArtifactCardTypeIconUnicode,
+            CardType.Sorcery => Utility.SorceryCardTypeIconUnicode,
+            _ => "",
+        };
     }
 }
