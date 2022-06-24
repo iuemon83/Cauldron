@@ -4233,5 +4233,35 @@ namespace Cauldron.Core_Test
                 Assert.Equal(c3.BaseToughness, c3.Toughness);
             });
         }
+
+        [Fact]
+        public async Task Pain()
+        {
+            var testCardDef = SampleCards1.Pain;
+            testCardDef.Cost = 0;
+
+            var creatureCardDef = SampleCards1.Vanilla;
+            creatureCardDef.Cost = 0;
+            creatureCardDef.Toughness = 3;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, creatureCardDef }, this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var noDamage = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var damaged = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                damaged.ToughnessBuff = -1;
+
+                // ダメージを受けているクリーチャーのみ候補になる
+                c.TestAnswer.ExpectedCardIdList = new[] { damaged.Id };
+                c.TestAnswer.ChoiceCardIdList = new[] { damaged.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+                Assert.Equal(noDamage.BaseToughness, noDamage.Toughness);
+                Assert.Equal(damaged.BaseToughness - 2, damaged.Toughness);
+            });
+        }
     }
 }

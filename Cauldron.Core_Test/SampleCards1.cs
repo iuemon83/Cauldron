@@ -3162,5 +3162,44 @@ namespace Cauldron.Core_Test
                     }
                     )
             });
+
+        public static CardDef Pain => SampleCards1.Sorcery(
+            0, "痛み",
+            effects: new[]
+            {
+                new CardEffect(
+                    "場にあるダメージを受けているクリーチャーすべてに1ダメージを与える。",
+                    new EffectConditionWrap(ByPlay: new()),
+                    new[]
+                    {
+                        new EffectAction(Damage: new(
+                            new NumValue(1),
+                            new Choice(
+                                new ChoiceSource(
+                                    orCardConditions: new[]
+                                    {
+                                        new CardCondition(
+                                            ZoneCondition: new(new ZoneValue(new[]
+                                            {
+                                                ZonePrettyName.YouField,
+                                                ZonePrettyName.OpponentField
+                                            })),
+                                            TypeCondition: new(new[]
+                                            {
+                                                CardType.Creature
+                                            }),
+                                            DiffToughnessCondition: new(
+                                                new NumValue(-1),
+                                                NumCompare.CompareValue.LessThan
+                                                )
+                                            )
+                                    }
+                                    ),
+                                numPicks: new NumValue(1),
+                                how: Choice.HowValue.Choose
+                                )
+                            ))
+                    })
+            });
     }
 }
