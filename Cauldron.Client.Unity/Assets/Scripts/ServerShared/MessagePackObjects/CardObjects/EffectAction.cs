@@ -16,6 +16,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectIf? If { get; } = null;
 
         public EffectActionDamage? Damage { get; } = null;
+        public EffectActionHeal? Heal { get; } = null;
         public EffectActionAddCard? AddCard { get; } = null;
         public EffectActionExcludeCard? ExcludeCard { get; } = null;
         public EffectActionModifyCard? ModifyCard { get; } = null;
@@ -33,6 +34,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectAction(
             EffectIf? If = null,
             EffectActionDamage? Damage = null,
+            EffectActionHeal? Heal = null,
             EffectActionAddCard? AddCard = null,
             EffectActionExcludeCard? ExcludeCard = null,
             EffectActionModifyCard? ModifyCard = null,
@@ -50,6 +52,7 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             this.If = If;
             this.Damage = Damage;
+            this.Heal = Heal;
             this.AddCard = AddCard;
             this.ExcludeCard = ExcludeCard;
             this.ModifyCard = ModifyCard;

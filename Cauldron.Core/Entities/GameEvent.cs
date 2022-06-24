@@ -23,6 +23,16 @@
         OnDamage,
 
         /// <summary>
+        /// いずれかが回復を受ける前
+        /// </summary>
+        OnHealBefore,
+
+        /// <summary>
+        /// いずれかが回復を受けるあと
+        /// </summary>
+        OnHeal,
+
+        /// <summary>
         /// 攻撃前
         /// </summary>
         OnAttackBefore,

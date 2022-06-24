@@ -1434,6 +1434,93 @@ namespace Cauldron.Core.Entities
             await this.FireEvent(newEventArgs with { GameEvent = GameEvent.OnDamage });
         }
 
+        public async ValueTask HealPlayer(HealContext healContext, Card? effectOwnerCard, CardEffectId? effectId)
+        {
+            var eventArgs = new EffectEventArgs(
+                GameEvent.OnHealBefore,
+                this,
+                HealContext: healContext
+            );
+            var newEventArgs = await this.FireEvent(eventArgs);
+
+            this.logger.LogInformation("回復：{value} > {playername}",
+                newEventArgs.HealContext?.Value,
+                newEventArgs.HealContext?.TakePlayer?.Name
+                );
+
+            var newHealContext = newEventArgs.HealContext;
+            if (newHealContext == null)
+            {
+                throw new InvalidOperationException($"{nameof(newHealContext)} is null");
+            }
+
+            if (newHealContext.TakePlayer == null)
+            {
+                return;
+            }
+
+            var actualDiffHp = newHealContext.TakePlayer.GainHp(newHealContext.Value);
+
+            // 各プレイヤーに通知
+            foreach (var player in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnHeal?.Invoke(player.Id,
+                    this.CreateGameContext(player.Id),
+                    new HealNotifyMessage(
+                        actualDiffHp,
+                        SourceCardId: newHealContext.HealSourceCard?.Id ?? default,
+                        TakePlayerId: newHealContext.TakePlayer.Id,
+                        EffectOwnerCard: effectOwnerCard,
+                        EffectId: effectId
+                        ));
+            }
+
+            // HPが0になったらその後の処理をすることなく負け判定
+            if (newHealContext.TakePlayer.CurrentHp <= 0)
+            {
+                this.Win(this.GetOpponent(newHealContext.TakePlayer.Id).Id, EndGameReason.HpIsZero, default);
+                return;
+            }
+
+            await this.FireEvent(newEventArgs with { GameEvent = GameEvent.OnHeal });
+        }
+
+        public async ValueTask HealCreature(HealContext healContext, Card? effectOwnerCard, CardEffectId? effectId)
+        {
+            var eventArgs = new EffectEventArgs(GameEvent.OnHealBefore, this, HealContext: healContext);
+            var newEventArgs = await this.FireEvent(eventArgs);
+
+            var newHealContext = newEventArgs.HealContext;
+
+            if (newHealContext?.TakeCard?.Type != CardType.Creature)
+            {
+                throw new Exception($"指定されたカードはクリーチャーではありません。: {newHealContext?.TakeCard?.Name}");
+            }
+
+            var (exists, guardCardOwnerplayer) = this.playerRepository.TryGet(newHealContext.TakeCard.OwnerId);
+            var playerName = exists && guardCardOwnerplayer != null ? guardCardOwnerplayer.Name : "";
+            this.logger.LogInformation("回復：{value} > {card}({playername})",
+                newHealContext.Value, newHealContext.TakeCard, playerName);
+
+            var actualDiffToughness = newHealContext.TakeCard.AddToughness(newHealContext.Value);
+
+            // 各プレイヤーに通知
+            foreach (var player in this.playerRepository.AllPlayers)
+            {
+                this.EventListener?.OnHeal?.Invoke(player.Id,
+                    this.CreateGameContext(player.Id),
+                    new HealNotifyMessage(
+                        actualDiffToughness,
+                        SourceCardId: newHealContext.HealSourceCard?.Id ?? default,
+                        TakeCardId: newHealContext.TakeCard.Id,
+                        EffectOwnerCard: effectOwnerCard,
+                        EffectId: effectId
+                        ));
+            }
+
+            await this.FireEvent(newEventArgs with { GameEvent = GameEvent.OnHeal });
+        }
+
         public async ValueTask<ChoiceResult> Choice(Card effectOwnerCard, Choice choice, EffectEventArgs eventArgs)
         {
             var numPicks = choice.How == Shared.MessagePackObjects.Choice.HowValue.All

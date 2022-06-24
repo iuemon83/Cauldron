@@ -13,6 +13,7 @@ namespace Cauldron.Core.Entities.Effect
         IReadOnlyList<Card> ActionTargetCards = null!,
         BattleContext? BattleContext = null,
         DamageContext? DamageContext = null,
+        HealContext? HealContext = null,
         MoveCardContext? MoveCardContext = null,
         ModifyCounterContext? ModifyCounterContext = null,
         ExcludeCardContext? ExcludeCardContext = null,

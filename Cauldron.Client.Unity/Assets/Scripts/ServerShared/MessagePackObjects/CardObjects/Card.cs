@@ -274,6 +274,14 @@ namespace Cauldron.Shared.MessagePackObjects
                 : 0;
         }
 
+        public int AddToughness(int value)
+        {
+            var before = this.ToughnessBuff;
+            this.ToughnessBuff = Math.Max(0, this.ToughnessBuff + value);
+
+            return this.ToughnessBuff - before;
+        }
+
         public Card AsHidden()
         {
             return new Card(

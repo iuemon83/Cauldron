@@ -175,6 +175,7 @@ public class BattleSceneController : MonoBehaviour
             holder.Receiver.OnBattleStart.Subscribe((a) => this.OnBattleStart(a.gameContext, a.message)),
             holder.Receiver.OnBattleEnd.Subscribe((a) => this.OnBattleEnd(a.gameContext, a.message)),
             holder.Receiver.OnDamage.Subscribe((a) => this.OnDamage(a.gameContext, a.message)),
+            holder.Receiver.OnHeal.Subscribe((a) => this.OnHeal(a.gameContext, a.message)),
             holder.Receiver.OnModifyCard.Subscribe((a) => this.OnModifyCard(a.gameContext, a.message)),
             holder.Receiver.OnModifyPlayer.Subscribe((a) => this.OnModifyPlayer(a.gameContext, a.message)),
             holder.Receiver.OnModifyCounter.Subscribe((a) => this.OnModifyCounter(a.gameContext, a.message)),
@@ -1182,14 +1183,26 @@ public class BattleSceneController : MonoBehaviour
         {
             if (diffHp > 0)
             {
-                await this.PlayAudio("", CardAudioCache.CardAudioType.Heal);
-                await playerController.HealEffect(diffHp);
+                await this.HealEffect(playerController, diffHp);
             }
             else
             {
                 await playerController.DamageEffect(diffHp);
             }
         }
+    }
+
+    private async UniTask HealEffect(PlayerController playerController, int diffHp)
+    {
+        if (playerController == null) return;
+
+        if (diffHp <= 0)
+        {
+            return;
+        }
+
+        await this.PlayAudio("", CardAudioCache.CardAudioType.Heal);
+        await playerController.HealEffect(diffHp);
     }
 
     void OnModifyCounter(GameContext gameContext, ModifyCounterNotifyMessage message)
@@ -1351,6 +1364,37 @@ public class BattleSceneController : MonoBehaviour
                 {
                     await this.PlayAudio(fieldCard.Card?.Name ?? "", CardAudioCache.CardAudioType.Damage);
                     await fieldCard.DamageEffect(message.Damage);
+                }
+            }
+
+            await this.UpdateGameContext(gameContext);
+        });
+    }
+
+    void OnHeal(GameContext gameContext, HealNotifyMessage message)
+    {
+        Debug.Log($"OnHeal({this.Client.PlayerName})");
+
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            if (message.TakePlayerId != default)
+            {
+                var playerInfo = message.TakePlayerId == this.YouId
+                        ? gameContext.You.PublicPlayerInfo
+                        : gameContext.Opponent;
+
+                await this.AddActionLog(
+                    new ActionLog("‰ñ•œ", playerInfo),
+                    message.EffectOwnerCard, message.EffectId
+                    );
+
+                if (this.youPlayerController.PlayerId == message.TakePlayerId)
+                {
+                    await this.HealEffect(youPlayerController, message.HealValue);
+                }
+                else if (this.opponentPlayerController.PlayerId == message.TakePlayerId)
+                {
+                    await this.HealEffect(opponentPlayerController, message.HealValue);
                 }
             }
 

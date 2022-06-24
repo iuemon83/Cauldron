@@ -1134,23 +1134,37 @@ namespace Cauldron.Core_Test
                 effects: new[]
                 {
                     new CardEffect(
-                        "このカードをプレイしたとき、あなたのHPを2回復する。",
+                        "このカードをプレイしたとき、あなたか、場のクリーチャー1つを選択して2回復する。",
                         new EffectConditionWrap(ByPlay: new()),
                         new[]
                         {
                             new EffectAction(
-                                ModifyPlayer: new(
+                                Heal: new(
+                                    new NumValue(2),
                                     new Choice(
                                         new ChoiceSource(
                                             orPlayerConditions: new[]
                                             {
                                                 new PlayerCondition(PlayerCondition.ContextValue.You)
-                                            })),
-                                    new PlayerModifier(
-                                        Hp: new NumValueModifier(
-                                            NumValueModifier.OperatorValue.Add,
-                                            new NumValue(2)))
-                                )
+                                            },
+                                            orCardConditions: new[]
+                                            {
+                                                new CardCondition(
+                                                    CardCondition.ContextConditionValue.Others,
+                                                    ZoneCondition: new(new ZoneValue(new[]
+                                                    {
+                                                        ZonePrettyName.YouField
+                                                    })),
+                                                    TypeCondition: new(new[]
+                                                    {
+                                                        CardType.Creature
+                                                    })
+                                                    )
+                                            }),
+                                        numPicks: new NumValue(1),
+                                        how: Choice.HowValue.Choose
+                                        )
+                                    )
                                 )
                         }
                     )
@@ -2973,14 +2987,9 @@ namespace Cauldron.Core_Test
                     "あなたのHPが回復したとき、あなたの場にあるクリーチャーを+1/+0する。",
                     new EffectConditionWrap(ByNotPlay: new(
                         ZonePrettyName.YouField,
-                        When: new(new EffectTiming(ModifyPlayer: new(
-                            OrPlayerConditions: new[]
-                            {
-                                new PlayerCondition(PlayerCondition.ContextValue.You)
-                            },
-                            ModifyCurrentHpCondition: new(
-                                new NumValue(1),
-                                NumCompare.CompareValue.GreaterThan
+                        When: new(new EffectTiming(HealAfter: new(
+                            TakePlayerCondition: new PlayerCondition(
+                                PlayerCondition.ContextValue.You
                                 )
                             )))
                         )),

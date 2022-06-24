@@ -25,6 +25,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 _this.AddCard == null ? null: new EffectActionAddCardExecuter(_this.AddCard),
                 _this.AddEffect == null ? null: new EffectActionAddEffectExecuter(_this.AddEffect),
                 _this.Damage == null ? null: new EffectActionDamageExecuter(_this.Damage),
+                _this.Heal == null ? null: new EffectActionHealExecuter(_this.Heal),
                 _this.DestroyCard == null ? null: new EffectActionDestroyCardExecuter(_this.DestroyCard),
                 _this.DrawCard == null ? null: new EffectActionDrawCardExecuter(_this.DrawCard),
                 _this.ExcludeCard == null ? null: new EffectActionExcludeCardExecuter(_this.ExcludeCard),

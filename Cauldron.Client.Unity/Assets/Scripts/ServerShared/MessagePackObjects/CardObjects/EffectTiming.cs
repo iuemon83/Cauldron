@@ -15,6 +15,8 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectTimingAttackAfterEvent? AttackAfter { get; }
         public EffectTimingDamageBeforeEvent? DamageBefore { get; }
         public EffectTimingDamageAfterEvent? DamageAfter { get; }
+        public EffectTimingHealBeforeEvent? HealBefore { get; }
+        public EffectTimingHealAfterEvent? HealAfter { get; }
         public EffectTimingMoveCardEvent? MoveCard { get; }
         public EffectTimingExcludeCardEvent? ExcludeCard { get; }
         public EffectTimingModifyCounterOnCardEvent? ModifyCounter { get; }
@@ -29,6 +31,8 @@ namespace Cauldron.Shared.MessagePackObjects
             EffectTimingAttackAfterEvent? AttackAfter = null,
             EffectTimingDamageBeforeEvent? DamageBefore = null,
             EffectTimingDamageAfterEvent? DamageAfter = null,
+            EffectTimingHealBeforeEvent? HealBefore = null,
+            EffectTimingHealAfterEvent? HealAfter = null,
             EffectTimingMoveCardEvent? MoveCard = null,
             EffectTimingExcludeCardEvent? ExcludeCard = null,
             EffectTimingModifyCounterOnCardEvent? ModifyCounter = null,
@@ -43,6 +47,8 @@ namespace Cauldron.Shared.MessagePackObjects
             this.AttackAfter = AttackAfter;
             this.DamageBefore = DamageBefore;
             this.DamageAfter = DamageAfter;
+            this.HealBefore = HealBefore;
+            this.HealAfter = HealAfter;
             this.MoveCard = MoveCard;
             this.ExcludeCard = ExcludeCard;
             this.ModifyCounter = ModifyCounter;

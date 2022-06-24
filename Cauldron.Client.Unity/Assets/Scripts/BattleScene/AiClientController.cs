@@ -99,4 +99,8 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     void ICauldronHubReceiver.OnModifyCounter(GameContext gameContext, ModifyCounterNotifyMessage message)
     {
     }
+
+    public void OnHeal(GameContext gameContext, HealNotifyMessage message)
+    {
+    }
 }

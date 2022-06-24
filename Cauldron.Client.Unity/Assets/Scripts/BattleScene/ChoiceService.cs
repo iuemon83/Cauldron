@@ -5,7 +5,7 @@ using UnityEngine;
 public class ChoiceService
 {
     public static Color LimitSelectedColor = Color.red;
-    public static Color NoLimitSelectedColor = Color.black;
+    public static Color NoLimitSelectedColor = Color.white;
 
     private readonly List<PlayerId> pickedPlayerIdList = new List<PlayerId>();
     private readonly List<CardId> pickedCardIdList = new List<CardId>();

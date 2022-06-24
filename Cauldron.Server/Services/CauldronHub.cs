@@ -227,6 +227,11 @@ namespace Cauldron.Server.Services
                         this.BroadcastTo(this.room, playerId.Value).OnDamage(gameContext, message);
                         this._logger.LogInformation("OnDamage: {playerId}", playerId);
                     },
+                    OnHeal: (playerId, gameContext, message) =>
+                    {
+                        this.BroadcastTo(this.room, playerId.Value).OnHeal(gameContext, message);
+                        this._logger.LogInformation("OnHeal: {playerId}", playerId);
+                    },
                     OnModifyCard: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnModifyCard(gameContext, message);

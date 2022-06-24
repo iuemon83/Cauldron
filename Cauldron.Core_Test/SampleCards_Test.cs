@@ -834,19 +834,29 @@ namespace Cauldron.Core_Test
             var testCardDef = SampleCards1.Healer;
             testCardDef.Cost = 0;
 
-            var c = await TestUtil.InitTest(new[] { testCardDef });
+            var c = await TestUtil.InitTest(new[] { testCardDef }, this.output);
 
             // 先攻
             await TestUtil.Turn(c.GameMaster, async (g, pId) =>
             {
-                // 事前にダメージ
-                c.Player1.Damage(5);
-
                 var beforeHp = c.Player1.CurrentHp;
-                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                c.TestAnswer.ExpectedPlayerIdList = new[] { c.Player1.Id };
+                c.TestAnswer.ChoicePlayerIdList = new[] { c.Player1.Id };
+                var t1 = await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
 
                 // 2回復している
                 Assert.Equal(beforeHp + 2, c.Player1.CurrentHp);
+
+                var beforeHp2 = t1.Toughness;
+
+                c.TestAnswer.ExpectedCardIdList = new[] { t1.Id };
+                c.TestAnswer.ChoicePlayerIdList = new PlayerId[0];
+                c.TestAnswer.ChoiceCardIdList = new[] { t1.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                // 2回復している
+                Assert.Equal(beforeHp2 + 2, t1.Toughness);
             });
         }
 
@@ -4102,6 +4112,7 @@ namespace Cauldron.Core_Test
                 Assert.Equal(0, v1.PowerBuff);
 
                 // 回復すると、場のカードが+1/+0される
+                c.TestAnswer.ChoicePlayerIdList = new[] { pId };
                 var h = await TestUtil.NewCardAndPlayFromHand(g, pId, healderDef.Id);
                 Assert.Equal(1, v1.PowerBuff);
                 Assert.Equal(1, h.PowerBuff);

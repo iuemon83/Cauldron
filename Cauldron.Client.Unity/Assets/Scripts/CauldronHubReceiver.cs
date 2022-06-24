@@ -36,6 +36,12 @@ namespace Assets.Scripts
         void ICauldronHubReceiver.OnDamage(GameContext gameContext, DamageNotifyMessage message)
             => this.onDamage.OnNext((gameContext, message));
 
+        public IObservable<(GameContext gameContext, HealNotifyMessage message)> OnHeal => onHeal;
+        private readonly Subject<(GameContext gameContext, HealNotifyMessage message)> onHeal
+            = new Subject<(GameContext gameContext, HealNotifyMessage message)>();
+        void ICauldronHubReceiver.OnHeal(GameContext gameContext, HealNotifyMessage message)
+            => this.onHeal.OnNext((gameContext, message));
+
         public IObservable<(GameContext gameContext, BattleNotifyMessage message)> OnBattleStart => onBattleStart;
         private readonly Subject<(GameContext gameContext, BattleNotifyMessage message)> onBattleStart
             = new Subject<(GameContext gameContext, BattleNotifyMessage message)>();
