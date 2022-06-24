@@ -33,7 +33,7 @@ public class CardBigDetailController : MonoBehaviour
 
         var result =
 $@"{Utility.DisplayText(card.Type)}
-{card.Cost} / {card.Power} / {card.Toughness}
+{card.Cost} / {card.Power} / {card.Toughness}({card.BaseCost} / {card.BasePower} / {card.BaseToughness})
 タグ | {annnotationsText}
 アビリティ | {abilitiesText}";
 
