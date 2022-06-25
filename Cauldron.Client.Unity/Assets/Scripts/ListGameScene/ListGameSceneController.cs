@@ -13,7 +13,7 @@ public class ListGameSceneController : MonoBehaviour
     [SerializeField]
     private GameObject GameListNodePrefab = default;
     [SerializeField]
-    private ListDeckDialogController SelectDeckDialog = default;
+    private CreateRoomDialogController SelectDeckDialog = default;
     [SerializeField]
     private Canvas canvas = default;
     [SerializeField]
@@ -48,21 +48,21 @@ public class ListGameSceneController : MonoBehaviour
         }
     }
 
-    private void AddListNode(GameOutline gameOutline)
+    private void AddListNode(RoomOutline gameOutline)
     {
         var node = Instantiate(this.GameListNodePrefab, this.listContent.transform);
         var controller = node.GetComponent<GameListNodeController>();
         controller.Set(gameOutline, () =>
         {
-            this.SelectDeckDialog.ShowDialog(true,
-                async deck =>
+            this.SelectDeckDialog.ShowYouJoinRoomDialog(
+                async (deck, message) =>
                 {
                     var holder = ConnectionHolder.Find();
-                    var reply = await holder.Client.EnterGame(gameOutline.GameId, deck);
-                    if (reply.StatusCode != EnterGameReply.StatusCodeValue.Ok)
+                    var reply = await holder.Client.JoinRoom(gameOutline.GameId, deck);
+                    if (reply.StatusCode != JoinRoomReply.StatusCodeValue.Ok)
                     {
                         // ゲーム開始前にエラー
-                        await holder.Client.LeaveGame();
+                        await holder.Client.LeaveRoom();
 
                         this.DisplayEnterGameErrorDialog(reply.StatusCode);
                         return;
@@ -82,54 +82,102 @@ public class ListGameSceneController : MonoBehaviour
     {
         this.PlayAudio(SeAudioCache.SeAudioType.Ok);
 
-        this.SelectDeckDialog.ShowDialog(true,
-            async deck =>
+        this.SelectDeckDialog.ShowNewRoomDialog(
+            async (deck, message) =>
             {
                 var holder = ConnectionHolder.Find();
-                await holder.Client.OpenNewGame();
 
-                var reply = await holder.Client.EnterGame(deck);
-                if (reply.StatusCode != EnterGameReply.StatusCodeValue.Ok)
+                try
                 {
-                    // ゲーム開始前にエラー
-                    await holder.Client.LeaveGame();
+                    var reply = await holder.Client.OpenNewRoom(message, deck);
 
-                    this.DisplayEnterGameErrorDialog(reply.StatusCode);
+                    //var reply = await holder.Client.EnterGame(deck);
+                    if (reply.StatusCode != OpenNewRoomReply.StatusCodeValue.Ok)
+                    {
+                        // ゲーム開始前にエラー
+                        await holder.Client.LeaveRoom();
+
+                        this.DisplayOpenNewGameErrorDialog(reply.StatusCode);
+                        return;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(e);
+
+                    this.DisplayUnknownErrorDialog();
                     return;
                 }
 
-                IDisposable disposable = default;
-                disposable = holder.Receiver.OnJoinGame.Subscribe(async _ =>
-                {
-                    disposable?.Dispose();
-                    await Utility.LoadAsyncScene(SceneNames.BattleScene);
-                });
-
-                var title = "対戦相手を待っています...";
-                var message = "対戦相手を待っています...";
-                var dialog = Instantiate(this.confirmDialogController);
-                dialog.Init(title, message, ConfirmDialogController.DialogType.OnlyCancel,
-                    onCancelAction: async () =>
-                    {
-                        // キャンセル
-                        disposable?.Dispose();
-                        await holder.Client.LeaveGame();
-                    });
-                dialog.transform.SetParent(this.canvas.transform, false);
+                this.ShowWaitDialog(holder);
             });
     }
 
-    private void DisplayEnterGameErrorDialog(EnterGameReply.StatusCodeValue statusCode)
+    private void ShowWaitDialog(ConnectionHolder holder)
+    {
+        IDisposable disposable = default;
+        disposable = holder.Receiver.OnJoinGame.Subscribe(async _ =>
+        {
+            disposable?.Dispose();
+            await Utility.LoadAsyncScene(SceneNames.BattleScene);
+        });
+
+        var title = "対戦相手を待っています...";
+        var message = "対戦相手を待っています...";
+        var dialog = Instantiate(this.confirmDialogController);
+        dialog.Init(title, message, ConfirmDialogController.DialogType.OnlyCancel,
+            onCancelAction: async () =>
+            {
+                // キャンセル
+                disposable?.Dispose();
+                await holder.Client.LeaveRoom();
+            });
+        dialog.transform.SetParent(this.canvas.transform, false);
+    }
+
+    private void DisplayOpenNewGameErrorDialog(OpenNewRoomReply.StatusCodeValue statusCode)
     {
         var title = "エラーが発生しました。";
         var message = statusCode switch
         {
-            EnterGameReply.StatusCodeValue.RoomIsFull => "部屋に入れませんでした。",
-            EnterGameReply.StatusCodeValue.InvalidDeck => @"選択したデッキの内容が正しくありません。デッキ編集画面より確認してください。
+            OpenNewRoomReply.StatusCodeValue.InvalidDeck => @"選択したデッキの内容が正しくありません。デッキ編集画面より確認してください。
 ・デッキ枚数が足りない or 超えている。
 ・1種類のカードをデッキに入れられる枚数を超過している。",
             _ => throw new NotImplementedException()
         };
+
+        var dialog = Instantiate(this.confirmDialogController);
+        dialog.Init(title, message, ConfirmDialogController.DialogType.OnlyCancel,
+            onCancelAction: () =>
+            {
+            });
+        dialog.transform.SetParent(this.canvas.transform, false);
+    }
+
+    private void DisplayEnterGameErrorDialog(JoinRoomReply.StatusCodeValue statusCode)
+    {
+        var title = "エラーが発生しました。";
+        var message = statusCode switch
+        {
+            JoinRoomReply.StatusCodeValue.RoomIsFull => "部屋に入れませんでした。",
+            JoinRoomReply.StatusCodeValue.InvalidDeck => @"選択したデッキの内容が正しくありません。デッキ編集画面より確認してください。
+・デッキ枚数が足りない or 超えている。
+・1種類のカードをデッキに入れられる枚数を超過している。",
+            _ => throw new NotImplementedException()
+        };
+
+        var dialog = Instantiate(this.confirmDialogController);
+        dialog.Init(title, message, ConfirmDialogController.DialogType.OnlyCancel,
+            onCancelAction: () =>
+            {
+            });
+        dialog.transform.SetParent(this.canvas.transform, false);
+    }
+
+    private void DisplayUnknownErrorDialog()
+    {
+        var title = "エラーが発生しました。";
+        var message = "エラーが発生しました。";
 
         var dialog = Instantiate(this.confirmDialogController);
         dialog.Init(title, message, ConfirmDialogController.DialogType.OnlyCancel,
@@ -153,21 +201,21 @@ public class ListGameSceneController : MonoBehaviour
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }
 
-    public void OnVsAiButtonClick()
+    public void OnSoloButtonClick()
     {
         this.PlayAudio(SeAudioCache.SeAudioType.Ok);
 
-        this.SelectDeckDialog.ShowDialog(true,
-            myDeck =>
+        this.SelectDeckDialog.ShowYouJoinRoomDialog(
+            (myDeck, message) =>
             {
                 this.PlayAudio(SeAudioCache.SeAudioType.Ok);
 
-                this.SelectDeckDialog.ShowDialog(false,
-                    aiDeck =>
+                this.SelectDeckDialog.ShowAiJoinRoomDialog(
+                    (aiDeck, message) =>
                     {
                         this.PlayAudio(SeAudioCache.SeAudioType.Ok);
 
-                        this.BattleAi(myDeck, aiDeck);
+                        this.SoloBattle(myDeck, aiDeck);
                     },
                     () =>
                     {
@@ -180,20 +228,20 @@ public class ListGameSceneController : MonoBehaviour
             });
     }
 
-    private async void BattleAi(IDeck myDeck, IDeck aiDeck)
+    private async void SoloBattle(IDeck myDeck, IDeck aiDeck)
     {
         // 自分側の接続処理ここから----
 
         var holder = ConnectionHolder.Find();
-        var gameId = await holder.Client.OpenNewGame();
+        var reply = await holder.Client.OpenNewRoom("", myDeck);
 
-        var reply = await holder.Client.EnterGame(myDeck);
-        if (reply.StatusCode != EnterGameReply.StatusCodeValue.Ok)
+        //var reply = await holder.Client.EnterGame(myDeck);
+        if (reply.StatusCode != OpenNewRoomReply.StatusCodeValue.Ok)
         {
             // ゲーム開始前にエラー
-            await holder.Client.LeaveGame();
+            await holder.Client.LeaveRoom();
 
-            this.DisplayEnterGameErrorDialog(reply.StatusCode);
+            this.DisplayOpenNewGameErrorDialog(reply.StatusCode);
             return;
         }
 
@@ -203,7 +251,7 @@ public class ListGameSceneController : MonoBehaviour
         {
             // AI側を接続する
             var aiClientController = FindObjectOfType<AiClientController>();
-            await aiClientController.StartClient(gameId, aiDeck);
+            await aiClientController.StartClient(reply.GameId, aiDeck);
         });
     }
 

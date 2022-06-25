@@ -820,7 +820,7 @@ public class BattleSceneController : MonoBehaviour
         dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
             onOkAction: async () =>
             {
-                await this.Client.LeaveGame();
+                await this.Client.LeaveRoom();
                 await Utility.LoadAsyncScene(SceneNames.ListGameScene);
             });
         dialog.transform.SetParent(this.canvas.transform, false);

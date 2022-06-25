@@ -79,6 +79,8 @@ public class Client
 
     public async UniTask Destroy()
     {
+        this.LogInfo("destroy " + this.PlayerName);
+
         await this.magiconionClient.DisposeAsync();
         await this.channel.ShutdownAsync();
     }
@@ -99,16 +101,24 @@ public class Client
         return true;
     }
 
-    public async UniTask<GameId> OpenNewGame()
+    public async UniTask<OpenNewRoomReply> OpenNewRoom(string message, IDeck deck)
     {
         this.LogInfo("OpenNewGame: " + this.PlayerName);
 
+        this.currentContext = null;
+
+        var cardDefs = await this.magiconionClient.GetCardPool();
+
         var ruleBook = await this.GetRuleBook();
-        var reply = await this.magiconionClient.OpenNewGame(new OpenNewGameRequest(ruleBook));
+        var deckCardIds = this.ToDeckIdList(deck, cardDefs).ToArray();
+
+        var reply = await this.magiconionClient.OpenNewRoom(
+            new OpenNewRoomRequest(ruleBook, this.PlayerName, message, deckCardIds));
 
         this.GameId = reply.GameId;
+        this.PlayerId = reply.PlayerId;
 
-        return this.GameId;
+        return reply;
     }
 
     public async UniTask<RuleBook> GetRuleBook()
@@ -126,24 +136,24 @@ public class Client
         return await this.magiconionClient.ListAllowedClientVersions();
     }
 
-    public UniTask<EnterGameReply> EnterGame(IDeck deck)
+    public UniTask<JoinRoomReply> JoinRoom(IDeck deck)
     {
         if (this.GameId == default)
         {
             throw new InvalidOperationException("selected invalid game");
         }
 
-        return this.EnterGame(this.GameId, deck);
+        return this.JoinRoom(this.GameId, deck);
     }
 
-    public async UniTask<EnterGameReply> EnterGame(GameId gameId, IDeck deck)
+    public async UniTask<JoinRoomReply> JoinRoom(GameId gameId, IDeck deck)
     {
         this.currentContext = null;
         this.GameId = gameId;
 
         this.LogInfo($"GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
-        var cardDefs = await this.magiconionClient.GetCardPoolByGame(gameId);
+        var cardDefs = await this.magiconionClient.GetCardPool();
 
         this.LogInfo($"reponse GetCardPool: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
@@ -151,7 +161,7 @@ public class Client
 
         this.LogInfo($"EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
-        var reply = await this.magiconionClient.EnterGame(new EnterGameRequest(this.GameId, this.PlayerName, deckCardIds));
+        var reply = await this.magiconionClient.JoinRoom(new JoinRoomRequest(this.GameId, this.PlayerName, deckCardIds));
 
         this.LogInfo($"response EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
@@ -160,14 +170,14 @@ public class Client
         return reply;
     }
 
-    public async UniTask LeaveGame()
+    public async UniTask LeaveRoom()
     {
         if (this.GameId == default)
         {
             return;
         }
 
-        await this.magiconionClient.LeaveGame(this.GameId);
+        await this.magiconionClient.LeaveRoom();
     }
 
     private IEnumerable<CardDefId> ToDeckIdList(IDeck deck, CardDef[] cardPool)
@@ -254,7 +264,7 @@ public class Client
         return result;
     }
 
-    public async UniTask<GameOutline[]> ListOpenGames()
+    public async UniTask<RoomOutline[]> ListOpenGames()
     {
         return await this.magiconionClient.ListOpenGames();
     }

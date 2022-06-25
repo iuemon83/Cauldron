@@ -13,15 +13,13 @@ namespace Cauldron.Shared.Services
 
         Task<ListAllowedClientVersionsReply> ListAllowedClientVersions();
 
-        Task<GameOutline[]> ListOpenGames();
+        Task<RoomOutline[]> ListOpenGames();
 
-        Task<OpenNewGameReply> OpenNewGame(OpenNewGameRequest request);
+        Task<OpenNewRoomReply> OpenNewRoom(OpenNewRoomRequest request);
 
-        Task<CardDef[]> GetCardPoolByGame(GameId gameId);
+        Task<JoinRoomReply> JoinRoom(JoinRoomRequest request);
 
-        Task<EnterGameReply> EnterGame(EnterGameRequest request);
-
-        Task<bool> LeaveGame(GameId gameId);
+        Task<bool> LeaveRoom();
 
         Task ReadyGame(ReadyGameRequest request);
 

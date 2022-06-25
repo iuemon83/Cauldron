@@ -50,8 +50,8 @@ public class AiClient
 
     public async UniTask Ready(IDeck deck)
     {
-        var reply = await this.client.EnterGame(this.gameId, deck);
-        if (reply.StatusCode != EnterGameReply.StatusCodeValue.Ok)
+        var reply = await this.client.JoinRoom(this.gameId, deck);
+        if (reply.StatusCode != JoinRoomReply.StatusCodeValue.Ok)
         {
             //TODO AIのゲーム開始時にエラーが発生した
         }

@@ -3,7 +3,7 @@
 namespace Cauldron.Shared.MessagePackObjects
 {
     [MessagePackObject(true)]
-    public class EnterGameReply
+    public class JoinRoomReply
     {
         public enum StatusCodeValue
         {
@@ -16,7 +16,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public StatusCodeValue StatusCode { get; }
 
-        public EnterGameReply(PlayerId PlayerId, StatusCodeValue StatusCode)
+        public JoinRoomReply(PlayerId PlayerId, StatusCodeValue StatusCode)
         {
             this.PlayerId = PlayerId;
             this.StatusCode = StatusCode;

@@ -4,15 +4,17 @@ using MessagePack;
 namespace Assets.Scripts.ServerShared.MessagePackObjects
 {
     [MessagePackObject(true)]
-    public class GameOutline
+    public class RoomOutline
     {
         public GameId GameId { get; }
         public string OwnerName { get; }
+        public string Message { get; }
 
-        public GameOutline(GameId gameId, string ownerName)
+        public RoomOutline(GameId gameId, string ownerName, string message)
         {
             this.GameId = gameId;
             this.OwnerName = ownerName;
+            this.Message = message;
         }
     }
 }

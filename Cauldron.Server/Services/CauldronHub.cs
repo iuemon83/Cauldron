@@ -92,7 +92,9 @@ namespace Cauldron.Server.Services
             // handle disconnection if needed.
             // on disconnecting, if automatically removed this connection from group.
 
-            await (this as ICauldronHub).LeaveGame(this.gameId);
+            this._logger.LogInformation("on disconnected " + this.self?.Name ?? "");
+
+            await (this as ICauldronHub).LeaveRoom();
 
             if (this.dbConnection != null)
             {
@@ -178,13 +180,13 @@ namespace Cauldron.Server.Services
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<GameOutline[]> ICauldronHub.ListOpenGames()
+        Task<RoomOutline[]> ICauldronHub.ListOpenGames()
         {
-            return Task.FromResult(gameMasterRepository.ListOpenGames());
+            return Task.FromResult(gameMasterRepository.ListOpenRooms());
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<OpenNewGameReply> ICauldronHub.OpenNewGame(OpenNewGameRequest request)
+        async Task<OpenNewRoomReply> ICauldronHub.OpenNewRoom(OpenNewRoomRequest request)
         {
             var ruleBook = request.RuleBook;
             var cardRepository = new CardRepository(ruleBook);
@@ -275,68 +277,82 @@ namespace Cauldron.Server.Services
 
             if (this.gameId != default)
             {
-                await (this as ICauldronHub).LeaveGame(this.gameId);
+                await (this as ICauldronHub).LeaveRoom();
             }
 
-            this.gameId = gameMasterRepository.Add(options);
+            this.gameId = gameMasterRepository.Add(request.OwnerName, request.Message, options);
 
-            try
-            {
-                new BattleLogDb().Add(this.dbConnection,
-                    new BattleLog(this.gameId, new PlayerId(Guid.Empty), GameEvent.OnStartGame));
-            }
-            catch (Exception e)
-            {
-                this._logger.LogError(e, "db error");
-            }
-
-            return new OpenNewGameReply(this.gameId);
-        }
-
-        [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<bool> ICauldronHub.LeaveGame(GameId gameId)
-        {
-            if (this.room == null)
-            {
-                return true;
-            }
-
-            var removed = await this.room.RemoveAsync(this.Context);
-            if (!removed)
-            {
-                return false;
-            }
-
-            var numPlayers = await this.room.GetMemberCountAsync();
-            if (numPlayers == 0)
-            {
-                gameMasterRepository.Delete(gameId);
-                numOfReadiesByGameId.TryRemove(gameId, out var _);
-            }
-
-            this.room = null;
-
-            return true;
-        }
-
-        [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<CardDef[]> ICauldronHub.GetCardPoolByGame(GameId gameId)
-        {
-            var (found, gameMaster) = gameMasterRepository.TryGetById(gameId);
+            var (found, gameMaster) = gameMasterRepository.TryGetById(this.gameId);
             if (!found)
             {
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
             }
 
-            var cards = gameMaster.CardPool.ToArray();
+            try
+            {
+                var enterResult = await this.JoinRoom(this.gameId, request.OwnerName, request.DeckCardIdList, gameMaster);
 
-            this._logger.LogInformation("response {length}: {ConnectionId}", cards.Length, this.ConnectionId);
+                switch (enterResult.StatusCode)
+                {
+                    case JoinRoomReply.StatusCodeValue.InvalidDeck:
+                        return new OpenNewRoomReply(OpenNewRoomReply.StatusCodeValue.InvalidDeck, default, default);
 
-            return Task.FromResult(cards);
+                    case JoinRoomReply.StatusCodeValue.RoomIsFull:
+                        throw new Exception("room is full");
+                }
+
+                try
+                {
+                    new BattleLogDb().Add(this.dbConnection,
+                        new BattleLog(this.gameId, new PlayerId(Guid.Empty), GameEvent.OnStartGame));
+                }
+                catch (Exception e)
+                {
+                    this._logger.LogError(e, "db error");
+                }
+
+                return new OpenNewRoomReply(OpenNewRoomReply.StatusCodeValue.Ok, this.gameId, enterResult.PlayerId);
+            }
+            catch (Exception e)
+            {
+                this._logger.LogError(e, "system error");
+                await (this as ICauldronHub).LeaveRoom();
+
+                throw;
+            }
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<EnterGameReply> ICauldronHub.EnterGame(EnterGameRequest request)
+        async Task<bool> ICauldronHub.LeaveRoom()
+        {
+            this._logger.LogInformation("leave game " + this.self?.Name ?? "");
+
+            if (this.room == null)
+            {
+                return true;
+            }
+
+            if (this.gameId == default)
+            {
+                return true;
+            }
+
+            var roomRemoved = await this.room.RemoveAsync(this.Context);
+
+            if (roomRemoved)
+            {
+                gameMasterRepository.Delete(this.gameId);
+                numOfReadiesByGameId.TryRemove(this.gameId, out var _);
+            }
+
+            this.room = null;
+            this.gameId = default;
+
+            return true;
+        }
+
+        [FromTypeFilter(typeof(LoggingAttribute))]
+        async Task<JoinRoomReply> ICauldronHub.JoinRoom(JoinRoomRequest request)
         {
             var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
             if (!found)
@@ -344,7 +360,16 @@ namespace Cauldron.Server.Services
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
             }
 
-            var (status, newPlayerId) = gameMaster.CreateNewPlayer(new PlayerId(this.ConnectionId), request.PlayerName, request.DeckCardIdList);
+            return await this.JoinRoom(request.GameId, request.PlayerName, request.DeckCardIdList, gameMaster);
+        }
+
+        private async Task<JoinRoomReply> JoinRoom(GameId gameId, string playerName, CardDefId[] deckCardIdList, GameMaster gameMaster)
+        {
+            var (status, newPlayerId) = gameMaster.CreateNewPlayer(
+                new PlayerId(this.ConnectionId),
+                playerName,
+                deckCardIdList
+                );
 
             switch (status)
             {
@@ -354,7 +379,8 @@ namespace Cauldron.Server.Services
                     try
                     {
                         this.self = gameMaster.PlayerDefsById[newPlayerId];
-                        (success, room, storage) = await this.Group.TryAddAsync(request.GameId.ToString(), 2, true, this.self);
+                        (success, room, storage) = await this.Group.TryAddAsync(
+                            gameId.ToString(), 2, true, this.self);
 
                     }
                     catch (Exception e)
@@ -364,18 +390,18 @@ namespace Cauldron.Server.Services
 
                     if (success)
                     {
+                        this.gameId = gameId;
                         this.BroadcastExceptSelf(this.room).OnJoinGame();
-                        return new EnterGameReply(newPlayerId, EnterGameReply.StatusCodeValue.Ok);
+                        return new JoinRoomReply(newPlayerId, JoinRoomReply.StatusCodeValue.Ok);
                     }
                     else
                     {
                         //TODO 追加したプレイヤーを削除
-                        return new EnterGameReply(newPlayerId, EnterGameReply.StatusCodeValue.RoomIsFull);
+                        return new JoinRoomReply(newPlayerId, JoinRoomReply.StatusCodeValue.RoomIsFull);
                     }
 
-
                 case GameMasterStatusCode.InvalidDeck:
-                    return new EnterGameReply(newPlayerId, EnterGameReply.StatusCodeValue.InvalidDeck);
+                    return new JoinRoomReply(newPlayerId, JoinRoomReply.StatusCodeValue.InvalidDeck);
 
                 default:
                     throw new RpcException(new Status(StatusCode.Unknown, "unknown error"));

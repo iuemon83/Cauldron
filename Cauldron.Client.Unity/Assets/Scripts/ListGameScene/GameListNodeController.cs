@@ -6,16 +6,19 @@ using UnityEngine;
 public class GameListNodeController : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI OwnerNameText = default;
+    private TextMeshProUGUI ownerNameText = default;
+    [SerializeField]
+    private TextMeshProUGUI messageText = default;
 
     private Action onJoinButtonClickAction;
 
-    private GameOutline gameOutline;
+    private RoomOutline roomOutline;
 
-    public void Set(GameOutline gameOutline, Action onJoinButtonClickAction)
+    public void Set(RoomOutline roomOutline, Action onJoinButtonClickAction)
     {
-        this.gameOutline = gameOutline;
-        this.OwnerNameText.text = this.gameOutline.OwnerName;
+        this.roomOutline = roomOutline;
+        this.ownerNameText.text = this.roomOutline.OwnerName;
+        this.messageText.text = this.roomOutline.Message;
         this.onJoinButtonClickAction = onJoinButtonClickAction;
     }
 
@@ -24,7 +27,7 @@ public class GameListNodeController : MonoBehaviour
     /// </summary>
     public void OnJoinButtonClick()
     {
-        Debug.Log("click join Button! " + this.OwnerNameText.text);
+        Debug.Log("click join Button! " + this.ownerNameText.text);
 
         this.onJoinButtonClickAction?.Invoke();
     }

@@ -2197,7 +2197,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2140493670}
         m_TargetAssemblyTypeName: ListGameSceneController, Assembly-CSharp
-        m_MethodName: OnVsAiButtonClick
+        m_MethodName: OnSoloButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
