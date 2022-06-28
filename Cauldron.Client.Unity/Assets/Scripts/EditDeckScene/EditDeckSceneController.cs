@@ -8,12 +8,11 @@ using UnityEngine;
 
 public class EditDeckSceneController : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject cardPoolList = default;
-    [SerializeField]
-    private GameObject deckList = default;
-    [SerializeField]
-    private GameObject listNodePrefab = default;
+    public static Color LimitNumTextColorToken = Color.magenta;
+    public static Color PickNumTextColorLimit = Color.green;
+    public static Color PickNumTextColorOver = Color.magenta;
+    public static Color PickNumTextColorNormal = Color.white;
+
     [SerializeField]
     private TMP_InputField deckNameInputField = default;
     [SerializeField]
@@ -26,16 +25,12 @@ public class EditDeckSceneController : MonoBehaviour
     private AudioSource audioSource = default;
     [SerializeField]
     private FlaverTextViewerController flaverTextViewerController = default;
+    [SerializeField]
+    private CardPoolGridViewController cardPoolGridViewController = default;
+    [SerializeField]
+    private DeckGridViewController deckGridViewController = default;
 
     public IDeck DeckToEdit { get; set; }
-
-    private Transform cardPoolListContent;
-    private Transform deckListContent;
-
-    private readonly Dictionary<CardDefId, EditDeckScene_ListNodeController> cardPoolListByDefId
-        = new Dictionary<CardDefId, EditDeckScene_ListNodeController>();
-    private readonly Dictionary<CardDefId, EditDeckScene_ListNodeController> deckListByDefId
-        = new Dictionary<CardDefId, EditDeckScene_ListNodeController>();
 
     private int currentDeckTotalCount;
 
@@ -43,36 +38,52 @@ public class EditDeckSceneController : MonoBehaviour
 
     private RuleBook ruleBook;
 
-    private CardDef[] allCards;
+    private IReadOnlyDictionary<CardDefId, CardDef> allCardsById
+        = new Dictionary<CardDefId, CardDef>();
 
     private Dictionary<CardDefId, int> numCardsLimitListByCardDefId
         = new Dictionary<CardDefId, int>();
 
+    private readonly List<CardDefId> deckCards = new List<CardDefId>();
+
     // Start is called before the first frame update
     async void Start()
     {
-        this.cardPoolListContent = this.cardPoolList.transform.Find("Viewport").transform.Find("Content");
-        this.deckListContent = this.deckList.transform.Find("Viewport").transform.Find("Content");
-
         this.searchKeywordInputField.onEndEdit.AddListener(this.SearchKeyWordInputFieldIfPushEnter);
 
         var holder = ConnectionHolder.Find();
         this.ruleBook = await holder.Client.GetRuleBook();
-        this.allCards = holder.CardPool.Values
-            .OrderBy(c => c.Cost)
-            .ThenBy(c => c.FullName)
+        this.allCardsById = holder.CardPool;
+
+        this.numCardsLimitListByCardDefId = this.allCardsById
+            .ToDictionary(x => x.Key, x => x.Value.LimitNumCardsInDeck.Value);
+
+        this.cardPoolGridViewController.Init(
+            this.DisplayCardDetail,
+            this.AddToDeck
+            );
+
+        this.deckGridViewController.Init(
+            this.numCardsLimitListByCardDefId,
+            this.cardDefDetailController.SetCard,
+            this.RemoveFromDeck
+            );
+
+        this.cardDefDetailController.Init(
+            defId => this.AddToDeck(this.allCardsById[defId]),
+            defId => this.RemoveFromDeck(defId),
+            defId => this.flaverTextViewerController.Open(this.allCardsById[defId])
+            );
+
+        var cardPoolNodes = this.allCardsById.Values
+            .Select(c => (c, 0))
             .ToArray();
 
-        this.numCardsLimitListByCardDefId = this.allCards.ToDictionary(c => c.Id, c => c.LimitNumCardsInDeck.Value);
-
-        foreach (var card in this.allCards)
-        {
-            this.AddToCardPool(card);
-        }
+        this.cardPoolGridViewController.RefreshList(cardPoolNodes);
 
         if (this.DeckToEdit != null)
         {
-            this.ApplyDeck(this.DeckToEdit, this.allCards);
+            this.ApplyDeck(this.DeckToEdit);
         }
 
         this.UpdateDeckTotalCountText();
@@ -96,17 +107,12 @@ public class EditDeckSceneController : MonoBehaviour
 
     private void SearchCardPool(string keyword)
     {
-        foreach (var listNode in this.cardPoolListByDefId.Values)
-        {
-            Destroy(listNode.gameObject);
-        }
-        this.cardPoolListByDefId.Clear();
+        var matchedCards = this.allCardsById.Values
+            .Where(c => this.IsMatchedByKeyword(keyword, c))
+            .Select(c => (c, this.deckCards.Count(id => id == c.Id)))
+            .ToArray();
 
-        var matchedCards = this.allCards.Where(c => this.IsMatchedByKeyword(keyword, c));
-        foreach (var c in matchedCards)
-        {
-            this.AddToCardPool(c);
-        }
+        this.cardPoolGridViewController.RefreshList(matchedCards);
     }
 
     private bool IsMatchedByKeyword(string keyword, CardDef cardDef)
@@ -134,16 +140,16 @@ public class EditDeckSceneController : MonoBehaviour
     /// </summary>
     /// <param name="deck"></param>
     /// <param name="cardPool"></param>
-    private void ApplyDeck(IDeck deck, CardDef[] cardPool)
+    private void ApplyDeck(IDeck deck)
     {
         this.deckNameInputField.text = deck.Name;
 
         foreach (var cardName in deck.CardDefNames)
         {
-            var cardDef = cardPool.FirstOrDefault(cd => cd.FullName == cardName);
+            var cardDef = this.allCardsById.Values.FirstOrDefault(cd => cd.FullName == cardName);
             if (cardDef != null)
             {
-                this.AddToDeck(cardDef);
+                this.AddToDeckIgnoreLimit(cardDef);
             }
         }
     }
@@ -168,16 +174,15 @@ public class EditDeckSceneController : MonoBehaviour
             return;
         }
 
-        var cardDefList = this.deckListByDefId.Values
-            .SelectMany(con => Enumerable.Repeat(con.Source, con.CurrentDeckCount));
+        var deckCards = this.deckCards.Select(id => this.allCardsById[id]).ToArray();
 
         if (this.DeckToEdit == null)
         {
-            new DeckRepository().Add(deckName, cardDefList);
+            new DeckRepository().Add(deckName, deckCards);
         }
         else
         {
-            new DeckRepository().Update(this.DeckToEdit.Id, deckName, cardDefList);
+            new DeckRepository().Update(this.DeckToEdit.Id, deckName, deckCards);
         }
 
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
@@ -190,143 +195,82 @@ public class EditDeckSceneController : MonoBehaviour
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }
 
-    /// <summary>
-    /// カードプールの一覧にカードを追加する
-    /// </summary>
-    /// <param name="cardDef"></param>
-    private void AddToCardPool(CardDef cardDef)
+    private void DisplayCardDetail(CardDef cardDef)
     {
-        if (!this.numCardsLimitListByCardDefId.TryGetValue(cardDef.Id, out var limit))
-        {
-            Debug.Log($"指定されたIDが存在しない。CardDefId={cardDef.Id}");
-            return;
-        }
-
-        var currentNumCards = this.deckListByDefId.TryGetValue(cardDef.Id, out var deckListNodeController)
-            ? deckListNodeController.CurrentDeckCount
-            : 0;
-
-        var node = Instantiate(this.listNodePrefab, this.cardPoolListContent.transform);
-        var controller = node.GetComponent<EditDeckScene_ListNodeController>();
-        controller.Init(
-            cardDef,
-            limit,
-            currentNumCards,
-            () => this.AddToDeck(cardDef),
-            () => this.RemoveFromDeck(cardDef.Id),
-            this.cardDefDetailController.SetCard,
-            this.flaverTextViewerController.Open
-            );
-
-        this.cardPoolListByDefId.Add(cardDef.Id, controller);
+        this.cardDefDetailController.SetCard(cardDef);
     }
 
     /// <summary>
     /// デッキ画面側にカードを追加する
     /// </summary>
     /// <param name="cardDefId"></param>
-    private void AddToDeck(CardDef cardDef)
+    private int AddToDeck(CardDef cardDef)
     {
         if (this.IsLimitTotalNum)
         {
             Debug.Log("デッキ上限");
-            return;
+            return 0;
         }
 
         if (!this.numCardsLimitListByCardDefId.TryGetValue(cardDef.Id, out var limit))
         {
             Debug.Log($"指定されたIDが存在しない。CardDefId={cardDef.Id}");
-            return;
+            return 0;
         }
 
         if (limit == 0)
         {
             Debug.Log("デッキに投入できる枚数が0枚");
-            return;
+            return 0;
         }
 
-        if (!this.deckListByDefId.TryGetValue(cardDef.Id, out var deckListNodeController))
+        var current = this.deckCards.Count(x => x == cardDef.Id);
+        if (current >= limit)
         {
-            // 指定したid が存在しない
-            //まだデッキに投入されていない
-            var node = Instantiate(this.listNodePrefab, this.deckListContent.transform);
-            deckListNodeController = node.GetComponent<EditDeckScene_ListNodeController>();
-            deckListNodeController.Init(
-                cardDef,
-                limit,
-                0,
-                () => this.AddToDeck(cardDef),
-                () => this.RemoveFromDeck(cardDef.Id),
-                this.cardDefDetailController.SetCard,
-                this.flaverTextViewerController.Open
-                );
-
-            this.deckListByDefId.Add(cardDef.Id, deckListNodeController);
-
-            this.SortDeckListNodes();
+            Debug.Log("デッキに投入できる枚数の上限");
+            return 0;
         }
 
-        if (deckListNodeController.IsLimitNumByCard)
-        {
-            Debug.Log("デッキに投入できる上限枚数");
-            return;
-        }
+        return this.AddToDeckIgnoreLimit(cardDef);
+    }
 
-        deckListNodeController.AddOne();
+    private int AddToDeckIgnoreLimit(CardDef cardDef)
+    {
+        this.deckGridViewController.CountUp(cardDef);
 
-        if (this.cardPoolListByDefId.TryGetValue(cardDef.Id, out var cardPoolListNodeController))
+        if (this.cardPoolGridViewController.isActiveAndEnabled)
         {
-            cardPoolListNodeController.AddOne();
+            this.cardPoolGridViewController.DeckCountUp(cardDef.Id);
         }
 
         this.currentDeckTotalCount++;
         this.UpdateDeckTotalCountText();
-    }
 
-    /// <summary>
-    /// デッキの一覧をソートする
-    /// </summary>
-    private void SortDeckListNodes()
-    {
-        var sorted = this.deckListByDefId.Values
-            .OrderBy(c => c.Source.Cost)
-            .ThenBy(c => c.Source.FullName);
+        this.deckCards.Add(cardDef.Id);
 
-        var index = 0;
-        foreach (var transform in sorted.Select(c => c.gameObject.transform))
-        {
-            transform.SetSiblingIndex(index);
-            index++;
-        }
+        return 1;
     }
 
     /// <summary>
     /// デッキ画面側からカードを削除する
     /// </summary>
     /// <param name="cardDefId"></param>
-    private void RemoveFromDeck(CardDefId cardDefId)
+    private int RemoveFromDeck(CardDefId cardDefId)
     {
-        if (!this.deckListByDefId.TryGetValue(cardDefId, out var deckListNodeController))
+        var actualRemovedNum = this.deckGridViewController.CountDown(cardDefId);
+        if (actualRemovedNum == 0)
         {
-            // 指定したid が存在しない
-            return;
+            return 0;
         }
 
-        deckListNodeController.RemoveOne();
-        if (deckListNodeController.IsEmpty)
-        {
-            // デッキへの投入枚数がゼロ
-            Destroy(deckListNodeController.gameObject);
-            this.deckListByDefId.Remove(cardDefId);
-        }
-
-        if (this.cardPoolListByDefId.TryGetValue(cardDefId, out var cardPoolListNodeController))
-        {
-            cardPoolListNodeController.RemoveOne();
-        }
+        this.deckCards.Remove(cardDefId);
 
         this.currentDeckTotalCount--;
         this.UpdateDeckTotalCountText();
+
+        this.cardPoolGridViewController.DeckCountDown(cardDefId);
+
+        return 1;
     }
 
     /// <summary>

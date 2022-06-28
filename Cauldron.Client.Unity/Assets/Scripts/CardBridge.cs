@@ -18,6 +18,8 @@ namespace Assets.Scripts
             this.card = card;
         }
 
+        public CardDefId CardDefId => this.cardDef.Id;
+
         public int Cost => this.cardDef?.Cost ?? this.card?.Cost ?? default;
         public int BaseCost => this.cardDef?.Cost ?? this.card?.BaseCost ?? default;
         public string CardSetName => this.cardDef?.CardSetName ?? this.card?.CardSetName ?? "";

@@ -25,18 +25,19 @@ public class CardDefDetailController : MonoBehaviour
     private TextMeshProUGUI powerText = default;
     [SerializeField]
     private TextMeshProUGUI toughnessText = default;
-    [SerializeField]
-    private TextMeshProUGUI otherText = default;
 
     protected CardBridge source;
     private bool requireUpdate;
+
+    private Action<CardDefId> addToDeck;
+    private Action<CardDefId> removeFromDeck;
+    private Action<CardDefId> displayBigDetail;
 
     private void Start()
     {
         this.cardNameText.text = "";
         this.effectText.text = "";
         this.costText.text = "";
-        this.otherText.text = "";
 
         this.powerSpace.gameObject.SetActive(false);
         this.toughnessSpace.gameObject.SetActive(false);
@@ -55,7 +56,6 @@ public class CardDefDetailController : MonoBehaviour
         this.cardTypeText.text = Utility.CardTypeIconUnicode(this.source.Type);
 
         this.costText.text = this.source.Cost.ToString();
-        this.otherText.text = this.OtherText();
 
         switch (this.source.Type)
         {
@@ -73,26 +73,44 @@ public class CardDefDetailController : MonoBehaviour
         }
     }
 
-
-    private string OtherText()
+    public void Init(
+        Action<CardDefId> addToDeck,
+        Action<CardDefId> removeFromDeck,
+        Action<CardDefId> displayBigDetail
+        )
     {
-        var result = Utility.DisplayText(this.source.Type);
-
-        if (this.source.Type == CardType.Creature)
-        {
-            result += Environment.NewLine +
-$@"攻撃回数 | {this.source.NumAttacksLimitInTurn}
-攻撃可能までのターン
-  → クリーチャー | {this.source.NumTurnsToCanAttackToCreature}
-  → プレイヤー | {this.source.NumTurnsToCanAttackToPlayer}";
-        }
-
-        return result;
+        this.addToDeck = addToDeck;
+        this.removeFromDeck = removeFromDeck;
+        this.displayBigDetail = displayBigDetail;
     }
 
     public void SetCard(CardDef cardDef)
     {
         this.source = new CardBridge(cardDef, default);
         this.requireUpdate = true;
+    }
+
+    public void OnAddToDeckButtonClick()
+    {
+        if (this.source != null)
+        {
+            this.addToDeck?.Invoke(this.source.CardDefId);
+        }
+    }
+
+    public void OnRemoveFromDeckButtonClick()
+    {
+        if (this.source != null)
+        {
+            this.removeFromDeck?.Invoke(this.source.CardDefId);
+        }
+    }
+
+    public void OnDisplayBigDetailButtonClick()
+    {
+        if (this.source != null)
+        {
+            this.displayBigDetail?.Invoke(this.source.CardDefId);
+        }
     }
 }
