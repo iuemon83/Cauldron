@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static CardAudioCache;
 
 public class TitleSceneController : MonoBehaviour
 {
@@ -84,6 +85,21 @@ public class TitleSceneController : MonoBehaviour
             }
 
             await holder.LoadCardPool();
+
+            // 全カードデータの読み込み
+            foreach (var name in holder.CardPool.Values.Select(c => c.Name))
+            {
+                CardImageCache.GetOrInit(name);
+            }
+
+            // 全カードSEの読み込み
+            var tasks = holder.CardPool.Values.Select(c => c.Name)
+                .SelectMany(name =>
+                    Enum.GetValues(typeof(CardAudioType)).OfType<CardAudioType>()
+                        .Select(type => CardAudioCache.GetOrInit(name, type))
+                        );
+
+            await UniTask.WhenAll(tasks);
         }
         catch (Exception e)
         {
