@@ -19,8 +19,6 @@ public class ListDeckSceneController : MonoBehaviour
     private Button editButton = default;
     [SerializeField]
     private Button deleteButton = default;
-    [SerializeField]
-    private AudioSource audioSource = default;
 
     private Transform deckListViewContent;
     private ListDeckScene_ListDeckNodeController selectedNode;
@@ -53,14 +51,14 @@ public class ListDeckSceneController : MonoBehaviour
 
     public async void OnNewButtonClick()
     {
-        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
         await Utility.LoadAsyncScene(SceneNames.EditDeckScene);
     }
 
     public async void OnEditButtonClick()
     {
-        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
         await Utility.LoadAsyncScene(SceneNames.EditDeckScene, () =>
         {
@@ -71,7 +69,7 @@ public class ListDeckSceneController : MonoBehaviour
 
     public void OnDeleteButtonClick()
     {
-        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
         // 確認ダイアログ
         var title = "デッキの削除";
@@ -111,14 +109,5 @@ public class ListDeckSceneController : MonoBehaviour
 
         this.editButton.interactable = true;
         this.deleteButton.interactable = true;
-    }
-
-    private void PlayAudio(SeAudioCache.SeAudioType audioType)
-    {
-        var (b, a) = SeAudioCache.GetOrInit(audioType);
-        if (b)
-        {
-            this.audioSource.PlayOneShot(a);
-        }
     }
 }

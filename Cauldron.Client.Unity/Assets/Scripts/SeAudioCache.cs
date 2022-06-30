@@ -2,7 +2,7 @@
 using System.IO;
 using UnityEngine;
 
-class SeAudioCache
+public class SeAudioCache
 {
     public enum SeAudioType
     {

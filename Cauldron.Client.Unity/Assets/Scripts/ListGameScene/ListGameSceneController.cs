@@ -18,8 +18,6 @@ public class ListGameSceneController : MonoBehaviour
     private Canvas canvas = default;
     [SerializeField]
     private ConfirmDialogController confirmDialogController = default;
-    [SerializeField]
-    private AudioSource audioSource = default;
 
     private Transform listContent;
 
@@ -80,7 +78,7 @@ public class ListGameSceneController : MonoBehaviour
 
     public void OnOpenNewGameButtonClick()
     {
-        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
         this.SelectDeckDialog.ShowNewRoomDialog(
             async (deck, message) =>
@@ -196,35 +194,35 @@ public class ListGameSceneController : MonoBehaviour
 
     public async void OnDeckButtonClick()
     {
-        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }
 
     public void OnSoloButtonClick()
     {
-        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
         this.SelectDeckDialog.ShowYouJoinRoomDialog(
             (myDeck, message) =>
             {
-                this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+                AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
                 this.SelectDeckDialog.ShowAiJoinRoomDialog(
                     (aiDeck, message) =>
                     {
-                        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+                        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
                         this.SoloBattle(myDeck, aiDeck);
                     },
                     () =>
                     {
-                        this.PlayAudio(SeAudioCache.SeAudioType.Cancel);
+                        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Cancel);
                     });
             },
             () =>
             {
-                this.PlayAudio(SeAudioCache.SeAudioType.Cancel);
+                AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Cancel);
             });
     }
 
@@ -253,14 +251,5 @@ public class ListGameSceneController : MonoBehaviour
             var aiClientController = FindObjectOfType<AiClientController>();
             await aiClientController.StartClient(reply.GameId, aiDeck);
         });
-    }
-
-    private void PlayAudio(SeAudioCache.SeAudioType audioType)
-    {
-        var (b, a) = SeAudioCache.GetOrInit(audioType);
-        if (b)
-        {
-            this.audioSource.PlayOneShot(a);
-        }
     }
 }

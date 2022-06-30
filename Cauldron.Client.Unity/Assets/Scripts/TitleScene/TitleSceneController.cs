@@ -18,8 +18,6 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField]
     private Button startButton = default;
     [SerializeField]
-    private AudioSource audioSource = default;
-    [SerializeField]
     private TextMeshProUGUI versionText = default;
 
     private Text startButtonText;
@@ -40,7 +38,7 @@ public class TitleSceneController : MonoBehaviour
     {
         this.startButton.interactable = false;
 
-        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
         this.startButtonText.text = "Loading...";
 
@@ -96,7 +94,7 @@ public class TitleSceneController : MonoBehaviour
             var tasks = holder.CardPool.Values.Select(c => c.Name)
                 .SelectMany(name =>
                     Enum.GetValues(typeof(CardAudioType)).OfType<CardAudioType>()
-                        .Select(type => CardAudioCache.GetOrInit(name, type))
+                        .Select(type => CardAudioCache.GetOrDefaultSe(name, type))
                         );
 
             await UniTask.WhenAll(tasks);
@@ -115,14 +113,5 @@ public class TitleSceneController : MonoBehaviour
     private void ShowErrorMessage(string message)
     {
         this.errorMessageText.text = message;
-    }
-
-    private void PlayAudio(SeAudioCache.SeAudioType audioType)
-    {
-        var (b, a) = SeAudioCache.GetOrInit(audioType);
-        if (b)
-        {
-            this.audioSource.PlayOneShot(a);
-        }
     }
 }

@@ -1,8 +1,9 @@
+using Assets.Scripts;
 using Cauldron.Shared.MessagePackObjects;
+using System;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class FlaverTextViewerController : MonoBehaviour
@@ -11,27 +12,37 @@ public class FlaverTextViewerController : MonoBehaviour
 
     private static readonly string hyperLinkTag = "<color=#00ACBF><u><link=\"{0}\">{0}</link></u></color>";
 
+    private static readonly CardAudioCache.CardAudioType[] CardAudioTypes
+        = (CardAudioCache.CardAudioType[])Enum.GetValues(typeof(CardAudioCache.CardAudioType));
+
     [SerializeField]
     private TextMeshProUGUI cardNameText = default;
 
     [SerializeField]
-    private Image CardIllustrationImage = default;
+    private Image cardIllustrationImage = default;
 
     [SerializeField]
     private TextMeshProUGUI flaverText = default;
 
+    private CardDef source;
+
+    private int CurrentCardAudioTypeIndex;
+
     public void Open(CardDef cardDef)
     {
+        this.source = cardDef;
+        this.CurrentCardAudioTypeIndex = 0;
+
         this.cardNameText.text = cardDef.Name;
 
         var (success, cardImageSprite) = CardImageCache.GetOrInit(cardDef.Name);
         if (success)
         {
-            this.CardIllustrationImage.sprite = cardImageSprite;
+            this.cardIllustrationImage.sprite = cardImageSprite;
         }
         else
         {
-            this.CardIllustrationImage.sprite = default;
+            this.cardIllustrationImage.sprite = default;
         }
 
         this.flaverText.text = FlaverText(cardDef);
@@ -56,5 +67,31 @@ public class FlaverTextViewerController : MonoBehaviour
     public void Close()
     {
         this.gameObject.SetActive(false);
+    }
+
+    public async void OnPlaySoundButtonClick()
+    {
+        Debug.Log("on click PlaySoundButton");
+
+        var done = false;
+        var startIndex = this.CurrentCardAudioTypeIndex;
+        // 1Žü‚µ‚Ä‚àSE‚ª–³‚©‚Á‚½‚ç‚â‚ß‚é
+        do
+        {
+            done = await AudioController.CreateOrFind()
+                .PlayAudio2(this.source.Name, this.NextCardAudioType());
+        }
+        while (!done && startIndex != this.CurrentCardAudioTypeIndex);
+    }
+
+    private CardAudioCache.CardAudioType NextCardAudioType()
+    {
+        this.CurrentCardAudioTypeIndex++;
+        if (this.CurrentCardAudioTypeIndex >= CardAudioTypes.Length)
+        {
+            this.CurrentCardAudioTypeIndex = 0;
+        }
+
+        return CardAudioTypes[this.CurrentCardAudioTypeIndex];
     }
 }

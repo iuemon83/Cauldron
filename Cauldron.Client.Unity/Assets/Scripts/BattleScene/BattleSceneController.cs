@@ -104,9 +104,6 @@ public class BattleSceneController : MonoBehaviour
     [SerializeField]
     private GameObject pickUiGroup = default;
 
-    [SerializeField]
-    private AudioSource audioSource = default;
-
     private readonly Dictionary<CardId, HandCardController> handCardObjectsByCardId = new Dictionary<CardId, HandCardController>();
     private readonly Dictionary<CardId, FieldCardController> fieldCardControllersByCardId = new Dictionary<CardId, FieldCardController>();
 
@@ -472,7 +469,7 @@ public class BattleSceneController : MonoBehaviour
     {
         Debug.Log("click endturn Button!");
 
-        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
         this.ResetAllMarks();
 
@@ -522,7 +519,7 @@ public class BattleSceneController : MonoBehaviour
         var dialog = Instantiate(this.choiceDialogPrefab);
         dialog.Init(this.choiceService.AskMessage, async answer =>
         {
-            this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+            AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
             var result = await this.DoAnswer(answer);
             if (result)
@@ -541,7 +538,7 @@ public class BattleSceneController : MonoBehaviour
     {
         this.choiceCardButton.interactable = false;
 
-        this.PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
         var answer = this.choiceService.Answer;
 
@@ -814,7 +811,7 @@ public class BattleSceneController : MonoBehaviour
 
         var message = winOrLoseText + Environment.NewLine + reasonText;
 
-        this.PlayAudio(isWin ? SeAudioCache.SeAudioType.Win : SeAudioCache.SeAudioType.Lose);
+        AudioController.CreateOrFind().PlayAudio(isWin ? SeAudioCache.SeAudioType.Win : SeAudioCache.SeAudioType.Lose);
 
         var dialog = Instantiate(this.confirmDialogPrefab);
         dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
@@ -837,24 +834,6 @@ public class BattleSceneController : MonoBehaviour
                 await this.Client.Surrender();
             });
         dialog.transform.SetParent(this.canvas.transform, false);
-    }
-
-    private async UniTask PlayAudio(string cardName, CardAudioCache.CardAudioType cardAudioType)
-    {
-        var (b, a) = await CardAudioCache.GetOrInit(cardName, cardAudioType);
-        if (b)
-        {
-            this.audioSource.PlayOneShot(a);
-        }
-    }
-
-    private void PlayAudio(SeAudioCache.SeAudioType audioType)
-    {
-        var (b, a) = SeAudioCache.GetOrInit(audioType);
-        if (b)
-        {
-            this.audioSource.PlayOneShot(a);
-        }
     }
 
     void OnStartTurn(GameContext gameContext, StartTurnNotifyMessage message)
@@ -927,7 +906,7 @@ public class BattleSceneController : MonoBehaviour
 
             if (carddef.Type == CardType.Sorcery)
             {
-                await this.PlayAudio(carddef?.Name ?? "", CardAudioCache.CardAudioType.Play);
+                await AudioController.CreateOrFind().PlayAudio(carddef?.Name ?? "", CardAudioCache.CardAudioType.Play);
             }
             await this.DisplaySmallCardDetail(carddef);
 
@@ -953,7 +932,7 @@ public class BattleSceneController : MonoBehaviour
             switch (message.ToZone.ZoneName)
             {
                 case ZoneName.Hand:
-                    await this.PlayAudio(card?.Name ?? "", CardAudioCache.CardAudioType.Draw);
+                    await AudioController.CreateOrFind().PlayAudio(card?.Name ?? "", CardAudioCache.CardAudioType.Draw);
                     await UniTask.Delay(TimeSpan.FromSeconds(0.2));
 
                     if (message.ToZone.PlayerId == this.YouId)
@@ -963,7 +942,7 @@ public class BattleSceneController : MonoBehaviour
                     break;
 
                 case ZoneName.Field:
-                    await this.PlayAudio(card?.Name ?? "", CardAudioCache.CardAudioType.AddField);
+                    await AudioController.CreateOrFind().PlayAudio(card?.Name ?? "", CardAudioCache.CardAudioType.AddField);
 
                     var fieldCardObj = this.GetOrCreateFieldCardObject(card, message.ToZone.PlayerId, message.Index);
                     await fieldCardObj.transform.DOScale(1.4f, 0);
@@ -994,7 +973,7 @@ public class BattleSceneController : MonoBehaviour
                 new ActionLog($"{Utility.DisplayText(message.FromZone.ZoneName)}Å®èúäO", message.Card)
                 , message.EffectOwnerCard, message.EffectId);
 
-            await this.PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Exclude);
+            await AudioController.CreateOrFind().PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Exclude);
 
             if (this.fieldCardControllersByCardId.TryGetValue(message.Card.Id, out var fieldCardController)
                 && fieldCardController.Card.Type != CardType.Sorcery)
@@ -1056,7 +1035,7 @@ public class BattleSceneController : MonoBehaviour
                     {
                         if (message.FromZone.ZoneName == ZoneName.Field)
                         {
-                            await this.PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Destroy);
+                            await AudioController.CreateOrFind().PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Destroy);
                         }
 
                         if (this.fieldCardControllersByCardId.TryGetValue(cardId, out var fieldCardController)
@@ -1089,7 +1068,7 @@ public class BattleSceneController : MonoBehaviour
 
                 case ZoneName.Hand:
                     {
-                        await this.PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Draw);
+                        await AudioController.CreateOrFind().PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Draw);
                         await UniTask.Delay(TimeSpan.FromSeconds(0.2));
 
                         if (this.fieldCardControllersByCardId.TryGetValue(cardId, out var fieldCardController)
@@ -1108,7 +1087,7 @@ public class BattleSceneController : MonoBehaviour
 
                 case ZoneName.Field:
                     {
-                        await this.PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.AddField);
+                        await AudioController.CreateOrFind().PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.AddField);
 
                         var fieldCard = this.GetOrCreateFieldCardObject(message.Card, message.ToZone.PlayerId, message.Index);
                         await fieldCard.transform.DOScale(1.4f, 0);
@@ -1201,7 +1180,7 @@ public class BattleSceneController : MonoBehaviour
             return;
         }
 
-        await this.PlayAudio("", CardAudioCache.CardAudioType.Heal);
+        await AudioController.CreateOrFind().PlayAudio("", CardAudioCache.CardAudioType.Heal);
         await playerController.HealEffect(diffHp);
     }
 
@@ -1259,7 +1238,7 @@ public class BattleSceneController : MonoBehaviour
 
             if (fieldCardControllersByCardId.TryGetValue(message.AttackCardId, out var attackCardController))
             {
-                await this.PlayAudio(attackCardController.Card?.Name ?? "", CardAudioCache.CardAudioType.Attack);
+                await AudioController.CreateOrFind().PlayAudio(attackCardController.Card?.Name ?? "", CardAudioCache.CardAudioType.Attack);
 
                 if (message.GuardCardId == default)
                 {
@@ -1347,7 +1326,7 @@ public class BattleSceneController : MonoBehaviour
 
             if (message.GuardCardId == default)
             {
-                await this.PlayAudio("", CardAudioCache.CardAudioType.Damage);
+                await AudioController.CreateOrFind().PlayAudio("", CardAudioCache.CardAudioType.Damage);
 
                 if (this.youPlayerController.PlayerId == message.GuardPlayerId)
                 {
@@ -1362,7 +1341,7 @@ public class BattleSceneController : MonoBehaviour
             {
                 if (fieldCardControllersByCardId.TryGetValue(message.GuardCardId, out var fieldCard))
                 {
-                    await this.PlayAudio(fieldCard.Card?.Name ?? "", CardAudioCache.CardAudioType.Damage);
+                    await AudioController.CreateOrFind().PlayAudio(fieldCard.Card?.Name ?? "", CardAudioCache.CardAudioType.Damage);
                     await fieldCard.DamageEffect(message.Damage);
                 }
             }

@@ -1,5 +1,4 @@
-﻿using Cauldron.Shared;
-using Cauldron.Shared.MessagePackObjects;
+﻿using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;

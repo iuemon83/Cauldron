@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-class CardAudioCache
+public class CardAudioCache
 {
     public enum CardAudioType
     {
@@ -17,35 +17,44 @@ class CardAudioCache
         AddField,
     }
 
-    private static readonly Dictionary<(string, CardAudioType), AudioClip> cache = new Dictionary<(string, CardAudioType), AudioClip>();
+    private static readonly Dictionary<(string, CardAudioType), AudioClip> cache
+        = new Dictionary<(string, CardAudioType), AudioClip>();
 
     private static readonly string[] fileExtensions = new[] { "mp3" };
 
-    public static async UniTask<(bool, AudioClip)> GetOrInit(string cardName, CardAudioType cardAudioType)
+    public static async UniTask<(bool, AudioClip)> GetOrDefaultSe(string cardName, CardAudioType cardAudioType)
+    {
+        var (exists, audioClip) = await Get(cardName, cardAudioType);
+
+        if (exists)
+        {
+            return (true, audioClip);
+        }
+
+        var defaultAudioClip = GetDefaultAudioClip(cardAudioType);
+        return (defaultAudioClip != null, defaultAudioClip);
+    }
+
+    public static async UniTask<(bool, AudioClip)> Get(string cardName, CardAudioType cardAudioType)
     {
         var key = (cardName, cardAudioType);
         if (!cache.TryGetValue(key, out var audioClip))
         {
-            audioClip = await GetAudioClip(cardName, cardAudioType);
-            if (audioClip == null)
-            {
-                return (false, null);
-            }
-
+            audioClip = await LoadAudioClip(cardName, cardAudioType);
             cache.Add(key, audioClip);
         }
 
-        return (true, audioClip);
+        return (audioClip != null, audioClip);
     }
 
     private static string GetPath(string cardName, CardAudioType cardAudioType, string extension)
         => Path.Combine(Config.CardAudiosDirectoryPath, $"{cardName}_{cardAudioType.ToString().ToLower()}.{extension}");
 
-    private static async UniTask<AudioClip> GetAudioClip(string cardName, CardAudioType cardAudioType)
+    private static async UniTask<AudioClip> LoadAudioClip(string cardName, CardAudioType cardAudioType)
     {
         foreach (var extension in fileExtensions)
         {
-            var s = await GetAudioClip(cardName, cardAudioType, extension);
+            var s = await LoadAudioClip(cardName, cardAudioType, extension);
             if (s != null)
             {
                 return s;
@@ -55,15 +64,13 @@ class CardAudioCache
         return null;
     }
 
-    private static async UniTask<AudioClip> GetAudioClip(string cardName, CardAudioType cardAudioType, string extension)
+    private static async UniTask<AudioClip> LoadAudioClip(string cardName, CardAudioType cardAudioType, string extension)
     {
         var fullPath = GetPath(cardName, cardAudioType, extension);
 
         if (!File.Exists(fullPath))
         {
-            // 個別のseがないなら共通のseを使う
-            var (b, a) = SeAudioCache.GetOrInit(SeAudioType(cardAudioType));
-            return a;
+            return null;
         }
 
         using var www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(fullPath, AudioType.MPEG);
@@ -78,6 +85,12 @@ class CardAudioCache
         {
             return UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(www);
         }
+    }
+
+    private static AudioClip GetDefaultAudioClip(CardAudioType cardAudioType)
+    {
+        var (_, a) = SeAudioCache.GetOrInit(SeAudioType(cardAudioType));
+        return a;
     }
 
     private static SeAudioCache.SeAudioType SeAudioType(CardAudioType audioType) => audioType switch
