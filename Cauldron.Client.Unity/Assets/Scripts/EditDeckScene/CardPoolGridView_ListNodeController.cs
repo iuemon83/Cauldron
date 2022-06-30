@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using Cauldron.Shared.MessagePackObjects;
 using System;
 using TMPro;
@@ -43,12 +44,14 @@ public class CardPoolGridView_ListNodeController : MonoBehaviour, IPointerClickH
         var (success, cardImageSprite) = CardImageCache.GetOrInit(source.Name);
         if (success)
         {
+            // 画像が取れたら画像を出す
             this.cardIllustrationImage.sprite = cardImageSprite;
             this.cardIllustrationImage.gameObject.SetActive(true);
             this.nameText.gameObject.SetActive(false);
         }
         else
         {
+            // 画像がとれなかったらカード名を出す
             this.cardIllustrationImage.sprite = default;
             this.nameText.text = source.Name;
             this.cardIllustrationImage.gameObject.SetActive(false);
@@ -73,6 +76,10 @@ public class CardPoolGridView_ListNodeController : MonoBehaviour, IPointerClickH
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
             var actualAddCount = this.addDeck?.Invoke(this.source) ?? 0;
+            if (actualAddCount > 0)
+            {
+                AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Draw);
+            }
             this.displayCardDetail?.Invoke(this.source);
         }
     }

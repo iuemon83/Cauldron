@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using Cauldron.Shared.MessagePackObjects;
 using System;
 using TMPro;
@@ -71,6 +72,10 @@ public class DeckGridView_ListNodeController : MonoBehaviour, IPointerClickHandl
         {
             // ƒfƒbƒL‚©‚ç”²‚­
             var actualRemoveNum = this.removeFromDeck(this.source.Id);
+            if (actualRemoveNum > 0)
+            {
+                AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Draw);
+            }
             this.displayCardDetail?.Invoke(this.source);
         }
     }
