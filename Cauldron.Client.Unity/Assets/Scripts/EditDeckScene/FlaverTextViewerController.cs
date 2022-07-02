@@ -25,12 +25,23 @@ public class FlaverTextViewerController : MonoBehaviour
     private TextMeshProUGUI flaverText = default;
 
     private CardDef source;
+    private int currentIndex;
 
     private int CurrentCardAudioTypeIndex;
 
-    public void Open(CardDef cardDef)
+    private Func<int, (CardDef, int)> prevCard;
+    private Func<int, (CardDef, int)> nextCard;
+
+    public void Init(Func<int, (CardDef, int)> prevCard, Func<int, (CardDef, int)> nextCard)
+    {
+        this.prevCard = prevCard;
+        this.nextCard = nextCard;
+    }
+
+    public void Open(CardDef cardDef, int cardPoolIndex)
     {
         this.source = cardDef;
+        this.currentIndex = cardPoolIndex;
         this.CurrentCardAudioTypeIndex = 0;
 
         this.cardNameText.text = cardDef.Name;
@@ -93,5 +104,17 @@ public class FlaverTextViewerController : MonoBehaviour
         }
 
         return CardAudioTypes[this.CurrentCardAudioTypeIndex];
+    }
+
+    public void OnPrevButtonClick()
+    {
+        var (card, index) = this.prevCard(this.currentIndex);
+        this.Open(card, index);
+    }
+
+    public void OnNextButtonClick()
+    {
+        var (card, index) = this.nextCard(this.currentIndex);
+        this.Open(card, index);
     }
 }

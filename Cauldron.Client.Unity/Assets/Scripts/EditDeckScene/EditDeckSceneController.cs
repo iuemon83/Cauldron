@@ -1,6 +1,7 @@
 using Assets.Scripts;
 using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -39,9 +40,6 @@ public class EditDeckSceneController : MonoBehaviour
     private IReadOnlyDictionary<CardDefId, CardDef> allCardsById
         = new Dictionary<CardDefId, CardDef>();
 
-    private Dictionary<CardDefId, int> numCardsLimitListByCardDefId
-        = new Dictionary<CardDefId, int>();
-
     private readonly List<CardDefId> deckCards = new List<CardDefId>();
 
     // Start is called before the first frame update
@@ -53,8 +51,10 @@ public class EditDeckSceneController : MonoBehaviour
         this.ruleBook = await holder.Client.GetRuleBook();
         this.allCardsById = holder.CardPool;
 
-        this.numCardsLimitListByCardDefId = this.allCardsById
-            .ToDictionary(x => x.Key, x => x.Value.LimitNumCardsInDeck.Value);
+        this.flaverTextViewerController.Init(
+            this.PrevCard,
+            this.NextCard
+            );
 
         this.cardPoolGridViewController.Init(
             this.DisplayCardDetail,
@@ -62,15 +62,15 @@ public class EditDeckSceneController : MonoBehaviour
             );
 
         this.deckGridViewController.Init(
-            this.numCardsLimitListByCardDefId,
-            this.cardDefDetailController.SetCard,
+            this.allCardsById.ToDictionary(x => x.Key, x => x.Value.LimitNumCardsInDeck.Value),
+            this.DisplayCardDetail,
             this.RemoveFromDeck
             );
 
         this.cardDefDetailController.Init(
             defId => this.AddToDeck(this.allCardsById[defId]),
             defId => this.RemoveFromDeck(defId),
-            defId => this.flaverTextViewerController.Open(this.allCardsById[defId])
+            this.DisplayFlaverTextViewer
             );
 
         var cardPoolNodes = this.allCardsById.Values
@@ -85,6 +85,11 @@ public class EditDeckSceneController : MonoBehaviour
         }
 
         this.UpdateDeckTotalCountText();
+    }
+
+    private void DisplayFlaverTextViewer(CardDefId cardDefId, int cardPoolIndex)
+    {
+        this.flaverTextViewerController.Open(this.allCardsById[cardDefId], cardPoolIndex);
     }
 
     private void SearchKeyWordInputFieldIfPushEnter(string a)
@@ -195,7 +200,9 @@ public class EditDeckSceneController : MonoBehaviour
 
     private void DisplayCardDetail(CardDef cardDef)
     {
-        this.cardDefDetailController.SetCard(cardDef);
+        var cardPoolIndex = this.cardPoolGridViewController.IndexOf(cardDef);
+
+        this.cardDefDetailController.SetCard(cardDef, cardPoolIndex);
     }
 
     /// <summary>
@@ -210,20 +217,20 @@ public class EditDeckSceneController : MonoBehaviour
             return 0;
         }
 
-        if (!this.numCardsLimitListByCardDefId.TryGetValue(cardDef.Id, out var limit))
+        if (!this.allCardsById.TryGetValue(cardDef.Id, out var card))
         {
             Debug.Log($"指定されたIDが存在しない。CardDefId={cardDef.Id}");
             return 0;
         }
 
-        if (limit == 0)
+        if (card.LimitNumCardsInDeck.Value == 0)
         {
             Debug.Log("デッキに投入できる枚数が0枚");
             return 0;
         }
 
         var current = this.deckCards.Count(x => x == cardDef.Id);
-        if (current >= limit)
+        if (current >= card.LimitNumCardsInDeck.Value)
         {
             Debug.Log("デッキに投入できる枚数の上限");
             return 0;
@@ -281,5 +288,15 @@ public class EditDeckSceneController : MonoBehaviour
         this.deckCountText.color = this.IsValidNumCards()
             ? Color.white
             : Color.red;
+    }
+
+    private (CardDef, int) PrevCard(int index)
+    {
+        return this.cardPoolGridViewController.PrevCard(index);
+    }
+
+    private (CardDef, int) NextCard(int index)
+    {
+        return this.cardPoolGridViewController.NextCard(index);
     }
 }

@@ -21,7 +21,7 @@ public class CardPoolGridView_ListNodeController : MonoBehaviour, IPointerClickH
 
     private CardDef source;
 
-    private Action<CardDef> displayCardDetail;
+    private Action displayCardDetail;
     private Func<CardDef, int> addDeck;
 
     public bool IsLimit => this.source.LimitNumCardsInDeck.Value == this.PickNum;
@@ -33,7 +33,7 @@ public class CardPoolGridView_ListNodeController : MonoBehaviour, IPointerClickH
     public void Init(
         CardDef source,
         int current,
-        Action<CardDef> displayCardDetail,
+        Action displayCardDetail,
         Func<CardDef, int> addDeck
         )
     {
@@ -71,7 +71,7 @@ public class CardPoolGridView_ListNodeController : MonoBehaviour, IPointerClickH
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            this.displayCardDetail?.Invoke(this.source);
+            this.displayCardDetail?.Invoke();
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
@@ -80,7 +80,7 @@ public class CardPoolGridView_ListNodeController : MonoBehaviour, IPointerClickH
             {
                 AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Draw);
             }
-            this.displayCardDetail?.Invoke(this.source);
+            this.displayCardDetail?.Invoke();
         }
     }
 

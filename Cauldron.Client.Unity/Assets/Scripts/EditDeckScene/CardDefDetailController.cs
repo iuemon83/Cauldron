@@ -26,12 +26,14 @@ public class CardDefDetailController : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI toughnessText = default;
 
-    protected CardBridge source;
+    private CardBridge source;
+    private int cardPoolIndex;
+
     private bool requireUpdate;
 
     private Action<CardDefId> addToDeck;
     private Action<CardDefId> removeFromDeck;
-    private Action<CardDefId> displayBigDetail;
+    private Action<CardDefId, int> displayFlaverTextViewer;
 
     private void Start()
     {
@@ -76,17 +78,18 @@ public class CardDefDetailController : MonoBehaviour
     public void Init(
         Action<CardDefId> addToDeck,
         Action<CardDefId> removeFromDeck,
-        Action<CardDefId> displayBigDetail
+        Action<CardDefId, int> displayFlaverTextViewer
         )
     {
         this.addToDeck = addToDeck;
         this.removeFromDeck = removeFromDeck;
-        this.displayBigDetail = displayBigDetail;
+        this.displayFlaverTextViewer = displayFlaverTextViewer;
     }
 
-    public void SetCard(CardDef cardDef)
+    public void SetCard(CardDef cardDef, int cardPoolIndex)
     {
         this.source = new CardBridge(cardDef, default);
+        this.cardPoolIndex = cardPoolIndex;
         this.requireUpdate = true;
     }
 
@@ -110,7 +113,7 @@ public class CardDefDetailController : MonoBehaviour
     {
         if (this.source != null)
         {
-            this.displayBigDetail?.Invoke(this.source.CardDefId);
+            this.displayFlaverTextViewer?.Invoke(this.source.CardDefId, this.cardPoolIndex);
         }
     }
 }
