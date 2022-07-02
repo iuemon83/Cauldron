@@ -37,6 +37,8 @@ namespace Cauldron.Shared.MessagePackObjects
                     ?? ValueTask.FromResult(false)),
                 GameEvent.OnModifyPlayer => await (effectTiming.ModifyPlayer?.IsMatch(effectOwnerCard, eventArgs)
                     ?? ValueTask.FromResult(false)),
+                GameEvent.OnModifyCard => await (effectTiming.ModifyCard?.IsMatch(effectOwnerCard, eventArgs)
+                    ?? ValueTask.FromResult(false)),
                 _ => false,
             };
         }
@@ -98,6 +100,10 @@ namespace Cauldron.Shared.MessagePackObjects
             else if (effectTiming.ModifyPlayer != null)
             {
                 return GameEvent.OnModifyPlayer;
+            }
+            else if (effectTiming.ModifyCard != null)
+            {
+                return GameEvent.OnModifyCard;
             }
 
             throw new InvalidOperationException("invalid card effect timing");

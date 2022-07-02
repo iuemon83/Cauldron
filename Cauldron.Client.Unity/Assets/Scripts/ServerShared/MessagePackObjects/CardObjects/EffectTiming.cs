@@ -21,6 +21,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectTimingExcludeCardEvent? ExcludeCard { get; }
         public EffectTimingModifyCounterOnCardEvent? ModifyCounter { get; }
         public EffectTimingModifyPlayerEvent? ModifyPlayer { get; }
+        public EffectTimingModifyCardEvent? ModifyCard { get; }
 
         public EffectTiming(
             EffectTimingStartTurnEvent? StartTurn = null,
@@ -36,7 +37,8 @@ namespace Cauldron.Shared.MessagePackObjects
             EffectTimingMoveCardEvent? MoveCard = null,
             EffectTimingExcludeCardEvent? ExcludeCard = null,
             EffectTimingModifyCounterOnCardEvent? ModifyCounter = null,
-            EffectTimingModifyPlayerEvent? ModifyPlayer = null
+            EffectTimingModifyPlayerEvent? ModifyPlayer = null,
+            EffectTimingModifyCardEvent? ModifyCard = null
             )
         {
             this.StartTurn = StartTurn;
@@ -53,6 +55,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.ExcludeCard = ExcludeCard;
             this.ModifyCounter = ModifyCounter;
             this.ModifyPlayer = ModifyPlayer;
+            this.ModifyCard = ModifyCard;
         }
     }
 }

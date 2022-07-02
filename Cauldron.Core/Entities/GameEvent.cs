@@ -91,5 +91,10 @@
         /// プレイヤーの変更イベント
         /// </summary>
         OnModifyPlayer,
+
+        /// <summary>
+        /// カードの変更イベント
+        /// </summary>
+        OnModifyCard,
     }
 }

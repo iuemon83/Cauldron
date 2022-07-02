@@ -355,6 +355,8 @@ namespace Cauldron.Core.Entities
 
             card.CostBuff = newCost - card.BaseCost;
 
+            var modifyCardContext = new ModifyCardContext(card.Id, 0, 0);
+
             if (card.Type == CardType.Creature)
             {
                 var newPower = await (effectActionModifyCard.Power?.Modify(effectOwnerCard, effectEventArgs, card.Power)
@@ -376,9 +378,11 @@ namespace Cauldron.Core.Entities
                         ?? ValueTask.FromResult(card.NumAttacksLimitInTurn));
 
                 var newPowerBuff = newPower - card.BasePower;
+                var diffPower = newPower - card.Power;
                 card.PowerBuff = newPowerBuff;
 
                 var newToubhnessBuff = newToughness - card.BaseToughness;
+                var diffToughness = newToughness - card.Toughness;
                 card.ToughnessBuff = newToubhnessBuff;
 
                 card.Abilities = newAbilities.ToList();
@@ -386,6 +390,8 @@ namespace Cauldron.Core.Entities
                 card.NumTurnsToCanAttackToCreature = newNumTurnsToCanAttackToCreature;
                 card.NumTurnsToCanAttackToPlayer = newNumTurnsToCanAttackToPlayer;
                 card.NumAttacksLimitInTurn = newNumAttacksLimitInTurn;
+
+                modifyCardContext = new ModifyCardContext(card.Id, diffPower, diffToughness);
             }
 
             // notify
@@ -400,6 +406,13 @@ namespace Cauldron.Core.Entities
                         effectId
                         ));
             }
+
+            await this.FireEvent(new EffectEventArgs(
+                GameEvent.OnModifyCard,
+                this,
+                SourceCard: card,
+                ModifyCardContext: modifyCardContext
+                ));
         }
 
         public async ValueTask<(GameMasterStatusCode, IReadOnlyList<Card>)> Draw(

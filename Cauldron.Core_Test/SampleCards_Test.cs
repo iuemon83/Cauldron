@@ -4297,5 +4297,36 @@ namespace Cauldron.Core_Test
                 Assert.Equal(goblin.BasePower + 1, goblin.Power);
             });
         }
+
+        [Fact]
+        public async Task DamageOnHeal()
+        {
+            var testCardDef = SampleCards1.DamageOnHeal;
+            testCardDef.Cost = 0;
+
+            var creatureCardDef = SampleCards1.Vanilla;
+            creatureCardDef.Cost = 0;
+
+            var addToughnessCardDef = SampleCards1.Shield;
+            addToughnessCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, creatureCardDef, addToughnessCardDef }, this.output
+                );
+
+            // æU
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var vanilla = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                var beforeOpHp = c.Player2.CurrentHp;
+
+                c.TestAnswer.ChoiceCardIdList = new[] { vanilla.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, addToughnessCardDef.Id);
+
+                Assert.Equal(beforeOpHp - 1, c.Player2.CurrentHp);
+            });
+        }
     }
 }

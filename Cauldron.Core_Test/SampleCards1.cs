@@ -3200,5 +3200,54 @@ namespace Cauldron.Core_Test
                             ))
                     })
             });
+
+        public static CardDef DamageOnHeal => SampleCards1.Artifact(
+            0,
+            "回復したら相手にダメージ",
+            effects: new[] {
+                new CardEffect(
+                    "場にあるクリーチャーが回復したとき、相手に1ダメージを与える。",
+                    new EffectConditionWrap(
+                        ByNotPlay: new(
+                            ZonePrettyName.YouField,
+                            When: new(new EffectTiming(
+                                ModifyCard: new(
+                                    OrCardConditions: new[]
+                                    {
+                                        new CardCondition(
+                                            CardCondition.ContextConditionValue.Others,
+                                            ZoneCondition: new(new ZoneValue(new[]
+                                            {
+                                                ZonePrettyName.YouField,
+                                                ZonePrettyName.OpponentField
+                                            })),
+                                            TypeCondition: new(new[]
+                                            {
+                                                CardType.Creature
+                                            }
+                                            )
+                                            )
+                                    },
+                                    ModifyToughnessCondition: new(
+                                        new NumValue(1),
+                                        NumCompare.CompareValue.GreaterThan
+                                        )
+                                    )
+                                ))
+                            )
+                        ),
+                    new[]
+                    {
+                        new EffectAction(
+                            Damage: new(
+                                new NumValue(1),
+                                new Choice(new ChoiceSource(orPlayerConditions: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.Opponent)
+                                }))
+                                )
+                            )
+                    })
+            });
     }
 }
