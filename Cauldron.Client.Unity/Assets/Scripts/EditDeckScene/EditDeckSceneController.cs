@@ -1,7 +1,6 @@
 using Assets.Scripts;
 using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -120,13 +119,24 @@ public class EditDeckSceneController : MonoBehaviour
 
     private bool IsMatchedByKeyword(string keyword, CardDef cardDef)
     {
-        var lowerKeyword = this.NormalizeForKeyword(keyword);
+        var normalizedList = this.NormalizeKeyword(keyword);
 
-        return this.NormalizeForKeyword(cardDef.Name).Contains(lowerKeyword)
-            || this.NormalizeForKeyword(Utility.EffectDescription(new CardBridge(cardDef, default))).Contains(lowerKeyword)
-            || cardDef.Annotations.Any(a => this.NormalizeForKeyword(a).Contains(lowerKeyword))
-            || cardDef.Abilities.Any(a => this.NormalizeForKeyword(Utility.DisplayText(a)).Contains(lowerKeyword))
-            ;
+        return normalizedList
+            .All(w =>
+            {
+                return this.NormalizeForKeyword(cardDef.Name).Contains(w)
+                    || this.NormalizeForKeyword(Utility.EffectDescription(new CardBridge(cardDef, default))).Contains(w)
+                    || cardDef.Annotations.Any(a => this.NormalizeForKeyword(a).Contains(w))
+                    || cardDef.Abilities.Any(a => this.NormalizeForKeyword(Utility.DisplayText(a)).Contains(w))
+                    ;
+            });
+    }
+
+    private string[] NormalizeKeyword(string value)
+    {
+        return value.Split(' ', 'Å@')
+            .Select(this.NormalizeForKeyword)
+            .ToArray();
     }
 
     private string NormalizeForKeyword(string value)
