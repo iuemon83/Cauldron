@@ -89,15 +89,6 @@ public class TitleSceneController : MonoBehaviour
             {
                 CardImageCache.GetOrInit(name);
             }
-
-            // 全カードSEの読み込み
-            var tasks = holder.CardPool.Values.Select(c => c.Name)
-                .SelectMany(name =>
-                    Enum.GetValues(typeof(CardAudioType)).OfType<CardAudioType>()
-                        .Select(type => CardAudioCache.GetOrDefaultSe(name, type))
-                        );
-
-            await UniTask.WhenAll(tasks);
         }
         catch (Exception e)
         {
