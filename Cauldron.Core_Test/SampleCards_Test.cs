@@ -4263,5 +4263,39 @@ namespace Cauldron.Core_Test
                 Assert.Equal(damaged.BaseToughness - 2, damaged.Toughness);
             });
         }
+
+        [Fact]
+        public async Task GoblinsElixir()
+        {
+            var testCardDef = SampleCards2.GoblinsElixir;
+            testCardDef.Cost = 0;
+
+            var creatureCardDef = SampleCards1.Vanilla;
+            creatureCardDef.Cost = 0;
+
+            var goblinDef = SampleCards2.Goblin;
+            goblinDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, creatureCardDef, goblinDef }, this.output
+                );
+
+            // æU
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var vanilla = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var goblin = await TestUtil.NewCardAndPlayFromHand(g, pId, goblinDef.Id);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { vanilla.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(vanilla.BasePower - 1, vanilla.Power);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { goblin.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(goblin.BasePower + 1, goblin.Power);
+            });
+        }
     }
 }

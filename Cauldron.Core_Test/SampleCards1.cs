@@ -2186,7 +2186,7 @@ namespace Cauldron.Core_Test
                 );
 
         public static CardDef SealedGoblin
-            => Creature(1, "封印されしゴブリン", 1, 1,
+            => Creature(1, "封印されしもの", 1, 1,
                 effects: new[]
                 {
                     new CardEffect(
@@ -2313,7 +2313,6 @@ namespace Cauldron.Core_Test
                 1, 1,
                 effects: new[]
                 {
-                    // 破壊時、からくりゴブリン１枚を手札に加える
                     new CardEffect(
                         "このカードが破壊されたとき、手札に「からくり人形」1枚を加える。",
                         new EffectConditionWrap(ByNotPlay: new(

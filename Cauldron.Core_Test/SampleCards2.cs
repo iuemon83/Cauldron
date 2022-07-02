@@ -2305,5 +2305,71 @@ namespace Cauldron.Core_Test
                                 )),
                         }),
                 });
+
+        public static CardDef GoblinsElixir => SampleCards1.Sorcery(
+            0,
+            "ゴブリンの秘薬",
+            effects: new[]
+            {
+                new CardEffect(
+                    "選択したクリーチャーを-1/+0する。選択したクリーチャーが「ゴブリン」なら代わりに+1/+0する。",
+                    new EffectConditionWrap(ByPlay: new()),
+                    new[]
+                    {
+                        new EffectAction(
+                            ModifyCard: new(
+                                new Choice(
+                                    new ChoiceSource(orCardConditions: new[]
+                                    {
+                                        new CardCondition(
+                                            ZoneCondition: new(new ZoneValue(new[]
+                                            {
+                                                ZonePrettyName.YouField,
+                                                ZonePrettyName.OpponentField
+                                            })),
+                                            TypeCondition: new(new[]
+                                            {
+                                                CardType.Creature
+                                            }))
+                                    }),
+                                    Choice.HowValue.Choose,
+                                    new NumValue(1)
+                                    ),
+                                Power: new(
+                                    NumValueModifier.OperatorValue.Add,
+                                    new NumValue(
+                                        1,
+                                        NumValueModifier: new(
+                                            NumValueModifier.OperatorValue.Sub,
+                                            new NumValue(
+                                                2,
+                                                NumValueModifier: new(
+                                                    NumValueModifier.OperatorValue.Multi,
+                                                    new NumValue(
+                                                        NumValueCalculator: new(
+                                                            ForCard: new(
+                                                                NumValueCalculatorForCard.TypeValue.Count,
+                                                                new Choice(new ChoiceSource(
+                                                                    orCardConditions: new[]{
+                                                                        new CardCondition(
+                                                                            CardCondition.ContextConditionValue.ActionTarget,
+                                                                            NameCondition: new(
+                                                                                new TextValue("ゴブリン"),
+                                                                                TextCompare.CompareValue.Contains,
+                                                                                Not: true
+                                                                            ))
+                                                                    }))
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                    })
+            });
     }
 }
