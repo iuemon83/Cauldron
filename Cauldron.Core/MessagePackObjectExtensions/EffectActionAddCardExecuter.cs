@@ -48,10 +48,12 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                 .Select(x => (x.Item1.CardDef, x.Item2.Zone))
                 .Concat(choiceResult.CardDefList.Select(cd => (CardDef: cd, Zone: defaultZone)));
 
+            var numOfAddCards = await _this.NumOfAddCards.Calculate(effectOwnerCard, effectEventArgs);
+
             var addedCards = new List<Card>();
             foreach (var (cardDef, zone) in cardDefAndZones)
             {
-                foreach (var cd in Enumerable.Repeat(cardDef, _this.NumOfAddCards))
+                foreach (var cd in Enumerable.Repeat(cardDef, numOfAddCards))
                 {
                     var card = await effectEventArgs.GameMaster.GenerateNewCard(cd.Id, zone, _this.InsertCardPosition, effectOwnerCard, effectId);
                     if (card == null)

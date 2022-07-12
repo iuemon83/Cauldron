@@ -1056,7 +1056,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             })),
                                     new ZoneValue(new[]{ZonePrettyName.YouField }),
-                                    NumOfAddCards: 2
+                                    NumOfAddCards: new NumValue(2)
                                     ))
                         })
                 });
@@ -1232,7 +1232,7 @@ namespace Cauldron.Core_Test
                                     numPicks: new NumValue(0)
                                     ),
                                 new ZoneValue(new[]{ ZonePrettyName.YouField }),
-                                NumOfAddCards: 2
+                                NumOfAddCards: new NumValue(2)
                                 ))
                         })
                 });
@@ -1530,7 +1530,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             })),
                                     new ZoneValue(new[]{ ZonePrettyName.YouField }),
-                                    NumOfAddCards: 1
+                                    NumOfAddCards: new NumValue(1)
                                     ))
                         })
                 });
@@ -2662,7 +2662,7 @@ namespace Cauldron.Core_Test
                                                 )
                                             })),
                                     new ZoneValue(new[]{ ZonePrettyName.YouField }),
-                                    NumOfAddCards: 2
+                                    NumOfAddCards: new NumValue(2)
                                     ))
                         })
                 });

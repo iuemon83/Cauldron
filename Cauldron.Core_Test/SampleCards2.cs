@@ -515,7 +515,8 @@ namespace Cauldron.Core_Test
                                                 )
                                             })),
                                     new ZoneValue(new[]{ ZonePrettyName.YouHand }),
-                                    NumOfAddCards: 3)
+                                    NumOfAddCards: new NumValue(3)
+                                    )
                             )
                         })
                 });
