@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -10,13 +12,13 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public CardCondition[] OrCardConditions { get; }
 
-        public ZonePrettyName From { get; }
-        public ZonePrettyName To { get; }
+        public ZoneCondition? From { get; }
+        public ZoneCondition? To { get; }
 
         public EffectTimingMoveCardEvent(
             CardCondition[] OrCardConditions,
-            ZonePrettyName From = ZonePrettyName.None,
-            ZonePrettyName To = ZonePrettyName.None
+            ZoneCondition? From = null,
+            ZoneCondition? To = null
             )
         {
             this.OrCardConditions = OrCardConditions;

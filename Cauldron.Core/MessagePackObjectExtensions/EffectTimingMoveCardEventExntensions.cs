@@ -1,6 +1,4 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -27,30 +25,10 @@ namespace Cauldron.Shared.MessagePackObjects
             var opponentId = args.GameMaster.GetOpponent(ownerCard.OwnerId).Id;
 
             return matchSource
-                && IsMatchZone(_this.From, args.MoveCardContext.From,
-                    ownerCard.OwnerId,
-                    opponentId,
-                    args.SourceCard.OwnerId)
-                && IsMatchZone(_this.To, args.MoveCardContext.To,
-                    ownerCard.OwnerId,
-                    opponentId,
-                    args.SourceCard.OwnerId);
-
-
-            static bool IsMatchZone(ZonePrettyName zonePrettyName, Zone other, PlayerId effectOwnerId, PlayerId opponentId, PlayerId cardOwnerId)
-            {
-                if (zonePrettyName == ZonePrettyName.None)
-                {
-                    return true;
-                }
-
-                var (success, zone) = zonePrettyName.TryGetZone(
-                    effectOwnerId,
-                    opponentId,
-                    cardOwnerId);
-
-                return success && zone == other;
-            }
+                && (_this.From == null
+                    || await _this.From.IsMatch(ownerCard, args, args.MoveCardContext.From))
+                && (_this.To == null
+                    || await _this.To.IsMatch(ownerCard, args, args.MoveCardContext.To));
         }
     }
 }

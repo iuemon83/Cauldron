@@ -23,8 +23,9 @@ namespace Cauldron.Core_Test
                                 new[]{
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
-                                To: ZonePrettyName.YouField
-                                ))))),
+                                To: new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouField }))
+                                )))
+                            )),
                         new[]
                         {
                             new EffectAction(
@@ -586,8 +587,9 @@ namespace Cauldron.Core_Test
                                 new[]{
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
-                                To: ZonePrettyName.YouField
-                                ))))),
+                                To: new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouField }))
+                                )))
+                            )),
                         new[]
                         {
                             new EffectAction(
@@ -1653,7 +1655,7 @@ namespace Cauldron.Core_Test
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
-                                To: ZonePrettyName.YouCemetery
+                                To: new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouCemetery }))
                                 )))
                             )),
                         new[]
@@ -1748,8 +1750,8 @@ namespace Cauldron.Core_Test
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.Others)
                                 },
-                                From: ZonePrettyName.YouField,
-                                To: ZonePrettyName.YouCemetery
+                                From: new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouField })),
+                                To: new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouCemetery }))
                                 )))
                             )),
                         new[]
@@ -1918,7 +1920,8 @@ namespace Cauldron.Core_Test
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
-                                To: ZonePrettyName.YouField)))
+                                To: new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouField }))
+                                )))
                             )),
                         new[]
                         {
@@ -2283,8 +2286,8 @@ namespace Cauldron.Core_Test
                                         AnnotationCondition: new(":ゾンビ")
                                         )
                                 },
-                                From: ZonePrettyName.YouField,
-                                To: ZonePrettyName.YouCemetery
+                                From: new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouField })),
+                                To: new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouCemetery }))
                                 )))
                             )),
                         new[]

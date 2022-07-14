@@ -13,6 +13,6 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectConditionByPlaying(
             EffectIf? If = null
             )
-            : base(ZonePrettyName.None, default, default, If) { }
+            : base(ZonePrettyName.Any, default, default, If) { }
     }
 }

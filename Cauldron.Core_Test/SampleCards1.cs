@@ -775,7 +775,10 @@ namespace Cauldron.Core_Test
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
-                                ZonePrettyName.YouHand, ZonePrettyName.YouCemetery))))),
+                                new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouHand })),
+                                new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouCemetery }))
+                                )))
+                            )),
                         new[]
                         {
                             new EffectAction(
@@ -1104,7 +1107,7 @@ namespace Cauldron.Core_Test
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
-                                To: ZonePrettyName.YouField
+                                To: new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouField }))
                                 )))
                             )),
                         new[]
@@ -1850,8 +1853,10 @@ namespace Cauldron.Core_Test
                                                                 new NumValue(4),
                                                                 NumCompare.CompareValue.GreaterThan))
                                                     },
-                                                    ZonePrettyName.OpponentDeck,
-                                                    ZonePrettyName.OpponentHand))),
+                                                    new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.OpponentDeck })),
+                                                    new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.OpponentHand }))
+                                                    )
+                                                )),
                                             While: new(new EffectTiming(EndTurn: new(
                                                 OrPlayerConditions: new[]
                                                 {
@@ -2058,9 +2063,10 @@ namespace Cauldron.Core_Test
                                         }))
                                         ),
                                 },
-                                ZonePrettyName.YouHand,
-                                ZonePrettyName.YouField)))
-                        )),
+                                new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouHand })),
+                                new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouField }))
+                                )))
+                            )),
                         new[]
                         {
                             new EffectAction(
@@ -2119,8 +2125,11 @@ namespace Cauldron.Core_Test
                                     {
                                         new CardCondition(CardCondition.ContextConditionValue.This)
                                     },
-                                    ZonePrettyName.YouField,
-                                    ZonePrettyName.YouCemetery))))),
+                                    new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouField })),
+                                    new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouCemetery }))
+                                    )
+                                ))
+                            )),
                         new[]
                         {
                             new EffectAction(
@@ -2446,7 +2455,10 @@ namespace Cauldron.Core_Test
                                 {
                                     new CardCondition(CardCondition.ContextConditionValue.This)
                                 },
-                                ZonePrettyName.YouDeck, ZonePrettyName.YouHand))))),
+                                new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouDeck })),
+                                new ZoneCondition(new ZoneValue(new[]{ ZonePrettyName.YouHand }))
+                                )))
+                            )),
                         new[]
                         {
                             new EffectAction(MoveCard: new(

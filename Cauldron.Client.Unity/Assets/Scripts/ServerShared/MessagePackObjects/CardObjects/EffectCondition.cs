@@ -19,7 +19,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectIf? If { get; }
 
         public EffectCondition(
-            ZonePrettyName Zone = ZonePrettyName.None,
+            ZonePrettyName Zone = ZonePrettyName.Any,
             EffectWhen? When = null,
             EffectWhile? While = null,
             EffectIf? If = null

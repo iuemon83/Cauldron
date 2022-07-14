@@ -4,8 +4,12 @@ namespace Cauldron.Shared
 {
     public enum ZonePrettyName
     {
-        [DisplayText("なし")]
-        None,
+        /// <summary>
+        /// 異常値
+        /// 通常は利用しない
+        /// </summary>
+        Error,
+
         [DisplayText("あなたの場")]
         YouField,
         [DisplayText("相手の場")]
