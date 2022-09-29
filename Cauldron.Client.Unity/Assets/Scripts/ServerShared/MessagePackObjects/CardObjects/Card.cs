@@ -4,6 +4,7 @@ using MessagePack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -114,6 +115,9 @@ namespace Cauldron.Shared.MessagePackObjects
                 _ => this.HasAbility(ability),
             };
         }
+
+        [JsonConstructor]
+        public Card() { }
 
         public Card(
             CardId Id,

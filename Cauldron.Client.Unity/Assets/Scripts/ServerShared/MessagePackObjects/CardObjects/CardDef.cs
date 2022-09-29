@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿#nullable enable
+
+using MessagePack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +13,7 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public static CardDef Empty => new CardDef();
 
-        [JsonIgnore]
-        public CardDefId Id { get; }
+        public CardDefId Id { get; private set; }
 
         public int Cost { get; set; }
 
@@ -62,46 +63,51 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public string EffectDescription => string.Join(Environment.NewLine, this.Effects.Select(x => x.Description));
 
-        public CardDef()
-        {
-            this.Id = CardDefId.NewId();
-        }
-
+        [JsonConstructor]
         public CardDef(
-            CardDefId Id,
-            int Cost,
-            string CardSetName,
-            string Name,
-            string FlavorText,
-            IReadOnlyList<string> Annotations,
-            bool IsToken,
-            CardType Type,
-            int Power,
-            int Toughness,
-            IReadOnlyList<CreatureAbility> Abilities,
-            IReadOnlyList<CardEffect> Effects,
-            int? NumTurnsToCanAttackToCreature,
-            int? NumTurnsToCanAttackToPlayer,
-            int? NumAttacksLimitInTurn,
-            int? LimitNumCardsInDeck
+            CardDefId Id = default,
+            int Cost = default,
+            string? CardSetName = default,
+            string? Name = default,
+            string? FlavorText = default,
+            IReadOnlyList<string>? Annotations = default,
+            bool IsToken = default,
+            CardType Type = default,
+            int Power = default,
+            int Toughness = default,
+            IReadOnlyList<CreatureAbility>? Abilities = default,
+            IReadOnlyList<CardEffect>? Effects = default,
+            int? NumTurnsToCanAttackToCreature = default,
+            int? NumTurnsToCanAttackToPlayer = default,
+            int? NumAttacksLimitInTurn = default,
+            int? LimitNumCardsInDeck = default
             )
         {
             this.Id = Id;
             this.Cost = Cost;
-            this.CardSetName = CardSetName;
-            this.Name = Name;
-            this.FlavorText = FlavorText;
-            this.Annotations = Annotations;
+            this.CardSetName = CardSetName ?? "";
+            this.Name = Name ?? "";
+            this.FlavorText = FlavorText ?? "";
+            this.Annotations = Annotations ?? Array.Empty<string>();
             this.IsToken = IsToken;
             this.Type = Type;
             this.Power = Power;
             this.Toughness = Toughness;
-            this.Abilities = Abilities;
-            this.Effects = Effects;
+            this.Abilities = Abilities ?? Array.Empty<CreatureAbility>();
+            this.Effects = Effects ?? Array.Empty<CardEffect>();
             this.NumTurnsToCanAttackToCreature = NumTurnsToCanAttackToCreature;
             this.NumTurnsToCanAttackToPlayer = NumTurnsToCanAttackToPlayer;
             this.NumAttacksLimitInTurn = NumAttacksLimitInTurn;
             this.LimitNumCardsInDeck = LimitNumCardsInDeck;
+        }
+
+        /// <summary>
+        /// cardset のjson からロードするときはIDがemptyで入っちゃうので振りなおす用
+        /// それ以外では利用しない
+        /// </summary>
+        public void DangerousSetNewId()
+        {
+            this.Id = CardDefId.NewId();
         }
     }
 }

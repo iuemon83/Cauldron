@@ -36,11 +36,7 @@ namespace Cauldron.Server
             CardPoolInitializer.Init(this.Configuration["CardSetDirectoryPath"]);
 
             // ログdbの初期化
-            var battleLogsDb = new BattleLogDb();
-            using var dbConnection = battleLogsDb.Connection();
-            dbConnection.Open();
-            battleLogsDb.CreateBattleLogsTableIfNotExists(dbConnection);
-            battleLogsDb.CreateBattlePlayersTableIfNotExists(dbConnection);
+            this.InitDb();
 
             app.UseRouting();
 
@@ -53,6 +49,16 @@ namespace Cauldron.Server
                     await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
                 });
             });
+        }
+
+        private void InitDb()
+        {
+            var battleLogsDb = new BattleLogDb();
+            using var dbConnection = battleLogsDb.Connection();
+            dbConnection.Open();
+            battleLogsDb.CreateCardPoolLogTableIfNotExists(dbConnection);
+            battleLogsDb.CreateBattleLogsTableIfNotExists(dbConnection);
+            battleLogsDb.CreateBattlePlayersTableIfNotExists(dbConnection);
         }
     }
 }

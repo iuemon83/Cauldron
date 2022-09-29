@@ -1,6 +1,6 @@
 ﻿using Assets.Scripts.ServerShared.MessagePackObjects;
+using Cauldron.Core;
 using Cauldron.Core.Entities;
-using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.Services;
 using Grpc.Core;
@@ -19,7 +19,7 @@ namespace Cauldron.Server.Services
 {
     public class CauldronHub : StreamingHubBase<ICauldronHub, ICauldronHubReceiver>, ICauldronHub
     {
-        public readonly static int GiveUpAnswerTimeInSecondes = 300;
+        public readonly static int GiveUpAnswerTimeInSeconds = 300;
 
         private static GameContext CreateGameContext(GameId gameId, PlayerId PlayerId)
         {
@@ -81,7 +81,7 @@ namespace Cauldron.Server.Services
         protected override async ValueTask OnConnecting()
         {
             // handle connection if needed.
-            Console.WriteLine($"client connected {this.Context.ContextId}");
+            this._logger.LogInformation($"client connected {this.Context.ContextId}");
 
             this.dbConnection = new BattleLogDb().Connection();
             await this.dbConnection.OpenAsync();
@@ -139,7 +139,7 @@ namespace Cauldron.Server.Services
                         //TODO エラー飛ばすけどクライアント側で処理してない
                         // エラーになると、このカードのPlayFromHandが失敗する。（クライアント側が選択して送ってきても何も起きない）
                         // その後に、なにかアクションすると再接続して、処理が続行される
-                        if (s.Elapsed >= TimeSpan.FromSeconds(GiveUpAnswerTimeInSecondes))
+                        if (s.Elapsed >= TimeSpan.FromSeconds(GiveUpAnswerTimeInSeconds))
                         {
                             throw new InvalidOperationException("give up recieve answer");
                         }
@@ -186,6 +186,145 @@ namespace Cauldron.Server.Services
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
+        Task<GameReplay[]> ICauldronHub.ListGameHistories(ListGameHistoriesRequest request)
+        {
+            return Task.FromResult(new BattleLogDb().ListGameHistories(this.dbConnection, request.GameIdList).ToArray());
+        }
+
+        [FromTypeFilter(typeof(LoggingAttribute))]
+        async Task<int> ICauldronHub.FirstActionLog(GameId gameId)
+        {
+            var (success, room) = await this.Group.TryAddAsync(
+                Guid.NewGuid().ToString(),
+                1, true);
+
+            if (!success)
+            {
+                // 失敗
+                throw new InvalidOperationException("failed create room!!!!");
+            }
+
+            this.room = room;
+            return await ((ICauldronHub)this).NextActionLog(gameId, new PlayerId(Guid.Empty), -1);
+        }
+
+        [FromTypeFilter(typeof(LoggingAttribute))]
+        Task<int> ICauldronHub.NextActionLog(GameId gameId, PlayerId playerId, int currentActionLogId)
+        {
+            if (this.room == null)
+            {
+                throw new InvalidOperationException("room is null");
+            }
+
+            this._logger.LogInformation($"current action id={currentActionLogId}");
+
+            var log = new BattleLogDb().FindNextActionLog(this.dbConnection, gameId, playerId, currentActionLogId);
+            if (log == null)
+            {
+                this._logger.LogInformation("end replay!!!!!!!!!");
+                return Task.FromResult(-1);
+            }
+
+            this._logger.LogInformation($"next action id={log.ActionLogId}");
+
+            switch (log.NotifyEvent)
+            {
+                case NotifyEvent.OnPlay:
+                    {
+                        var message = JsonConverter.Deserialize<PlayCardNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnPlayCard(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnStartTurn:
+                    {
+                        var message = JsonConverter.Deserialize<StartTurnNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnStartTurn(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnAddCard:
+                    {
+                        var message = JsonConverter.Deserialize<AddCardNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnAddCard(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnExcludeCard:
+                    {
+                        var message = JsonConverter.Deserialize<ExcludeCardNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnExcludeCard(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnMoveCard:
+                    {
+                        var message = JsonConverter.Deserialize<MoveCardNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnMoveCard(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnModifyCard:
+                    {
+                        var message = JsonConverter.Deserialize<ModifyCardNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnModifyCard(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnModifyPlayer:
+                    {
+                        var message = JsonConverter.Deserialize<ModifyPlayerNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnModifyPlayer(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnBattleStart:
+                    {
+                        var message = JsonConverter.Deserialize<BattleNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnBattleStart(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnBattleEnd:
+                    {
+                        var message = JsonConverter.Deserialize<BattleNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnBattleEnd(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnDamage:
+                    {
+                        var message = JsonConverter.Deserialize<DamageNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnDamage(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnHeal:
+                    {
+                        var message = JsonConverter.Deserialize<HealNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnHeal(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnModityCounter:
+                    {
+                        var message = JsonConverter.Deserialize<ModifyCounterNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnModifyCounter(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnStartGame:
+                    {
+                        //var message = JsonConverter.Deserialize<>(log.MessageJson);
+                        //this.Broadcast(this.room).OnStartGame(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.OnEndGame:
+                    {
+                        var message = JsonConverter.Deserialize<EndGameNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnEndGame(log.GameContext, message);
+                        break;
+                    }
+                case NotifyEvent.AskCardAction:
+                    {
+                        //var message = JsonConverter.Deserialize<EndGameNotifyMessage>(log.MessageJson);
+                        //this.Broadcast(this.room).OnAsk(log.GameContext, message);
+                        break;
+                    }
+            }
+
+            return Task.FromResult(log.ActionLogId);
+        }
+
+        [FromTypeFilter(typeof(LoggingAttribute))]
         async Task<OpenNewRoomReply> ICauldronHub.OpenNewRoom(OpenNewRoomRequest request)
         {
             var ruleBook = request.RuleBook;
@@ -198,78 +337,195 @@ namespace Cauldron.Server.Services
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnStartTurn(gameContext, message);
                         this._logger.LogInformation("OnStartTurn: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsStartTurnEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnPlay: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnPlayCard(gameContext, message);
                         this._logger.LogInformation("OnPlayCard: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsPlayEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnAddCard: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnAddCard(gameContext, message);
                         this._logger.LogInformation("OnAddCard: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsAddCardEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnExcludeCard: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnExcludeCard(gameContext, message);
                         this._logger.LogInformation("OnExcludeCard: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsExcludeCardEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnBattleStart: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnBattleStart(gameContext, message);
                         this._logger.LogInformation("OnBattle: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsBattleStartEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnBattleEnd: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnBattleEnd(gameContext, message);
                         this._logger.LogInformation("OnBattle: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsBattleEndEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnDamage: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnDamage(gameContext, message);
                         this._logger.LogInformation("OnDamage: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsDamageEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnHeal: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnHeal(gameContext, message);
                         this._logger.LogInformation("OnHeal: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsHealEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnModifyCard: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnModifyCard(gameContext, message);
                         this._logger.LogInformation("OnModifyCard: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsModifyCardEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnModifyPlayer: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnModifyPlayer(gameContext, message);
                         this._logger.LogInformation("OnModifyPlayer: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsModifyPlayerEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnMoveCard: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnMoveCard(gameContext, message);
                         this._logger.LogInformation("OnMoveCard: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsMoveCardEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnModityCounter: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnModifyCounter(gameContext, message);
                         this._logger.LogInformation("OnModifyCounter: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsModityCounterEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
                     },
                     OnEndGame: (playerId, gameContext, message) =>
                     {
                         this.BroadcastTo(this.room, playerId.Value).OnEndGame(gameContext, message);
                         this._logger.LogInformation($"OnEndGame:");
 
-                        if (playerId == this.self.Id)
+                        try
                         {
-                            try
-                            {
-                                new BattleLogDb().Add(this.dbConnection,
-                                    new BattleLog(this.gameId, gameContext.WinnerPlayerId, GameEvent.OnEndGame));
-                            }
-                            catch (Exception e)
-                            {
-                                this._logger.LogError(e, "db error");
-                            }
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsEndGameEvent(this.gameId, playerId, gameContext.WinnerPlayerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
                         }
                     },
                     AskCardAction: this.AskCard
@@ -301,16 +557,6 @@ namespace Cauldron.Server.Services
                         throw new Exception("room is full");
                 }
 
-                try
-                {
-                    new BattleLogDb().Add(this.dbConnection,
-                        new BattleLog(this.gameId, new PlayerId(Guid.Empty), GameEvent.OnStartGame));
-                }
-                catch (Exception e)
-                {
-                    this._logger.LogError(e, "db error");
-                }
-
                 return new OpenNewRoomReply(OpenNewRoomReply.StatusCodeValue.Ok, this.gameId, enterResult.PlayerId);
             }
             catch (Exception e)
@@ -325,7 +571,7 @@ namespace Cauldron.Server.Services
         [FromTypeFilter(typeof(LoggingAttribute))]
         async Task<bool> ICauldronHub.LeaveRoom()
         {
-            this._logger.LogInformation("leave game " + this.self?.Name ?? "");
+            this._logger.LogInformation("leave game {name}", this.self?.Name ?? "");
 
             if (this.room == null)
             {
@@ -441,28 +687,41 @@ namespace Cauldron.Server.Services
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
             }
 
-            await gameMaster.StartGame(firstPlayerId);
-
-            var logs = gameMaster.playerRepository.AllPlayers
-                .Select(p =>
-                {
-                    var playOrder = firstPlayerId == p.Id ? 1 : 2;
-                    var cardNamesInDeck = p.Hands.AllCards.Concat(p.Deck.AllCards).Select(c => c.Name).ToArray();
-                    //var ip = this.Context.CallContext.GetHttpContext().Connection.RemoteIpAddress?.ToString() ?? "";
-
-                    return new BattlePlayer(request.GameId, p.Id, p.Name, cardNamesInDeck, playOrder, "");
-                });
-
-            foreach (var log in logs)
+            try
             {
-                try
+                new BattleLogDb().Add(this.dbConnection,
+                    BattleLog.AsStartGameEvent(this.gameId));
+
+                new BattleLogDb().Add(this.dbConnection,
+                    new CardPoolLog(this.gameId, gameMaster.CardPool));
+
+                await gameMaster.StartGame(firstPlayerId);
+
+                var logs = gameMaster.playerRepository.AllPlayers
+                    .Select(p =>
+                    {
+                        var playOrder = firstPlayerId == p.Id ? 1 : 2;
+                        var cardNamesInDeck = p.Hands.AllCards.Concat(p.Deck.AllCards).Select(c => c.Name).ToArray();
+                        //var ip = this.Context.CallContext.GetHttpContext().Connection.RemoteIpAddress?.ToString() ?? "";
+
+                        return new BattlePlayer(request.GameId, p.Id, p.Name, cardNamesInDeck, playOrder, "");
+                    });
+
+                foreach (var log in logs)
                 {
-                    new BattleLogDb().Add(this.dbConnection, log);
+                    try
+                    {
+                        new BattleLogDb().Add(this.dbConnection, log);
+                    }
+                    catch (Exception e)
+                    {
+                        this._logger.LogError(e, "db error");
+                    }
                 }
-                catch (Exception e)
-                {
-                    this._logger.LogError(e, "db error");
-                }
+            }
+            catch (Exception e)
+            {
+                this._logger.LogError(e, "db error");
             }
         }
 

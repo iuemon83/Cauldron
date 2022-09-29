@@ -1,5 +1,6 @@
 ﻿using MessagePack;
 using System;
+using System.Text.Json.Serialization;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -14,6 +15,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
         public Guid Value { get; }
 
+        [JsonConstructor]
         public GameId(Guid value)
         {
             this.Value = value;

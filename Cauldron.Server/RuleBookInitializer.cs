@@ -1,4 +1,4 @@
-﻿using Cauldron.Core.Entities;
+﻿using Cauldron.Core;
 using Cauldron.Shared.MessagePackObjects;
 using System;
 using System.IO;

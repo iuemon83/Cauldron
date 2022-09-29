@@ -35,7 +35,7 @@ namespace Assets.Scripts
             set => LoadFromFile().DeckListJson = value;
         }
 
-        private static string SettingsFilePath => Path.Combine(Application.dataPath, "settings.json");
+        private static readonly string SettingsFilePath = Path.Combine(Application.dataPath, "settings.json");
 
         private static readonly string localDataPath = Path.Combine(Application.persistentDataPath, "data.json");
 

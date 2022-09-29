@@ -1,29 +1,50 @@
 using Assets.Scripts;
+using Assets.Scripts.ServerShared.MessagePackObjects;
+using System;
 using TMPro;
 using UnityEngine;
 
 public class ListBattleLogNodeController : MonoBehaviour
 {
     [SerializeField]
-    private Color winColor = default;
-    [SerializeField]
-    private Color loseColor = default;
-
-    [SerializeField]
     private TextMeshProUGUI timestampText = default;
     [SerializeField]
-    private TextMeshProUGUI IsWinText = default;
+    private TextMeshProUGUI player1NameText = default;
     [SerializeField]
-    private TextMeshProUGUI opponentNameText = default;
+    private TextMeshProUGUI player2NameText = default;
 
-    public LocalBattleLog Source { get; private set; }
+    private Action playGameReplayAction;
 
-    public void Set(LocalBattleLog source)
+    private GameReplay gameReplay;
+
+    public void Set(GameReplay gameReplay, Action playGameReplayAction)
     {
-        this.Source = source;
-        this.timestampText.text = source.TimestampText;
-        this.IsWinText.text = source.IsWin ? "Win" : "Lose";
-        this.IsWinText.color = source.IsWin ? winColor : loseColor;
-        this.opponentNameText.text = source.OpponentName;
+        this.gameReplay = gameReplay;
+        this.timestampText.text = gameReplay.DateTime.ToString();
+        this.player1NameText.text = "Player1";
+        this.player2NameText.text = "Player2";
+        this.playGameReplayAction = playGameReplayAction;
+    }
+
+    public void Set(GameReplay gameReplay, Action okButtonClickAction, LocalBattleLog localBattleLog)
+    {
+        this.Set(gameReplay, okButtonClickAction);
+
+        this.player1NameText.text = gameReplay.PlayerIdList[0].ToString() == localBattleLog.YouIdText
+            ? localBattleLog.YouName
+            : localBattleLog.OpponentName;
+        this.player2NameText.text = gameReplay.PlayerIdList[1].ToString() == localBattleLog.YouIdText
+            ? localBattleLog.YouName
+            : localBattleLog.OpponentName;
+    }
+
+    public void OnPlayReplayButtonClicked()
+    {
+        this.playGameReplayAction?.Invoke();
+    }
+
+    public void OnCopyGameIdButtonClicked()
+    {
+        GUIUtility.systemCopyBuffer = this.gameReplay.GameId.ToString();
     }
 }

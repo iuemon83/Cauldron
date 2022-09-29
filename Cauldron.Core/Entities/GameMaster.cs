@@ -137,6 +137,7 @@ namespace Cauldron.Core.Entities
         public int AllTurnCount => this.PlayerTurnCountById.Sum(x => x.Value);
 
         public IReadOnlyList<CardDef> CardPool => this.cardRepository.CardPool;
+        public IReadOnlyList<Card> AllCards => this.cardRepository.AllCards;
 
         private readonly EffectManager effectManager;
 

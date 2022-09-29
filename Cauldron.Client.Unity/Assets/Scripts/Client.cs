@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts;
 using Assets.Scripts.ServerShared.MessagePackObjects;
-using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.Services;
 using Cysharp.Threading.Tasks;
@@ -267,5 +266,20 @@ public class Client
     public async UniTask<RoomOutline[]> ListOpenGames()
     {
         return await this.magiconionClient.ListOpenGames();
+    }
+
+    public async UniTask<GameReplay[]> ListGameHistories(ListGameHistoriesRequest request)
+    {
+        return await this.magiconionClient.ListGameHistories(request);
+    }
+
+    public async UniTask<int> FirstActionLog(GameId gameId)
+    {
+        return await this.magiconionClient.FirstActionLog(gameId);
+    }
+
+    public async UniTask<int> NextActionLog(GameId gameId, PlayerId playerId, int currentActionLogId)
+    {
+        return await this.magiconionClient.NextActionLog(gameId, playerId, currentActionLogId);
     }
 }

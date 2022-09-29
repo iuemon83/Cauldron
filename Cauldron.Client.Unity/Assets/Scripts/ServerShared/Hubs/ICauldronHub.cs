@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.ServerShared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects;
 using MagicOnion;
+using System;
 using System.Threading.Tasks;
 
 namespace Cauldron.Shared.Services
@@ -14,6 +15,11 @@ namespace Cauldron.Shared.Services
         Task<ListAllowedClientVersionsReply> ListAllowedClientVersions();
 
         Task<RoomOutline[]> ListOpenGames();
+
+        Task<GameReplay[]> ListGameHistories(ListGameHistoriesRequest request);
+
+        Task<int> FirstActionLog(GameId gameId);
+        Task<int> NextActionLog(GameId gameId, PlayerId playerId, int currentActionLogId);
 
         Task<OpenNewRoomReply> OpenNewRoom(OpenNewRoomRequest request);
 

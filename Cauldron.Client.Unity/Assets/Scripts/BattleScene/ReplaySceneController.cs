@@ -1,4 +1,5 @@
 using Assets.Scripts;
+using Assets.Scripts.ServerShared.MessagePackObjects;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
@@ -7,27 +8,18 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UniRx;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class BattleSceneController : MonoBehaviour
+public class ReplaySceneController : MonoBehaviour
 {
     private static readonly int MaxNumFields = 5;
     private static readonly int MaxNumHands = 10;
 
-    public static BattleSceneController Instance;
-
-    public Color YouColor => this.youColor;
-    public Color OpponentColor => this.opponentColor;
+    public Color YouColor => BattleSceneController.Instance.YouColor;
+    public Color OpponentColor => BattleSceneController.Instance.OpponentColor;
 
     public PlayerId YouId => this.youPlayerController.PlayerId;
-
-    [SerializeField]
-    private Color youColor = default;
-    [SerializeField]
-    private Color opponentColor = default;
 
     [SerializeField]
     private HandCardController handCardPrefab = default;
@@ -38,8 +30,6 @@ public class BattleSceneController : MonoBehaviour
     private Canvas canvas = default;
     [SerializeField]
     private ConfirmDialogController confirmDialogPrefab = default;
-    [SerializeField]
-    private ChoiceDialogController choiceDialogPrefab = default;
     [SerializeField]
     private ActionLogViewController actionLogViewController = default;
 
@@ -81,28 +71,8 @@ public class BattleSceneController : MonoBehaviour
     [SerializeField]
     private GameObject handCardsContainer = default;
 
-    /// <summary>
-    /// 選択中の手札カードを配置するためのコンテナ
-    /// </summary>
-    [SerializeField]
-    private GameObject playTargetHandCardsContainer = default;
-
     [SerializeField]
     private CardBigDetailController cardDetailViewController = default;
-
-    [SerializeField]
-    private Button endTurnButton = default;
-    [SerializeField]
-    private Button surrenderButton = default;
-
-    [SerializeField]
-    private Button choiceCardButton = default;
-    [SerializeField]
-    private TextMeshProUGUI numPicksText = default;
-    [SerializeField]
-    private TextMeshProUGUI numPicksLimitText = default;
-    [SerializeField]
-    private GameObject pickUiGroup = default;
 
     [SerializeField]
     private GameObject battleUiContainer = default;
@@ -125,50 +95,25 @@ public class BattleSceneController : MonoBehaviour
 
     private GameContext currentGameContext;
 
-    private FieldCardController attackCardController;
-
-    private HandCardController playTargetHand = default;
-
     private bool IsPlayable(CardId cardId) => this.currentGameContext?.You?.PlayableCards?.Contains(cardId) ?? false;
 
-    private readonly ChoiceService choiceService = new ChoiceService();
-
-    private int NumPicks
+    private void OnDestroy()
     {
-        set
+        foreach (var disposable in this.disposableList)
         {
-            this.numPicksText.text = value.ToString();
-            if (this.choiceService.IsLimit)
-            {
-                this.numPicksText.color = ChoiceService.LimitSelectedColor;
-            }
-            else
-            {
-                this.numPicksText.color = ChoiceService.NoLimitSelectedColor;
-            }
+            disposable.Dispose();
         }
     }
-    private int NumPicksLimit
+
+    public async UniTask Init(GameReplay gameReplay, PlayerId playerId)
     {
-        set { this.numPicksLimitText.text = value.ToString(); }
-    }
-
-    private void Start()
-    {
-        Instance = this;
-    }
-
-    public async UniTask Init()
-    {
-        this.battleUiContainer.SetActive(true);
-        this.replayUiContainer.SetActive(false);
-
-        this.endTurnButton.interactable = false;
-
-        while (Instance == null)
+        while (BattleSceneController.Instance == null)
         {
             await UniTask.DelayFrame(1);
         }
+
+        this.battleUiContainer.SetActive(false);
+        this.replayUiContainer.SetActive(true);
 
         var holder = ConnectionHolder.Find();
 
@@ -187,7 +132,7 @@ public class BattleSceneController : MonoBehaviour
         {
             holder.Receiver.OnPlayCard.Subscribe((a) => this.OnPlayCard(a.gameContext, a.message)),
             holder.Receiver.OnAddCard.Subscribe((a) => this.OnAddCard(a.gameContext, a.message)),
-            holder.Receiver.OnAsk.Subscribe((a) => this.OnAsk(a)),
+            //holder.Receiver.OnAsk.Subscribe((a) => this.OnAsk(a)),
             holder.Receiver.OnBattleStart.Subscribe((a) => this.OnBattleStart(a.gameContext, a.message)),
             holder.Receiver.OnBattleEnd.Subscribe((a) => this.OnBattleEnd(a.gameContext, a.message)),
             holder.Receiver.OnDamage.Subscribe((a) => this.OnDamage(a.gameContext, a.message)),
@@ -201,178 +146,100 @@ public class BattleSceneController : MonoBehaviour
             holder.Receiver.OnEndGame.Subscribe((a) => this.OnEndGame(a.gameContext, a.message)),
         });
 
-        this.connectionHolder = ConnectionHolder.Find();
+        this.connectionHolder = holder;
 
-        this.youPlayerController.Set(this.Client.PlayerId);
+        // リプレイするプレイヤーのID
+        this.youPlayerController.Set(playerId);
 
-        await this.Client.ReadyGame();
+        this.gameReplay = gameReplay;
+        this.replayPlayerId = playerId;
+        this.replayCardpool = this.gameReplay.CardPool.ToDictionary(x => x.Id, x => x);
+        this.currentActionLogId = await this.Client.FirstActionLog(this.gameReplay.GameId);
+
+        this.initialized = true;
     }
 
-    private void OnDestroy()
-    {
-        foreach (var disposable in this.disposableList)
-        {
-            disposable.Dispose();
-        }
-    }
+    private GameReplay gameReplay;
+    private PlayerId replayPlayerId;
+    private int currentActionLogId;
+    private bool isRequesting;
+    private bool isEnd;
+    private float prevTime;
+    private Dictionary<CardDefId, CardDef> replayCardpool;
+    private bool isPaused;
+    private float requestInterval = 0.1f;
+    private bool initialized = false;
 
     private async void Update()
     {
-        if (!this.updating)
+        if (!this.initialized)
         {
-            if (this.updateViewActionQueue.TryDequeue(out var updateViewAction))
+            return;
+        }
+
+        if (this.gameReplay == null)
+        {
+            return;
+        }
+
+        if (this.isPaused)
+        {
+            return;
+        }
+
+        if (this.isEnd)
+        {
+            return;
+        }
+
+        if (Time.time - this.prevTime < this.requestInterval)
+        {
+            return;
+        }
+
+        this.prevTime = Time.time;
+
+        if (this.updating)
+        {
+            return;
+        }
+
+        if (this.updateViewActionQueue.TryDequeue(out var updateViewAction))
+        {
+            try
             {
                 this.updating = true;
                 await updateViewAction();
+            }
+            finally
+            {
                 this.updating = false;
             }
+        }
+        else
+        {
+            await this.RequestNextAction();
         }
     }
 
     public void Pick(PlayerController controller)
     {
-        this.choiceService.Pick(controller);
-        this.NumPicks = this.choiceService.CurrentNumPicks;
     }
 
     public void UnPick(PlayerController controller)
     {
-        this.choiceService.UnPick(controller);
-        this.NumPicks = this.choiceService.CurrentNumPicks;
     }
 
     public void Pick(CardController controller)
     {
-        this.choiceService.Pick(controller);
-        this.NumPicks = this.choiceService.CurrentNumPicks;
     }
 
     public void UnPick(CardController controller)
     {
-        this.choiceService.UnPick(controller);
-        this.NumPicks = this.choiceService.CurrentNumPicks;
     }
 
     private void SetPlayTargetHand(HandCardController target)
     {
-        // 選択モードでは機能させない
-        if (this.choiceService.IsChoiceMode)
-        {
-            return;
-        }
-
-        if (!this.IsPlayable(target.CardId))
-        {
-            return;
-        }
-
-        if (this.playTargetHand == null)
-        {
-            // unityのnull判定はぶっ壊れてるのでnullを入れる
-            this.playTargetHand = null;
-        }
-
-        var prevId = this.playTargetHand?.CardId;
-
-        this.ResetAllMarks();
-
-        if (prevId != target.CardId)
-        {
-            target.transform.SetParent(this.playTargetHandCardsContainer.transform, false);
-            target.TogglePlayTarget();
-            this.playTargetHand = target;
-        }
-    }
-
-    public async UniTask PlayFromHand(HandCardController handCardController)
-    {
-        this.ResetAllMarks();
-        await this.Client.PlayFromHand(handCardController.CardId);
-    }
-
-    public async UniTask AttackToOpponentPlayerIfSelectedAttackCard()
-    {
-        // 選択モードでは機能させない
-        if (this.choiceService.IsChoiceMode)
-        {
-            return;
-        }
-
-        if (this.attackCardController == null)
-        {
-            return;
-        }
-
-        await this.Client.AttackToOpponentPlayer(this.attackCardController.CardId);
-
-        // 攻撃後は選択済みのカードの選択を解除する
-        this.UnSelectAttackCard();
-    }
-
-    public async void AttackToCardIfSelectedAttackCard(FieldCardController guardFieldCardController)
-    {
-        // 選択モードでは機能させない
-        if (this.choiceService.IsChoiceMode)
-        {
-            return;
-        }
-
-        if (this.attackCardController == null)
-        {
-            // 攻撃元のカードが選択されていない
-            return;
-        }
-
-        var attackCardId = this.attackCardController.CardId;
-        var guardCardId = guardFieldCardController.CardId;
-
-        // 攻撃する
-        await this.Client.Attack(attackCardId, guardCardId);
-
-        // 攻撃後は選択済みのカードの選択を解除する
-        this.UnSelectAttackCard();
-    }
-
-    public void ToggleAttackCard(FieldCardController attackCardController)
-    {
-        // 選択モードでは機能させない
-        if (this.choiceService.IsChoiceMode)
-        {
-            return;
-        }
-
-        var isSelected = this.attackCardController?.CardId == attackCardController.CardId;
-
-        if (isSelected)
-        {
-            // 解除
-            this.attackCardController.VisibleAttackIcon(false);
-
-            this.ResetAttackTargets();
-
-            this.attackCardController = null;
-        }
-        else
-        {
-            this.ResetAllMarks();
-
-            // 攻撃カードとして指定する
-
-            if (!fieldCardControllersByCardId.TryGetValue(attackCardController.CardId, out var fieldCardController))
-            {
-                return;
-            }
-
-            if (!this.CanAttack(fieldCardController.Card.Id))
-            {
-                return;
-            }
-
-            this.attackCardController = fieldCardController;
-            this.attackCardController.VisibleAttackIcon(true);
-
-            this.MarkingAttackTargets();
-        }
     }
 
     private bool CanAttack(CardId cardid)
@@ -387,54 +254,6 @@ public class BattleSceneController : MonoBehaviour
             ||
             (this.currentGameContext.Opponent.AttackableCardIdList.TryGetValue(cardid, out var opTargets)
                 && opTargets.Any);
-    }
-
-    public void MarkingAttackTargets()
-    {
-        if (this.attackCardController == null)
-        {
-            return;
-        }
-
-        var targets = this.currentGameContext.You.PublicPlayerInfo.AttackableCardIdList[this.attackCardController.CardId];
-
-        this.ResetAttackTargets();
-
-        foreach (var targetPlayerId in targets.PlayerIdList)
-        {
-            foreach (var player in new[] { this.opponentPlayerController, this.youPlayerController })
-            {
-                player.VisibleAttackTargetIcon(player.PlayerId == targetPlayerId);
-            }
-        }
-
-        foreach (var targetCardId in targets.CardIdList)
-        {
-            if (fieldCardControllersByCardId.TryGetValue(targetCardId, out var fieldCardController))
-            {
-                fieldCardController.VisibleAttackTargetIcon(true);
-            }
-        }
-    }
-
-    public void UnSelectAttackCard()
-    {
-        if (this.attackCardController != null)
-        {
-            this.attackCardController.VisibleAttackIcon(false);
-            this.attackCardController = null;
-        }
-
-        this.ResetAttackTargets();
-    }
-
-    public void ResetAttackTargets()
-    {
-        this.opponentPlayerController.VisibleAttackTargetIcon(false);
-        foreach (var fieldCardController in fieldCardControllersByCardId.Values)
-        {
-            fieldCardController.VisibleAttackTargetIcon(false);
-        }
     }
 
     /// <summary>
@@ -481,120 +300,79 @@ public class BattleSceneController : MonoBehaviour
         this.opponentExcludedCardListViewController.ToggleDisplay();
     }
 
-    /// <summary>
-    /// ターン終了ボタンのクリックイベント
-    /// </summary>
-    public async void OnEndTurnButtonClick()
+    public void OnAutoReplayButtonClick()
     {
-        Debug.Log("click endturn Button!");
-
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
-
-        this.ResetAllMarks();
-
-        await UniTask.Delay(TimeSpan.FromSeconds(1));
-
-        await this.Client.EndTurn();
+        this.StartAutoReplay();
     }
 
-    /// <summary>
-    /// 降参ボタンのクリックイベント
-    /// </summary>
-    public void OnSurrenderButtonClick()
+    public void OnPauseActionButtonClick()
     {
-        Debug.Log("click surrender Button!");
+        this.PauseReplay();
+    }
 
-        this.ShowConfirmSurrenderDialog();
+    public void OnEndReplayButtonClick()
+    {
+        this.PauseReplay();
+
+        this.ShowConfirmEndReplayDialog();
+    }
+
+    private void StartAutoReplay()
+    {
+        this.isPaused = false;
+    }
+
+    private void PauseReplay()
+    {
+        this.isPaused = true;
+    }
+
+    private void ShowConfirmEndReplayDialog()
+    {
+        var title = "リプレイの終了";
+        var message = "リプレイを終了しますか？";
+        var dialog = Instantiate(this.confirmDialogPrefab);
+        dialog.Init(title, message, ConfirmDialogController.DialogType.Confirm,
+            onOkAction: async () =>
+            {
+                await this.Client.LeaveRoom();
+                await Utility.LoadAsyncScene(SceneNames.ListBattleLogsScene);
+            });
+        dialog.transform.SetParent(this.canvas.transform, false);
+    }
+
+    private async UniTask RequestNextAction()
+    {
+        if (this.isRequesting)
+        {
+            return;
+        }
+
+        try
+        {
+            this.isRequesting = true;
+
+            this.currentActionLogId = await this.Client.NextActionLog(
+                this.gameReplay.GameId,
+                this.replayPlayerId,
+                this.currentActionLogId
+                );
+
+            if (this.currentActionLogId == -1)
+            {
+                this.isEnd = true;
+            }
+        }
+        finally
+        {
+            this.isRequesting = false;
+        }
     }
 
     private async UniTask AddActionLog(ActionLog actionLog, Card effectOwnerCard = default, CardEffectId? effectId = default)
     {
         await this.actionLogViewController.AddLog(actionLog, effectOwnerCard, effectId);
     }
-
-    private async UniTask<bool> DoAnswer(ChoiceAnswer answer)
-    {
-        if (!this.choiceService.ValidChoiceAnwser(answer))
-        {
-            return false;
-        }
-
-        var result = await this.Client.AnswerChoice(this.choiceService.AskMessage.QuestionId, answer);
-        if (result != GameMasterStatusCode.OK)
-        {
-            Debug.Log($"result: {result}");
-
-            return false;
-        }
-
-        // リセット
-        this.FinishChoiceMode();
-
-        return true;
-    }
-
-    private void ShowChoiceDialog()
-    {
-        var dialog = Instantiate(this.choiceDialogPrefab);
-        dialog.Init(this.choiceService.AskMessage, async answer =>
-        {
-            AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
-
-            var result = await this.DoAnswer(answer);
-            if (result)
-            {
-                Destroy(dialog.gameObject);
-            }
-        });
-
-        dialog.transform.SetParent(this.canvas.transform, false);
-    }
-
-    /// <summary>
-    /// 選択完了ボタンのクリックイベント
-    /// </summary>
-    public async void OnPickedButtonClick()
-    {
-        this.choiceCardButton.interactable = false;
-
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
-
-        var answer = this.choiceService.Answer;
-
-        var result = await this.DoAnswer(answer);
-        if (!result)
-        {
-            this.choiceCardButton.interactable = true;
-        }
-    }
-
-    private void StartChoiceMode(AskMessage askMessage)
-    {
-        // カード選択に必要なボタンだけを有効にする
-        this.ResetAllMarks();
-        this.endTurnButton.interactable = false;
-        this.surrenderButton.interactable = false;
-
-        this.pickUiGroup.SetActive(true);
-        this.choiceCardButton.interactable = true;
-        this.NumPicks = 0;
-
-        this.choiceService.Init(askMessage);
-        this.NumPicksLimit = this.choiceService.LimitNumPicks;
-    }
-
-    private void FinishChoiceMode()
-    {
-        this.NumPicksLimit = 0;
-        this.NumPicks = 0;
-        this.choiceCardButton.interactable = false;
-        this.pickUiGroup.SetActive(false);
-
-        this.endTurnButton.interactable = true;
-        this.surrenderButton.interactable = true;
-        this.ResetAllMarks();
-    }
-
 
     private async UniTask UpdateGameContext(GameContext gameContext)
     {
@@ -837,20 +615,7 @@ public class BattleSceneController : MonoBehaviour
             onOkAction: async () =>
             {
                 await this.Client.LeaveRoom();
-                await Utility.LoadAsyncScene(SceneNames.ListGameScene);
-            });
-        dialog.transform.SetParent(this.canvas.transform, false);
-    }
-
-    public void ShowConfirmSurrenderDialog()
-    {
-        var title = "降参";
-        var message = "降参しますか？";
-        var dialog = Instantiate(this.confirmDialogPrefab);
-        dialog.Init(title, message, ConfirmDialogController.DialogType.Confirm,
-            onOkAction: async () =>
-            {
-                await this.Client.Surrender();
+                await Utility.LoadAsyncScene(SceneNames.ListBattleLogsScene);
             });
         dialog.transform.SetParent(this.canvas.transform, false);
     }
@@ -867,8 +632,6 @@ public class BattleSceneController : MonoBehaviour
 
                 this.youPlayerController.SetActiveTurn(true);
                 this.opponentPlayerController.SetActiveTurn(false);
-                this.endTurnButton.interactable = true;
-                await this.Client.StartTurn();
             }
             else
             {
@@ -876,7 +639,6 @@ public class BattleSceneController : MonoBehaviour
 
                 this.youPlayerController.SetActiveTurn(false);
                 this.opponentPlayerController.SetActiveTurn(true);
-                this.endTurnButton.interactable = false;
             }
         });
     }
@@ -887,18 +649,6 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(() =>
         {
-            // 戦闘結果のログを追加
-            var localdata = LocalData.LoadLocalData();
-            localdata.AddBattleLog(LocalBattleLog.Create(
-                this.Client.GameId,
-                this.currentGameContext.You.PublicPlayerInfo.Id,
-                this.currentGameContext.You.PublicPlayerInfo.Name,
-                this.currentGameContext.Opponent.Name,
-                message.WinnerPlayerId == this.youPlayerController.PlayerId
-            ));
-
-            LocalData.SaveLocalData();
-
             this.ShowEndGameDialog(message);
 
             return UniTask.CompletedTask;
@@ -911,8 +661,9 @@ public class BattleSceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            if (!this.connectionHolder.CardPool.TryGetValue(message.CardDefId, out var carddef))
+            if (!this.replayCardpool.TryGetValue(message.CardDefId, out var carddef))
             {
+                Debug.Log("Undefined Play Card id=" + message.CardDefId);
                 return;
             }
 
@@ -920,16 +671,11 @@ public class BattleSceneController : MonoBehaviour
 
             Debug.Log($"プレイ: {carddef.Name}({ownerName})");
 
-            //TODO carddefじゃなくてcardは取れない？
-            //await this.AddActionLog(new ActionLog($"プレイ: {carddef.Name}({ownerName})", card));
-
             if (carddef.Type == CardType.Sorcery)
             {
                 await AudioController.CreateOrFind().PlayAudio(carddef?.Name ?? "", CardAudioCache.CardAudioType.Play);
             }
             await this.DisplaySmallCardDetail(carddef);
-
-            //await this.UpdateGameContext(gameContext);
         });
     }
 
@@ -1400,49 +1146,6 @@ public class BattleSceneController : MonoBehaviour
         });
     }
 
-    void OnAsk(AskMessage message)
-    {
-        Debug.Log($"questionId={message.QuestionId}");
-
-        this.updateViewActionQueue.Enqueue(() =>
-        {
-            this.StartChoiceMode(message);
-
-            // ダイアログで選択させるか、フィールドから選択させるかの判定
-            var choiceFromDialog = message.ChoiceCandidates.CardDefList.Length != 0
-                 || message.ChoiceCandidates.CardList
-                     .Any(x => x.Zone.ZoneName == ZoneName.Cemetery
-                         || x.Zone.ZoneName == ZoneName.Deck
-                         || x.Zone.ZoneName == ZoneName.CardPool);
-
-            if (choiceFromDialog)
-            {
-                this.ShowChoiceDialog();
-                return UniTask.CompletedTask;
-            }
-
-            foreach (var player in new[] { this.youPlayerController, this.opponentPlayerController })
-            {
-                player.VisiblePickCandidateIcon(message.ChoiceCandidates.PlayerIdList.Contains(player.PlayerId));
-            }
-
-            foreach (var card in message.ChoiceCandidates.CardList)
-            {
-                if (fieldCardControllersByCardId.TryGetValue(card.Id, out var fieldCardController))
-                {
-                    fieldCardController.VisiblePickCandidateIcon(true);
-                }
-
-                if (this.handCardObjectsByCardId.TryGetValue(card.Id, out var handCardController))
-                {
-                    handCardController.VisiblePickCandidateIcon(true);
-                }
-            }
-
-            return UniTask.CompletedTask;
-        });
-    }
-
     private void DisplaySmallCardDetailSimple(Card card)
     {
         this.cardDetailController.SetCard(card);
@@ -1458,32 +1161,5 @@ public class BattleSceneController : MonoBehaviour
     private void DisplayBigCardDetail(CardBridge card)
     {
         this.cardDetailViewController.Open(card);
-    }
-
-    public void ResetAllMarks()
-    {
-        foreach (var handController in this.handCardObjectsByCardId.Values)
-        {
-            handController.ResetAllIcon();
-        }
-
-        foreach (var fieldController in this.fieldCardControllersByCardId.Values)
-        {
-            fieldController.ResetAllIcon();
-        }
-
-        this.opponentPlayerController.ResetAllIcon();
-        this.youPlayerController.ResetAllIcon();
-
-        this.attackCardController = null;
-
-        this.choiceService.Reset();
-
-        if (this.playTargetHand != null)
-        {
-            this.playTargetHand.transform.SetParent(this.handCardsContainer.transform, false);
-            this.playTargetHand.DisablePlayTarget();
-            this.playTargetHand = null;
-        }
     }
 }

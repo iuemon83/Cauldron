@@ -227,7 +227,13 @@ namespace Cauldron.Core_Test
 
         public static async ValueTask<TestContext> InitTest(IEnumerable<CardDef> cardpool, IEnumerable<CardDef> deck, GameMasterOptions options, ITestOutputHelper output)
         {
-            options.CardRepository.SetCardPool(new CardPool(new[] { new CardSet(SampleCards2.CardsetName, cardpool.ToArray()) }));
+            var cardPoolArray = cardpool.ToArray();
+            foreach (var c in cardPoolArray)
+            {
+                c.DangerousSetNewId();
+            }
+
+            options.CardRepository.SetCardPool(new CardPool(new[] { new CardSet(SampleCards2.CardsetName, cardPoolArray) }));
 
             TestAnswer testAnswer = null;
             if (options.EventListener.AskCardAction == null)

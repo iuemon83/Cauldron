@@ -1,7 +1,6 @@
 using Assets.Scripts;
 using Assets.Scripts.ServerShared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects;
-using Grpc.Core;
 using System;
 using UniRx;
 using UnityEngine;
@@ -11,7 +10,7 @@ public class ListGameSceneController : MonoBehaviour
     [SerializeField]
     private GameObject GameList = default;
     [SerializeField]
-    private GameObject GameListNodePrefab = default;
+    private GameListNodeController GameListNodePrefab = default;
     [SerializeField]
     private CreateRoomDialogController SelectDeckDialog = default;
     [SerializeField]
@@ -48,8 +47,7 @@ public class ListGameSceneController : MonoBehaviour
 
     private void AddListNode(RoomOutline gameOutline)
     {
-        var node = Instantiate(this.GameListNodePrefab, this.listContent.transform);
-        var controller = node.GetComponent<GameListNodeController>();
+        var controller = Instantiate(this.GameListNodePrefab, this.listContent.transform);
         controller.Set(gameOutline, () =>
         {
             this.SelectDeckDialog.ShowYouJoinRoomDialog(
@@ -66,7 +64,12 @@ public class ListGameSceneController : MonoBehaviour
                         return;
                     }
 
-                    await Utility.LoadAsyncScene(SceneNames.BattleScene);
+                    await Utility.LoadAsyncScene(SceneNames.BattleScene, async () =>
+                    {
+                        // ‘Îí‰æ–Ê‚ğ‰Šú‰»
+                        var battleSceneController = FindObjectOfType<BattleSceneController>();
+                        await battleSceneController.Init();
+                    });
                 });
         });
     }
@@ -117,7 +120,12 @@ public class ListGameSceneController : MonoBehaviour
         disposable = holder.Receiver.OnJoinGame.Subscribe(async _ =>
         {
             disposable?.Dispose();
-            await Utility.LoadAsyncScene(SceneNames.BattleScene);
+            await Utility.LoadAsyncScene(SceneNames.BattleScene, async () =>
+            {
+                // ‘Îí‰æ–Ê‚ğ‰Šú‰»
+                var battleSceneController = FindObjectOfType<BattleSceneController>();
+                await battleSceneController.Init();
+            });
         });
 
         var title = "‘Îí‘Šè‚ğ‘Ò‚Á‚Ä‚¢‚Ü‚·...";
@@ -247,6 +255,10 @@ public class ListGameSceneController : MonoBehaviour
 
         await Utility.LoadAsyncScene(SceneNames.BattleScene, async () =>
         {
+            // ‘Îí‰æ–Ê‚ğ‰Šú‰»
+            var battleSceneController = FindObjectOfType<BattleSceneController>();
+            await battleSceneController.Init();
+
             // AI‘¤‚ğÚ‘±‚·‚é
             var aiClientController = FindObjectOfType<AiClientController>();
             await aiClientController.StartClient(reply.GameId, aiDeck);

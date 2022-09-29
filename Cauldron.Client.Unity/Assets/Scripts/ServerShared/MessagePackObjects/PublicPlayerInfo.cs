@@ -2,25 +2,9 @@
 
 using MessagePack;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
-    [MessagePackObject(true)]
-    public class AttackTarget
-    {
-        public PlayerId[] PlayerIdList { get; }
-        public CardId[] CardIdList { get; }
-
-        public AttackTarget(PlayerId[] playerIdList, CardId[] cardIdList)
-        {
-            PlayerIdList = playerIdList;
-            CardIdList = cardIdList;
-        }
-
-        public bool Any => this.PlayerIdList.Any() || this.CardIdList.Any();
-    }
-
     /// <summary>
     /// プレイヤーの公開情報
     /// </summary>

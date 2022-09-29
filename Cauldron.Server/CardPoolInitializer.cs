@@ -1,4 +1,5 @@
-﻿using Cauldron.Core.Entities;
+﻿using Cauldron.Core;
+using Cauldron.Core.Entities;
 using Cauldron.Shared.MessagePackObjects;
 using System;
 using System.IO;
@@ -19,7 +20,16 @@ namespace Cauldron.Server
         private static CardSet ReadFromFile(string jsonFilePath)
         {
             var jsonString = File.ReadAllText(jsonFilePath);
-            return JsonConverter.Deserialize<CardSet>(jsonString) ?? new CardSet("", Array.Empty<CardDef>());
+
+            var cardset = JsonConverter.Deserialize<CardSet>(jsonString) ?? new CardSet("", Array.Empty<CardDef>());
+
+            // IDがemptyになるので振りなおす
+            foreach (var c in cardset.Cards)
+            {
+                c.DangerousSetNewId();
+            }
+
+            return cardset;
         }
 
         public static void Init(string cardsetDirectoryPath)
