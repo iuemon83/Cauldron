@@ -22,25 +22,27 @@ namespace Cauldron.Server
             return new SqliteConnection("Data Source=" + filepath);
         }
 
-        public void CreateCardPoolLogTableIfNotExists(SqliteConnection con)
+        public void CreateGamesTableIfNotExists(SqliteConnection con)
         {
             using var command = con.CreateCommand();
 
             command.CommandText = @"
-create table if not exists card_pool_log(
-    game_id text not null,
+create table if not exists games(
+    game_id text not null primary key,
     card_defs_json text not null,
+    winner_player_id text,
     created_at text not null default (datetime(CURRENT_TIMESTAMP, 'localtime'))
-)";
+)
+";
             command.ExecuteNonQuery();
         }
 
-        public void Add(SqliteConnection con, CardPoolLog log)
+        public void Add(SqliteConnection con, GameLog log)
         {
             using var command = con.CreateCommand();
 
             command.CommandText = $@"
-insert into card_pool_log(game_id, card_defs_json)
+insert into games(game_id, card_defs_json)
 values(@game_id, @card_defs_json)
 ";
 
@@ -55,6 +57,25 @@ values(@game_id, @card_defs_json)
             command.ExecuteNonQuery();
         }
 
+        public void SetGameWinner(SqliteConnection con, GameId gameId, PlayerId winnerPlayerId)
+        {
+            using var command = con.CreateCommand();
+
+            command.CommandText = $@"
+update games
+set winner_player_id = @winner_player_id
+where game_id = @game_id
+";
+
+            command.Parameters.AddRange(new[]
+            {
+                new SqliteParameter("@game_id", gameId.ToString()),
+                new SqliteParameter("@winner_player_id", winnerPlayerId.ToString()),
+            });
+
+            command.ExecuteNonQuery();
+        }
+
         public void CreateBattleLogsTableIfNotExists(SqliteConnection con)
         {
             using var command = con.CreateCommand();
@@ -64,12 +85,12 @@ create table if not exists battle_logs(
     id integer primary key AUTOINCREMENT,
     game_id text not null,
     player_id text not null,
-    winner_player_id text not null,
     game_event text not null,
     game_context_json text not null,
     notify_message_json text not null,
     created_at text not null default (datetime(CURRENT_TIMESTAMP, 'localtime'))
-)";
+)
+";
             command.ExecuteNonQuery();
         }
 
@@ -78,8 +99,8 @@ create table if not exists battle_logs(
             using var command = con.CreateCommand();
 
             command.CommandText = $@"
-insert into battle_logs(game_id, player_id, winner_player_id, game_event, game_context_json, notify_message_json)
-values(@game_id, @player_id, @winner_player_id, @game_event, @game_context_json, @notify_message_json)
+insert into battle_logs(game_id, player_id, game_event, game_context_json, notify_message_json)
+values(@game_id, @player_id, @game_event, @game_context_json, @notify_message_json)
 ";
 
             var gameContextJson = JsonConverter.Serialize(log.GameContext);
@@ -88,7 +109,6 @@ values(@game_id, @player_id, @winner_player_id, @game_event, @game_context_json,
             {
                 new SqliteParameter("@game_id", log.GameId.ToString()),
                 new SqliteParameter("@player_id", log.PlayerId.ToString()),
-                new SqliteParameter("@winner_player_id", log.WinnerPlayerId.ToString()),
                 new SqliteParameter("@game_event", log.NotifyEvent.ToString()),
                 new SqliteParameter("@game_context_json", gameContextJson),
                 new SqliteParameter("@notify_message_json", log.MessageJson.ToString()),
@@ -103,12 +123,13 @@ values(@game_id, @player_id, @winner_player_id, @game_event, @game_context_json,
 
             command.CommandText = @"
 create table if not exists battle_players(
-    player_id text,
+    player_id text not null,
     game_id text not null,
     name text not null,
     card_names_in_deck_json text not null,
     play_order INTEGER not null,
-    ip string not null,
+    ip text not null,
+    client_id text not null,
     created_at text not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),
     primary key(player_id, game_id)
 )
@@ -121,8 +142,8 @@ create table if not exists battle_players(
             using var command = con.CreateCommand();
 
             command.CommandText = $@"
-insert into battle_players(player_id, game_id, name, card_names_in_deck_json, play_order, ip)
-values(@player_id, @game_id, @name, @card_names_in_deck_json, @play_order, @ip)
+insert into battle_players(player_id, game_id, name, card_names_in_deck_json, play_order, ip, client_id)
+values(@player_id, @game_id, @name, @card_names_in_deck_json, @play_order, @ip, @client_id)
 ";
 
             command.Parameters.AddRange(new[]
@@ -133,44 +154,73 @@ values(@player_id, @game_id, @name, @card_names_in_deck_json, @play_order, @ip)
                 new SqliteParameter("@card_names_in_deck_json", JsonConverter.Serialize(log.CardNamesInDeck)),
                 new SqliteParameter("@play_order", log.PlayOrder),
                 new SqliteParameter("@ip", log.Ip),
+                new SqliteParameter("@client_id", log.ClientId),
             });
 
             command.ExecuteNonQuery();
         }
 
-        public IEnumerable<GameReplay> ListGameHistories(SqliteConnection con, IReadOnlyList<GameId> gameIdList)
+        public IEnumerable<GameReplay> ListGameHistories(
+            SqliteConnection con,
+            IReadOnlyList<GameId> gameIdList,
+            string clientId,
+            bool onlyMyLogs
+            )
         {
-            var sql = @"
+            var sql = $@"
 select
-	bl1.game_id,
-	(select json_group_array(bp.player_id) from battle_players as bp where bp.game_id = bl1.game_id) as player_id_list,
-    bl1.id as action_log_id,
-    bl1.created_at,
-    cp.card_defs_json
-from battle_logs bl1
-inner join card_pool_log cp
-	on cp.game_id = bl1.game_id
-where game_event = 'OnStartGame'
-and exists(
-	select *
-	from card_pool_log c
-	where c.game_id = bl1.game_id
-)
-and exists(
-	select *
-	from battle_logs bl2
-	where bl2.game_id = bl1.game_id
-	and game_event = 'OnEndGame'
-)
+	g.game_id,
+	(
+        select json_group_array(
+            json_object(
+                'id', json_object('value', bp.player_id),
+                'name', bp.name
+                )
+            )
+        from battle_players as bp
+        where bp.game_id = g.game_id
+    ) as player_id_list,
+	(
+		select bl.id
+		from battle_logs bl
+		where bl.game_id = g.game_id
+		order by bl.id
+		limit 1
+	) as action_log_id,
+    g.created_at,
+    g.card_defs_json,
+	exists(
+		select *
+		from battle_players bp
+		where bp.game_id = g.game_id
+		and client_id = @client_id
+	) as is_mine
+from games g
+where g.winner_player_id is not NULL
 ";
-            var sqlParameters = new SqliteParameter[0];
+            var sqlParameters = new List<SqliteParameter>();
+            sqlParameters.Add(new SqliteParameter("client_id", clientId));
 
             if (gameIdList.Any())
             {
                 var gameIdListString = string.Join(",", gameIdList.Select((_, i) => $"@game_id_{i}"));
-                sql += $" and bl1.game_id in ({gameIdListString})";
+                sql += $" and g.game_id in ({gameIdListString})";
 
-                sqlParameters = gameIdList.Select((g, i) => new SqliteParameter($"game_id_{i}", g.ToString())).ToArray();
+                sqlParameters.AddRange(
+                    gameIdList.Select((g, i) => new SqliteParameter($"game_id_{i}", g.ToString()))
+                    );
+            }
+
+            if (onlyMyLogs)
+            {
+                sql += $@"
+and exists(
+    select *
+    from battle_players bp
+    where bp.game_id = g.game_id
+    and client_id = @client_id
+)
+";
             }
 
             using var command = con.CreateCommand();
@@ -183,15 +233,20 @@ and exists(
 
             while (reader.Read())
             {
-                var playerIdList = JsonConverter.Deserialize<string[]>(reader.GetFieldValue<string>(1))
-                    .Select(PlayerId.Parse)
-                    .ToArray();
+                var players = JsonConverter.Deserialize<GameReplayPlayer[]>(reader.GetFieldValue<string>(1));
+                var isMine = reader.GetFieldValue<bool>(5);
+                if (!isMine)
+                {
+                    players = players
+                        .Select((p, i) => new GameReplayPlayer(p.Id, $"Player{i + 1}"))
+                        .ToArray();
+                }
 
                 var cardDefs = JsonConverter.Deserialize<CardDef[]>(reader.GetFieldValue<string>(4));
 
                 result.Add(new GameReplay(
                     GameId.Parse(reader.GetFieldValue<string>(0)),
-                    playerIdList,
+                    players,
                     reader.GetFieldValue<int>(2),
                     DateTime.Parse(reader.GetFieldValue<string>(3)),
                     cardDefs
@@ -230,7 +285,7 @@ limit 1
             {
                 new SqliteParameter("@game_id", gameId.ToString()),
                 new SqliteParameter("@player_id", playerId.ToString()),
-                new SqliteParameter("@current_action_log_id",currentActionLogId),
+                new SqliteParameter("@current_action_log_id", currentActionLogId),
             });
 
             using var reader = command.ExecuteReader();

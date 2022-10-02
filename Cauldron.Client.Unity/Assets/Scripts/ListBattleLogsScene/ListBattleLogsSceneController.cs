@@ -25,38 +25,28 @@ public class ListBattleLogsSceneController : MonoBehaviour
 
     private Transform listContent;
 
-    private Dictionary<GameId, LocalBattleLog> localBattlelogsByGameId = new Dictionary<GameId, LocalBattleLog>();
-
     // Start is called before the first frame update
     async void Start()
     {
         this.listContent = this.battleLogList.transform.Find("Viewport").transform.Find("Content");
-
-        this.localBattlelogsByGameId = LocalData.LoadLocalData().BattleLogs
-            .ToDictionary(l => GameId.Parse(l.GameIdText));
 
         await this.RefreshReplays();
     }
 
     private async UniTask RefreshReplays()
     {
-        var gameIdList = this.onlyMyReplaysToggle.isOn
-            ? this.localBattlelogsByGameId.Keys.ToArray()
-            : default;
-
+        var gameIdList = new GameId[0];
         var searchKeyword = this.searchByGameIdInputField.text.Trim();
         if (searchKeyword != "")
         {
             if (Guid.TryParse(this.searchByGameIdInputField.text, out var gameGuid))
             {
                 var searchGameId = new GameId(gameGuid);
-                gameIdList = gameIdList == null
-                    ? new[] { searchGameId }
-                    : gameIdList.Where(gameId => gameId == searchGameId).ToArray();
+                gameIdList = new[] { searchGameId };
             }
         }
 
-        var request = new ListGameHistoriesRequest(gameIdList);
+        var request = new ListGameHistoriesRequest(LocalData.ClientId, this.onlyMyReplaysToggle.isOn, gameIdList);
         var replays = await ConnectionHolder.Find().Client.ListGameHistories(request);
         if ((replays?.Length ?? 0) == 0)
         {
@@ -82,47 +72,15 @@ public class ListBattleLogsSceneController : MonoBehaviour
 
         foreach (var replay in gameReplays.OrderByDescending(l => l.DateTime))
         {
-            if (this.localBattlelogsByGameId.TryGetValue(replay.GameId, out var localLog))
-            {
-                this.AddListNode(replay, localLog);
-            }
-            else
-            {
-                this.AddListNode(replay);
-            }
+            this.AddListNode(replay);
         }
-    }
-
-    private void AddListNode(GameReplay gameReplay, LocalBattleLog localLog)
-    {
-        var playerList = gameReplay.PlayerIdList.Select(pid =>
-        {
-            var name = pid.ToString() == localLog.YouIdText
-                ? localLog.YouName
-                : localLog.OpponentName;
-
-            return (pid, name);
-        })
-            .ToArray();
-
-        var controller = Instantiate(this.listNodePrefab, this.listContent.transform);
-        controller.Set(gameReplay, () =>
-        {
-            var dialog = Instantiate(this.startBattleLogDialogController);
-            dialog.Init(
-                playerList,
-                selectedPlayerId => this.ShowBattleLog(gameReplay, selectedPlayerId));
-            dialog.transform.SetParent(this.canvas.transform, false);
-        },
-        localLog);
     }
 
     private void AddListNode(GameReplay gameReplay)
     {
-        var playerList = gameReplay.PlayerIdList.Zip(new[] { "Player1", "Player2" },
-            (a, b) => (a, b))
+        var playerList = gameReplay.Players
+            .Select(p => (p.Id, p.Name))
             .ToArray();
-
 
         var controller = Instantiate(this.listNodePrefab, this.listContent.transform);
         controller.Set(gameReplay, () =>

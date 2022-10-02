@@ -7,11 +7,17 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         public GameId GameId { get; }
         public PlayerId PlayerId { get; }
+        public string ClientId { get; }
 
-        public ReadyGameRequest(GameId gameId, PlayerId playerId)
+        public ReadyGameRequest(
+            GameId gameId,
+            PlayerId playerId,
+            string clientId
+            )
         {
             this.GameId = gameId;
             this.PlayerId = playerId;
+            this.ClientId = clientId;
         }
     }
 }

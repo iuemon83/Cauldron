@@ -188,7 +188,15 @@ namespace Cauldron.Server.Services
         [FromTypeFilter(typeof(LoggingAttribute))]
         Task<GameReplay[]> ICauldronHub.ListGameHistories(ListGameHistoriesRequest request)
         {
-            return Task.FromResult(new BattleLogDb().ListGameHistories(this.dbConnection, request.GameIdList).ToArray());
+            return Task.FromResult(
+                new BattleLogDb().ListGameHistories(
+                    this.dbConnection,
+                    request.GameIdList,
+                    request.ClientId,
+                    request.OnlyMyLogs
+                    )
+                .ToArray()
+                );
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
@@ -216,7 +224,7 @@ namespace Cauldron.Server.Services
                 throw new InvalidOperationException("room is null");
             }
 
-            this._logger.LogInformation($"current action id={currentActionLogId}");
+            this._logger.LogInformation("current action id={currentActionLogId}", currentActionLogId);
 
             var log = new BattleLogDb().FindNextActionLog(this.dbConnection, gameId, playerId, currentActionLogId);
             if (log == null)
@@ -225,7 +233,7 @@ namespace Cauldron.Server.Services
                 return Task.FromResult(-1);
             }
 
-            this._logger.LogInformation($"next action id={log.ActionLogId}");
+            this._logger.LogInformation("next action id={actionLogId}", log.ActionLogId);
 
             switch (log.NotifyEvent)
             {
@@ -299,12 +307,6 @@ namespace Cauldron.Server.Services
                     {
                         var message = JsonConverter.Deserialize<ModifyCounterNotifyMessage>(log.MessageJson);
                         this.Broadcast(this.room).OnModifyCounter(log.GameContext, message);
-                        break;
-                    }
-                case NotifyEvent.OnStartGame:
-                    {
-                        //var message = JsonConverter.Deserialize<>(log.MessageJson);
-                        //this.Broadcast(this.room).OnStartGame(log.GameContext, message);
                         break;
                     }
                 case NotifyEvent.OnEndGame:
@@ -521,7 +523,10 @@ namespace Cauldron.Server.Services
                         try
                         {
                             new BattleLogDb().Add(this.dbConnection,
-                                BattleLog.AsEndGameEvent(this.gameId, playerId, gameContext.WinnerPlayerId, gameContext, message));
+                                BattleLog.AsEndGameEvent(this.gameId, playerId, gameContext, message));
+
+                            new BattleLogDb().SetGameWinner(this.dbConnection,
+                                this.gameId, gameContext.WinnerPlayerId);
                         }
                         catch (Exception e)
                         {
@@ -690,10 +695,7 @@ namespace Cauldron.Server.Services
             try
             {
                 new BattleLogDb().Add(this.dbConnection,
-                    BattleLog.AsStartGameEvent(this.gameId));
-
-                new BattleLogDb().Add(this.dbConnection,
-                    new CardPoolLog(this.gameId, gameMaster.CardPool));
+                    new GameLog(this.gameId, gameMaster.CardPool));
 
                 await gameMaster.StartGame(firstPlayerId);
 
@@ -704,7 +706,10 @@ namespace Cauldron.Server.Services
                         var cardNamesInDeck = p.Hands.AllCards.Concat(p.Deck.AllCards).Select(c => c.Name).ToArray();
                         //var ip = this.Context.CallContext.GetHttpContext().Connection.RemoteIpAddress?.ToString() ?? "";
 
-                        return new BattlePlayer(request.GameId, p.Id, p.Name, cardNamesInDeck, playOrder, "");
+                        return new BattlePlayer(
+                            request.GameId, p.Id, request.ClientId,
+                            p.Name, cardNamesInDeck, playOrder, ""
+                            );
                     });
 
                 foreach (var log in logs)

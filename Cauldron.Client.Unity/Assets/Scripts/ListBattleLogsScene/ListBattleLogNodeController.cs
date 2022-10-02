@@ -21,21 +21,9 @@ public class ListBattleLogNodeController : MonoBehaviour
     {
         this.gameReplay = gameReplay;
         this.timestampText.text = gameReplay.DateTime.ToString();
-        this.player1NameText.text = "Player1";
-        this.player2NameText.text = "Player2";
+        this.player1NameText.text = gameReplay.Players[0].Name;
+        this.player2NameText.text = gameReplay.Players[1].Name;
         this.playGameReplayAction = playGameReplayAction;
-    }
-
-    public void Set(GameReplay gameReplay, Action okButtonClickAction, LocalBattleLog localBattleLog)
-    {
-        this.Set(gameReplay, okButtonClickAction);
-
-        this.player1NameText.text = gameReplay.PlayerIdList[0].ToString() == localBattleLog.YouIdText
-            ? localBattleLog.YouName
-            : localBattleLog.OpponentName;
-        this.player2NameText.text = gameReplay.PlayerIdList[1].ToString() == localBattleLog.YouIdText
-            ? localBattleLog.YouName
-            : localBattleLog.OpponentName;
     }
 
     public void OnPlayReplayButtonClicked()

@@ -189,7 +189,9 @@ public class Client
     public async UniTask ReadyGame()
     {
         this.LogInfo($"ReadyGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
-        await this.magiconionClient.ReadyGame(new ReadyGameRequest(this.GameId, this.PlayerId));
+        await this.magiconionClient.ReadyGame(
+            new ReadyGameRequest(this.GameId, this.PlayerId, LocalData.ClientId)
+            );
     }
 
     public async UniTask StartTurn()

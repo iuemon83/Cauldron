@@ -56,7 +56,7 @@ namespace Cauldron.Server
             var battleLogsDb = new BattleLogDb();
             using var dbConnection = battleLogsDb.Connection();
             dbConnection.Open();
-            battleLogsDb.CreateCardPoolLogTableIfNotExists(dbConnection);
+            battleLogsDb.CreateGamesTableIfNotExists(dbConnection);
             battleLogsDb.CreateBattleLogsTableIfNotExists(dbConnection);
             battleLogsDb.CreateBattlePlayersTableIfNotExists(dbConnection);
         }
