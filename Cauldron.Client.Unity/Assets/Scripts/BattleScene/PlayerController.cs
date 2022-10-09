@@ -83,8 +83,8 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
     {
         this.PlayerId = publicPlayerInfo.Id;
         this.nameText.text = publicPlayerInfo.Name;
-        this.hpText.text = $"[{publicPlayerInfo.CurrentHp} / {publicPlayerInfo.MaxHp}]";
-        this.mpText.text = $"[{publicPlayerInfo.CurrentMp} / {publicPlayerInfo.MaxMp}]";
+        this.hpText.text = publicPlayerInfo.CurrentHp.ToString();
+        this.mpText.text = publicPlayerInfo.CurrentMp.ToString();
         this.numDecksText.text = publicPlayerInfo.DeckCount.ToString();
         this.numCemeteriesText.text = publicPlayerInfo.Cemetery.Length.ToString();
         this.numExcludedsText.text = publicPlayerInfo.Excluded.Length.ToString();

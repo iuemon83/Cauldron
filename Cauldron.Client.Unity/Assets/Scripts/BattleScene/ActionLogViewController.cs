@@ -1,4 +1,3 @@
-using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
@@ -15,12 +14,18 @@ public class ActionLogViewController : MonoBehaviour
     private ActionLogView_ListNodeController listNodePrefab = default;
     [SerializeField]
     private CardDetailController cardDetailController = default;
+    [SerializeField]
+    private Transform hiddenContainer = default;
+    [SerializeField]
+    private Transform displayContainer = default;
 
     private readonly List<ActionLogView_ListNodeController> nodeList = new List<ActionLogView_ListNodeController>();
 
     private Transform actionLogListContent;
 
     private CardEffectId previousEffectId = default;
+
+    private bool isDisplay = false;
 
     public void Start()
     {
@@ -38,11 +43,6 @@ public class ActionLogViewController : MonoBehaviour
         }
 
         await this.AddListNode(actionLog, effectOwnerCard != default);
-    }
-
-    public void OnCloseButtonClick()
-    {
-        Destroy(this.gameObject);
     }
 
     private async UniTask AddListNode(ActionLog actionLog, bool isChild)
@@ -74,5 +74,30 @@ public class ActionLogViewController : MonoBehaviour
         {
             this.ActionLogList.verticalNormalizedPosition = 0f;
         }
+    }
+
+
+    public void ToggleDisplay()
+    {
+        if (this.isDisplay)
+        {
+            this.Hidden();
+        }
+        else
+        {
+            this.Display();
+        }
+    }
+
+    public void Display()
+    {
+        this.transform.SetParent(this.displayContainer.transform, false);
+        this.isDisplay = true;
+    }
+
+    public void Hidden()
+    {
+        this.transform.SetParent(this.hiddenContainer.transform, false);
+        this.isDisplay = false;
     }
 }

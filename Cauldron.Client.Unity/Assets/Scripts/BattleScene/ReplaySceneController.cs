@@ -13,9 +13,6 @@ using UnityEngine;
 
 public class ReplaySceneController : MonoBehaviour
 {
-    private static readonly int MaxNumFields = 5;
-    private static readonly int MaxNumHands = 10;
-
     public Color YouColor => BattleSceneController.Instance.YouColor;
     public Color OpponentColor => BattleSceneController.Instance.OpponentColor;
 
@@ -96,6 +93,9 @@ public class ReplaySceneController : MonoBehaviour
     private GameContext currentGameContext;
 
     private bool IsPlayable(CardId cardId) => this.currentGameContext?.You?.PlayableCards?.Contains(cardId) ?? false;
+
+    private int MaxNumFields => this.youFieldSpaces.Length;
+    private int MaxNumHands => this.youHandSpaces.Length;
 
     private void OnDestroy()
     {
@@ -256,50 +256,6 @@ public class ReplaySceneController : MonoBehaviour
                 && opTargets.Any);
     }
 
-    /// <summary>
-    /// 自分の墓地ビューボタンのクリックイベント
-    /// </summary>
-    public void OnYouCemeteryButtonClick()
-    {
-        this.opponentCemeteryCardListViewController.Hidden();
-        this.youExcludedCardListViewController.Hidden();
-        this.opponentExcludedCardListViewController.Hidden();
-        this.youCemeteryCardListViewController.ToggleDisplay();
-    }
-
-    /// <summary>
-    /// 相手の墓地ビューボタンのクリックイベント
-    /// </summary>
-    public void OnOpponentCemeteryButtonClick()
-    {
-        this.youCemeteryCardListViewController.Hidden();
-        this.youExcludedCardListViewController.Hidden();
-        this.opponentExcludedCardListViewController.Hidden();
-        this.opponentCemeteryCardListViewController.ToggleDisplay();
-    }
-
-    /// <summary>
-    /// 自分の除外ビューボタンのクリックイベント
-    /// </summary>
-    public void OnYouExcludedButtonClick()
-    {
-        this.youCemeteryCardListViewController.Hidden();
-        this.opponentCemeteryCardListViewController.Hidden();
-        this.opponentExcludedCardListViewController.Hidden();
-        this.youExcludedCardListViewController.ToggleDisplay();
-    }
-
-    /// <summary>
-    /// 相手の除外ビューボタンのクリックイベント
-    /// </summary>
-    public void OnOpponentExcludedButtonClick()
-    {
-        this.youCemeteryCardListViewController.Hidden();
-        this.opponentCemeteryCardListViewController.Hidden();
-        this.youExcludedCardListViewController.Hidden();
-        this.opponentExcludedCardListViewController.ToggleDisplay();
-    }
-
     public void OnAutoReplayButtonClick()
     {
         this.StartAutoReplay();
@@ -437,7 +393,7 @@ public class ReplaySceneController : MonoBehaviour
                 // なくなったものを削除する
                 this.RemoveFieldCardObj(fieldCardId);
             }
-            foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(opponentFieldCards.Length, 5)))
+            foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(opponentFieldCards.Length, MaxNumFields)))
             {
                 this.UpdateField(opponent, fieldIndex, opponentFieldCards[fieldIndex]);
             }

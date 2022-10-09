@@ -15,7 +15,7 @@
   "maxNumDeckCards": 40,
   "minNumDeckCards": 10,
   "startMaxNumFields": 5,
-  "maxNumFields": 5,
+  "maxNumFields": 7,
   "defaultNumTurnsToCanAttack": 1,
   "defaultNumAttacksLimitInTurn": 1,
   "defaultLimitNumCardsInDeck": 3

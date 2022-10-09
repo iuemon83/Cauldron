@@ -14,9 +14,6 @@ using UnityEngine.UI;
 
 public class BattleSceneController : MonoBehaviour
 {
-    private static readonly int MaxNumFields = 5;
-    private static readonly int MaxNumHands = 10;
-
     public static BattleSceneController Instance;
 
     public Color YouColor => this.youColor;
@@ -132,6 +129,9 @@ public class BattleSceneController : MonoBehaviour
     private bool IsPlayable(CardId cardId) => this.currentGameContext?.You?.PlayableCards?.Contains(cardId) ?? false;
 
     private readonly ChoiceService choiceService = new ChoiceService();
+
+    private int MaxNumFields => this.youFieldSpaces.Length;
+    private int MaxNumHands => this.youHandSpaces.Length;
 
     private int NumPicks
     {
@@ -438,10 +438,23 @@ public class BattleSceneController : MonoBehaviour
     }
 
     /// <summary>
+    /// ログビューボタンのクリックイベント
+    /// </summary>
+    public void OnActionLogViewButtonClick()
+    {
+        this.opponentCemeteryCardListViewController.Hidden();
+        this.youExcludedCardListViewController.Hidden();
+        this.opponentExcludedCardListViewController.Hidden();
+        this.youCemeteryCardListViewController.Hidden();
+        this.actionLogViewController.ToggleDisplay();
+    }
+
+    /// <summary>
     /// 自分の墓地ビューボタンのクリックイベント
     /// </summary>
     public void OnYouCemeteryButtonClick()
     {
+        this.actionLogViewController.Hidden();
         this.opponentCemeteryCardListViewController.Hidden();
         this.youExcludedCardListViewController.Hidden();
         this.opponentExcludedCardListViewController.Hidden();
@@ -453,6 +466,7 @@ public class BattleSceneController : MonoBehaviour
     /// </summary>
     public void OnOpponentCemeteryButtonClick()
     {
+        this.actionLogViewController.Hidden();
         this.youCemeteryCardListViewController.Hidden();
         this.youExcludedCardListViewController.Hidden();
         this.opponentExcludedCardListViewController.Hidden();
@@ -464,6 +478,7 @@ public class BattleSceneController : MonoBehaviour
     /// </summary>
     public void OnYouExcludedButtonClick()
     {
+        this.actionLogViewController.Hidden();
         this.youCemeteryCardListViewController.Hidden();
         this.opponentCemeteryCardListViewController.Hidden();
         this.opponentExcludedCardListViewController.Hidden();
@@ -475,6 +490,7 @@ public class BattleSceneController : MonoBehaviour
     /// </summary>
     public void OnOpponentExcludedButtonClick()
     {
+        this.actionLogViewController.Hidden();
         this.youCemeteryCardListViewController.Hidden();
         this.opponentCemeteryCardListViewController.Hidden();
         this.youExcludedCardListViewController.Hidden();
