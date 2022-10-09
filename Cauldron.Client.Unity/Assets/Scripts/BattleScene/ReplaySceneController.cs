@@ -45,13 +45,13 @@ public class ReplaySceneController : MonoBehaviour
     [SerializeField]
     private GameObject[] youHandSpaces = default;
     [SerializeField]
-    private GameObject[] youFieldSpaces = default;
+    private FieldCardSpaceController[] youFieldSpaces = default;
 
     [SerializeField]
     private PlayerController youPlayerController = default;
 
     [SerializeField]
-    private GameObject[] opponentFieldSpaces = default;
+    private FieldCardSpaceController[] opponentFieldSpaces = default;
 
     [SerializeField]
     private PlayerController opponentPlayerController = default;
@@ -417,11 +417,7 @@ public class ReplaySceneController : MonoBehaviour
             }
             foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(youFieldCards.Length, MaxNumFields)))
             {
-                var fieldCard = youFieldCards[fieldIndex];
-                if (fieldCard != null)
-                {
-                    this.GetOrCreateFieldCardObject(fieldCard, publicInfo.Id, fieldIndex);
-                }
+                this.UpdateField(publicInfo, fieldIndex, youFieldCards[fieldIndex]);
             }
         }
 
@@ -443,16 +439,34 @@ public class ReplaySceneController : MonoBehaviour
             }
             foreach (var fieldIndex in Enumerable.Range(0, Mathf.Min(opponentFieldCards.Length, 5)))
             {
-                var fieldCard = opponentFieldCards[fieldIndex];
-
-                if (fieldCard != null)
-                {
-                    this.GetOrCreateFieldCardObject(fieldCard, opponent.Id, fieldIndex);
-                }
+                this.UpdateField(opponent, fieldIndex, opponentFieldCards[fieldIndex]);
             }
         }
 
         await UniTask.Delay(TimeSpan.FromSeconds(0.3));
+    }
+
+    private void UpdateField(PublicPlayerInfo publicInfo, int fieldIndex, Card fieldCard)
+    {
+        var fieldSpace = publicInfo.Id == this.YouId
+            ? this.youFieldSpaces[fieldIndex]
+            : this.opponentFieldSpaces[fieldIndex];
+
+        if (publicInfo.IsAvailableFields[fieldIndex])
+        {
+            // èÍÇ™óLå¯Ç»ÇÁ
+            fieldSpace.SetEnable(true);
+
+            if (fieldCard != null)
+            {
+                this.GetOrCreateFieldCardObject(fieldCard, publicInfo.Id, fieldIndex);
+            }
+        }
+        else
+        {
+            // èÍÇ™ñ≥å¯Ç»ÇÁ
+            fieldSpace.SetEnable(false);
+        }
     }
 
     private async UniTask UpdateGameContextSimple(GameContext gameContext)

@@ -1,5 +1,4 @@
 ﻿using MessagePack;
-using System.IO;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -9,7 +8,7 @@ namespace Cauldron.Shared.MessagePackObjects
         /// <summary>
         /// ゲーム開始時点のプレイヤーのHP
         /// </summary>
-        public int InitialPlayerHp { get; }
+        public int StartPlayerHp { get; }
 
         /// <summary>
         /// ゲーム中のプレイヤーのHPの上限値
@@ -34,7 +33,7 @@ namespace Cauldron.Shared.MessagePackObjects
         /// <summary>
         /// ゲーム開始時点の手札枚数
         /// </summary>
-        public int InitialNumHands { get; }
+        public int StartNumHands { get; }
 
         /// <summary>
         /// 手札の枚数の上限値
@@ -82,9 +81,14 @@ namespace Cauldron.Shared.MessagePackObjects
         public int LimitMpToIncrease { get; }
 
         /// <summary>
+        /// ゲーム開始時の場に出せるカード枚数の上限値
+        /// </summary>
+        public int StartMaxNumFields { get; }
+
+        /// <summary>
         /// 場に出せるカード枚数の上限値
         /// </summary>
-        public int MaxNumFieldCards { get; }
+        public int MaxNumFields { get; }
 
         /// <summary>
         /// 攻撃可能となるまでのターン数の基本値
@@ -102,12 +106,12 @@ namespace Cauldron.Shared.MessagePackObjects
         public int DefaultLimitNumCardsInDeck { get; }
 
         public RuleBook(
-            int InitialPlayerHp,
+            int StartPlayerHp,
             int MaxPlayerHp,
             int MinPlayerHp,
             int MaxNumDeckCards,
             int MinNumDeckCards,
-            int InitialNumHands,
+            int StartNumHands,
             int MaxNumHands,
             int NumDraws,
             int FirstPlayerNumDrawsInFirstTurn,
@@ -117,18 +121,19 @@ namespace Cauldron.Shared.MessagePackObjects
             int MaxLimitMp,
             int MinMp,
             int LimitMpToIncrease,
-            int MaxNumFieldCards,
+            int StartMaxNumFields,
+            int MaxNumFields,
             int DefaultNumTurnsToCanAttack,
             int DefaultNumAttacksLimitInTurn,
             int DefaultLimitNumCardsInDeck
             )
         {
-            this.InitialPlayerHp = InitialPlayerHp;
+            this.StartPlayerHp = StartPlayerHp;
             this.MaxPlayerHp = MaxPlayerHp;
             this.MinPlayerHp = MinPlayerHp;
             this.MaxNumDeckCards = MaxNumDeckCards;
             this.MinNumDeckCards = MinNumDeckCards;
-            this.InitialNumHands = InitialNumHands;
+            this.StartNumHands = StartNumHands;
             this.MaxNumHands = MaxNumHands;
             this.NumDraws = NumDraws;
             this.FirstPlayerNumDrawsInFirstTurn = FirstPlayerNumDrawsInFirstTurn;
@@ -138,7 +143,8 @@ namespace Cauldron.Shared.MessagePackObjects
             this.MaxLimitMp = MaxLimitMp;
             this.MinMp = MinMp;
             this.LimitMpToIncrease = LimitMpToIncrease;
-            this.MaxNumFieldCards = MaxNumFieldCards;
+            this.StartMaxNumFields = StartMaxNumFields;
+            this.MaxNumFields = MaxNumFields;
             this.DefaultNumTurnsToCanAttack = DefaultNumTurnsToCanAttack;
             this.DefaultNumAttacksLimitInTurn = DefaultNumAttacksLimitInTurn;
             this.DefaultLimitNumCardsInDeck = DefaultLimitNumCardsInDeck;

@@ -154,6 +154,7 @@ namespace Cauldron.Core.Entities
         public Player GetOpponent(PlayerId playerId) => this.playerRepository.Opponents(playerId)[0];
 
         public (bool Exists, CardDef CardDef) TryGet(CardDefId id) => this.cardRepository.TryGetCardDefById(id);
+        public (bool Exists, Player CardDef) TryGet(PlayerId id) => this.playerRepository.TryGet(id);
 
         public static bool IsPlayable(Player player, Card card)
         {
@@ -300,7 +301,7 @@ namespace Cauldron.Core.Entities
                     player.Deck.Shuffle();
 
                     // カードを配る
-                    await this.Draw(player.Id, this.RuleBook.InitialNumHands, default, default);
+                    await this.Draw(player.Id, this.RuleBook.StartNumHands, default, default);
                 }
 
                 foreach (var p in this.playerRepository.AllPlayers)
@@ -816,6 +817,7 @@ namespace Cauldron.Core.Entities
             player.Id,
             player.Name,
             player.Field.AllCardsWithIndex.ToArray(),
+            player.Field.IsAvailabledList.ToArray(),
             player.Deck.Count,
             player.Cemetery.AllCards.ToArray(),
             player.Excludes.ToArray(),
@@ -1887,6 +1889,17 @@ namespace Cauldron.Core.Entities
             this.effectManager.FinalyGameEvent(effectEventArgs.GameEvent, effectEventArgs);
 
             return newEventArgs;
+        }
+
+        public int ModifyNumFields(PlayerId id, int newNumFields)
+        {
+            var player = this.Get(id);
+            if (player == null)
+            {
+                throw new ArgumentException();
+            }
+
+            return player.Field.UpdateLimit(newNumFields);
         }
     }
 }

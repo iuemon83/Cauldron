@@ -1,5 +1,4 @@
 ﻿using Cauldron.Core.Entities.Effect;
-using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 
 namespace Cauldron.Core.MessagePackObjectExtensions

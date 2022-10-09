@@ -3261,5 +3261,38 @@ namespace Cauldron.Core_Test
                             )
                     })
             });
+
+        public static CardDef FieldUpAndDown => SampleCards1.Sorcery(
+            1, "場の増減",
+            effects: new[] {
+                new CardEffect(
+                    "あなたの場を-1して、相手の場を+1する",
+                    new EffectConditionWrap(ByPlay: new()),
+                    new[]
+                    {
+                        new EffectAction(ModifyNumFields: new(
+                            new Choice(
+                                new ChoiceSource(orPlayerConditions: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.You)
+                                })),
+                            new NumValueModifier(
+                                NumValueModifier.OperatorValue.Sub,
+                                new NumValue(1)
+                                )
+                            )),
+                        new EffectAction(ModifyNumFields: new(
+                            new Choice(
+                                new ChoiceSource(orPlayerConditions: new[]
+                                {
+                                    new PlayerCondition(PlayerCondition.ContextValue.Opponent)
+                                })),
+                            new NumValueModifier(
+                                NumValueModifier.OperatorValue.Add,
+                                new NumValue(1)
+                                )
+                            )),
+                    })
+            });
     }
 }

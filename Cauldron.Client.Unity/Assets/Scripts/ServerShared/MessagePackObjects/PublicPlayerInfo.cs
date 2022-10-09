@@ -14,6 +14,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public PlayerId Id { get; }
         public string Name { get; }
         public Card?[] Field { get; }
+        public bool[] IsAvailableFields { get; }
         public int DeckCount { get; }
         public Card[] Cemetery { get; }
         public CardDef[] Excluded { get; }
@@ -29,6 +30,7 @@ namespace Cauldron.Shared.MessagePackObjects
             PlayerId Id,
             string Name,
             Card?[] Field,
+            bool[] IsAvailableFields,
             int DeckCount,
             Card[] Cemetery,
             CardDef[] Excluded,
@@ -44,6 +46,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.Id = Id;
             this.Name = Name;
             this.Field = Field;
+            this.IsAvailableFields = IsAvailableFields;
             this.DeckCount = DeckCount;
             this.Cemetery = Cemetery;
             this.Excluded = Excluded;

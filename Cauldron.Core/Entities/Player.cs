@@ -54,7 +54,7 @@ namespace Cauldron.Core.Entities
             this.Id = id;
             this.Name = name;
             this.MaxHp = this.RuleBook.MaxPlayerHp;
-            this.UsedHp = this.MaxHp - this.RuleBook.InitialPlayerHp;
+            this.UsedHp = this.MaxHp - this.RuleBook.StartPlayerHp;
             this.MaxLimitMp = this.RuleBook.MaxLimitMp;
             this.MaxMp = isFirst ? this.RuleBook.FirstPlayerStartMp : this.RuleBook.SecondPlayerStartMp;
             this.Deck = new Deck(deck);

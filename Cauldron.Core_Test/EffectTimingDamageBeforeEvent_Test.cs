@@ -142,7 +142,7 @@ namespace Cauldron.Core_Test
                         GuardPlayer: new(
                             PlayerId.NewId(),
                             "",
-                            TestUtil.TestRuleBook,
+                            TestUtil.TestRuleBook(),
                             Array.Empty<Card>(),
                             default
                             )
@@ -191,7 +191,7 @@ namespace Cauldron.Core_Test
                         GuardPlayer: new(
                             PlayerId.NewId(),
                             "",
-                            TestUtil.TestRuleBook,
+                            TestUtil.TestRuleBook(),
                             Array.Empty<Card>(),
                             default
                             )
@@ -243,7 +243,7 @@ namespace Cauldron.Core_Test
                         GuardPlayer: new(
                             PlayerId.NewId(),
                             "",
-                            TestUtil.TestRuleBook,
+                            TestUtil.TestRuleBook(),
                             Array.Empty<Card>(),
                             default
                             )

@@ -1807,7 +1807,7 @@ namespace Cauldron.Core_Test
 
                 Assert.Equal(goblin1.BaseToughness - 1, goblin1.Toughness);
                 Assert.Equal(goblin2.BaseToughness - 1, goblin1.Toughness);
-                Assert.Equal(TestUtil.TestRuleBook.InitialPlayerHp - 1, c.Player1.CurrentHp);
+                Assert.Equal(TestUtil.TestRuleBook().StartPlayerHp - 1, c.Player1.CurrentHp);
             });
         }
 
@@ -1821,7 +1821,7 @@ namespace Cauldron.Core_Test
 
             var c = await TestUtil.InitTest(
                 new[] { goblinDef, testCardDef },
-                Enumerable.Repeat(goblinDef, TestUtil.TestRuleBook.MaxNumDeckCards));
+                Enumerable.Repeat(goblinDef, TestUtil.TestRuleBook().MaxNumDeckCards));
 
             // 先攻
             await TestUtil.Turn(c.GameMaster, async (g, pId) =>
@@ -1901,7 +1901,7 @@ namespace Cauldron.Core_Test
                 await c.GameMaster.AttackToPlayer(pId, goblinCard2.Id, c.Player1.Id);
 
                 // プレイヤーは2ダメージ受ける
-                Assert.Equal(TestUtil.TestRuleBook.InitialPlayerHp - 2, c.Player1.CurrentHp);
+                Assert.Equal(TestUtil.TestRuleBook().StartPlayerHp - 2, c.Player1.CurrentHp);
                 // 破壊されない
                 Assert.Equal(ZoneName.Field, testCard.Zone.ZoneName);
             });
@@ -2147,12 +2147,12 @@ namespace Cauldron.Core_Test
             });
 
             // 相手プレイヤーとクリーチャーに6ダメージ
-            Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp - 6, c.Player1.CurrentHp);
+            Assert.Equal(c.GameMaster.RuleBook.StartPlayerHp - 6, c.Player1.CurrentHp);
             Assert.Equal(goblin1.BaseToughness - 6, goblin1.Toughness);
             Assert.Equal(goblin2.BaseToughness - 6, goblin2.Toughness);
 
             // 自分プレイヤーと自分クリーチャーはダメージを受けない
-            Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp, c.Player2.CurrentHp);
+            Assert.Equal(c.GameMaster.RuleBook.StartPlayerHp, c.Player2.CurrentHp);
             Assert.Equal(goblin3.BaseToughness, goblin3.Toughness);
         }
 
@@ -3480,11 +3480,11 @@ namespace Cauldron.Core_Test
                 await TestUtil.NewCardAndPlayFromHand(g, pId, spellDef.Id);
 
                 // まだ0ダメージ
-                Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp, op.CurrentHp);
+                Assert.Equal(c.GameMaster.RuleBook.StartPlayerHp, op.CurrentHp);
             });
 
             // ターン終了したので、相手に1ダメージ
-            Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp - 1, c.Player2.CurrentHp);
+            Assert.Equal(c.GameMaster.RuleBook.StartPlayerHp - 1, c.Player2.CurrentHp);
 
             // 後攻
             await TestUtil.Turn(c.GameMaster, (g, pId) =>
@@ -3492,7 +3492,7 @@ namespace Cauldron.Core_Test
             });
 
             // 1度だけなのでもう発動しない
-            Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp - 1, c.Player2.CurrentHp);
+            Assert.Equal(c.GameMaster.RuleBook.StartPlayerHp - 1, c.Player2.CurrentHp);
 
             // 先攻2
             await TestUtil.Turn(c.GameMaster, (g, pId) =>
@@ -3500,7 +3500,7 @@ namespace Cauldron.Core_Test
             });
 
             // 1度だけなのでもう発動しない
-            Assert.Equal(c.GameMaster.RuleBook.InitialPlayerHp - 1, c.Player2.CurrentHp);
+            Assert.Equal(c.GameMaster.RuleBook.StartPlayerHp - 1, c.Player2.CurrentHp);
         }
 
         [Fact]
@@ -4326,6 +4326,47 @@ namespace Cauldron.Core_Test
                 await TestUtil.NewCardAndPlayFromHand(g, pId, addToughnessCardDef.Id);
 
                 Assert.Equal(beforeOpHp - 1, c.Player2.CurrentHp);
+            });
+        }
+
+        [Fact]
+        public async Task FieldUpAndDown()
+        {
+            var testCardDef = SampleCards1.FieldUpAndDown;
+            testCardDef.Cost = 0;
+
+            var creatureCardDef = SampleCards1.Vanilla;
+            creatureCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, creatureCardDef },
+                TestUtil.GameMasterOptions(
+                    ruleBook: TestUtil.TestRuleBook(
+                        StartMaxNumFields: 5, MaxNumFields: 7
+                        )),
+                this.output
+                );
+
+            // 先攻
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.True(c.Player1.Field.IsAvailabledList[0]);
+                Assert.True(c.Player1.Field.IsAvailabledList[1]);
+                Assert.True(c.Player1.Field.IsAvailabledList[2]);
+                Assert.True(c.Player1.Field.IsAvailabledList[3]);
+                Assert.False(c.Player1.Field.IsAvailabledList[4]);
+                Assert.False(c.Player1.Field.IsAvailabledList[5]);
+                Assert.False(c.Player1.Field.IsAvailabledList[6]);
+
+                Assert.True(c.Player2.Field.IsAvailabledList[0]);
+                Assert.True(c.Player2.Field.IsAvailabledList[1]);
+                Assert.True(c.Player2.Field.IsAvailabledList[2]);
+                Assert.True(c.Player2.Field.IsAvailabledList[3]);
+                Assert.True(c.Player2.Field.IsAvailabledList[4]);
+                Assert.True(c.Player2.Field.IsAvailabledList[5]);
+                Assert.False(c.Player2.Field.IsAvailabledList[6]);
             });
         }
     }

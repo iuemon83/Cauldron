@@ -14,18 +14,40 @@ namespace Cauldron.Core_Test
 {
     class TestUtil
     {
-        public static RuleBook TestRuleBook => new(
-            InitialPlayerHp: 10, MaxPlayerHp: 99, MinPlayerHp: 0,
-            MaxNumDeckCards: 99, MinNumDeckCards: 1,
-            InitialNumHands: 5, MaxNumHands: 10,
-            NumDraws: 1,
-            FirstPlayerNumDrawsInFirstTurn: 1, SecondPlayerNumDrawsInFirstTurn: 1,
-            FirstPlayerStartMp: 1, SecondPlayerStartMp: 1,
-            MaxLimitMp: 10, MinMp: 1, LimitMpToIncrease: 1,
-            MaxNumFieldCards: 5,
-            DefaultNumTurnsToCanAttack: 0,
-            DefaultNumAttacksLimitInTurn: 1,
-            DefaultLimitNumCardsInDeck: 99
+        public static RuleBook TestRuleBook(
+            int StartPlayerHp = 10,
+            int MaxPlayerHp = 99,
+            int MinPlayerHp = 0,
+            int MaxNumDeckCards = 99,
+            int MinNumDeckCards = 1,
+            int StartNumHands = 5,
+            int MaxNumHands = 10,
+            int NumDraws = 1,
+            int FirstPlayerNumDrawsInFirstTurn = 1,
+            int SecondPlayerNumDrawsInFirstTurn = 1,
+            int FirstPlayerStartMp = 1,
+            int SecondPlayerStartMp = 1,
+            int MaxLimitMp = 10,
+            int MinMp = 1,
+            int LimitMpToIncrease = 1,
+            int StartMaxNumFields = 5,
+            int MaxNumFields = 10,
+            int DefaultNumTurnsToCanAttack = 0,
+            int DefaultNumAttacksLimitInTurn = 1,
+            int DefaultLimitNumCardsInDeck = 99
+            ) => new(
+            StartPlayerHp: StartPlayerHp, MaxPlayerHp: MaxPlayerHp, MinPlayerHp: MinPlayerHp,
+            MaxNumDeckCards: MaxNumDeckCards, MinNumDeckCards: MinNumDeckCards,
+            StartNumHands: StartNumHands, MaxNumHands: MaxNumHands,
+            NumDraws: NumDraws,
+            FirstPlayerNumDrawsInFirstTurn: FirstPlayerNumDrawsInFirstTurn,
+            SecondPlayerNumDrawsInFirstTurn: SecondPlayerNumDrawsInFirstTurn,
+            FirstPlayerStartMp: FirstPlayerStartMp, SecondPlayerStartMp: SecondPlayerStartMp,
+            MaxLimitMp: MaxLimitMp, MinMp: MinMp, LimitMpToIncrease: LimitMpToIncrease,
+            StartMaxNumFields: StartMaxNumFields, MaxNumFields: MaxNumFields,
+            DefaultNumTurnsToCanAttack: DefaultNumTurnsToCanAttack,
+            DefaultNumAttacksLimitInTurn: DefaultNumAttacksLimitInTurn,
+            DefaultLimitNumCardsInDeck: DefaultLimitNumCardsInDeck
             );
 
         public static CardDef CardDef(string name)
@@ -42,8 +64,8 @@ namespace Cauldron.Core_Test
             ILogger Logger = null,
             GameEventListener EventListener = null
             ) => new(
-                ruleBook ?? TestUtil.TestRuleBook,
-                cardRepository ?? new CardRepository(ruleBook ?? TestUtil.TestRuleBook),
+                ruleBook ?? TestUtil.TestRuleBook(),
+                cardRepository ?? new CardRepository(ruleBook ?? TestUtil.TestRuleBook()),
                 Logger ?? new TestLogger(),
                 EventListener ?? TestUtil.GameEventListener()
                 );

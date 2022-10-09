@@ -21,7 +21,7 @@ namespace Cauldron.Core_Test
                     Core.Entities.GameEvent.OnStartTurn,
                     default,
                     SourcePlayer: new Core.Entities.Player(
-                        PlayerId.NewId(), "", TestUtil.TestRuleBook, Array.Empty<Card>(), default)
+                        PlayerId.NewId(), "", TestUtil.TestRuleBook(), Array.Empty<Card>(), default)
                 ));
 
             Assert.True(actual);
@@ -31,7 +31,7 @@ namespace Cauldron.Core_Test
         public async Task IsMatch_あなたのターン開始時()
         {
             var testPlayer = new Core.Entities.Player(
-                PlayerId.NewId(), "", TestUtil.TestRuleBook, Array.Empty<Card>(), default
+                PlayerId.NewId(), "", TestUtil.TestRuleBook(), Array.Empty<Card>(), default
                 );
 
             var youCard = new Card(TestUtil.CardDef(""))
@@ -74,7 +74,7 @@ namespace Cauldron.Core_Test
         public async Task IsMatch_相手のターン開始時()
         {
             var testPlayer = new Core.Entities.Player(
-                PlayerId.NewId(), "", TestUtil.TestRuleBook, Array.Empty<Card>(), default
+                PlayerId.NewId(), "", TestUtil.TestRuleBook(), Array.Empty<Card>(), default
                 );
 
             var youCard = new Card(TestUtil.CardDef(""))

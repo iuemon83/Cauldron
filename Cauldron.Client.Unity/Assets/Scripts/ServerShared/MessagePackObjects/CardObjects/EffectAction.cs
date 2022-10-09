@@ -25,6 +25,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectActionModifyPlayer? ModifyPlayer { get; } = null;
         public EffectActionDrawCard? DrawCard { get; } = null;
         public EffectActionMoveCard? MoveCard { get; } = null;
+        public EffectActionModifyNumFields? ModifyNumFields { get; } = null;
         public EffectActionAddEffect? AddEffect { get; } = null;
         public EffectActionSetVariable? SetVariable { get; } = null;
         public EffectActionModifyCounter? ModifyCounter { get; } = null;
@@ -43,6 +44,7 @@ namespace Cauldron.Shared.MessagePackObjects
             EffectActionModifyPlayer? ModifyPlayer = null,
             EffectActionDrawCard? DrawCard = null,
             EffectActionMoveCard? MoveCard = null,
+            EffectActionModifyNumFields? ModifyNumFields = null,
             EffectActionAddEffect? AddEffect = null,
             EffectActionSetVariable? SetVariable = null,
             EffectActionModifyCounter? ModifyCounter = null,
@@ -61,6 +63,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.ModifyPlayer = ModifyPlayer;
             this.DrawCard = DrawCard;
             this.MoveCard = MoveCard;
+            this.ModifyNumFields = ModifyNumFields;
             this.AddEffect = AddEffect;
             this.SetVariable = SetVariable;
             this.ModifyCounter = ModifyCounter;
