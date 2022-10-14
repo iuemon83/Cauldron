@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Assets.Scripts.ServerShared.MessagePackObjects;
 using MessagePack;
 
 namespace Cauldron.Shared.MessagePackObjects.Value
@@ -12,11 +13,13 @@ namespace Cauldron.Shared.MessagePackObjects.Value
         /// </summary>
         public enum EventContextValue
         {
+            [DisplayText("なし")]
             None,
 
             /// <summary>
             /// ダメージの値。ダメージ前イベントで有効。
             /// </summary>
+            [DisplayText("ダメージ値")]
             DamageValue
         }
 
