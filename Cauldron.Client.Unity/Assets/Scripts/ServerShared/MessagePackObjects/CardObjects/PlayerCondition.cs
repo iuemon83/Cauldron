@@ -43,6 +43,11 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public bool? IsFirst { get; }
 
+        /// <summary>
+        /// アクティブプレイヤーならTrue
+        /// </summary>
+        public bool? IsActive { get; }
+
         public NumCompare? MaxHpCondition { get; }
         public NumCompare? CurrentHpCondition { get; }
         public NumCompare? MaxMpCondition { get; }
@@ -52,6 +57,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public PlayerCondition(
             PlayerCondition.ContextValue Context = ContextValue.Any,
             bool? IsFirst = null,
+            bool? IsActive = null,
             NumCompare? MaxHpCondition = default,
             NumCompare? CurrentHpCondition = default,
             NumCompare? MaxMpCondition = default,
@@ -60,6 +66,7 @@ namespace Cauldron.Shared.MessagePackObjects
         {
             this.Context = Context;
             this.IsFirst = IsFirst;
+            this.IsActive = IsActive;
             this.MaxHpCondition = MaxHpCondition;
             this.CurrentHpCondition = CurrentHpCondition;
             this.MaxMpCondition = MaxMpCondition;

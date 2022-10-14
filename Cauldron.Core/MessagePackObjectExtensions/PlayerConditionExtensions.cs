@@ -35,6 +35,7 @@ namespace Cauldron.Shared.MessagePackObjects
                     _ => true
                 }
                 && (_this.IsFirst == null || _this.IsFirst == playerToMatch.IsFirst)
+                && (_this.IsActive == null || _this.IsActive == (playerToMatch.Id == eventArgs.GameMaster.ActivePlayer.Id))
                 && (_this.MaxHpCondition == null || await _this.MaxHpCondition.IsMatch(playerToMatch.MaxHp, effectOwnerCard, eventArgs))
                 && (_this.CurrentHpCondition == null || await _this.CurrentHpCondition.IsMatch(playerToMatch.CurrentHp, effectOwnerCard, eventArgs))
                 && (_this.MaxMpCondition == null || await _this.MaxMpCondition.IsMatch(playerToMatch.MaxMp, effectOwnerCard, eventArgs))
