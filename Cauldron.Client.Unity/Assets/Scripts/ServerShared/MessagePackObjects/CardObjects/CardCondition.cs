@@ -138,6 +138,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public ActionContextCards? ActionContext { get; }
         public NumCompare? CostCondition { get; }
         public NumCompare? PowerCondition { get; }
+        public NumCompare? DiffPowerCondition { get; }
         public NumCompare? ToughnessCondition { get; }
         public NumCompare? DiffToughnessCondition { get; }
         public CardSetCondition? CardSetCondition { get; }
@@ -156,6 +157,7 @@ namespace Cauldron.Shared.MessagePackObjects
             ActionContextCards? ActionContext = default,
             NumCompare? CostCondition = default,
             NumCompare? PowerCondition = default,
+            NumCompare? DiffPowerCondition = default,
             NumCompare? ToughnessCondition = default,
             NumCompare? DiffToughnessCondition = default,
             CardSetCondition? CardSetCondition = default,
@@ -174,6 +176,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.ActionContext = ActionContext;
             this.CostCondition = CostCondition;
             this.PowerCondition = PowerCondition;
+            this.DiffPowerCondition = DiffPowerCondition;
             this.ToughnessCondition = ToughnessCondition;
             this.DiffToughnessCondition = DiffToughnessCondition;
             this.CardSetCondition = CardSetCondition;

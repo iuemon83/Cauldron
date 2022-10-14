@@ -142,6 +142,8 @@ namespace Cauldron.Shared.MessagePackObjects
                     ?? ValueTask.FromResult(true)))
                 && (await (_this.PowerCondition?.IsMatch(cardToMatch.Power, effectOwnerCard, effectEventArgs)
                     ?? ValueTask.FromResult(true)))
+                && (await (_this.DiffPowerCondition?.IsMatch(cardToMatch.PowerBuff, effectOwnerCard, effectEventArgs)
+                    ?? ValueTask.FromResult(true)))
                 && (await (_this.ToughnessCondition?.IsMatch(cardToMatch.Toughness, effectOwnerCard, effectEventArgs)
                     ?? ValueTask.FromResult(true)))
                 && (await (_this.DiffToughnessCondition?.IsMatch(cardToMatch.ToughnessBuff, effectOwnerCard, effectEventArgs)
