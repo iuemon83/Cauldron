@@ -311,7 +311,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5846010935912505412, guid: 84b4df996674d374a8e59f047d398d8e, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5846010935912505412, guid: 84b4df996674d374a8e59f047d398d8e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2680,7 +2680,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameList: {fileID: 1025618933}
-  GameListNodePrefab: {fileID: 6801688050871598779, guid: 6a52d21b60df40e40b04cf10cc29cf31, type: 3}
+  GameListNodePrefab: {fileID: 1016326065282317097, guid: 6a52d21b60df40e40b04cf10cc29cf31, type: 3}
   SelectDeckDialog: {fileID: 169913118}
   canvas: {fileID: 839613576}
   confirmDialogController: {fileID: 206061174593263470, guid: 311bc35d10666ad47bfcbe81f0e33cd7, type: 3}
