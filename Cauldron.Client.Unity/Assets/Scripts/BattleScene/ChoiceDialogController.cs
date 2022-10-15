@@ -1,4 +1,5 @@
 using Cauldron.Shared.MessagePackObjects;
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,10 +44,17 @@ public class ChoiceDialogController : MonoBehaviour
         }
     }
 
-    public void Init(AskMessage askMessage, Action<ChoiceAnswer> okAction)
+    public async UniTask Init(AskMessage askMessage, Action<ChoiceAnswer> okAction)
     {
         this.askMessage = askMessage;
         this.okAction = okAction;
+
+        while (this.countText == null)
+        {
+            await UniTask.DelayFrame(1);
+        }
+
+        this.UpdateDeckTotalCountText();
     }
 
     public void OnOkButtonClick()
