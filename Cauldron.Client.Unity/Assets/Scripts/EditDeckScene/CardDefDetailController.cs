@@ -3,7 +3,6 @@ using Cauldron.Shared.MessagePackObjects;
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CardDefDetailController : MonoBehaviour
 {
@@ -13,9 +12,9 @@ public class CardDefDetailController : MonoBehaviour
     private TextMeshProUGUI effectText = default;
 
     [SerializeField]
-    private Image powerSpace = default;
+    private GameObject powerSpace = default;
     [SerializeField]
-    private Image toughnessSpace = default;
+    private GameObject toughnessSpace = default;
 
     [SerializeField]
     private TextMeshProUGUI cardTypeText = default;
