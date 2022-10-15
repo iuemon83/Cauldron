@@ -1,5 +1,7 @@
-﻿using Cauldron.Core.Entities;
+﻿using Cauldron.Core;
+using Cauldron.Core.Entities;
 using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared.MessagePackObjects.Value;
 
 namespace Cauldron.Shared.MessagePackObjects
 {
@@ -81,7 +83,17 @@ namespace Cauldron.Shared.MessagePackObjects
                 mathedCards.AddRange(carddefs);
             }
 
-            return mathedCards
+            if (choiceSource.How == ChoiceSource.HowValue.All)
+            {
+                return mathedCards
+                    .SelectMany(c => Enumerable.Repeat(c, numDuplicates))
+                    .OrderBy(x => x.Name);
+            }
+
+            var num = await choiceSource.NumPicks.Calculate(effectOwnerCard, eventArgs);
+            var piockedCards = RandomUtil.RandomPick(mathedCards, num);
+
+            return piockedCards
                 .SelectMany(c => Enumerable.Repeat(c, numDuplicates))
                 .OrderBy(x => x.Name);
         }

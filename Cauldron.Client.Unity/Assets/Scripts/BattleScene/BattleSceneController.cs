@@ -898,7 +898,12 @@ public class BattleSceneController : MonoBehaviour
                 this.youPlayerController.SetActiveTurn(true);
                 this.opponentPlayerController.SetActiveTurn(false);
                 this.endTurnButton.interactable = true;
-                await this.Client.StartTurn();
+
+                // awaitするとダメ
+                // サーバーとの通信終わるまでUI止まる
+#pragma warning disable CS4014 // この呼び出しは待機されなかったため、現在のメソッドの実行は呼び出しの完了を待たずに続行されます
+                this.Client.StartTurn();
+#pragma warning restore CS4014 // この呼び出しは待機されなかったため、現在のメソッドの実行は呼び出しの完了を待たずに続行されます
             }
             else
             {

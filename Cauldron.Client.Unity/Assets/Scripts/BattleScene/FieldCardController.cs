@@ -139,7 +139,7 @@ public class FieldCardController : CardController, IPointerClickHandler
 
         this.transform.SetAsLastSibling();
 
-        await this.AttackEffect(dest.transform.position);
+        await this.AttackEffect(dest.AttackDestPosition);
 
         this.transform.SetSiblingIndex(origIndex);
     }

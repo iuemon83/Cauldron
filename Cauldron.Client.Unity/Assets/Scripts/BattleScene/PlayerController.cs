@@ -10,6 +10,8 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
+    private GameObject playerIcon = default;
+    [SerializeField]
     private TextMeshProUGUI nameText = default;
     [SerializeField]
     private TextMeshProUGUI hpText = default;
@@ -40,6 +42,8 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
 
     private Action<PlayerController> unPick;
     private Action<PlayerController> pick;
+
+    public Vector3 AttackDestPosition => this.playerIcon.transform.position;
 
     public bool IsPickCandidate => this.pickCandidateIcon.activeSelf || this.IsPicked;
     public bool IsPicked => this.pickedIcon.activeSelf;
