@@ -105,7 +105,7 @@ public class ReplaySceneController : MonoBehaviour
         }
     }
 
-    public async UniTask Init(GameReplay gameReplay, PlayerId playerId)
+    public async UniTask Init(GameReplay gameReplay, PlayerId playerId, CardDef[] cardpool)
     {
         while (BattleSceneController.Instance == null)
         {
@@ -153,7 +153,7 @@ public class ReplaySceneController : MonoBehaviour
 
         this.gameReplay = gameReplay;
         this.replayPlayerId = playerId;
-        this.replayCardpool = this.gameReplay.CardPool.ToDictionary(x => x.Id, x => x);
+        this.replayCardpool = cardpool.ToDictionary(x => x.Id, x => x);
         this.currentActionLogId = await this.Client.FirstActionLog(this.gameReplay.GameId);
 
         this.initialized = true;
@@ -167,7 +167,7 @@ public class ReplaySceneController : MonoBehaviour
     private float prevTime;
     private Dictionary<CardDefId, CardDef> replayCardpool;
     private bool isPaused;
-    private float requestInterval = 0.1f;
+    private readonly float requestInterval = 0.1f;
     private bool initialized = false;
 
     private async void Update()

@@ -11,21 +11,18 @@ namespace Assets.Scripts.ServerShared.MessagePackObjects
         public GameReplayPlayer[] Players { get; }
         public int ActionLogId { get; }
         public DateTime DateTime { get; }
-        public CardDef[] CardPool { get; }
 
         public GameReplay(
             GameId GameId,
             GameReplayPlayer[] Players,
             int ActionLogId,
-            DateTime DateTime,
-            CardDef[] CardPool
+            DateTime DateTime
             )
         {
             this.GameId = GameId;
             this.Players = Players;
             this.ActionLogId = ActionLogId;
             this.DateTime = DateTime;
-            this.CardPool = CardPool;
         }
     }
 

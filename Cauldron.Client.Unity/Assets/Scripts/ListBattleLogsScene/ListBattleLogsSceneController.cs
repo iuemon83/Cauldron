@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -97,9 +98,11 @@ public class ListBattleLogsSceneController : MonoBehaviour
     {
         await Utility.LoadAsyncScene(SceneNames.BattleScene, async () =>
         {
+            var cardpool = await ConnectionHolder.Find().Client.GetCardPool(gameReplay.GameId);
+
             // ƒŠƒvƒŒƒC‰æ–Ê‚ğ‰Šú‰»
             var replaySceneController = FindObjectOfType<ReplaySceneController>();
-            await replaySceneController.Init(gameReplay, playerId);
+            await replaySceneController.Init(gameReplay, playerId, cardpool);
         });
     }
 

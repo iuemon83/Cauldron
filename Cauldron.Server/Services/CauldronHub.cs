@@ -200,6 +200,14 @@ namespace Cauldron.Server.Services
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
+        Task<CardDef[]> ICauldronHub.GetCardPoolByGame(GameId gameId)
+        {
+            return Task.FromResult(
+                new BattleLogDb().FindCardPool(this.dbConnection, gameId)
+                );
+        }
+
+        [FromTypeFilter(typeof(LoggingAttribute))]
         async Task<int> ICauldronHub.FirstActionLog(GameId gameId)
         {
             var (success, room) = await this.Group.TryAddAsync(

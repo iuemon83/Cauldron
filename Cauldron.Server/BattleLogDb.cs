@@ -188,7 +188,6 @@ select
 		limit 1
 	) as action_log_id,
     g.created_at,
-    g.card_defs_json,
 	exists(
 		select *
 		from battle_players bp
@@ -198,8 +197,10 @@ select
 from games g
 where g.winner_player_id is not NULL
 ";
-            var sqlParameters = new List<SqliteParameter>();
-            sqlParameters.Add(new SqliteParameter("client_id", clientId));
+            var sqlParameters = new List<SqliteParameter>
+            {
+                new SqliteParameter("client_id", clientId)
+            };
 
             if (gameIdList.Any())
             {
@@ -234,7 +235,7 @@ and exists(
             while (reader.Read())
             {
                 var players = JsonConverter.Deserialize<GameReplayPlayer[]>(reader.GetFieldValue<string>(1));
-                var isMine = reader.GetFieldValue<bool>(5);
+                var isMine = reader.GetFieldValue<bool>(4);
                 if (!isMine)
                 {
                     players = players
@@ -242,18 +243,43 @@ and exists(
                         .ToArray();
                 }
 
-                var cardDefs = JsonConverter.Deserialize<CardDef[]>(reader.GetFieldValue<string>(4));
-
                 result.Add(new GameReplay(
                     GameId.Parse(reader.GetFieldValue<string>(0)),
                     players,
                     reader.GetFieldValue<int>(2),
-                    DateTime.Parse(reader.GetFieldValue<string>(3)),
-                    cardDefs
+                    DateTime.Parse(reader.GetFieldValue<string>(3))
                     ));
             }
 
             return result;
+        }
+
+        public CardDef[] FindCardPool(SqliteConnection con, GameId gameId)
+        {
+            var sql = $@"
+select card_defs_json
+from games g
+where game_id = @game_id
+";
+            var sqlParameters = new List<SqliteParameter>
+            {
+                new SqliteParameter("@game_id", gameId.ToString()),
+            };
+
+            using var command = con.CreateCommand();
+            command.CommandText = sql;
+            command.Parameters.AddRange(sqlParameters);
+
+            using var reader = command.ExecuteReader();
+
+            var result = new List<GameReplay>();
+
+            while (reader.Read())
+            {
+                return JsonConverter.Deserialize<CardDef[]>(reader.GetFieldValue<string>(0));
+            }
+
+            return Array.Empty<CardDef>();
         }
 
         public ReplayActionLog FindNextActionLog(

@@ -18,6 +18,8 @@ namespace Cauldron.Shared.Services
 
         Task<GameReplay[]> ListGameHistories(ListGameHistoriesRequest request);
 
+        Task<CardDef[]> GetCardPoolByGame(GameId gameId);
+
         Task<int> FirstActionLog(GameId gameId);
         Task<int> NextActionLog(GameId gameId, PlayerId playerId, int currentActionLogId);
 

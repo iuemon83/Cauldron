@@ -275,6 +275,11 @@ public class Client
         return await this.magiconionClient.ListGameHistories(request);
     }
 
+    public async UniTask<CardDef[]> GetCardPool(GameId gameId)
+    {
+        return await this.magiconionClient.GetCardPoolByGame(gameId);
+    }
+
     public async UniTask<int> FirstActionLog(GameId gameId)
     {
         return await this.magiconionClient.FirstActionLog(gameId);
