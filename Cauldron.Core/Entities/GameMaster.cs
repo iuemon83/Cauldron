@@ -397,13 +397,17 @@ namespace Cauldron.Core.Entities
             }
 
             // notify
-            var isPublic = card.Zone.IsPublic();
-            foreach (var p in this.playerRepository.AllPlayers)
+            var targetCardIsPublic = card.Zone.IsPublic();
+            var notifyPlayerIdList = !targetCardIsPublic && !effectOwnerCard.Zone.IsPublic()
+                ? new[] { effectOwnerCard.OwnerId }
+                : this.playerRepository.AllPlayers.Select(p => p.Id);
+
+            foreach (var pid in notifyPlayerIdList)
             {
-                this.EventListener?.OnModifyCard?.Invoke(p.Id,
-                    this.CreateGameContext(p.Id),
+                this.EventListener?.OnModifyCard?.Invoke(pid,
+                    this.CreateGameContext(pid),
                     new ModifyCardNotifyMessage(
-                        (isPublic || card.OwnerId == p.Id) ? card : card.AsHidden(),
+                        (targetCardIsPublic || card.OwnerId == pid) ? card : card.AsHidden(),
                         effectOwnerCard,
                         effectId
                         ));
@@ -1717,17 +1721,21 @@ namespace Cauldron.Core.Entities
             this.logger.LogInformation("set counter. card={targetCard}, counter={counterName}:{numCounters}",
                 targetCard, counterName, numCounters);
 
-            var isPublic = targetCard.Zone.IsPublic();
-            foreach (var p in this.playerRepository.AllPlayers)
+            var targetCardIsPublic = targetCard.Zone.IsPublic();
+            var notifyPlayerIdList = !targetCardIsPublic && !effectOwnerCard.Zone.IsPublic()
+                ? new[] { effectOwnerCard.OwnerId }
+                : this.playerRepository.AllPlayers.Select(p => p.Id);
+
+            foreach (var pid in notifyPlayerIdList)
             {
                 // 非公開領域なら、カードの持ち主以外にはカードを知らせない
-                var card = isPublic || p.Id == targetCard.OwnerId
+                var card = targetCardIsPublic || pid == targetCard.OwnerId
                     ? targetCard
                     : targetCard.AsHidden();
 
                 this.EventListener?.OnModityCounter?.Invoke(
-                    p.Id,
-                    this.CreateGameContext(p.Id),
+                    pid,
+                    this.CreateGameContext(pid),
                     new ModifyCounterNotifyMessage(
                         counterName, numCounters,
                         TargetCard: card,
