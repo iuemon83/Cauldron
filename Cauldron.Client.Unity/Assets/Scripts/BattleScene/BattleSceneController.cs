@@ -195,6 +195,7 @@ public class BattleSceneController : MonoBehaviour
             holder.Receiver.OnModifyCard.Subscribe((a) => this.OnModifyCard(a.gameContext, a.message)),
             holder.Receiver.OnModifyPlayer.Subscribe((a) => this.OnModifyPlayer(a.gameContext, a.message)),
             holder.Receiver.OnModifyCounter.Subscribe((a) => this.OnModifyCounter(a.gameContext, a.message)),
+            holder.Receiver.OnModifyNumFields.Subscribe((a) => this.OnModifyNumFields(a.gameContext, a.message)),
             holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.message)),
             holder.Receiver.OnExcludeCard.Subscribe((a) => this.OnExcludeCard(a.gameContext, a.message)),
             holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.message)),
@@ -549,10 +550,10 @@ public class BattleSceneController : MonoBehaviour
         return true;
     }
 
-    private void ShowChoiceDialog()
+    private async UniTask ShowChoiceDialog()
     {
         var dialog = Instantiate(this.choiceDialogPrefab);
-        dialog.Init(this.choiceService.AskMessage, async answer =>
+        await dialog.Init(this.choiceService.AskMessage, async answer =>
         {
             AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
@@ -1259,6 +1260,29 @@ public class BattleSceneController : MonoBehaviour
         });
     }
 
+    void OnModifyNumFields(GameContext gameContext, ModifyNumFieldsNotifyMessage message)
+    {
+        Debug.Log($"OnModifyNumFields({this.Client.PlayerName})");
+
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            if (message.PlayerId != default)
+            {
+                var playerName = Utility.GetPlayerName(gameContext, message.PlayerId);
+                var playerInfo = message.PlayerId == this.YouId
+                    ? gameContext.You.PublicPlayerInfo
+                    : gameContext.Opponent;
+
+                await this.AddActionLog(
+                    new ActionLog($"ê‚Ì”‚ª•Ï‰»", playerInfo),
+                    message.EffectOwnerCard, message.EffectId
+                    );
+            }
+
+            await this.UpdateGameContext(gameContext);
+        });
+    }
+
     void OnBattleStart(GameContext gameContext, BattleNotifyMessage message)
     {
         Debug.Log($"OnBattle({this.Client.PlayerName})");
@@ -1428,7 +1452,7 @@ public class BattleSceneController : MonoBehaviour
     {
         Debug.Log($"questionId={message.QuestionId}");
 
-        this.updateViewActionQueue.Enqueue(() =>
+        this.updateViewActionQueue.Enqueue(async () =>
         {
             this.StartChoiceMode(message);
 
@@ -1441,8 +1465,8 @@ public class BattleSceneController : MonoBehaviour
 
             if (choiceFromDialog)
             {
-                this.ShowChoiceDialog();
-                return UniTask.CompletedTask;
+                await this.ShowChoiceDialog();
+                return;
             }
 
             foreach (var player in new[] { this.youPlayerController, this.opponentPlayerController })
@@ -1463,7 +1487,7 @@ public class BattleSceneController : MonoBehaviour
                 }
             }
 
-            return UniTask.CompletedTask;
+            return;
         });
     }
 

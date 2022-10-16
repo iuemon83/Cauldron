@@ -1891,15 +1891,33 @@ namespace Cauldron.Core.Entities
             return newEventArgs;
         }
 
-        public int ModifyNumFields(PlayerId id, int newNumFields)
+        public int ModifyNumFields(PlayerId id, int newNumFields,
+            Card effectOwnerCard, CardEffectId effectId)
         {
             var player = this.Get(id);
             if (player == null)
             {
-                throw new ArgumentException();
+                throw new ArgumentException($"player not found id={id}");
             }
 
-            return player.Field.UpdateLimit(newNumFields);
+            var diffNum = player.Field.UpdateLimit(newNumFields);
+
+            foreach (var p in this.playerRepository.AllPlayers)
+            {
+                //TODO メッセージに含める値が適当
+                this.EventListener?.OnModifyNumFields?.Invoke(
+                    p.Id,
+                    this.CreateGameContext(p.Id),
+                    new ModifyNumFieldsNotifyMessage(
+                        id,
+                        0,
+                        false,
+                        effectOwnerCard,
+                        effectId
+                        ));
+            }
+
+            return diffNum;
         }
     }
 }

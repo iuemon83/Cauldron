@@ -1,7 +1,6 @@
 ﻿using Assets.Scripts.ServerShared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects;
 using MagicOnion;
-using System;
 using System.Threading.Tasks;
 
 namespace Cauldron.Shared.Services

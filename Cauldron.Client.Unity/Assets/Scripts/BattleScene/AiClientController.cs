@@ -100,7 +100,11 @@ public class AiClientController : MonoBehaviour, ICauldronHubReceiver
     {
     }
 
-    public void OnHeal(GameContext gameContext, HealNotifyMessage message)
+    void ICauldronHubReceiver.OnModifyNumFields(GameContext gameContext, ModifyNumFieldsNotifyMessage message)
+    {
+    }
+
+    void ICauldronHubReceiver.OnHeal(GameContext gameContext, HealNotifyMessage message)
     {
     }
 }

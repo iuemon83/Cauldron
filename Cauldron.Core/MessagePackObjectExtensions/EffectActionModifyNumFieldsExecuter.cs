@@ -29,7 +29,7 @@ namespace Cauldron.Core.MessagePackObjectExtensions
 
                 var newNumFields = await _this.DiffNum.Modify(effectOwnerCard, args, player.Field.CurrentLimit);
 
-                var diff = args.GameMaster.ModifyNumFields(id, newNumFields);
+                var diff = args.GameMaster.ModifyNumFields(id, newNumFields, effectOwnerCard, effectId);
                 if (diff != 0)
                 {
                     done = true;

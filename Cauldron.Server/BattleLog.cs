@@ -60,6 +60,10 @@ namespace Cauldron.Server
         {
             return new BattleLog(GameId, playerId, NotifyEvent.OnModityCounter, gameContext, JsonConverter.Serialize(message));
         }
+        public static BattleLog AsModityNumFieldsEvent(GameId GameId, PlayerId playerId, GameContext gameContext, ModifyNumFieldsNotifyMessage message)
+        {
+            return new BattleLog(GameId, playerId, NotifyEvent.OnModifyNumFields, gameContext, JsonConverter.Serialize(message));
+        }
         public static BattleLog AsEndGameEvent(GameId GameId, PlayerId playerId, GameContext gameContext, EndGameNotifyMessage message)
         {
             return new BattleLog(GameId, playerId, NotifyEvent.OnEndGame, gameContext, JsonConverter.Serialize(message));

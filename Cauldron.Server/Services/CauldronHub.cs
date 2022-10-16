@@ -81,7 +81,7 @@ namespace Cauldron.Server.Services
         protected override async ValueTask OnConnecting()
         {
             // handle connection if needed.
-            this._logger.LogInformation($"client connected {this.Context.ContextId}");
+            this._logger.LogInformation("client connected {context_id}", this.Context.ContextId);
 
             this.dbConnection = new BattleLogDb().Connection();
             await this.dbConnection.OpenAsync();
@@ -92,7 +92,7 @@ namespace Cauldron.Server.Services
             // handle disconnection if needed.
             // on disconnecting, if automatically removed this connection from group.
 
-            this._logger.LogInformation("on disconnected " + this.self?.Name ?? "");
+            this._logger.LogInformation("on disconnected {name}", this.self?.Name ?? "");
 
             await (this as ICauldronHub).LeaveRoom();
 
@@ -317,6 +317,12 @@ namespace Cauldron.Server.Services
                         this.Broadcast(this.room).OnModifyCounter(log.GameContext, message);
                         break;
                     }
+                case NotifyEvent.OnModifyNumFields:
+                    {
+                        var message = JsonConverter.Deserialize<ModifyNumFieldsNotifyMessage>(log.MessageJson);
+                        this.Broadcast(this.room).OnModifyNumFields(log.GameContext, message);
+                        break;
+                    }
                 case NotifyEvent.OnEndGame:
                     {
                         var message = JsonConverter.Deserialize<EndGameNotifyMessage>(log.MessageJson);
@@ -517,6 +523,21 @@ namespace Cauldron.Server.Services
                         {
                             new BattleLogDb().Add(this.dbConnection,
                                 BattleLog.AsModityCounterEvent(this.gameId, playerId, gameContext, message));
+                        }
+                        catch (Exception e)
+                        {
+                            this._logger.LogError(e, "db error");
+                        }
+                    },
+                    OnModifyNumFields: (playerId, gameContext, message) =>
+                    {
+                        this.BroadcastTo(this.room, playerId.Value).OnModifyNumFields(gameContext, message);
+                        this._logger.LogInformation("OnModifyNumFields: {playerId}", playerId);
+
+                        try
+                        {
+                            new BattleLogDb().Add(this.dbConnection,
+                                BattleLog.AsModityNumFieldsEvent(this.gameId, playerId, gameContext, message));
                         }
                         catch (Exception e)
                         {

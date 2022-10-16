@@ -140,6 +140,7 @@ public class ReplaySceneController : MonoBehaviour
             holder.Receiver.OnModifyCard.Subscribe((a) => this.OnModifyCard(a.gameContext, a.message)),
             holder.Receiver.OnModifyPlayer.Subscribe((a) => this.OnModifyPlayer(a.gameContext, a.message)),
             holder.Receiver.OnModifyCounter.Subscribe((a) => this.OnModifyCounter(a.gameContext, a.message)),
+            holder.Receiver.OnModifyNumFields.Subscribe((a) => this.OnModifyNumFields(a.gameContext, a.message)),
             holder.Receiver.OnMoveCard.Subscribe((a) => this.OnMoveCard(a.gameContext, a.message)),
             holder.Receiver.OnExcludeCard.Subscribe((a) => this.OnExcludeCard(a.gameContext, a.message)),
             holder.Receiver.OnStartTurn.Subscribe((a) => this.OnStartTurn(a.gameContext, a.message)),
@@ -943,6 +944,29 @@ public class ReplaySceneController : MonoBehaviour
 
                 await this.AddActionLog(
                     new ActionLog($"カウンター {message.CounterName}({message.NumCounters})", playerInfo),
+                    message.EffectOwnerCard, message.EffectId
+                    );
+            }
+
+            await this.UpdateGameContext(gameContext);
+        });
+    }
+
+    void OnModifyNumFields(GameContext gameContext, ModifyNumFieldsNotifyMessage message)
+    {
+        Debug.Log($"OnModifyNumFields({this.Client.PlayerName})");
+
+        this.updateViewActionQueue.Enqueue(async () =>
+        {
+            if (message.PlayerId != default)
+            {
+                var playerName = Utility.GetPlayerName(gameContext, message.PlayerId);
+                var playerInfo = message.PlayerId == this.YouId
+                    ? gameContext.You.PublicPlayerInfo
+                    : gameContext.Opponent;
+
+                await this.AddActionLog(
+                    new ActionLog($"場の数が変化", playerInfo),
                     message.EffectOwnerCard, message.EffectId
                     );
             }

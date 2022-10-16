@@ -14,6 +14,7 @@
         OnDamage,
         OnHeal,
         OnModityCounter,
+        OnModifyNumFields,
         OnEndGame,
         AskCardAction
     }
