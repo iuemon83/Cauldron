@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EditDeckSceneController : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class EditDeckSceneController : MonoBehaviour
     private CardPoolGridViewController cardPoolGridViewController = default;
     [SerializeField]
     private DeckGridViewController deckGridViewController = default;
+    [SerializeField]
+    private Toggle isShowTokenToggle = default;
 
     public IDeck DeckToEdit { get; set; }
 
@@ -99,22 +102,37 @@ public class EditDeckSceneController : MonoBehaviour
         }
     }
 
+    public void OnIsShowTokenToggleChanged()
+    {
+        this.RefleshCardPool();
+    }
+
     public void OnSearchButtonClick()
     {
         AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
-        var keyword = this.searchKeywordInputField.text;
-        this.SearchCardPool(keyword);
+        this.RefleshCardPool();
     }
 
-    private void SearchCardPool(string keyword)
+    private void RefleshCardPool()
     {
-        var matchedCards = this.allCardsById.Values
+        var keyword = this.searchKeywordInputField.text;
+        var isShowToken = this.isShowTokenToggle.isOn;
+
+        var matchedCards = this.allCardsById.Values;
+
+        if (!isShowToken)
+        {
+            matchedCards = matchedCards
+                .Where(c => !c.IsToken);
+        }
+
+        var matchedCardsArray = matchedCards
             .Where(c => this.IsMatchedByKeyword(keyword, c))
             .Select(c => (c, this.deckCards.Count(id => id == c.Id)))
             .ToArray();
 
-        this.cardPoolGridViewController.RefreshList(matchedCards);
+        this.cardPoolGridViewController.RefreshList(matchedCardsArray);
     }
 
     private bool IsMatchedByKeyword(string keyword, CardDef cardDef)
