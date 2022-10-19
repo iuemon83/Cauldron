@@ -1,5 +1,4 @@
-﻿using Cauldron.Shared;
-using Cauldron.Shared.MessagePackObjects;
+﻿using Cauldron.Shared.MessagePackObjects;
 using System.Collections.Concurrent;
 
 namespace Cauldron.Core.Entities

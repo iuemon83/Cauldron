@@ -27,5 +27,10 @@ namespace Cauldron.Core.Entities
         {
             this.Cards.Remove(card);
         }
+
+        public int Index(Card card)
+        {
+            return this.Cards.IndexOf(card);
+        }
     }
 }

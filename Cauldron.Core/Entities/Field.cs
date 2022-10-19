@@ -146,5 +146,10 @@ namespace Cauldron.Core.Entities
                 return count;
             }
         }
+
+        public int Index(Card card)
+        {
+            return Array.IndexOf(this.CardContainers, card);
+        }
     }
 }

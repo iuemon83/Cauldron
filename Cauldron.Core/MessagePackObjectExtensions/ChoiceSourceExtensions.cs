@@ -18,6 +18,7 @@ namespace Cauldron.Shared.MessagePackObjects
 
             var cardList = await choiceSource.ListMatchedCards(effectOwnerCard, effectEventArgs, cardRepository);
 
+            // 対象を選択するなら、ステルスは除外する
             if (choiceHow == Choice.HowValue.Choose)
             {
                 cardList = cardList.Where(c =>
@@ -70,7 +71,21 @@ namespace Cauldron.Shared.MessagePackObjects
             }
 
             return mathedCards.Values
-                .OrderBy(x => x.Name);
+                .OrderBy(x => x.OwnerId == eventArgs.GameMaster.ActivePlayer.Id ? 1 : 2)
+                .ThenBy(x => x.Zone.ZoneName)
+                .ThenBy(x => SortInZoneKey(x, eventArgs.GameMaster));
+        }
+
+        private static string SortInZoneKey(Card card, GameMaster gameMaster)
+        {
+            return card.Zone.ZoneName switch
+            {
+                ZoneName.Deck => card.Name,
+                ZoneName.Cemetery => (gameMaster.Get(card.Zone.PlayerId)?.Cemetery.Index(card) ?? -1).ToString(),
+                ZoneName.Hand => (gameMaster.Get(card.Zone.PlayerId)?.Hands.Index(card) ?? -1).ToString(),
+                ZoneName.Field => (gameMaster.Get(card.Zone.PlayerId)?.Field.Index(card) ?? -1).ToString(),
+                _ => card.Name
+            };
         }
 
         public static async ValueTask<IEnumerable<CardDef>> ListMatchedCardDefs(this ChoiceSource choiceSource,

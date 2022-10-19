@@ -3117,11 +3117,11 @@ namespace Cauldron.Core_Test
                 Assert.Equal(testcard.BaseCost - 1, testcard.Cost);
 
                 // 魔法を使わなくてもカウンターが乗ったらコストが-1
-                await g.ModifyCounter(testcard, "魔導", 1, default, default);
+                await g.ModifyCounter(testcard, "魔導", 1, Card.Empty, default);
                 Assert.Equal(testcard.BaseCost - 2, testcard.Cost);
 
                 // 2つカウンターが乗ったらコストが-2
-                await g.ModifyCounter(testcard, "魔導", 2, default, default);
+                await g.ModifyCounter(testcard, "魔導", 2, Card.Empty, default);
                 Assert.Equal(testcard.BaseCost - 4, testcard.Cost);
 
                 return testcard;

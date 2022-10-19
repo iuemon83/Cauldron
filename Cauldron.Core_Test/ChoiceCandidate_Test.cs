@@ -844,7 +844,8 @@ namespace Cauldron.Core_Test
             );
             var numPicks = await testChoice.NumPicks.Calculate(cards.testCard, null);
             var actual = await testChoice.Source.ChoiceCandidates(
-                cards.testCard, null,
+                cards.testCard,
+                new EffectEventArgs(default, c.GameMaster),
                 c.GameMaster.playerRepository,
                 c.CardRepository,
                 testChoice.How,
@@ -857,7 +858,8 @@ namespace Cauldron.Core_Test
                 new[] { cards.testCard },
                 Array.Empty<CardDef>()
             );
-            var actual2 = await c.GameMaster.Choice(cards.testCard, testChoice, null);
+            var actual2 = await c.GameMaster.Choice(cards.testCard, testChoice,
+                new EffectEventArgs(default, c.GameMaster));
             TestUtil.AssertChoiceResult(expected2, actual2);
         }
 

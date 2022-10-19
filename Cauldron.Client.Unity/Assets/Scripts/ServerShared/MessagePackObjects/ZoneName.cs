@@ -6,9 +6,9 @@
         CardPool,
         Field,
         Hand,
-        Deck,
         Cemetery,
         Excluded,
+        Deck,
         Temporary
     }
 }
