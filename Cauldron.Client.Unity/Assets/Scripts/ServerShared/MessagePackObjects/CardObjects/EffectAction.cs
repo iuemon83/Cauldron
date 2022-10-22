@@ -31,6 +31,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public EffectActionModifyCounter? ModifyCounter { get; } = null;
         public EffectActionWin? Win { get; } = null;
         public EffectActionReserveEffect? ReserveEffect { get; } = null;
+        public EffectActionChoice? Choice { get; } = null;
 
         public EffectAction(
             EffectIf? If = null,
@@ -49,7 +50,8 @@ namespace Cauldron.Shared.MessagePackObjects
             EffectActionSetVariable? SetVariable = null,
             EffectActionModifyCounter? ModifyCounter = null,
             EffectActionWin? Win = null,
-            EffectActionReserveEffect? ReserveEffect = null
+            EffectActionReserveEffect? ReserveEffect = null,
+            EffectActionChoice? Choice = null
             )
         {
             this.If = If;
@@ -69,6 +71,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.ModifyCounter = ModifyCounter;
             this.Win = Win;
             this.ReserveEffect = ReserveEffect;
+            this.Choice = Choice;
         }
     }
 }

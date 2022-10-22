@@ -153,8 +153,9 @@ namespace Cauldron.Core.Entities
 
         public Player GetOpponent(PlayerId playerId) => this.playerRepository.Opponents(playerId)[0];
 
+        public (bool Exists, Card Card) TryGet(CardId id) => this.cardRepository.TryGetById(id);
         public (bool Exists, CardDef CardDef) TryGet(CardDefId id) => this.cardRepository.TryGetCardDefById(id);
-        public (bool Exists, Player CardDef) TryGet(PlayerId id) => this.playerRepository.TryGet(id);
+        public (bool Exists, Player Player) TryGet(PlayerId id) => this.playerRepository.TryGet(id);
 
         public static bool IsPlayable(Player player, Card card)
         {

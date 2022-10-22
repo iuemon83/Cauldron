@@ -9,6 +9,7 @@
         ActionExcludeCardContext? ExcludeCard = null,
         ActionModifyCardContext? ModifyCard = null,
         ActionModifyCounterContext? ModifyCounter = null,
-        ActionMoveCardContext? MoveCard = null
+        ActionMoveCardContext? MoveCard = null,
+        ActionChoiceContext? Choice = null
         );
 }

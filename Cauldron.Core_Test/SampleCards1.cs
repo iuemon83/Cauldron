@@ -1,4 +1,5 @@
-﻿using Cauldron.Shared;
+﻿using Cauldron.Core.Entities.Effect;
+using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cauldron.Shared.MessagePackObjects.Value;
 using System;
@@ -3290,6 +3291,150 @@ namespace Cauldron.Core_Test
                             new NumValueModifier(
                                 NumValueModifier.OperatorValue.Add,
                                 new NumValue(1)
+                                )
+                            )),
+                    })
+            });
+
+        public static CardDef Bomb2 => SampleCards1.Sorcery(
+            1, "拡散ボム",
+            effects: new[] {
+                new CardEffect(
+                    "クリーチャーを1つ選択して2ダメージ、その周囲に1ダメージ",
+                    new EffectConditionWrap(ByPlay: new()),
+                    new[]
+                    {
+                        new EffectAction(Choice: new(
+                            new Choice(
+                                new ChoiceSource(orCardConditions: new[]
+                                {
+                                    new CardCondition(
+                                        ZoneCondition: new(new ZoneValue(new[]
+                                        {
+                                            ZonePrettyName.YouField, ZonePrettyName.OpponentField
+                                        })),
+                                        TypeCondition: new(new[]{ CardType.Creature })
+                                        )
+                                }),
+                                Choice.HowValue.Choose,
+                                new NumValue(1)
+                                ),
+                            "choice1"
+                            )),
+                        new EffectAction(Choice: new(
+                            new Choice(
+                                new ChoiceSource(orCardConditions: new[]
+                                {
+                                    new CardCondition(
+                                        PositionCondition: new(
+                                            new Choice(
+                                                new ChoiceSource(orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ActionContext: new(Choice: new(
+                                                            "choice1",
+                                                            ActionContextCardsOfChoice.TypeValue.ChoiceCards
+                                                            ))
+                                                        )
+                                                })
+                                                ),
+                                            -1,0
+                                            )
+                                        ),
+                                    new CardCondition(
+                                        PositionCondition: new(
+                                            new Choice(
+                                                new ChoiceSource(orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ActionContext: new(Choice: new(
+                                                            "choice1",
+                                                            ActionContextCardsOfChoice.TypeValue.ChoiceCards
+                                                            ))
+                                                        )
+                                                })
+                                                ),
+                                            1,0
+                                            )
+                                        ),
+                                    new CardCondition(
+                                        PositionCondition: new(
+                                            new Choice(
+                                                new ChoiceSource(orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ActionContext: new(Choice: new(
+                                                            "choice1",
+                                                            ActionContextCardsOfChoice.TypeValue.ChoiceCards
+                                                            ))
+                                                        )
+                                                })
+                                                ),
+                                            -1,1
+                                            )
+                                        ),
+                                    new CardCondition(
+                                        PositionCondition: new(
+                                            new Choice(
+                                                new ChoiceSource(orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ActionContext: new(Choice: new(
+                                                            "choice1",
+                                                            ActionContextCardsOfChoice.TypeValue.ChoiceCards
+                                                            ))
+                                                        )
+                                                })
+                                                ),
+                                            0,1
+                                            )
+                                        ),
+                                    new CardCondition(
+                                        PositionCondition: new(
+                                            new Choice(
+                                                new ChoiceSource(orCardConditions: new[]
+                                                {
+                                                    new CardCondition(
+                                                        ActionContext: new(Choice: new(
+                                                            "choice1",
+                                                            ActionContextCardsOfChoice.TypeValue.ChoiceCards
+                                                            ))
+                                                        )
+                                                })
+                                                ),
+                                            1,1
+                                            )
+                                        ),
+                                })
+                                ),
+                            "choice2"
+                            )),
+                        new EffectAction(Damage: new(
+                            new NumValue(2),
+                            new Choice(
+                                new ChoiceSource(orCardConditions: new[]
+                                {
+                                    new CardCondition(
+                                        ActionContext: new(Choice: new(
+                                            "choice1",
+                                            ActionContextCardsOfChoice.TypeValue.ChoiceCards
+                                            ))
+                                        )
+                                })
+                                )
+                            )),
+                        new EffectAction(Damage: new(
+                            new NumValue(1),
+                            new Choice(
+                                new ChoiceSource(orCardConditions: new[]
+                                {
+                                    new CardCondition(
+                                        ActionContext: new(Choice: new(
+                                            "choice2",
+                                            ActionContextCardsOfChoice.TypeValue.ChoiceCards
+                                            ))
+                                        )
+                                })
                                 )
                             )),
                     })

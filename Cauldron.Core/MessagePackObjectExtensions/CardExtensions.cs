@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Cauldron.Shared.MessagePackObjects
+﻿namespace Cauldron.Shared.MessagePackObjects
 {
     public static class CardExtensions
     {

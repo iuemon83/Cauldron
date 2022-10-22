@@ -4369,5 +4369,82 @@ namespace Cauldron.Core_Test
                 Assert.False(c.Player2.Field.IsAvailabledList[6]);
             });
         }
+
+        [Fact]
+        public async Task Bomb2()
+        {
+            var testCardDef = SampleCards1.Bomb2;
+            testCardDef.Cost = 0;
+
+            var creatureCardDef = SampleCards1.Vanilla;
+            creatureCardDef.Cost = 0;
+
+            var c = await TestUtil.InitTest(
+                new[] { testCardDef, creatureCardDef },
+                TestUtil.GameMasterOptions(
+                    ruleBook: TestUtil.TestRuleBook(
+                        StartMaxNumFields: 5, MaxNumFields: 7
+                        )),
+                this.output
+                );
+
+            // æU
+            var (
+                vanilla1,
+                vanilla2,
+                vanilla3,
+                vanilla4,
+                vanilla5
+            ) = await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var vanilla1 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var vanilla2 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var vanilla3 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var vanilla4 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var vanilla5 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+
+                return (
+                    vanilla1,
+                    vanilla2,
+                    vanilla3,
+                    vanilla4,
+                    vanilla5
+                );
+            });
+
+            // ŒãU
+            await TestUtil.Turn(c.GameMaster, async (g, pId) =>
+            {
+                var vanilla6 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var vanilla7 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var vanilla8 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var vanilla9 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+                var vanilla10 = await TestUtil.NewCardAndPlayFromHand(g, pId, creatureCardDef.Id);
+
+                c.TestAnswer.ChoiceCardIdList = new[] { vanilla3.Id };
+                await TestUtil.NewCardAndPlayFromHand(g, pId, testCardDef.Id);
+
+                Assert.Equal(ZoneName.Field, vanilla1.Zone.ZoneName);
+                Assert.Equal(ZoneName.Field, vanilla2.Zone.ZoneName);
+                Assert.Equal(ZoneName.Cemetery, vanilla3.Zone.ZoneName);
+                Assert.Equal(ZoneName.Field, vanilla4.Zone.ZoneName);
+                Assert.Equal(ZoneName.Field, vanilla5.Zone.ZoneName);
+                Assert.Equal(ZoneName.Field, vanilla6.Zone.ZoneName);
+                Assert.Equal(ZoneName.Field, vanilla7.Zone.ZoneName);
+                Assert.Equal(ZoneName.Field, vanilla8.Zone.ZoneName);
+                Assert.Equal(ZoneName.Field, vanilla9.Zone.ZoneName);
+                Assert.Equal(ZoneName.Field, vanilla10.Zone.ZoneName);
+
+                Assert.Equal(2, vanilla1.Toughness);
+                Assert.Equal(1, vanilla2.Toughness);
+                Assert.Equal(1, vanilla4.Toughness);
+                Assert.Equal(2, vanilla5.Toughness);
+                Assert.Equal(2, vanilla6.Toughness);
+                Assert.Equal(1, vanilla7.Toughness);
+                Assert.Equal(1, vanilla8.Toughness);
+                Assert.Equal(1, vanilla9.Toughness);
+                Assert.Equal(2, vanilla10.Toughness);
+            });
+        }
     }
 }

@@ -38,6 +38,7 @@ namespace Cauldron.Shared.MessagePackObjects
                 _this.Win == null ? null: new EffectActionWinExecuter(_this.Win),
                 _this.ReserveEffect == null ? null: new EffectActionReserveEffectExecuter(_this.ReserveEffect),
                 _this.ModifyNumFields == null ? null: new EffectActionModifyNumFieldsExecuter(_this.ModifyNumFields),
+                _this.Choice == null ? null: new EffectActionChoiceExecuter(_this.Choice),
             }
             .OfType<IEffectActionExecuter>()
             .ToArray();

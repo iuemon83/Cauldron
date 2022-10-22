@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace Cauldron.Shared.MessagePackObjects
+﻿namespace Cauldron.Shared.MessagePackObjects
 {
     public static class CardTypeConditionExtensions
     {

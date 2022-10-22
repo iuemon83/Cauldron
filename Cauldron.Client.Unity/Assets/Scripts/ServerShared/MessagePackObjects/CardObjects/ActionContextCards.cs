@@ -16,6 +16,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public ActionContextCardsOfModifyCard? ModifyCard { get; }
         public ActionContextCardsOfModifyCounter? ModifyCounter { get; }
         public ActionContextCardsOfMoveCard? MoveCard { get; }
+        public ActionContextCardsOfChoice? Choice { get; }
 
         public ActionContextCards(
             ActionContextCardsOfAddCard? AddCard = null,
@@ -26,7 +27,8 @@ namespace Cauldron.Shared.MessagePackObjects
             ActionContextCardsOfExcludeCard? ExcludeCard = null,
             ActionContextCardsOfModifyCard? ModifyCard = null,
             ActionContextCardsOfModifyCounter? ModifyCounter = null,
-            ActionContextCardsOfMoveCard? MoveCard = null
+            ActionContextCardsOfMoveCard? MoveCard = null,
+            ActionContextCardsOfChoice? Choice = null
             )
         {
             this.AddCard = AddCard;
@@ -38,6 +40,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.ModifyCard = ModifyCard;
             this.ModifyCounter = ModifyCounter;
             this.MoveCard = MoveCard;
+            this.Choice = Choice;
         }
     }
 }

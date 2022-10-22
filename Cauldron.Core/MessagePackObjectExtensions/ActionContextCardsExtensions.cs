@@ -42,6 +42,10 @@ namespace Cauldron.Shared.MessagePackObjects
             {
                 return _this.MoveCard.GetRsult(effectOwnerCard, eventArgs);
             }
+            else if (_this?.Choice != null)
+            {
+                return _this.Choice.GetRsult(effectOwnerCard, eventArgs);
+            }
             else
             {
                 return Array.Empty<Card>();
