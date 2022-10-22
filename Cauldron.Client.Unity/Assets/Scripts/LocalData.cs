@@ -42,50 +42,50 @@ namespace Assets.Scripts
             set => LoadFromFile().DeckListJson = value;
         }
 
-        private static readonly string SettingsFilePath = Path.Combine(Application.dataPath, "settings.json");
+        private static readonly string SettingsFilePath = Path.Combine(Application.persistentDataPath, "settings.json");
 
-        private static ApplicationSettings applicationSettingsCache = default;
-        private static ApplicationSettings LoadFromFile()
+        private static LocalDataCache cache = default;
+        private static LocalDataCache LoadFromFile()
         {
             try
             {
-                if (applicationSettingsCache == default)
+                if (cache == default)
                 {
                     if (File.Exists(SettingsFilePath))
                     {
                         var json = File.ReadAllText(SettingsFilePath);
-                        applicationSettingsCache =
-                            JsonUtility.FromJson<ApplicationSettings>(json)
-                            ?? new ApplicationSettings();
+                        cache =
+                            JsonUtility.FromJson<LocalDataCache>(json)
+                            ?? new LocalDataCache();
                     }
                     else
                     {
-                        applicationSettingsCache = new ApplicationSettings();
+                        cache = new LocalDataCache();
                     }
                 }
             }
             catch
             {
-                applicationSettingsCache = new ApplicationSettings();
+                cache = new LocalDataCache();
             }
 
-            return applicationSettingsCache;
+            return cache;
         }
 
         public static void SaveToFile()
         {
-            if (applicationSettingsCache == default)
+            if (cache == default)
             {
                 return;
             }
 
-            var json = JsonUtility.ToJson(applicationSettingsCache);
+            var json = JsonUtility.ToJson(cache);
             File.WriteAllText(SettingsFilePath, json);
         }
     }
 
     [Serializable]
-    class ApplicationSettings
+    class LocalDataCache
     {
         public string ClientId = Guid.NewGuid().ToString();
 
