@@ -11,6 +11,8 @@ namespace Cauldron.Server
 {
     public class BattleLogDb
     {
+        public static string UnknownPlayerName(int order) => $"Player{order}";
+
         public SqliteConnection Connection()
         {
             var filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "BattleLogs.sqlite");
@@ -179,6 +181,7 @@ select
             )
         from battle_players as bp
         where bp.game_id = g.game_id
+        order by play_order asc
     ) as player_id_list,
 	(
 		select bl.id
@@ -239,7 +242,7 @@ and exists(
                 if (!isMine)
                 {
                     players = players
-                        .Select((p, i) => new GameReplayPlayer(p.Id, $"Player{i + 1}"))
+                        .Select((p, i) => new GameReplayPlayer(p.Id, UnknownPlayerName(i + 1)))
                         .ToArray();
                 }
 

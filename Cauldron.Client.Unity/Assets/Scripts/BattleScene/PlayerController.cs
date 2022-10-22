@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.PlayerId = playerId;
     }
 
-    public void Set(PublicPlayerInfo publicPlayerInfo)
+    public void Set(PublicPlayerInfo publicPlayerInfo, string aliasName = default)
     {
         this.PlayerId = publicPlayerInfo.Id;
         this.nameText.text = publicPlayerInfo.Name;
@@ -93,6 +93,11 @@ public class PlayerController : MonoBehaviour, IPointerClickHandler
         this.numCemeteriesText.text = publicPlayerInfo.Cemetery.Length.ToString();
         this.numExcludedsText.text = publicPlayerInfo.Excluded.Length.ToString();
         this.numHandsText.text = publicPlayerInfo.HandsCount.ToString();
+
+        if (aliasName != default)
+        {
+            this.nameText.text = aliasName;
+        }
     }
 
     public void SetActiveTurn(bool value)

@@ -97,6 +97,17 @@ public class ReplaySceneController : MonoBehaviour
     private int MaxNumFields => this.youFieldSpaces.Length;
     private int MaxNumHands => this.youHandSpaces.Length;
 
+    private GameReplay gameReplay;
+    private PlayerId replayPlayerId;
+    private int currentActionLogId;
+    private bool isRequesting;
+    private bool isEnd;
+    private float prevTime;
+    private Dictionary<CardDefId, CardDef> replayCardpool;
+    private bool isPaused;
+    private readonly float requestInterval = 0.1f;
+    private bool initialized = false;
+
     private void OnDestroy()
     {
         foreach (var disposable in this.disposableList)
@@ -159,17 +170,6 @@ public class ReplaySceneController : MonoBehaviour
 
         this.initialized = true;
     }
-
-    private GameReplay gameReplay;
-    private PlayerId replayPlayerId;
-    private int currentActionLogId;
-    private bool isRequesting;
-    private bool isEnd;
-    private float prevTime;
-    private Dictionary<CardDefId, CardDef> replayCardpool;
-    private bool isPaused;
-    private readonly float requestInterval = 0.1f;
-    private bool initialized = false;
 
     private async void Update()
     {
@@ -344,7 +344,10 @@ public class ReplaySceneController : MonoBehaviour
         if (you != null)
         {
             var publicInfo = you.PublicPlayerInfo;
-            this.youPlayerController.Set(publicInfo);
+
+            var alias = this.gameReplay.Players.FirstOrDefault(p => p.Id == publicInfo.Id)?.Name;
+
+            this.youPlayerController.Set(publicInfo, alias);
 
             var youHands = you.Hands;
             var removeHandIdList = this.handCardObjectsByCardId.Keys
@@ -381,7 +384,9 @@ public class ReplaySceneController : MonoBehaviour
         var opponent = gameContext.Opponent;
         if (opponent != null)
         {
-            this.opponentPlayerController.Set(opponent);
+            var alias = this.gameReplay.Players.FirstOrDefault(p => p.Id == opponent.Id)?.Name;
+
+            this.opponentPlayerController.Set(opponent, alias);
 
             var opponentFieldCards = opponent.Field;
             var removeFieldIdList = this.fieldCardControllersByCardId
