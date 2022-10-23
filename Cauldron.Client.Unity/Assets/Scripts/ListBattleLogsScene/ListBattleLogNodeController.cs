@@ -1,4 +1,3 @@
-using Assets.Scripts;
 using Assets.Scripts.ServerShared.MessagePackObjects;
 using System;
 using TMPro;
@@ -14,16 +13,18 @@ public class ListBattleLogNodeController : MonoBehaviour
     private TextMeshProUGUI player2NameText = default;
 
     private Action playGameReplayAction;
+    private Action showCopyGameIdMessage;
 
     private GameReplay gameReplay;
 
-    public void Set(GameReplay gameReplay, Action playGameReplayAction)
+    public void Set(GameReplay gameReplay, Action playGameReplayAction, Action showCopyGameIdMessage)
     {
         this.gameReplay = gameReplay;
         this.timestampText.text = gameReplay.DateTime.ToString();
         this.player1NameText.text = gameReplay.Players[0].Name;
         this.player2NameText.text = gameReplay.Players[1].Name;
         this.playGameReplayAction = playGameReplayAction;
+        this.showCopyGameIdMessage = showCopyGameIdMessage;
     }
 
     public void OnPlayReplayButtonClicked()
@@ -34,5 +35,6 @@ public class ListBattleLogNodeController : MonoBehaviour
     public void OnCopyGameIdButtonClicked()
     {
         GUIUtility.systemCopyBuffer = this.gameReplay.GameId.ToString();
+        this.showCopyGameIdMessage?.Invoke();
     }
 }

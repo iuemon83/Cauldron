@@ -305,6 +305,7 @@ MonoBehaviour:
   startBattleLogDialogController: {fileID: 1963644643158909622, guid: 4968fee4a99a0eb469d946c4dbadf964, type: 3}
   onlyMyReplaysToggle: {fileID: 937559086}
   searchByGameIdInputField: {fileID: 820172826}
+  toast: {fileID: 558320491974727894, guid: 189430d53175bba42b6ce3eb306d81bb, type: 3}
 --- !u!1 &241985056
 GameObject:
   m_ObjectHideFlags: 0

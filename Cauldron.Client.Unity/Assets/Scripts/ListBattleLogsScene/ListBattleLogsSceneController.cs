@@ -22,6 +22,8 @@ public class ListBattleLogsSceneController : MonoBehaviour
     private Toggle onlyMyReplaysToggle = default;
     [SerializeField]
     private InputField searchByGameIdInputField = default;
+    [SerializeField]
+    private ToastController toast = default;
 
     private Transform listContent;
 
@@ -83,14 +85,20 @@ public class ListBattleLogsSceneController : MonoBehaviour
             .ToArray();
 
         var controller = Instantiate(this.listNodePrefab, this.listContent.transform);
-        controller.Set(gameReplay, () =>
-        {
-            var dialog = Instantiate(this.startBattleLogDialogController);
-            dialog.Init(
-                playerList,
-                selectedPlayerId => this.ShowBattleLog(gameReplay, selectedPlayerId));
-            dialog.transform.SetParent(this.canvas.transform, false);
-        });
+        controller.Set(gameReplay,
+            () =>
+            {
+                var dialog = Instantiate(this.startBattleLogDialogController);
+                dialog.Init(
+                    playerList,
+                    selectedPlayerId => this.ShowBattleLog(gameReplay, selectedPlayerId));
+                dialog.transform.SetParent(this.canvas.transform, false);
+            },
+            () =>
+            {
+                var toast = Instantiate(this.toast);
+                toast.Show(this.canvas, "");
+            });
     }
 
     private async void ShowBattleLog(GameReplay gameReplay, PlayerId playerId)
