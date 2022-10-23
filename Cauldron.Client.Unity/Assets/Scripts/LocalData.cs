@@ -10,7 +10,7 @@ namespace Assets.Scripts
         {
             get
             {
-                return LoadFromFile().ClientId;
+                return LoadPrivateLocalDataFromFile().ClientId;
             }
         }
 
@@ -18,79 +18,136 @@ namespace Assets.Scripts
         {
             get
             {
-                return LoadFromFile().ServerAddress;
+                return LoadPublicLocalDataFromFile().ServerAddress;
             }
 
-            set => LoadFromFile().ServerAddress = value;
+            set => LoadPublicLocalDataFromFile().ServerAddress = value;
         }
 
         public static string PlayerName
         {
             get
             {
-                return LoadFromFile().PlayerName;
+                return LoadPublicLocalDataFromFile().PlayerName;
             }
-            set => LoadFromFile().PlayerName = value;
+            set => LoadPublicLocalDataFromFile().PlayerName = value;
         }
 
         public static string DeckListJson
         {
             get
             {
-                return LoadFromFile().DeckListJson;
+                return LoadPublicLocalDataFromFile().DeckListJson;
             }
-            set => LoadFromFile().DeckListJson = value;
+            set => LoadPublicLocalDataFromFile().DeckListJson = value;
         }
 
-        private static readonly string SettingsFilePath = Path.Combine(Application.persistentDataPath, "settings.json");
+        private static LocalDataCache publicCache = default;
 
-        private static LocalDataCache cache = default;
-        private static LocalDataCache LoadFromFile()
+        private static LocalDataCache LoadPublicLocalDataFromFile()
         {
+            if (publicCache != default)
+            {
+                return publicCache;
+            }
+
             try
             {
-                if (cache == default)
-                {
-                    if (File.Exists(SettingsFilePath))
-                    {
-                        var json = File.ReadAllText(SettingsFilePath);
-                        cache =
-                            JsonUtility.FromJson<LocalDataCache>(json)
-                            ?? new LocalDataCache();
-                    }
-                    else
-                    {
-                        cache = new LocalDataCache();
-                    }
-                }
+
+                return publicCache = LocalDataCache.LoadFromFile();
             }
-            catch
+            catch (Exception ex)
             {
-                cache = new LocalDataCache();
+                Debug.LogError(ex);
+
+                return publicCache = new LocalDataCache();
+            }
+        }
+
+        private static PrivateLocalDataCache privateCache = default;
+
+        private static PrivateLocalDataCache LoadPrivateLocalDataFromFile()
+        {
+            if (privateCache != default)
+            {
+                return privateCache;
             }
 
-            return cache;
+            try
+            {
+                return privateCache = PrivateLocalDataCache.LoadFromFile();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+
+                return privateCache = new PrivateLocalDataCache();
+            }
         }
 
         public static void SaveToFile()
         {
-            if (cache == default)
-            {
-                return;
-            }
+            publicCache?.SaveToFile();
+            privateCache?.SaveToFile();
+        }
+    }
 
-            var json = JsonUtility.ToJson(cache);
-            File.WriteAllText(SettingsFilePath, json);
+    [Serializable]
+    class PrivateLocalDataCache
+    {
+        private static readonly string filePath
+            = Path.Combine(Application.persistentDataPath, "settings.json");
+
+        public static PrivateLocalDataCache LoadFromFile()
+        {
+            if (File.Exists(filePath))
+            {
+                var json = File.ReadAllText(filePath);
+                return JsonUtility.FromJson<PrivateLocalDataCache>(json)
+                    ?? new PrivateLocalDataCache();
+            }
+            else
+            {
+                return new PrivateLocalDataCache();
+            }
+        }
+
+        public string ClientId = Guid.NewGuid().ToString();
+
+        public void SaveToFile()
+        {
+            var json = JsonUtility.ToJson(this);
+            File.WriteAllText(filePath, json);
         }
     }
 
     [Serializable]
     class LocalDataCache
     {
-        public string ClientId = Guid.NewGuid().ToString();
+        private static readonly string filePath = Path.Combine(Application.dataPath, "settings.json");
+
+        public static LocalDataCache LoadFromFile()
+        {
+            if (File.Exists(filePath))
+            {
+                var json = File.ReadAllText(filePath);
+                return JsonUtility.FromJson<LocalDataCache>(json)
+                    ?? new LocalDataCache();
+            }
+            else
+            {
+                return new LocalDataCache();
+            }
+        }
 
         public string ServerAddress = "";
         public string PlayerName = "";
         public string DeckListJson = "";
+
+        public void SaveToFile()
+        {
+            var json = JsonUtility.ToJson(this);
+            File.WriteAllText(filePath, json);
+        }
     }
 }
