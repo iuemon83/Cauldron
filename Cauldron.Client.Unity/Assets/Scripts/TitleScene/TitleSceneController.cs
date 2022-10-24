@@ -25,7 +25,7 @@ public class TitleSceneController : MonoBehaviour
     private void Start()
     {
         this.startButtonText = this.startButton.GetComponentInChildren<Text>();
-        this.versionText.text = $"ver.{Config.Version}";
+        this.versionText.text = $"ver.{Application.version}";
 
         this.ipOrHostNameText.text = LocalData.ServerAddress;
         this.playerNameText.text = LocalData.PlayerName;
@@ -75,7 +75,7 @@ public class TitleSceneController : MonoBehaviour
             var holder = await ConnectionHolder.Create(this.ipOrHostNameText.text, this.playerNameText.text);
 
             var reply = await holder.Client.ListAllowedClientVersions();
-            if (!reply?.AllowedClientVersions.Contains(Config.Version) ?? false)
+            if (!reply?.AllowedClientVersions.Contains(Application.version) ?? false)
             {
                 this.ShowErrorMessage(@$"新しいバージョンがリリースされています。
 有効なバージョンは{string.Join(",", reply.AllowedClientVersions)}です。");
