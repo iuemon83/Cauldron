@@ -165,7 +165,7 @@ public class CardController : MonoBehaviour
     {
         this.transform.SetAsLastSibling();
 
-        await this.BounceDeckEffect(dest.transform.position);
+        await this.BounceDeckEffect(dest.AttackDestPosition);
     }
 
     public async UniTask BounceDeckEffect(Vector3 dest)
@@ -185,7 +185,7 @@ public class CardController : MonoBehaviour
     {
         this.transform.SetAsLastSibling();
 
-        await this.BounceHandEffect(dest.transform.position);
+        await this.BounceHandEffect(dest.AttackDestPosition);
     }
 
     public async UniTask BounceHandEffect(Vector3 dest)
