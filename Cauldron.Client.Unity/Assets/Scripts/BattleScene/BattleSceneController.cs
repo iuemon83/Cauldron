@@ -107,6 +107,9 @@ public class BattleSceneController : MonoBehaviour
     [SerializeField]
     private GameObject replayUiContainer = default;
 
+    [SerializeField]
+    private StartTurnMessageController startTurnMessage = default;
+
     private readonly Dictionary<CardId, HandCardController> handCardObjectsByCardId = new Dictionary<CardId, HandCardController>();
     private readonly Dictionary<CardId, FieldCardController> fieldCardControllersByCardId = new Dictionary<CardId, FieldCardController>();
 
@@ -132,6 +135,8 @@ public class BattleSceneController : MonoBehaviour
 
     private int MaxNumFields => this.youFieldSpaces.Length;
     private int MaxNumHands => this.youHandSpaces.Length;
+
+    private bool isStartedGame = false;
 
     private int NumPicks
     {
@@ -896,6 +901,8 @@ public class BattleSceneController : MonoBehaviour
             {
                 await this.AddActionLog(new ActionLog("ターン開始", gameContext.You.PublicPlayerInfo));
 
+                await this.startTurnMessage.Show(true, !this.isStartedGame);
+
                 this.youPlayerController.SetActiveTurn(true);
                 this.opponentPlayerController.SetActiveTurn(false);
                 this.endTurnButton.interactable = true;
@@ -910,9 +917,16 @@ public class BattleSceneController : MonoBehaviour
             {
                 await this.AddActionLog(new ActionLog("ターン開始", gameContext.Opponent));
 
+                await this.startTurnMessage.Show(false, !this.isStartedGame);
+
                 this.youPlayerController.SetActiveTurn(false);
                 this.opponentPlayerController.SetActiveTurn(true);
                 this.endTurnButton.interactable = false;
+            }
+
+            if (!this.isStartedGame)
+            {
+                this.isStartedGame = true;
             }
         });
     }
