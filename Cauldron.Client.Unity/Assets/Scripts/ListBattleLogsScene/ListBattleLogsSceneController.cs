@@ -23,7 +23,9 @@ public class ListBattleLogsSceneController : MonoBehaviour
     [SerializeField]
     private InputField searchByGameIdInputField = default;
     [SerializeField]
-    private ToastController toast = default;
+    private ToastController toastPrefab = default;
+    [SerializeField]
+    private LoadingViewController loadingViewPrefab = default;
 
     private Transform listContent;
 
@@ -37,27 +39,37 @@ public class ListBattleLogsSceneController : MonoBehaviour
 
     private async UniTask RefreshReplays()
     {
-        var gameIdList = new GameId[0];
-        var searchKeyword = this.searchByGameIdInputField.text.Trim();
-        if (searchKeyword != "")
+        var loadingView = Instantiate(this.loadingViewPrefab);
+        loadingView.Show(this.canvas);
+
+        try
         {
-            if (Guid.TryParse(this.searchByGameIdInputField.text, out var gameGuid))
+            var gameIdList = new GameId[0];
+            var searchKeyword = this.searchByGameIdInputField.text.Trim();
+            if (searchKeyword != "")
             {
-                var searchGameId = new GameId(gameGuid);
-                gameIdList = new[] { searchGameId };
+                if (Guid.TryParse(this.searchByGameIdInputField.text, out var gameGuid))
+                {
+                    var searchGameId = new GameId(gameGuid);
+                    gameIdList = new[] { searchGameId };
+                }
             }
-        }
 
-        var request = new ListGameHistoriesRequest(LocalData.ClientId, this.onlyMyReplaysToggle.isOn, gameIdList);
-        var replays = await ConnectionHolder.Find().Client.ListGameHistories(request);
-        if ((replays?.Length ?? 0) == 0)
+            var request = new ListGameHistoriesRequest(LocalData.ClientId, this.onlyMyReplaysToggle.isOn, gameIdList);
+            var replays = await ConnectionHolder.Find().Client.ListGameHistories(request);
+            if ((replays?.Length ?? 0) == 0)
+            {
+                Debug.LogError("リプレイが取得できない");
+            }
+
+            Debug.Log("リプレイ取得完了");
+
+            this.DisplayReplays(replays);
+        }
+        finally
         {
-            Debug.LogError("リプレイが取得できない");
+            loadingView?.Hide();
         }
-
-        Debug.Log("リプレイ取得完了");
-
-        this.DisplayReplays(replays);
     }
 
     private void ClearReplaysList()
@@ -96,7 +108,7 @@ public class ListBattleLogsSceneController : MonoBehaviour
             },
             () =>
             {
-                var toast = Instantiate(this.toast);
+                var toast = Instantiate(this.toastPrefab);
                 toast.Show(this.canvas, "");
             });
     }
