@@ -350,9 +350,7 @@ public class ReplaySceneController : MonoBehaviour
         {
             var publicInfo = you.PublicPlayerInfo;
 
-            var alias = this.gameReplay.Players.FirstOrDefault(p => p.Id == publicInfo.Id)?.Name;
-
-            this.youPlayerController.Set(publicInfo, alias);
+            this.youPlayerController.Set(publicInfo);
 
             var youHands = you.Hands;
             var removeHandIdList = this.handCardObjectsByCardId.Keys
@@ -389,9 +387,7 @@ public class ReplaySceneController : MonoBehaviour
         var opponent = gameContext.Opponent;
         if (opponent != null)
         {
-            var alias = this.gameReplay.Players.FirstOrDefault(p => p.Id == opponent.Id)?.Name;
-
-            this.opponentPlayerController.Set(opponent, alias);
+            this.opponentPlayerController.Set(opponent);
 
             var opponentFieldCards = opponent.Field;
             var removeFieldIdList = this.fieldCardControllersByCardId

@@ -282,11 +282,16 @@ public class Client
 
     public async UniTask<int> FirstActionLog(GameId gameId)
     {
-        return await this.magiconionClient.FirstActionLog(gameId);
+        return await this.magiconionClient.FirstActionLog(gameId, LocalData.ClientId);
     }
 
     public async UniTask<int> NextActionLog(GameId gameId, PlayerId playerId, int currentActionLogId)
     {
-        return await this.magiconionClient.NextActionLog(gameId, playerId, currentActionLogId);
+        return await this.magiconionClient.NextActionLog(new NextActionLogRequest(
+            LocalData.ClientId,
+            gameId,
+            playerId,
+            currentActionLogId
+            ));
     }
 }

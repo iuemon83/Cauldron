@@ -19,8 +19,8 @@ namespace Cauldron.Shared.Services
 
         Task<CardDef[]> GetCardPoolByGame(GameId gameId);
 
-        Task<int> FirstActionLog(GameId gameId);
-        Task<int> NextActionLog(GameId gameId, PlayerId playerId, int currentActionLogId);
+        Task<int> FirstActionLog(GameId gameId, string clientId);
+        Task<int> NextActionLog(NextActionLogRequest request);
 
         Task<OpenNewRoomReply> OpenNewRoom(OpenNewRoomRequest request);
 

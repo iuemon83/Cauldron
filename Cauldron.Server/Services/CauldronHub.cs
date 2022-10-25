@@ -208,7 +208,7 @@ namespace Cauldron.Server.Services
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        async Task<int> ICauldronHub.FirstActionLog(GameId gameId)
+        async Task<int> ICauldronHub.FirstActionLog(GameId gameId, string clientId)
         {
             var (success, room) = await this.Group.TryAddAsync(
                 Guid.NewGuid().ToString(),
@@ -221,20 +221,22 @@ namespace Cauldron.Server.Services
             }
 
             this.room = room;
-            return await ((ICauldronHub)this).NextActionLog(gameId, new PlayerId(Guid.Empty), -1);
+            return await ((ICauldronHub)this).NextActionLog(new NextActionLogRequest(
+                clientId, gameId, new PlayerId(Guid.Empty), -1));
         }
 
         [FromTypeFilter(typeof(LoggingAttribute))]
-        Task<int> ICauldronHub.NextActionLog(GameId gameId, PlayerId playerId, int currentActionLogId)
+        Task<int> ICauldronHub.NextActionLog(NextActionLogRequest request)
         {
             if (this.room == null)
             {
                 throw new InvalidOperationException("room is null");
             }
 
-            this._logger.LogInformation("current action id={currentActionLogId}", currentActionLogId);
+            this._logger.LogInformation("current action id={currentActionLogId}", request.CurrentActionLogId);
 
-            var log = new BattleLogDb().FindNextActionLog(this.dbConnection, gameId, playerId, currentActionLogId);
+            var log = new BattleLogDb().FindNextActionLog(this.dbConnection,
+                request.GameId, request.PlayerId, request.CurrentActionLogId, request.ClientId);
             if (log == null)
             {
                 this._logger.LogInformation("end replay!!!!!!!!!");

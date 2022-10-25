@@ -12,7 +12,12 @@ namespace Cauldron.Shared.MessagePackObjects
     public class PublicPlayerInfo
     {
         public PlayerId Id { get; }
-        public string Name { get; }
+
+        /// <summary>
+        /// リプレイ用の匿名に置き換えるためにprivate set になっている
+        /// recordに変更できたら削除する
+        /// </summary>
+        public string Name { get; private set; }
         public Card?[] Field { get; }
         public bool[] IsAvailableFields { get; }
         public int DeckCount { get; }
@@ -57,6 +62,17 @@ namespace Cauldron.Shared.MessagePackObjects
             this.CurrentMp = CurrentMp;
             this.IsFirst = IsFirst;
             this.AttackableCardIdList = AttackableCardIdList;
+        }
+
+        /// <summary>
+        /// 名前をリプレイ用の匿名に置き換えるためのもの
+        /// それ以外の用途では利用しない
+        /// recordに変更できたら削除する
+        /// </summary>
+        /// <param name="alias"></param>
+        public void SetReplayAliasName(string alias)
+        {
+            this.Name = alias;
         }
     }
 }

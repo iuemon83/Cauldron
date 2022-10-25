@@ -286,14 +286,22 @@ where game_id = @game_id
         }
 
         public ReplayActionLog FindNextActionLog(
-            SqliteConnection con, GameId gameId, PlayerId playerId, int currentActionLogId)
+            SqliteConnection con, GameId gameId, PlayerId playerId, int currentActionLogId,
+            string clientId
+            )
         {
             var sql = @"
 select
     id as action_id,
     player_id, game_event,
     game_context_json,
-    notify_message_json
+    notify_message_json,
+    exists(
+        select *
+        from battle_players bp
+        where bp.game_id = b1.game_id
+        and client_id = @client_id
+    ) is_mine
 from battle_logs b1
 where game_id = @game_id
 and player_id = @player_id
@@ -315,6 +323,7 @@ limit 1
                 new SqliteParameter("@game_id", gameId.ToString()),
                 new SqliteParameter("@player_id", playerId.ToString()),
                 new SqliteParameter("@current_action_log_id", currentActionLogId),
+                new SqliteParameter("@client_id", clientId),
             });
 
             using var reader = command.ExecuteReader();
@@ -322,6 +331,15 @@ limit 1
             while (reader.Read())
             {
                 var gameContext = JsonConverter.Deserialize<GameContext>(reader.GetFieldValue<string>(3));
+                var isMine = reader.GetFieldValue<bool>(5);
+                if (!isMine)
+                {
+                    gameContext.You.PublicPlayerInfo.SetReplayAliasName(
+                        gameContext.You.PublicPlayerInfo.IsFirst ? UnknownPlayerName(1) : UnknownPlayerName(2));
+
+                    gameContext.Opponent.SetReplayAliasName(
+                        gameContext.Opponent.IsFirst ? UnknownPlayerName(1) : UnknownPlayerName(2));
+                }
 
                 return new ReplayActionLog(
                     reader.GetFieldValue<int>(0),
