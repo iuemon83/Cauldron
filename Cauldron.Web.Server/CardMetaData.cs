@@ -87,5 +87,9 @@ namespace Cauldron.Web.Server
             = Convert<CreatureAbilityModifier.OperatorValue>();
         public MetaDataElm[] AnnotationsModifierOperators { get; }
             = Convert<AnnotationsModifier.OperatorValue>();
+        public MetaDataElm[] ActionContextCardsOfChoiceTypes { get; }
+            = Convert<ActionContextCardsOfChoice.TypeValue>();
+        public MetaDataElm[] ActionContextPlayersOfChoiceTypes { get; }
+            = Convert<ActionContextPlayersOfChoice.TypeValue>();
     }
 }
