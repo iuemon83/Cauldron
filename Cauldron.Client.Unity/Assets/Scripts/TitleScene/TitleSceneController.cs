@@ -5,10 +5,11 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static CardAudioCache;
 
 public class TitleSceneController : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject canvas = default;
     [SerializeField]
     private TextMeshProUGUI errorMessageText = default;
     [SerializeField]
@@ -16,15 +17,12 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField]
     private InputField playerNameText = default;
     [SerializeField]
-    private Button startButton = default;
-    [SerializeField]
     private TextMeshProUGUI versionText = default;
-
-    private Text startButtonText;
+    [SerializeField]
+    private LoadingViewController loadingViewPrefab = default;
 
     private void Start()
     {
-        this.startButtonText = this.startButton.GetComponentInChildren<Text>();
         this.versionText.text = $"ver.{Application.version}";
 
         this.ipOrHostNameText.text = LocalData.ServerAddress;
@@ -36,25 +34,32 @@ public class TitleSceneController : MonoBehaviour
     /// </summary>
     public async void OnStartButtonClick()
     {
-        this.startButton.interactable = false;
+        Debug.Log($"click {nameof(this.OnStartButtonClick)}");
+
+        this.ClearErrorMessage();
 
         AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
 
-        this.startButtonText.text = "Loading...";
+        var loadingView = Instantiate(this.loadingViewPrefab);
+        loadingView.Show(this.canvas);
 
-        var isValid = await this.DoValidation();
-        if (!isValid)
+        try
         {
-            this.startButton.interactable = true;
-            this.startButtonText.text = "Start";
+            var isValid = await this.DoValidation();
+            if (!isValid)
+            {
+                return;
+            }
 
-            return;
+            LocalData.ServerAddress = this.ipOrHostNameText.text;
+            LocalData.PlayerName = this.playerNameText.text;
+
+            await Utility.LoadAsyncScene(SceneNames.ListGameScene);
         }
-
-        LocalData.ServerAddress = this.ipOrHostNameText.text;
-        LocalData.PlayerName = this.playerNameText.text;
-
-        await Utility.LoadAsyncScene(SceneNames.ListGameScene);
+        finally
+        {
+            loadingView.Hide();
+        }
     }
 
     public async void OnLicenseButtonClick()
@@ -104,5 +109,10 @@ public class TitleSceneController : MonoBehaviour
     private void ShowErrorMessage(string message)
     {
         this.errorMessageText.text = message;
+    }
+
+    private void ClearErrorMessage()
+    {
+        this.errorMessageText.text = "";
     }
 }

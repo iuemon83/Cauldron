@@ -1674,11 +1674,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 323d31a831368f740a6cbfe64379e3a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 392192932}
   errorMessageText: {fileID: 744681981}
   ipOrHostNameText: {fileID: 1960442382}
   playerNameText: {fileID: 2006874409}
-  startButton: {fileID: 578585977}
   versionText: {fileID: 199710734}
+  loadingViewPrefab: {fileID: 406258935009350899, guid: fe8cba482a49b0143bd94fcd583b867a, type: 3}
 --- !u!4 &1986986003
 Transform:
   m_ObjectHideFlags: 0
