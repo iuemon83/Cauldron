@@ -1894,6 +1894,10 @@ namespace Cauldron.Core_Test
                             ZonePrettyName.YouField,
                             new(new(
                                 DamageBefore: new(
+                                    DamageValueCondition: new(
+                                        new NumValue(1),
+                                        NumCompare.CompareValue.GreaterThan
+                                        ),
                                     TakeCardCondition: new CardCondition(
                                         TypeCondition: new(new[]{ CardType.Creature }),
                                         ZoneCondition: new(new(new[]{ ZonePrettyName.YouField })),

@@ -24,44 +24,43 @@ namespace Cauldron.Shared.MessagePackObjects
                 return false;
             }
 
-            if (eventArgs.DamageContext.Value <= 0)
+            return await SourceCardIsMatch(_this, effectOwnerCard, eventArgs)
+                && await TakeIsMatch(_this, effectOwnerCard, eventArgs)
+                && await DamageValueIsMatch(_this, effectOwnerCard, eventArgs);
+        }
+
+        public static async ValueTask<bool> SourceCardIsMatch(EffectTimingDamageBeforeEvent _this,
+            Card effectOwnerCard, EffectEventArgs eventArgs)
+        {
+            if (_this.SourceCardCondition == null)
+            {
+                return true;
+            }
+
+            if (eventArgs.DamageContext?.DamageSourceCard == null)
             {
                 return false;
             }
 
-            return await SourceCardIsMatch(_this, effectOwnerCard, eventArgs)
-                && await TakeIsMatch(_this, effectOwnerCard, eventArgs);
+            return await _this.SourceCardCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.DamageSourceCard);
+        }
 
-            static async ValueTask<bool> SourceCardIsMatch(EffectTimingDamageBeforeEvent _this, Card effectOwnerCard, EffectEventArgs eventArgs)
+        public static async ValueTask<bool> TakeIsMatch(EffectTimingDamageBeforeEvent _this,
+            Card effectOwnerCard, EffectEventArgs eventArgs)
+        {
+            // プレイヤーの条件とカードの条件が両方とも未指定なら素通し
+            if (_this.TakePlayerCondition == null
+                && _this.TakeCardCondition == null)
             {
-                if (_this.SourceCardCondition == null)
-                {
-                    return true;
-                }
-
-                if (eventArgs.DamageContext?.DamageSourceCard == null)
-                {
-                    return false;
-                }
-
-                return await _this.SourceCardCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.DamageSourceCard);
+                return true;
             }
 
-            static async ValueTask<bool> TakeIsMatch(EffectTimingDamageBeforeEvent _this, Card effectOwnerCard, EffectEventArgs eventArgs)
-            {
-                // プレイヤーの条件とカードの条件が両方とも未指定なら素通し
-                if (_this.TakePlayerCondition == null
-                    && _this.TakeCardCondition == null)
-                {
-                    return true;
-                }
+            // どちらかでも指定されているなら、指定されているほうの条件には合致しないとダメ
+            return await TakePlayerIsMatch(_this, effectOwnerCard, eventArgs)
+                || await TakeCardIsMatch(_this, effectOwnerCard, eventArgs);
 
-                // どちらかでも指定されているなら、指定されているほうの条件には合致しないとダメ
-                return await TakePlayerIsMatch(_this, effectOwnerCard, eventArgs)
-                    || await TakeCardIsMatch(_this, effectOwnerCard, eventArgs);
-            }
-
-            static async ValueTask<bool> TakePlayerIsMatch(EffectTimingDamageBeforeEvent _this, Card effectOwnerCard, EffectEventArgs eventArgs)
+            static async ValueTask<bool> TakePlayerIsMatch(EffectTimingDamageBeforeEvent _this,
+               Card effectOwnerCard, EffectEventArgs eventArgs)
             {
                 if (_this.TakePlayerCondition == null)
                 {
@@ -73,10 +72,12 @@ namespace Cauldron.Shared.MessagePackObjects
                     return false;
                 }
 
-                return await _this.TakePlayerCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer);
+                return await _this.TakePlayerCondition.IsMatch(
+                    effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardPlayer);
             }
 
-            static async ValueTask<bool> TakeCardIsMatch(EffectTimingDamageBeforeEvent _this, Card effectOwnerCard, EffectEventArgs eventArgs)
+            static async ValueTask<bool> TakeCardIsMatch(EffectTimingDamageBeforeEvent _this,
+               Card effectOwnerCard, EffectEventArgs eventArgs)
             {
                 if (_this.TakeCardCondition == null)
                 {
@@ -89,8 +90,28 @@ namespace Cauldron.Shared.MessagePackObjects
                     return false;
                 }
 
-                return await _this.TakeCardCondition.IsMatch(effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardCard);
+                return await _this.TakeCardCondition.IsMatch(
+                    effectOwnerCard, eventArgs, eventArgs.DamageContext.GuardCard);
             }
+        }
+
+        public static async ValueTask<bool> DamageValueIsMatch(EffectTimingDamageBeforeEvent _this,
+            Card effectOwnerCard, EffectEventArgs eventArgs)
+        {
+            if (_this.DamageValueCondition == null)
+            {
+                return true;
+            }
+
+            var damageValue = eventArgs.DamageContext?.Value;
+
+            if (damageValue == null)
+            {
+                return false;
+            }
+
+            return await _this.DamageValueCondition.IsMatch(
+                damageValue.Value, effectOwnerCard, eventArgs);
         }
     }
 }

@@ -1,5 +1,4 @@
 using Cauldron.Shared.MessagePackObjects;
-using Cauldron.Shared.MessagePackObjects.Value;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -9,66 +8,58 @@ namespace Cauldron.Core_Test
     /// <summary>
     /// ダメージ前イベントのテスト
     /// </summary>
-    public class EffectTimingDamageBeforeEvent_Test
+    public class EffectTimingDamageAfterEvent_Test
     {
         [Fact]
-        public async Task IsMatch_1のダメージ()
+        public async Task IsMatch_1以上のダメージ()
         {
-            static async Task assert(EffectTimingDamageBeforeEvent test, bool expected)
-            {
-                var actual = await test.IsMatch(
+            var test = new EffectTimingDamageAfterEvent();
+
+            var actual = await test.IsMatch(
+                default,
+                new Core.Entities.Effect.EffectEventArgs(
+                    Core.Entities.GameEvent.OnDamage,
                     default,
-                    new Core.Entities.Effect.EffectEventArgs(
-                        Core.Entities.GameEvent.OnDamageBefore,
+                    DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
                         default,
-                        DamageContext: new(
-                            DamageNotifyMessage.ReasonValue.Effect,
-                            default,
-                            1
-                        )
-                    ));
+                        1
+                    )
+                ));
 
-                Assert.Equal(expected, actual);
-            }
+            Assert.True(actual);
+        }
 
-            // = 1で発動
-            var test = new EffectTimingDamageBeforeEvent(
-                DamageValueCondition: new(
-                    new NumValue(1),
-                    NumCompare.CompareValue.Equality
-                    ));
+        [Fact]
+        public async Task IsMatch_0のダメージ()
+        {
+            var test = new EffectTimingDamageAfterEvent();
 
-            await assert(test, true);
+            var actual = await test.IsMatch(
+                default,
+                new Core.Entities.Effect.EffectEventArgs(
+                    Core.Entities.GameEvent.OnDamage,
+                    default,
+                    DamageContext: new(
+                        DamageNotifyMessage.ReasonValue.Effect,
+                        default,
+                        0
+                    )
+                ));
 
-            // >= 2で発動
-            test = new EffectTimingDamageBeforeEvent(
-                DamageValueCondition: new(
-                    new NumValue(2),
-                    NumCompare.CompareValue.GreaterThan
-                    ));
-
-            await assert(test, false);
-
-            // <= 0で発動
-            test = new EffectTimingDamageBeforeEvent(
-                DamageValueCondition: new(
-                    new NumValue(0),
-                    NumCompare.CompareValue.LessThan
-                    ));
-
-            await assert(test, false);
+            Assert.False(actual);
         }
 
         [Fact]
         public async Task IsMatch_戦闘ダメージ()
         {
-            var test = new EffectTimingDamageBeforeEvent(
-                EffectTimingDamageBeforeEvent.TypeValue.Battle);
+            var test = new EffectTimingDamageAfterEvent(
+                EffectTimingDamageAfterEvent.TypeValue.Battle);
 
             var actual = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -82,7 +73,7 @@ namespace Cauldron.Core_Test
             var actual2 = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Attack,
@@ -97,13 +88,13 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task IsMatch_戦闘ダメージ以外()
         {
-            var test = new EffectTimingDamageBeforeEvent(
-                EffectTimingDamageBeforeEvent.TypeValue.NonBattle);
+            var test = new EffectTimingDamageAfterEvent(
+                EffectTimingDamageAfterEvent.TypeValue.NonBattle);
 
             var actual = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -117,7 +108,7 @@ namespace Cauldron.Core_Test
             var actual2 = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Attack,
@@ -132,8 +123,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task IsMatch_プレイヤーにダメージ()
         {
-            var test = new EffectTimingDamageBeforeEvent(
-                EffectTimingDamageBeforeEvent.TypeValue.Any,
+            var test = new EffectTimingDamageAfterEvent(
+                EffectTimingDamageAfterEvent.TypeValue.Any,
                 TakePlayerCondition: new(
                     PlayerCondition.ContextValue.Any)
                 );
@@ -142,7 +133,7 @@ namespace Cauldron.Core_Test
             var actual = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -164,7 +155,7 @@ namespace Cauldron.Core_Test
             var actual2 = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -180,8 +171,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task IsMatch_クリーチャーにダメージ()
         {
-            var test = new EffectTimingDamageBeforeEvent(
-                EffectTimingDamageBeforeEvent.TypeValue.Any,
+            var test = new EffectTimingDamageAfterEvent(
+                EffectTimingDamageAfterEvent.TypeValue.Any,
                 TakeCardCondition: new(
                     CardCondition.ContextConditionValue.Any
                     )
@@ -191,7 +182,7 @@ namespace Cauldron.Core_Test
             var actual = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -213,7 +204,7 @@ namespace Cauldron.Core_Test
             var actual2 = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -229,8 +220,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task IsMatch_プレイヤーかクリーチャーにダメージ()
         {
-            var test = new EffectTimingDamageBeforeEvent(
-                EffectTimingDamageBeforeEvent.TypeValue.Any,
+            var test = new EffectTimingDamageAfterEvent(
+                EffectTimingDamageAfterEvent.TypeValue.Any,
                 TakePlayerCondition: new(
                     PlayerCondition.ContextValue.Any
                     ),
@@ -243,7 +234,7 @@ namespace Cauldron.Core_Test
             var actual = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -265,7 +256,7 @@ namespace Cauldron.Core_Test
             var actual2 = await test.IsMatch(
                 default,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -281,8 +272,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task IsMatch_自分が攻撃()
         {
-            var test = new EffectTimingDamageBeforeEvent(
-                EffectTimingDamageBeforeEvent.TypeValue.Any,
+            var test = new EffectTimingDamageAfterEvent(
+                EffectTimingDamageAfterEvent.TypeValue.Any,
                     SourceCardCondition: new CardCondition(
                         ContextCondition: CardCondition.ContextConditionValue.This
                         )
@@ -294,7 +285,7 @@ namespace Cauldron.Core_Test
             var actual = await test.IsMatch(
                 testCard,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -310,7 +301,7 @@ namespace Cauldron.Core_Test
             var actual2 = await test.IsMatch(
                 testCard,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -326,8 +317,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task IsMatch_自分が防御()
         {
-            var test = new EffectTimingDamageBeforeEvent(
-                EffectTimingDamageBeforeEvent.TypeValue.Any,
+            var test = new EffectTimingDamageAfterEvent(
+                EffectTimingDamageAfterEvent.TypeValue.Any,
                 TakeCardCondition: new CardCondition(
                     ContextCondition: CardCondition.ContextConditionValue.This
                 )
@@ -339,7 +330,7 @@ namespace Cauldron.Core_Test
             var actual = await test.IsMatch(
                 testCard,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -355,7 +346,7 @@ namespace Cauldron.Core_Test
             var actual2 = await test.IsMatch(
                 testCard,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -371,8 +362,8 @@ namespace Cauldron.Core_Test
         [Fact]
         public async Task IsMatch_他が防御()
         {
-            var test = new EffectTimingDamageBeforeEvent(
-                EffectTimingDamageBeforeEvent.TypeValue.Any,
+            var test = new EffectTimingDamageAfterEvent(
+                EffectTimingDamageAfterEvent.TypeValue.Any,
                 TakeCardCondition: new CardCondition(
                     ContextCondition: CardCondition.ContextConditionValue.Others
                     )
@@ -384,7 +375,7 @@ namespace Cauldron.Core_Test
             var actual = await test.IsMatch(
                 testCard,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,
@@ -400,7 +391,7 @@ namespace Cauldron.Core_Test
             var actual2 = await test.IsMatch(
                 testCard,
                 new Core.Entities.Effect.EffectEventArgs(
-                    Core.Entities.GameEvent.OnDamageBefore,
+                    Core.Entities.GameEvent.OnDamage,
                     default,
                     DamageContext: new(
                         DamageNotifyMessage.ReasonValue.Effect,

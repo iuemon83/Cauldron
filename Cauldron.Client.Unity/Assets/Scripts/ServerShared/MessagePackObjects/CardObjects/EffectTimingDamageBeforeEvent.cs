@@ -33,18 +33,21 @@ namespace Cauldron.Shared.MessagePackObjects
         public CardCondition? SourceCardCondition { get; }
         public PlayerCondition? TakePlayerCondition { get; }
         public CardCondition? TakeCardCondition { get; }
+        public NumCompare? DamageValueCondition { get; }
 
         public EffectTimingDamageBeforeEvent(
             EffectTimingDamageBeforeEvent.TypeValue Type = TypeValue.Any,
             CardCondition? SourceCardCondition = null,
             PlayerCondition? TakePlayerCondition = null,
-            CardCondition? TakeCardCondition = null
+            CardCondition? TakeCardCondition = null,
+            NumCompare? DamageValueCondition = null
             )
         {
             this.Type = Type;
             this.TakePlayerCondition = TakePlayerCondition;
             this.SourceCardCondition = SourceCardCondition;
             this.TakeCardCondition = TakeCardCondition;
+            this.DamageValueCondition = DamageValueCondition;
         }
     }
 }
