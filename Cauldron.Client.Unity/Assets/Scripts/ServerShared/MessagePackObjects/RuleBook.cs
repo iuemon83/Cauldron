@@ -5,6 +5,12 @@ namespace Cauldron.Shared.MessagePackObjects
     [MessagePackObject(true)]
     public class RuleBook
     {
+        public enum LibraryOutActionValue
+        {
+            DamageOne,
+            Lose
+        }
+
         /// <summary>
         /// ゲーム開始時点のプレイヤーのHP
         /// </summary>
@@ -105,6 +111,11 @@ namespace Cauldron.Shared.MessagePackObjects
         /// </summary>
         public int DefaultLimitNumCardsInDeck { get; }
 
+        /// <summary>
+        /// デッキ切れの処理
+        /// </summary>
+        public LibraryOutActionValue LibraryOutAction { get; }
+
         public RuleBook(
             int StartPlayerHp,
             int MaxPlayerHp,
@@ -125,7 +136,8 @@ namespace Cauldron.Shared.MessagePackObjects
             int MaxNumFields,
             int DefaultNumTurnsToCanAttack,
             int DefaultNumAttacksLimitInTurn,
-            int DefaultLimitNumCardsInDeck
+            int DefaultLimitNumCardsInDeck,
+            LibraryOutActionValue LibraryOutAction
             )
         {
             this.StartPlayerHp = StartPlayerHp;
@@ -148,6 +160,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.DefaultNumTurnsToCanAttack = DefaultNumTurnsToCanAttack;
             this.DefaultNumAttacksLimitInTurn = DefaultNumAttacksLimitInTurn;
             this.DefaultLimitNumCardsInDeck = DefaultLimitNumCardsInDeck;
+            this.LibraryOutAction = LibraryOutAction;
         }
     }
 }

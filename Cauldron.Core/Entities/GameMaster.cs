@@ -454,14 +454,42 @@ namespace Cauldron.Core.Entities
                 {
                     this.logger.LogInformation("デッキが0: {playername}", player.Name);
 
-                    await this.DamagePlayer(new DamageContext(
-                        DamageNotifyMessage.ReasonValue.DrawDeath,
-                        default,
-                        1,
-                        GuardPlayer: player),
-                        effectOwnerCard,
-                        effectId
-                        );
+                    switch (this.RuleBook.LibraryOutAction)
+                    {
+
+                        case RuleBook.LibraryOutActionValue.DamageOne:
+                            {
+                                await this.DamagePlayer(new DamageContext(
+                                    DamageNotifyMessage.ReasonValue.DrawDeath,
+                                    default,
+                                    1,
+                                    GuardPlayer: player),
+                                    effectOwnerCard,
+                                    effectId
+                                    );
+
+                                break;
+                            }
+
+                        case RuleBook.LibraryOutActionValue.Lose:
+                            {
+                                var (s, _) = this.Win(
+                                    this.GetOpponent(playerId).Id,
+                                    EndGameReason.LibraryOut,
+                                    default
+                                    );
+
+                                if (s)
+                                {
+                                    return (GameMasterStatusCode.OK, drawnCards);
+                                }
+
+                                break;
+                            }
+
+                        default:
+                            break;
+                    }
                 }
                 if (isDiscarded)
                 {

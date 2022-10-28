@@ -34,7 +34,8 @@ namespace Cauldron.Core_Test
             int MaxNumFields = 10,
             int DefaultNumTurnsToCanAttack = 0,
             int DefaultNumAttacksLimitInTurn = 1,
-            int DefaultLimitNumCardsInDeck = 99
+            int DefaultLimitNumCardsInDeck = 99,
+            RuleBook.LibraryOutActionValue LibraryOutAction = default
             ) => new(
             StartPlayerHp: StartPlayerHp, MaxPlayerHp: MaxPlayerHp, MinPlayerHp: MinPlayerHp,
             MaxNumDeckCards: MaxNumDeckCards, MinNumDeckCards: MinNumDeckCards,
@@ -47,7 +48,8 @@ namespace Cauldron.Core_Test
             StartMaxNumFields: StartMaxNumFields, MaxNumFields: MaxNumFields,
             DefaultNumTurnsToCanAttack: DefaultNumTurnsToCanAttack,
             DefaultNumAttacksLimitInTurn: DefaultNumAttacksLimitInTurn,
-            DefaultLimitNumCardsInDeck: DefaultLimitNumCardsInDeck
+            DefaultLimitNumCardsInDeck: DefaultLimitNumCardsInDeck,
+            LibraryOutAction: LibraryOutAction
             );
 
         public static CardDef CardDef(string name)

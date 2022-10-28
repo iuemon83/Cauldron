@@ -11,7 +11,8 @@ namespace Cauldron.Shared.MessagePackObjects
     {
         HpIsZero,
         CardEffect,
-        Surrender
+        Surrender,
+        LibraryOut
     }
 
     [MessagePackObject(true)]

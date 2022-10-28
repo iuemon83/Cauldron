@@ -18,5 +18,6 @@
   "maxNumFields": 7,
   "defaultNumTurnsToCanAttack": 1,
   "defaultNumAttacksLimitInTurn": 1,
-  "defaultLimitNumCardsInDeck": 3
+  "defaultLimitNumCardsInDeck": 3,
+  "libraryOutAction": "lose"
 }

@@ -1,4 +1,5 @@
 using Assets.Scripts;
+using Assets.Scripts.BattleScene;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
 using Cysharp.Threading.Tasks;
@@ -848,36 +849,6 @@ public class BattleSceneController : MonoBehaviour
         }
     }
 
-    public void ShowEndGameDialog(EndGameNotifyMessage notify)
-    {
-        var title = "ゲーム終了";
-        var isWin = notify.WinnerPlayerId == this.youPlayerController.PlayerId;
-        var winOrLoseText = isWin
-            ? "Win !"
-            : "Lose...";
-
-        var reasonText = notify.EndGameReason switch
-        {
-            EndGameReason.HpIsZero => $"{(isWin ? "相手" : "あなた")}のHPが0になりました。",
-            EndGameReason.CardEffect => $"「{notify.EffectOwnerCard?.Name ?? ""}」の効果でゲームが終了しました。",
-            EndGameReason.Surrender => $"{(isWin ? "相手" : "あなた")}が降参しました。",
-            _ => throw new NotImplementedException($"正しくない値が指定されました。EndGameReason={notify.EndGameReason}"),
-        };
-
-        var message = winOrLoseText + Environment.NewLine + reasonText;
-
-        AudioController.CreateOrFind().PlayAudio(isWin ? SeAudioCache.SeAudioType.Win : SeAudioCache.SeAudioType.Lose);
-
-        var dialog = Instantiate(this.confirmDialogPrefab);
-        dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
-            onOkAction: async () =>
-            {
-                await this.Client.LeaveRoom();
-                await Utility.LoadAsyncScene(SceneNames.ListGameScene);
-            });
-        dialog.transform.SetParent(this.canvas.transform, false);
-    }
-
     public void ShowConfirmSurrenderDialog()
     {
         var title = "降参";
@@ -938,7 +909,17 @@ public class BattleSceneController : MonoBehaviour
         this.updateViewActionQueue.Enqueue(() =>
         {
             // 戦闘結果のログを追加
-            this.ShowEndGameDialog(message);
+            var dialog = Instantiate(this.confirmDialogPrefab);
+            EndGameDialog.ShowEndGameDialog(
+                message,
+                dialog,
+                this.canvas,
+                this.youPlayerController.PlayerId,
+                onOkAction: async () =>
+                {
+                    await this.Client.LeaveRoom();
+                    await Utility.LoadAsyncScene(SceneNames.ListGameScene);
+                });
 
             return UniTask.CompletedTask;
         });

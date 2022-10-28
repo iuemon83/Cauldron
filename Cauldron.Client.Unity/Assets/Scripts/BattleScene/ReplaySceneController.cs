@@ -1,4 +1,5 @@
 using Assets.Scripts;
+using Assets.Scripts.BattleScene;
 using Assets.Scripts.ServerShared.MessagePackObjects;
 using Cauldron.Shared;
 using Cauldron.Shared.MessagePackObjects;
@@ -567,36 +568,6 @@ public class ReplaySceneController : MonoBehaviour
         }
     }
 
-    public void ShowEndGameDialog(EndGameNotifyMessage notify)
-    {
-        var title = "ゲーム終了";
-        var isWin = notify.WinnerPlayerId == this.youPlayerController.PlayerId;
-        var winOrLoseText = isWin
-            ? "Win !"
-            : "Lose...";
-
-        var reasonText = notify.EndGameReason switch
-        {
-            EndGameReason.HpIsZero => $"{(isWin ? "相手" : "あなた")}のHPが0になりました。",
-            EndGameReason.CardEffect => $"「{notify.EffectOwnerCard?.Name ?? ""}」の効果でゲームが終了しました。",
-            EndGameReason.Surrender => $"{(isWin ? "相手" : "あなた")}が降参しました。",
-            _ => throw new NotImplementedException($"正しくない値が指定されました。EndGameReason={notify.EndGameReason}"),
-        };
-
-        var message = winOrLoseText + Environment.NewLine + reasonText;
-
-        AudioController.CreateOrFind().PlayAudio(isWin ? SeAudioCache.SeAudioType.Win : SeAudioCache.SeAudioType.Lose);
-
-        var dialog = Instantiate(this.confirmDialogPrefab);
-        dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
-            onOkAction: async () =>
-            {
-                await this.Client.LeaveRoom();
-                await Utility.LoadAsyncScene(SceneNames.ListBattleLogsScene);
-            });
-        dialog.transform.SetParent(this.canvas.transform, false);
-    }
-
     void OnStartTurn(GameContext gameContext, StartTurnNotifyMessage message)
     {
         Debug.Log($"OnStartTurn({this.Client.PlayerName})");
@@ -635,7 +606,18 @@ public class ReplaySceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(() =>
         {
-            this.ShowEndGameDialog(message);
+            // 戦闘結果のログを追加
+            var dialog = Instantiate(this.confirmDialogPrefab);
+            EndGameDialog.ShowEndGameDialog(
+                message,
+                dialog,
+                this.canvas,
+                this.youPlayerController.PlayerId,
+                onOkAction: async () =>
+                {
+                    await this.Client.LeaveRoom();
+                    await Utility.LoadAsyncScene(SceneNames.ListBattleLogsScene);
+                });
 
             return UniTask.CompletedTask;
         });
