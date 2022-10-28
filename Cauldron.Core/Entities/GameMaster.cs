@@ -1265,20 +1265,26 @@ namespace Cauldron.Core.Entities
                 newEventArgs.DamageContext?.GuardPlayer?.Name
                 );
 
-            var newDamageContext = newEventArgs.DamageContext;
-            if (newDamageContext == null)
+            var actualDamageContext = newEventArgs.DamageContext;
+            if (actualDamageContext == null)
             {
                 throw new InvalidOperationException("DamageContext is null");
             }
 
-            if (newDamageContext.GuardPlayer == null)
+            if (actualDamageContext.GuardPlayer == null)
             {
                 return;
             }
 
-            newDamageContext.GuardPlayer.Damage(newDamageContext.Value);
+            // ダメージが0未満なら0に変換する
+            if (actualDamageContext.Value < 0)
+            {
+                actualDamageContext = actualDamageContext with { Value = 0 };
+            }
 
-            if (newDamageContext?.GuardPlayer == default)
+            actualDamageContext.GuardPlayer.Damage(actualDamageContext.Value);
+
+            if (actualDamageContext?.GuardPlayer == default)
             {
                 return;
             }
@@ -1289,19 +1295,19 @@ namespace Cauldron.Core.Entities
                 this.EventListener?.OnDamage?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
                     new DamageNotifyMessage(
-                        newDamageContext.Reason,
-                        newDamageContext.Value,
-                        SourceCardId: newDamageContext.DamageSourceCard?.Id ?? default,
-                        GuardPlayerId: newDamageContext.GuardPlayer.Id,
+                        actualDamageContext.Reason,
+                        actualDamageContext.Value,
+                        SourceCardId: actualDamageContext.DamageSourceCard?.Id ?? default,
+                        GuardPlayerId: actualDamageContext.GuardPlayer.Id,
                         EffectOwnerCard: effectOwnerCard,
                         EffectId: effectId
                         ));
             }
 
             // HPが0になったらその後の処理をすることなく負け判定
-            if (newDamageContext.GuardPlayer.CurrentHp <= 0)
+            if (actualDamageContext.GuardPlayer.CurrentHp <= 0)
             {
-                this.Win(this.GetOpponent(newDamageContext.GuardPlayer.Id).Id, EndGameReason.HpIsZero, default);
+                this.Win(this.GetOpponent(actualDamageContext.GuardPlayer.Id).Id, EndGameReason.HpIsZero, default);
                 return;
             }
 
@@ -1423,19 +1429,25 @@ namespace Cauldron.Core.Entities
             var eventArgs = new EffectEventArgs(GameEvent.OnDamageBefore, this, DamageContext: damageContext);
             var newEventArgs = await this.FireEvent(eventArgs);
 
-            var newDamageContext = newEventArgs.DamageContext;
+            var actualDamageContext = newEventArgs.DamageContext;
 
-            if (newDamageContext?.GuardCard?.Type != CardType.Creature)
+            if (actualDamageContext?.GuardCard?.Type != CardType.Creature)
             {
-                throw new Exception($"指定されたカードはクリーチャーではありません。: {newDamageContext?.GuardCard?.Name}");
+                throw new Exception($"指定されたカードはクリーチャーではありません。: {actualDamageContext?.GuardCard?.Name}");
             }
 
-            var (exists, guardCardOwnerplayer) = this.playerRepository.TryGet(newDamageContext.GuardCard.OwnerId);
+            // ダメージが0未満なら0に変換する
+            if (actualDamageContext.Value < 0)
+            {
+                actualDamageContext = actualDamageContext with { Value = 0 };
+            }
+
+            var (exists, guardCardOwnerplayer) = this.playerRepository.TryGet(actualDamageContext.GuardCard.OwnerId);
             var playerName = exists && guardCardOwnerplayer != null ? guardCardOwnerplayer.Name : "";
             this.logger.LogInformation("ダメージ：{value} > {card}({playername})",
-                newDamageContext.Value, newDamageContext.GuardCard, playerName);
+                actualDamageContext.Value, actualDamageContext.GuardCard, playerName);
 
-            newDamageContext.GuardCard.Damage(newDamageContext.Value);
+            actualDamageContext.GuardCard.Damage(actualDamageContext.Value);
 
             // 各プレイヤーに通知
             foreach (var player in this.playerRepository.AllPlayers)
@@ -1443,10 +1455,10 @@ namespace Cauldron.Core.Entities
                 this.EventListener?.OnDamage?.Invoke(player.Id,
                     this.CreateGameContext(player.Id),
                     new DamageNotifyMessage(
-                        newDamageContext.Reason,
-                        newDamageContext.Value,
-                        SourceCardId: newDamageContext.DamageSourceCard?.Id ?? default,
-                        GuardCardId: newDamageContext.GuardCard.Id,
+                        actualDamageContext.Reason,
+                        actualDamageContext.Value,
+                        SourceCardId: actualDamageContext.DamageSourceCard?.Id ?? default,
+                        GuardCardId: actualDamageContext.GuardCard.Id,
                         EffectOwnerCard: effectOwnerCard,
                         EffectId: effectId
                         ));

@@ -27,7 +27,11 @@ namespace Cauldron.Core.MessagePackObjectExtensions
                 {
                     DamageContext = args.DamageContext with
                     {
-                        Value = Math.Max(0, value)
+                        // < 0 の判定はしない。
+                        // damagebeforeイベント完了後に< 0なら0に置換する
+                        // 途中で0のときに軽減効果が発動しないようになってしまうため
+                        Value = value
+                        //Value = Math.Max(0, value)
                     }
                 };
 

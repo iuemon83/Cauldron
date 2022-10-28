@@ -161,7 +161,8 @@ namespace Cauldron.Core.Entities
 
             var newEffectEventArgs = effectEventArgs;
 
-            static async ValueTask<IReadOnlyList<(Card card, CardEffect effect)>> CandidateCards(EffectEventArgs effectEventArgs)
+            static async ValueTask<IReadOnlyList<(Card card, CardEffect effect)>>
+                CandidateCards(EffectEventArgs effectEventArgs)
             {
                 var candidateCards = getCards(effectEventArgs.GameMaster.ActivePlayer)
                     .Concat(effectEventArgs.GameMaster.NonActivePlayers.SelectMany(p => getCards(p)))
