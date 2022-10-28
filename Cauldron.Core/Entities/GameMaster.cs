@@ -271,20 +271,21 @@ namespace Cauldron.Core.Entities
                     throw new InvalidOperationException($"player not exists. id={firstPlayerId}");
                 }
 
-                foreach (var playerDef in this.PlayerDefsById.Values)
-                {
-                    var isFirst = playerDef.Id == firstPlayerId;
+                var sortedPlayerDefs = this.PlayerDefsById.Values
+                    .OrderBy(p => p.Id != firstPlayerId);
 
+                foreach (var (playerDef, i) in sortedPlayerDefs.Select((x, i) => (x, i)))
+                {
                     var deckCards = playerDef.DeckIdList
                         .Select(id => this.cardRepository.CreateNew(id))
                         .OfType<Card>()
                         .ToArray();
 
-                    var player = this.playerRepository.CreateNew(playerDef, this.RuleBook, deckCards, isFirst);
+                    var player = this.playerRepository.CreateNew(playerDef, this.RuleBook, deckCards, i);
 
                     this.PlayerTurnCountById.TryAdd(player.Id, 0);
 
-                    if (isFirst)
+                    if (player.IsFirst)
                     {
                         this.ActivePlayer = player;
                     }
@@ -297,7 +298,7 @@ namespace Cauldron.Core.Entities
 
                 this.NextPlayer = this.GetOpponent(this.ActivePlayer.Id);
 
-                foreach (var player in this.playerRepository.AllPlayers)
+                foreach (var player in this.playerRepository.SortedPlayers)
                 {
                     player.Deck.Shuffle();
 
@@ -1892,7 +1893,8 @@ namespace Cauldron.Core.Entities
         {
             // フィールドカードの破壊判定
             var deadCards = this.playerRepository
-                .AllPlayers.SelectMany(p => p.Field.AllCards)
+                .SortedPlayers
+                .SelectMany(p => p.Field.AllCards)
                 .Where(c => IsDead(c))
                 .ToArray();
 

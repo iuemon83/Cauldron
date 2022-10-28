@@ -23,7 +23,9 @@ namespace Cauldron.Core.Entities
 
         public List<CardDef> Excludes { get; }
 
-        public bool IsFirst { get; }
+        public bool IsFirst => this.PlayOrder == 0;
+
+        public int PlayOrder { get; }
 
         public int MaxHp { get; private set; }
         public int UsedHp { get; private set; }
@@ -43,26 +45,26 @@ namespace Cauldron.Core.Entities
 
         private readonly Dictionary<string, int> CountersByName = new();
 
-        public Player(PlayerId id, string name, RuleBook ruleBook, IReadOnlyList<Card> deck, bool isFirst)
+        public Player(PlayerId id, string name, RuleBook ruleBook, IReadOnlyList<Card> deck, int playOrder)
         {
             foreach (var card in deck)
             {
                 card.OwnerId = id;
             }
 
+            this.PlayOrder = playOrder;
             this.RuleBook = ruleBook;
             this.Id = id;
             this.Name = name;
             this.MaxHp = this.RuleBook.MaxPlayerHp;
             this.UsedHp = this.MaxHp - this.RuleBook.StartPlayerHp;
             this.MaxLimitMp = this.RuleBook.MaxLimitMp;
-            this.MaxMp = isFirst ? this.RuleBook.FirstPlayerStartMp : this.RuleBook.SecondPlayerStartMp;
+            this.MaxMp = this.IsFirst ? this.RuleBook.FirstPlayerStartMp : this.RuleBook.SecondPlayerStartMp;
             this.Deck = new Deck(deck);
             this.Hands = new Hands(this.RuleBook);
             this.Field = new Field(this.RuleBook);
             this.Cemetery = new Cemetery();
             this.Excludes = new List<CardDef>();
-            this.IsFirst = isFirst;
 
             foreach (var card in deck)
             {

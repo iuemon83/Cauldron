@@ -1,4 +1,5 @@
 ﻿using Cauldron.Shared.MessagePackObjects;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -56,11 +57,15 @@ namespace Cauldron.Core
         public override IDictionary<CardId, AttackTarget> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             //Step 1 - Use built-in serializer to deserialize into a dictionary with string key
-            var dictionaryWithStringKey = (Dictionary<string, AttackTarget>)JsonSerializer.Deserialize(ref reader, typeof(Dictionary<string, AttackTarget>), options);
-
+            var dictionaryWithStringKey = (Dictionary<string, AttackTarget>?)JsonSerializer.Deserialize(ref reader, typeof(Dictionary<string, AttackTarget>), options);
 
             //Step 2 - Convert the dictionary to one that uses the actual key type we want
             var dictionary = new Dictionary<CardId, AttackTarget>();
+
+            if (dictionaryWithStringKey == null)
+            {
+                return dictionary;
+            }
 
             foreach (var kvp in dictionaryWithStringKey)
             {

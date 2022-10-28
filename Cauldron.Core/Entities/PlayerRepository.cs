@@ -9,6 +9,8 @@ namespace Cauldron.Core.Entities
 
         public IReadOnlyList<Player> AllPlayers => this.PlayersById.Values.ToArray();
 
+        public IReadOnlyList<Player> SortedPlayers => this.PlayersById.Values.OrderBy(p => p.PlayOrder).ToArray();
+
         public IReadOnlyList<Player> Alives => this.PlayersById.Values.Where(p => p.CurrentHp > 0).ToArray();
 
         public (bool exists, Player value) TryGet(PlayerId id)
@@ -26,9 +28,9 @@ namespace Cauldron.Core.Entities
                 .Select(x => x.value);
         }
 
-        public Player CreateNew(PlayerDef playerDef, RuleBook ruleBook, Card[] deckCards, bool isFirst)
+        public Player CreateNew(PlayerDef playerDef, RuleBook ruleBook, Card[] deckCards, int order)
         {
-            var player = new Player(playerDef.Id, playerDef.Name, ruleBook, deckCards, isFirst);
+            var player = new Player(playerDef.Id, playerDef.Name, ruleBook, deckCards, order);
             this.PlayersById.TryAdd(player.Id, player);
 
             return player;
