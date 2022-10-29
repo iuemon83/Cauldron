@@ -1,10 +1,13 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LoadingViewController : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI playerNameText = default;
+    private Image loadingImage = default;
+    [SerializeField]
+    private TextMeshProUGUI loadingText = default;
 
     private void Update()
     {
@@ -13,10 +16,17 @@ public class LoadingViewController : MonoBehaviour
 
     private void UpdateOutlineColorByTime()
     {
-        var color = this.playerNameText.color;
-        color.a = Mathf.Sin(2 * Mathf.PI * 0.5f * Time.time) * 0.5f + 0.5f;
-        this.playerNameText.color = color;
+        var color = this.loadingImage.color;
+        color.a = this.CalcAlphaByTime(Time.time);
+        this.loadingImage.color = color;
+
+        color = this.loadingText.color;
+        color.a = this.CalcAlphaByTime(Time.time);
+        this.loadingText.color = color;
     }
+
+    private float CalcAlphaByTime(float time)
+        => Mathf.Sin(2 * Mathf.PI * 0.5f * time) * 0.5f + 0.5f;
 
     public void Show(GameObject parent)
     {
