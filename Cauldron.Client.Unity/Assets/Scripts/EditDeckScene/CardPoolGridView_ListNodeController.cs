@@ -46,6 +46,7 @@ public class CardPoolGridView_ListNodeController : MonoBehaviour, IPointerClickH
         {
             // ‰æ‘œ‚ªæ‚ê‚½‚ç‰æ‘œ‚ğo‚·
             this.cardIllustrationImage.sprite = cardImageSprite;
+            this.cardIllustrationImage.preserveAspect = true;
             this.cardIllustrationImage.gameObject.SetActive(true);
             this.nameText.gameObject.SetActive(false);
         }

@@ -48,6 +48,7 @@ public class DeckGridView_ListNodeController : MonoBehaviour, IPointerClickHandl
         if (success)
         {
             this.cardIllustrationImage.sprite = cardImageSprite;
+            this.cardIllustrationImage.preserveAspect = true;
             this.cardIllustrationImage.gameObject.SetActive(true);
             this.nameText.gameObject.SetActive(false);
         }

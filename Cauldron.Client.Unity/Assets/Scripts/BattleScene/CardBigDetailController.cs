@@ -70,6 +70,7 @@ $@"カウンター | {counterText}";
         if (success)
         {
             this.CardIllustrationImage.sprite = cardImageSprite;
+            this.CardIllustrationImage.preserveAspect = true;
         }
         else
         {

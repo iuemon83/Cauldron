@@ -134,6 +134,7 @@ public class CardController : MonoBehaviour
         if (success)
         {
             this.cardImage.sprite = cardImageSprite;
+            this.cardImage.preserveAspect = true;
         }
         else
         {

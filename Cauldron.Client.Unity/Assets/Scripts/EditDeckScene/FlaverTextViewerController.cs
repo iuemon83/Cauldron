@@ -50,6 +50,7 @@ public class FlaverTextViewerController : MonoBehaviour
         if (success)
         {
             this.cardIllustrationImage.sprite = cardImageSprite;
+            this.cardIllustrationImage.preserveAspect = true;
         }
         else
         {
