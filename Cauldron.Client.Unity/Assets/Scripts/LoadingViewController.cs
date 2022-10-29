@@ -35,6 +35,9 @@ public class LoadingViewController : MonoBehaviour
 
     public void Hide()
     {
-        Destroy(this.gameObject);
+        if (this.gameObject != null)
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

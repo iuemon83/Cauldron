@@ -20,6 +20,7 @@ public class SeAudioCache
         Win,
         StartTurn,
         EndTurn,
+        ServerConnected
     }
 
     private static readonly Dictionary<SeAudioType, AudioClip> cache = new Dictionary<SeAudioType, AudioClip>();

@@ -54,11 +54,16 @@ public class TitleSceneController : MonoBehaviour
             LocalData.ServerAddress = this.ipOrHostNameText.text;
             LocalData.PlayerName = this.playerNameText.text;
 
+            AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.ServerConnected);
+
             await Utility.LoadAsyncScene(SceneNames.ListGameScene);
         }
         finally
         {
-            loadingView.Hide();
+            if (loadingView != null)
+            {
+                loadingView.Hide();
+            }
         }
     }
 
