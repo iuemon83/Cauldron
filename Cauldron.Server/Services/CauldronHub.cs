@@ -663,11 +663,10 @@ namespace Cauldron.Server.Services
                         this.self = gameMaster.PlayerDefsById[newPlayerId];
                         (success, room, storage) = await this.Group.TryAddAsync(
                             gameId.ToString(), 2, true, this.self);
-
                     }
                     catch (Exception e)
                     {
-                        this._logger.LogInformation("{a}", e.ToString());
+                        this._logger.LogError(e, "join room error");
                     }
 
                     if (success)
@@ -679,6 +678,7 @@ namespace Cauldron.Server.Services
                     else
                     {
                         //TODO 追加したプレイヤーを削除
+                        this._logger.LogError("join room is full");
                         return new JoinRoomReply(newPlayerId, JoinRoomReply.StatusCodeValue.RoomIsFull);
                     }
 

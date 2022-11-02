@@ -96,8 +96,8 @@ create table if not exists battle_logs(
             command.ExecuteNonQuery();
 
             command.CommandText = @"
-create index battle_logs_game_id on battle_logs(game_id);
-create index battle_logs_player_id on battle_logs(player_id);
+create index if not exists battle_logs_game_id on battle_logs(game_id);
+create index if not exists battle_logs_player_id on battle_logs(player_id);
 ";
             command.ExecuteNonQuery();
         }
@@ -145,9 +145,9 @@ create table if not exists battle_players(
             command.ExecuteNonQuery();
 
             command.CommandText = @"
-create index battle_players_player_id on battle_players(player_id);
-create index battle_players_game_id on battle_players(game_id);
-create index battle_players_client_id on battle_players(client_id);
+create index if not exists battle_players_player_id on battle_players(player_id);
+create index if not exists battle_players_game_id on battle_players(game_id);
+create index if not exists battle_players_client_id on battle_players(client_id);
 ";
             command.ExecuteNonQuery();
         }

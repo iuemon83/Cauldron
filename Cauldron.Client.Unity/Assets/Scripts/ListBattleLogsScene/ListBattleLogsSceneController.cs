@@ -10,10 +10,18 @@ using UnityEngine.UI;
 
 public class ListBattleLogsSceneController : MonoBehaviour
 {
+    private static ListGameHistoriesRequest searchConditionCache;
+
+    /// <summary>
+    /// リプレイを再生してから戻ってきたときのためのもの
+    /// それ以外では利用しない
+    /// </summary>
+    private static float scrollPositionCache = 1;
+
     [SerializeField]
     private GameObject canvas = default;
     [SerializeField]
-    private GameObject battleLogList = default;
+    private ScrollRect battleLogList = default;
     [SerializeField]
     private ListBattleLogNodeController listNodePrefab = default;
     [SerializeField]
@@ -27,14 +35,29 @@ public class ListBattleLogsSceneController : MonoBehaviour
     [SerializeField]
     private LoadingViewController loadingViewPrefab = default;
 
-    private Transform listContent;
-
     // Start is called before the first frame update
     async void Start()
     {
-        this.listContent = this.battleLogList.transform.Find("Viewport").transform.Find("Content");
+        this.DisplaySerchConditionCache();
 
         await this.RefreshReplays();
+
+        this.battleLogList.verticalNormalizedPosition = scrollPositionCache;
+        scrollPositionCache = 1;
+    }
+
+    private void DisplaySerchConditionCache()
+    {
+        if (searchConditionCache == null)
+        {
+            return;
+        }
+
+        this.searchByGameIdInputField.text = searchConditionCache.GameIdList.Any()
+            ? searchConditionCache.GameIdList[0].ToString()
+            : "";
+
+        this.onlyMyReplaysToggle.isOn = searchConditionCache.OnlyMyLogs;
     }
 
     private async UniTask RefreshReplays()
@@ -55,8 +78,8 @@ public class ListBattleLogsSceneController : MonoBehaviour
                 }
             }
 
-            var request = new ListGameHistoriesRequest(LocalData.ClientId, this.onlyMyReplaysToggle.isOn, gameIdList);
-            var replays = await ConnectionHolder.Find().Client.ListGameHistories(request);
+            searchConditionCache = new ListGameHistoriesRequest(LocalData.ClientId, this.onlyMyReplaysToggle.isOn, gameIdList);
+            var replays = await ConnectionHolder.Find().Client.ListGameHistories(searchConditionCache);
             if ((replays?.Length ?? 0) == 0)
             {
                 Debug.LogError("リプレイが取得できない");
@@ -74,7 +97,7 @@ public class ListBattleLogsSceneController : MonoBehaviour
 
     private void ClearReplaysList()
     {
-        foreach (Transform child in this.listContent.transform)
+        foreach (Transform child in this.battleLogList.content.transform)
         {
             Destroy(child.gameObject);
         }
@@ -88,6 +111,8 @@ public class ListBattleLogsSceneController : MonoBehaviour
         {
             this.AddListNode(replay);
         }
+
+        this.battleLogList.verticalNormalizedPosition = 1;
     }
 
     private void AddListNode(GameReplay gameReplay)
@@ -96,7 +121,7 @@ public class ListBattleLogsSceneController : MonoBehaviour
             .Select(p => (p.Id, p.Name))
             .ToArray();
 
-        var controller = Instantiate(this.listNodePrefab, this.listContent.transform);
+        var controller = Instantiate(this.listNodePrefab, this.battleLogList.content.transform);
         controller.Set(gameReplay,
             () =>
             {
@@ -115,6 +140,8 @@ public class ListBattleLogsSceneController : MonoBehaviour
 
     private async void ShowBattleLog(GameReplay gameReplay, PlayerId playerId)
     {
+        scrollPositionCache = this.battleLogList.verticalNormalizedPosition;
+
         await Utility.LoadAsyncScene(SceneNames.BattleScene, async () =>
         {
             var cardpool = await ConnectionHolder.Find().Client.GetCardPool(gameReplay.GameId);
@@ -123,6 +150,17 @@ public class ListBattleLogsSceneController : MonoBehaviour
             var replaySceneController = FindObjectOfType<ReplaySceneController>();
             await replaySceneController.Init(gameReplay, playerId, cardpool);
         });
+    }
+
+    public async void OnClearButtonClick()
+    {
+        if (this.searchByGameIdInputField.text == "")
+        {
+            return;
+        }
+
+        this.searchByGameIdInputField.text = "";
+        await this.RefreshReplays();
     }
 
     public async void OnCloseButtonClick()
