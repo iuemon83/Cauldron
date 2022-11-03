@@ -23,96 +23,96 @@ public class BattleSceneController : MonoBehaviour
     public PlayerId YouId => this.youPlayerController.PlayerId;
 
     [SerializeField]
-    private Color youColor = default;
+    public Color youColor = default;
     [SerializeField]
-    private Color opponentColor = default;
+    public Color opponentColor = default;
 
     [SerializeField]
-    private HandCardController handCardPrefab = default;
+    public HandCardController handCardPrefab = default;
     [SerializeField]
-    private FieldCardController fieldCardPrefab = default;
+    public FieldCardController fieldCardPrefab = default;
 
     [SerializeField]
-    private Canvas canvas = default;
+    public Canvas canvas = default;
     [SerializeField]
-    private ConfirmDialogController confirmDialogPrefab = default;
+    public ConfirmDialogController confirmDialogPrefab = default;
     [SerializeField]
-    private ChoiceDialogController choiceDialogPrefab = default;
+    public ChoiceDialogController choiceDialogPrefab = default;
     [SerializeField]
-    private ActionLogViewController actionLogViewController = default;
+    public ActionLogViewController actionLogViewController = default;
 
     [SerializeField]
-    private ReadonlyCardListViewController youCemeteryCardListViewController = default;
+    public ReadonlyCardListViewController youCemeteryCardListViewController = default;
     [SerializeField]
-    private ReadonlyCardListViewController opponentCemeteryCardListViewController = default;
+    public ReadonlyCardListViewController opponentCemeteryCardListViewController = default;
     [SerializeField]
-    private ReadonlyCardListViewController youExcludedCardListViewController = default;
+    public ReadonlyCardListViewController youExcludedCardListViewController = default;
     [SerializeField]
-    private ReadonlyCardListViewController opponentExcludedCardListViewController = default;
+    public ReadonlyCardListViewController opponentExcludedCardListViewController = default;
 
     [SerializeField]
-    private GameObject[] youHandSpaces = default;
+    public GameObject[] youHandSpaces = default;
     [SerializeField]
-    private FieldCardSpaceController[] youFieldSpaces = default;
+    public FieldCardSpaceController[] youFieldSpaces = default;
 
     [SerializeField]
-    private PlayerController youPlayerController = default;
+    public PlayerController youPlayerController = default;
 
     [SerializeField]
-    private FieldCardSpaceController[] opponentFieldSpaces = default;
+    public FieldCardSpaceController[] opponentFieldSpaces = default;
 
     [SerializeField]
-    private PlayerController opponentPlayerController = default;
+    public PlayerController opponentPlayerController = default;
 
     [SerializeField]
-    private CardDetailController cardDetailController = default;
+    public CardDetailController cardDetailController = default;
 
     /// <summary>
     /// 場のカードを配置するためのコンテナ
     /// </summary>
     [SerializeField]
-    private GameObject fieldCardsContainer = default;
+    public GameObject fieldCardsContainer = default;
 
     /// <summary>
     /// 手札カードを配置するためのコンテナ
     /// </summary>
     [SerializeField]
-    private GameObject handCardsContainer = default;
+    public GameObject handCardsContainer = default;
 
     /// <summary>
     /// 選択中の手札カードを配置するためのコンテナ
     /// </summary>
     [SerializeField]
-    private GameObject playTargetHandCardsContainer = default;
+    public GameObject playTargetHandCardsContainer = default;
 
     [SerializeField]
-    private CardBigDetailController cardDetailViewController = default;
+    public CardBigDetailController cardDetailViewController = default;
 
     [SerializeField]
-    private Button endTurnButton = default;
+    public Button endTurnButton = default;
     [SerializeField]
-    private Button surrenderButton = default;
+    public Button surrenderButton = default;
 
     [SerializeField]
-    private Button choiceCardButton = default;
+    public Button choiceCardButton = default;
     [SerializeField]
-    private TextMeshProUGUI numPicksText = default;
+    public TextMeshProUGUI numPicksText = default;
     [SerializeField]
-    private TextMeshProUGUI numPicksLimitText = default;
+    public TextMeshProUGUI numPicksLimitText = default;
     [SerializeField]
-    private GameObject pickUiGroup = default;
+    public GameObject pickUiGroup = default;
 
     [SerializeField]
-    private GameObject battleUiContainer = default;
+    public GameObject battleUiContainer = default;
 
     [SerializeField]
-    private GameObject replayUiContainer = default;
+    public GameObject replayUiContainer = default;
 
     [SerializeField]
-    private StartTurnMessageController startTurnMessage = default;
+    public StartTurnMessageController startTurnMessage = default;
 
     [SerializeField]
-    private LoadingViewController loadingViewPrefab = default;
+    public LoadingViewController loadingViewPrefab = default;
 
     private readonly Dictionary<CardId, HandCardController> handCardObjectsByCardId = new Dictionary<CardId, HandCardController>();
     private readonly Dictionary<CardId, FieldCardController> fieldCardControllersByCardId = new Dictionary<CardId, FieldCardController>();

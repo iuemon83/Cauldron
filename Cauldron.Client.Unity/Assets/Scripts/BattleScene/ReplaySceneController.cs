@@ -17,72 +17,10 @@ public class ReplaySceneController : MonoBehaviour
     public Color YouColor => this.battleSceneController.YouColor;
     public Color OpponentColor => this.battleSceneController.OpponentColor;
 
-    public PlayerId YouId => this.youPlayerController.PlayerId;
+    public PlayerId YouId => this.battleSceneController.youPlayerController.PlayerId;
 
     [SerializeField]
     private BattleSceneController battleSceneController = default;
-
-    [SerializeField]
-    private HandCardController handCardPrefab = default;
-    [SerializeField]
-    private FieldCardController fieldCardPrefab = default;
-
-    [SerializeField]
-    private Canvas canvas = default;
-    [SerializeField]
-    private ConfirmDialogController confirmDialogPrefab = default;
-    [SerializeField]
-    private ActionLogViewController actionLogViewController = default;
-
-    [SerializeField]
-    private ReadonlyCardListViewController youCemeteryCardListViewController = default;
-    [SerializeField]
-    private ReadonlyCardListViewController opponentCemeteryCardListViewController = default;
-    [SerializeField]
-    private ReadonlyCardListViewController youExcludedCardListViewController = default;
-    [SerializeField]
-    private ReadonlyCardListViewController opponentExcludedCardListViewController = default;
-
-    [SerializeField]
-    private GameObject[] youHandSpaces = default;
-    [SerializeField]
-    private FieldCardSpaceController[] youFieldSpaces = default;
-
-    [SerializeField]
-    private PlayerController youPlayerController = default;
-
-    [SerializeField]
-    private FieldCardSpaceController[] opponentFieldSpaces = default;
-
-    [SerializeField]
-    private PlayerController opponentPlayerController = default;
-
-    [SerializeField]
-    private CardDetailController cardDetailController = default;
-
-    /// <summary>
-    /// 場のカードを配置するためのコンテナ
-    /// </summary>
-    [SerializeField]
-    private GameObject fieldCardsContainer = default;
-
-    /// <summary>
-    /// 手札カードを配置するためのコンテナ
-    /// </summary>
-    [SerializeField]
-    private GameObject handCardsContainer = default;
-
-    [SerializeField]
-    private CardBigDetailController cardDetailViewController = default;
-
-    [SerializeField]
-    private GameObject battleUiContainer = default;
-
-    [SerializeField]
-    private GameObject replayUiContainer = default;
-
-    [SerializeField]
-    private StartTurnMessageController startTurnMessage = default;
 
     private readonly Dictionary<CardId, HandCardController> handCardObjectsByCardId = new Dictionary<CardId, HandCardController>();
     private readonly Dictionary<CardId, FieldCardController> fieldCardControllersByCardId = new Dictionary<CardId, FieldCardController>();
@@ -101,8 +39,8 @@ public class ReplaySceneController : MonoBehaviour
 
     private bool IsPlayable(CardId cardId) => this.currentGameContext?.You?.PlayableCards?.Contains(cardId) ?? false;
 
-    private int MaxNumFields => this.youFieldSpaces.Length;
-    private int MaxNumHands => this.youHandSpaces.Length;
+    private int MaxNumFields => this.battleSceneController.youFieldSpaces.Length;
+    private int MaxNumHands => this.battleSceneController.youHandSpaces.Length;
 
     private bool isStartedGame = false;
 
@@ -127,21 +65,21 @@ public class ReplaySceneController : MonoBehaviour
 
     public async UniTask Init(GameReplay gameReplay, PlayerId playerId, CardDef[] cardpool)
     {
-        this.battleUiContainer.SetActive(false);
-        this.replayUiContainer.SetActive(true);
+        this.battleSceneController.battleUiContainer.SetActive(false);
+        this.battleSceneController.replayUiContainer.SetActive(true);
 
         var holder = ConnectionHolder.Find();
 
-        this.youCemeteryCardListViewController.InitAsYou("Cemetery");
-        this.opponentCemeteryCardListViewController.InitAsOpponent("Cemetery");
+        this.battleSceneController.youCemeteryCardListViewController.InitAsYou("Cemetery");
+        this.battleSceneController.opponentCemeteryCardListViewController.InitAsOpponent("Cemetery");
 
-        this.youExcludedCardListViewController.InitAsYou("Excluded");
-        this.opponentExcludedCardListViewController.InitAsOpponent("Excluded");
+        this.battleSceneController.youExcludedCardListViewController.InitAsYou("Excluded");
+        this.battleSceneController.opponentExcludedCardListViewController.InitAsOpponent("Excluded");
 
-        this.cardDetailController.Init(this.DisplayBigCardDetail);
+        this.battleSceneController.cardDetailController.Init(this.DisplayBigCardDetail);
 
-        this.youPlayerController.Init(this.UnPick, this.Pick);
-        this.opponentPlayerController.Init(this.UnPick, this.Pick);
+        this.battleSceneController.youPlayerController.Init(this.UnPick, this.Pick);
+        this.battleSceneController.opponentPlayerController.Init(this.UnPick, this.Pick);
 
         this.disposableList.AddRange(new[]
         {
@@ -165,7 +103,7 @@ public class ReplaySceneController : MonoBehaviour
         this.connectionHolder = holder;
 
         // リプレイするプレイヤーのID
-        this.youPlayerController.Set(playerId);
+        this.battleSceneController.youPlayerController.Set(playerId);
 
         this.gameReplay = gameReplay;
         this.replayPlayerId = playerId;
@@ -294,14 +232,14 @@ public class ReplaySceneController : MonoBehaviour
     {
         var title = "リプレイの終了";
         var message = "リプレイを終了しますか？";
-        var dialog = Instantiate(this.confirmDialogPrefab);
+        var dialog = Instantiate(this.battleSceneController.confirmDialogPrefab);
         dialog.Init(title, message, ConfirmDialogController.DialogType.Confirm,
             onOkAction: async () =>
             {
                 await this.Client.LeaveRoom();
                 await Utility.LoadAsyncScene(SceneNames.ListBattleLogsScene);
             });
-        dialog.transform.SetParent(this.canvas.transform, false);
+        dialog.transform.SetParent(this.battleSceneController.canvas.transform, false);
     }
 
     private async UniTask RequestNextAction()
@@ -334,7 +272,7 @@ public class ReplaySceneController : MonoBehaviour
 
     private async UniTask AddActionLog(ActionLog actionLog, Card effectOwnerCard = default, CardEffectId? effectId = default)
     {
-        await this.actionLogViewController.AddLog(actionLog, effectOwnerCard, effectId);
+        await this.battleSceneController.actionLogViewController.AddLog(actionLog, effectOwnerCard, effectId);
     }
 
     private async UniTask UpdateGameContext(GameContext gameContext)
@@ -351,7 +289,7 @@ public class ReplaySceneController : MonoBehaviour
         {
             var publicInfo = you.PublicPlayerInfo;
 
-            this.youPlayerController.Set(publicInfo);
+            this.battleSceneController.youPlayerController.Set(publicInfo);
 
             var youHands = you.Hands;
             var removeHandIdList = this.handCardObjectsByCardId.Keys
@@ -388,7 +326,7 @@ public class ReplaySceneController : MonoBehaviour
         var opponent = gameContext.Opponent;
         if (opponent != null)
         {
-            this.opponentPlayerController.Set(opponent);
+            this.battleSceneController.opponentPlayerController.Set(opponent);
 
             var opponentFieldCards = opponent.Field;
             var removeFieldIdList = this.fieldCardControllersByCardId
@@ -413,8 +351,8 @@ public class ReplaySceneController : MonoBehaviour
     private void UpdateField(PublicPlayerInfo publicInfo, int fieldIndex, Card fieldCard)
     {
         var fieldSpace = publicInfo.Id == this.YouId
-            ? this.youFieldSpaces[fieldIndex]
-            : this.opponentFieldSpaces[fieldIndex];
+            ? this.battleSceneController.youFieldSpaces[fieldIndex]
+            : this.battleSceneController.opponentFieldSpaces[fieldIndex];
 
         if (publicInfo.IsAvailableFields[fieldIndex])
         {
@@ -446,13 +384,13 @@ public class ReplaySceneController : MonoBehaviour
         if (you != null)
         {
             var publicInfo = you.PublicPlayerInfo;
-            this.youPlayerController.Set(publicInfo);
+            this.battleSceneController.youPlayerController.Set(publicInfo);
         }
 
         var opponent = gameContext.Opponent;
         if (opponent != null)
         {
-            this.opponentPlayerController.Set(opponent);
+            this.battleSceneController.opponentPlayerController.Set(opponent);
 
         }
 
@@ -465,7 +403,7 @@ public class ReplaySceneController : MonoBehaviour
         {
             this.RemoveCardObjectByCardId(cardId);
 
-            controller = Instantiate(this.handCardPrefab, this.handCardsContainer.transform);
+            controller = Instantiate(this.battleSceneController.handCardPrefab, this.battleSceneController.handCardsContainer.transform);
             handCardObjectsByCardId.Add(cardId, controller);
         }
 
@@ -475,7 +413,7 @@ public class ReplaySceneController : MonoBehaviour
             this.SetPlayTargetHand
             );
 
-        controller.transform.position = this.youHandSpaces[index].transform.position;
+        controller.transform.position = this.battleSceneController.youHandSpaces[index].transform.position;
 
         controller.SetCanPlay(this.IsPlayable(cardId));
 
@@ -488,7 +426,7 @@ public class ReplaySceneController : MonoBehaviour
         {
             this.RemoveCardObjectByCardId(card.Id);
 
-            cardController = Instantiate(this.fieldCardPrefab, this.fieldCardsContainer.transform);
+            cardController = Instantiate(this.battleSceneController.fieldCardPrefab, this.battleSceneController.fieldCardsContainer.transform);
             fieldCardControllersByCardId.Add(card.Id, cardController);
         }
 
@@ -498,8 +436,8 @@ public class ReplaySceneController : MonoBehaviour
             );
 
         cardController.transform.position = playerId == this.YouId
-            ? this.youFieldSpaces[index].transform.position
-            : this.opponentFieldSpaces[index].transform.position;
+            ? this.battleSceneController.youFieldSpaces[index].transform.position
+            : this.battleSceneController.opponentFieldSpaces[index].transform.position;
 
         var canAttack = this.currentGameContext.ActivePlayerId == card.OwnerId
             && this.CanAttack(card.Id);
@@ -536,11 +474,11 @@ public class ReplaySceneController : MonoBehaviour
     {
         if (this.YouId == playerId)
         {
-            this.youCemeteryCardListViewController.AddCard(card);
+            this.battleSceneController.youCemeteryCardListViewController.AddCard(card);
         }
         else
         {
-            this.opponentCemeteryCardListViewController.AddCard(card);
+            this.battleSceneController.opponentCemeteryCardListViewController.AddCard(card);
         }
     }
 
@@ -548,11 +486,11 @@ public class ReplaySceneController : MonoBehaviour
     {
         if (this.YouId == playerId)
         {
-            this.youCemeteryCardListViewController.RemoveCard(card);
+            this.battleSceneController.youCemeteryCardListViewController.RemoveCard(card);
         }
         else
         {
-            this.opponentCemeteryCardListViewController.RemoveCard(card);
+            this.battleSceneController.opponentCemeteryCardListViewController.RemoveCard(card);
         }
     }
 
@@ -560,11 +498,11 @@ public class ReplaySceneController : MonoBehaviour
     {
         if (this.YouId == card.OwnerId)
         {
-            this.youExcludedCardListViewController.AddCard(card);
+            this.battleSceneController.youExcludedCardListViewController.AddCard(card);
         }
         else
         {
-            this.opponentExcludedCardListViewController.AddCard(card);
+            this.battleSceneController.opponentExcludedCardListViewController.AddCard(card);
         }
     }
 
@@ -574,23 +512,23 @@ public class ReplaySceneController : MonoBehaviour
 
         this.updateViewActionQueue.Enqueue(async () =>
         {
-            if (this.youPlayerController.PlayerId == message.PlayerId)
+            if (this.battleSceneController.youPlayerController.PlayerId == message.PlayerId)
             {
                 await this.AddActionLog(new ActionLog("ターン開始", gameContext.You.PublicPlayerInfo));
 
-                await this.startTurnMessage.Show(true, !this.isStartedGame);
+                await this.battleSceneController.startTurnMessage.Show(true, !this.isStartedGame);
 
-                this.youPlayerController.SetActiveTurn(true);
-                this.opponentPlayerController.SetActiveTurn(false);
+                this.battleSceneController.youPlayerController.SetActiveTurn(true);
+                this.battleSceneController.opponentPlayerController.SetActiveTurn(false);
             }
             else
             {
                 await this.AddActionLog(new ActionLog("ターン開始", gameContext.Opponent));
 
-                await this.startTurnMessage.Show(false, !this.isStartedGame);
+                await this.battleSceneController.startTurnMessage.Show(false, !this.isStartedGame);
 
-                this.youPlayerController.SetActiveTurn(false);
-                this.opponentPlayerController.SetActiveTurn(true);
+                this.battleSceneController.youPlayerController.SetActiveTurn(false);
+                this.battleSceneController.opponentPlayerController.SetActiveTurn(true);
             }
 
             if (!this.isStartedGame)
@@ -607,12 +545,12 @@ public class ReplaySceneController : MonoBehaviour
         this.updateViewActionQueue.Enqueue(() =>
         {
             // 戦闘結果のログを追加
-            var dialog = Instantiate(this.confirmDialogPrefab);
+            var dialog = Instantiate(this.battleSceneController.confirmDialogPrefab);
             EndGameDialog.ShowEndGameDialog(
                 message,
                 dialog,
-                this.canvas,
-                this.youPlayerController.PlayerId,
+                this.battleSceneController.canvas,
+                this.battleSceneController.youPlayerController.PlayerId,
                 onOkAction: async () =>
                 {
                     await this.Client.LeaveRoom();
@@ -747,8 +685,8 @@ public class ReplaySceneController : MonoBehaviour
 
             var cardId = message.Card.Id;
             var targetPlayer = message.ToZone.PlayerId == this.YouId
-                ? this.youPlayerController
-                : this.opponentPlayerController;
+                ? this.battleSceneController.youPlayerController
+                : this.battleSceneController.opponentPlayerController;
 
             switch (message.FromZone.ZoneName)
             {
@@ -868,15 +806,15 @@ public class ReplaySceneController : MonoBehaviour
                 message.EffectOwnerCard, message.EffectId
                 );
 
-            if (this.youPlayerController.PlayerId == message.PlayerId)
+            if (this.battleSceneController.youPlayerController.PlayerId == message.PlayerId)
             {
-                await HealOrDamageEffect(this.youPlayerController,
+                await HealOrDamageEffect(this.battleSceneController.youPlayerController,
                     this.currentGameContext.You.PublicPlayerInfo.CurrentHp,
                     gameContext.You.PublicPlayerInfo.CurrentHp);
             }
-            else if (this.opponentPlayerController.PlayerId == message.PlayerId)
+            else if (this.battleSceneController.opponentPlayerController.PlayerId == message.PlayerId)
             {
-                await HealOrDamageEffect(this.opponentPlayerController,
+                await HealOrDamageEffect(this.battleSceneController.opponentPlayerController,
                     this.currentGameContext.Opponent.CurrentHp,
                     gameContext.Opponent.CurrentHp);
             }
@@ -998,13 +936,13 @@ public class ReplaySceneController : MonoBehaviour
 
                 if (message.GuardCardId == default)
                 {
-                    if (this.youPlayerController.PlayerId == message.GuardPlayerId)
+                    if (this.battleSceneController.youPlayerController.PlayerId == message.GuardPlayerId)
                     {
-                        await attackCardController.AttackEffect(this.youPlayerController);
+                        await attackCardController.AttackEffect(this.battleSceneController.youPlayerController);
                     }
                     else
                     {
-                        await attackCardController.AttackEffect(this.opponentPlayerController);
+                        await attackCardController.AttackEffect(this.battleSceneController.opponentPlayerController);
                     }
                 }
                 else
@@ -1084,13 +1022,13 @@ public class ReplaySceneController : MonoBehaviour
             {
                 await AudioController.CreateOrFind().PlayAudio("", CardAudioCache.CardAudioType.Damage);
 
-                if (this.youPlayerController.PlayerId == message.GuardPlayerId)
+                if (this.battleSceneController.youPlayerController.PlayerId == message.GuardPlayerId)
                 {
-                    await this.youPlayerController.DamageEffect(message.Damage);
+                    await this.battleSceneController.youPlayerController.DamageEffect(message.Damage);
                 }
                 else
                 {
-                    await this.opponentPlayerController.DamageEffect(message.Damage);
+                    await this.battleSceneController.opponentPlayerController.DamageEffect(message.Damage);
                 }
             }
             else
@@ -1123,13 +1061,13 @@ public class ReplaySceneController : MonoBehaviour
                     message.EffectOwnerCard, message.EffectId
                     );
 
-                if (this.youPlayerController.PlayerId == message.TakePlayerId)
+                if (this.battleSceneController.youPlayerController.PlayerId == message.TakePlayerId)
                 {
-                    await this.HealEffect(youPlayerController, message.HealValue);
+                    await this.HealEffect(this.battleSceneController.youPlayerController, message.HealValue);
                 }
-                else if (this.opponentPlayerController.PlayerId == message.TakePlayerId)
+                else if (this.battleSceneController.opponentPlayerController.PlayerId == message.TakePlayerId)
                 {
-                    await this.HealEffect(opponentPlayerController, message.HealValue);
+                    await this.HealEffect(this.battleSceneController.opponentPlayerController, message.HealValue);
                 }
             }
 
@@ -1139,18 +1077,18 @@ public class ReplaySceneController : MonoBehaviour
 
     private void DisplaySmallCardDetailSimple(Card card)
     {
-        this.cardDetailController.SetCard(card);
+        this.battleSceneController.cardDetailController.SetCard(card);
     }
 
     private async UniTask DisplaySmallCardDetail(CardDef cardDef)
     {
-        this.cardDetailController.SetCardDef(cardDef);
-        await cardDetailController.transform.DOScale(1.1f, 0);
-        await cardDetailController.transform.DOScale(1f, 0.5f);
+        this.battleSceneController.cardDetailController.SetCardDef(cardDef);
+        await this.battleSceneController.cardDetailController.transform.DOScale(1.1f, 0);
+        await this.battleSceneController.cardDetailController.transform.DOScale(1f, 0.5f);
     }
 
     private void DisplayBigCardDetail(CardBridge card)
     {
-        this.cardDetailViewController.Open(card);
+        this.battleSceneController.cardDetailViewController.Open(card);
     }
 }
