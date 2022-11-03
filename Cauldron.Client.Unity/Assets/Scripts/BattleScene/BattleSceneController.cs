@@ -111,6 +111,9 @@ public class BattleSceneController : MonoBehaviour
     [SerializeField]
     private StartTurnMessageController startTurnMessage = default;
 
+    [SerializeField]
+    private LoadingViewController loadingViewPrefab = default;
+
     private readonly Dictionary<CardId, HandCardController> handCardObjectsByCardId = new Dictionary<CardId, HandCardController>();
     private readonly Dictionary<CardId, FieldCardController> fieldCardControllersByCardId = new Dictionary<CardId, FieldCardController>();
 
@@ -139,6 +142,8 @@ public class BattleSceneController : MonoBehaviour
 
     private bool isStartedGame = false;
 
+    private LoadingViewController loadingView;
+
     private int NumPicks
     {
         set
@@ -162,6 +167,8 @@ public class BattleSceneController : MonoBehaviour
     private void Start()
     {
         Instance = this;
+
+        this.ShowLoadingView();
     }
 
     public async UniTask Init()
@@ -191,6 +198,7 @@ public class BattleSceneController : MonoBehaviour
 
         this.disposableList.AddRange(new[]
         {
+            //holder.Receiver.OnStartGame.Subscribe(() => {}),
             holder.Receiver.OnPlayCard.Subscribe((a) => this.OnPlayCard(a.gameContext, a.message)),
             holder.Receiver.OnAddCard.Subscribe((a) => this.OnAddCard(a.gameContext, a.message)),
             holder.Receiver.OnAsk.Subscribe((a) => this.OnAsk(a)),
@@ -229,10 +237,32 @@ public class BattleSceneController : MonoBehaviour
         {
             if (this.updateViewActionQueue.TryDequeue(out var updateViewAction))
             {
+                this.HideLoadingView();
+
                 this.updating = true;
                 await updateViewAction();
                 this.updating = false;
             }
+        }
+    }
+
+    public void ShowLoadingView()
+    {
+        if (this.loadingView == null)
+        {
+            this.loadingView = Instantiate(this.loadingViewPrefab);
+        }
+
+        this.loadingView.Dark();
+        this.loadingView.Show(this.canvas.gameObject);
+    }
+
+    public void HideLoadingView()
+    {
+        if (this.loadingView != null)
+        {
+            this.loadingView.Hide();
+            this.loadingView = null;
         }
     }
 
@@ -279,7 +309,11 @@ public class BattleSceneController : MonoBehaviour
             this.playTargetHand = null;
         }
 
-        var prevId = this.playTargetHand?.CardId;
+        CardId prevId = default;
+        if (this.playTargetHand != null)
+        {
+            prevId = this.playTargetHand.CardId;
+        }
 
         this.ResetAllMarks();
 
@@ -348,7 +382,11 @@ public class BattleSceneController : MonoBehaviour
             return;
         }
 
-        var isSelected = this.attackCardController?.CardId == attackCardController.CardId;
+        var isSelected = false;
+        if (this.attackCardController != null)
+        {
+            isSelected = this.attackCardController.CardId == attackCardController.CardId;
+        }
 
         if (isSelected)
         {

@@ -3,6 +3,7 @@ using Cauldron.Shared.MessagePackObjects;
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardDetailController : MonoBehaviour
 {
@@ -11,6 +12,12 @@ public class CardDetailController : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI effectText = default;
 
+    [SerializeField]
+    private Button detailButton = default;
+    [SerializeField]
+    private GameObject cardTypeSpace = default;
+    [SerializeField]
+    private GameObject costSpace = default;
     [SerializeField]
     private GameObject powerSpace = default;
     [SerializeField]
@@ -39,6 +46,14 @@ public class CardDetailController : MonoBehaviour
     {
         if (this.source == null)
         {
+            this.cardNameText.text = "";
+            this.effectText.text = "";
+            this.detailButton.gameObject.SetActive(false);
+            this.cardTypeSpace.SetActive(false);
+            this.costSpace.SetActive(false);
+            this.powerSpace.SetActive(false);
+            this.toughnessSpace.SetActive(false);
+
             return;
         }
 
@@ -46,6 +61,10 @@ public class CardDetailController : MonoBehaviour
         this.effectText.text = Utility.EffectDescription(this.source);
         this.cardTypeText.text = Utility.CardTypeIconUnicode(this.source.Type);
         this.costText.text = this.source.Cost.ToString();
+
+        this.detailButton.gameObject.SetActive(true);
+        this.cardTypeSpace.SetActive(true);
+        this.costSpace.SetActive(true);
 
         switch (this.source.Type)
         {

@@ -377,6 +377,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardNameText: {fileID: 3888882663627528157}
   effectText: {fileID: 278128111136649821}
+  detailButton: {fileID: 5520334109853725246}
+  cardTypeSpace: {fileID: 7671855396295175190}
+  costSpace: {fileID: 4610171773842578880}
   powerSpace: {fileID: 1711945964665666578}
   toughnessSpace: {fileID: 3535689428707182111}
   cardTypeText: {fileID: 300633932096403258}

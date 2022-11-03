@@ -14,10 +14,13 @@ using UnityEngine;
 
 public class ReplaySceneController : MonoBehaviour
 {
-    public Color YouColor => BattleSceneController.Instance.YouColor;
-    public Color OpponentColor => BattleSceneController.Instance.OpponentColor;
+    public Color YouColor => this.battleSceneController.YouColor;
+    public Color OpponentColor => this.battleSceneController.OpponentColor;
 
     public PlayerId YouId => this.youPlayerController.PlayerId;
+
+    [SerializeField]
+    private BattleSceneController battleSceneController = default;
 
     [SerializeField]
     private HandCardController handCardPrefab = default;
@@ -124,11 +127,6 @@ public class ReplaySceneController : MonoBehaviour
 
     public async UniTask Init(GameReplay gameReplay, PlayerId playerId, CardDef[] cardpool)
     {
-        while (BattleSceneController.Instance == null)
-        {
-            await UniTask.DelayFrame(1);
-        }
-
         this.battleUiContainer.SetActive(false);
         this.replayUiContainer.SetActive(true);
 
@@ -213,6 +211,8 @@ public class ReplaySceneController : MonoBehaviour
 
         if (this.updateViewActionQueue.TryDequeue(out var updateViewAction))
         {
+            this.battleSceneController.HideLoadingView();
+
             try
             {
                 this.updating = true;

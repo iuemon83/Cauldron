@@ -5,6 +5,8 @@ using UnityEngine.UI;
 public class LoadingViewController : MonoBehaviour
 {
     [SerializeField]
+    private Image backgroundImage = default;
+    [SerializeField]
     private Image loadingImage = default;
     [SerializeField]
     private TextMeshProUGUI loadingText = default;
@@ -39,5 +41,12 @@ public class LoadingViewController : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+    }
+
+    public void Dark()
+    {
+        var color = this.backgroundImage.color;
+        color.a = 1;
+        this.backgroundImage.color = color;
     }
 }

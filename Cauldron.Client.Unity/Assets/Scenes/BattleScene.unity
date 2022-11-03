@@ -4440,6 +4440,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1711945964665666578, guid: bbcae6f60277d4040814972b8d63876f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3535689428707182111, guid: bbcae6f60277d4040814972b8d63876f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4558063170896010698, guid: bbcae6f60277d4040814972b8d63876f, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -4452,12 +4460,20 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4610171773842578880, guid: bbcae6f60277d4040814972b8d63876f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6897226516203425731, guid: bbcae6f60277d4040814972b8d63876f, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6897226516203425731, guid: bbcae6f60277d4040814972b8d63876f, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7671855396295175190, guid: bbcae6f60277d4040814972b8d63876f, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -4562,6 +4578,7 @@ MonoBehaviour:
   battleUiContainer: {fileID: 1984304579}
   replayUiContainer: {fileID: 1735652555}
   startTurnMessage: {fileID: 1651278225}
+  loadingViewPrefab: {fileID: 406258935009350899, guid: fe8cba482a49b0143bd94fcd583b867a, type: 3}
 --- !u!4 &1305728135
 Transform:
   m_ObjectHideFlags: 0
@@ -5013,6 +5030,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afad82e64a62ab8489a6af2340aaa50b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  battleSceneController: {fileID: 1305728134}
   handCardPrefab: {fileID: 7518114258685450989, guid: 366785259e542df4bbd7293904d2fe94, type: 3}
   fieldCardPrefab: {fileID: 2731262012295190428, guid: f6d57eceff31c8b49bab86ddae3211bb, type: 3}
   canvas: {fileID: 1511447165}
