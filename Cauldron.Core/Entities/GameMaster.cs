@@ -861,7 +861,8 @@ namespace Cauldron.Core.Entities
             player.MaxMp,
             player.CurrentMp,
             player.IsFirst,
-            this.ListAttackableCardId(player)
+            this.ListAttackableCardId(player),
+            this.PlayerTurnCountById[player.Id]
             );
 
         private Dictionary<CardId, AttackTarget> ListAttackableCardId(Player player)

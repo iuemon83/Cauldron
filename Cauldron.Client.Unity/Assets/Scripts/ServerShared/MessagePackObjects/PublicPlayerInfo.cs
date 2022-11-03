@@ -30,6 +30,7 @@ namespace Cauldron.Shared.MessagePackObjects
         public int CurrentMp { get; }
         public bool IsFirst { get; }
         public Dictionary<CardId, AttackTarget> AttackableCardIdList { get; }
+        public int TurnCount { get; }
 
         public PublicPlayerInfo(
             PlayerId Id,
@@ -45,7 +46,8 @@ namespace Cauldron.Shared.MessagePackObjects
             int MaxMp,
             int CurrentMp,
             bool IsFirst,
-            Dictionary<CardId, AttackTarget> AttackableCardIdList
+            Dictionary<CardId, AttackTarget> AttackableCardIdList,
+            int TurnCount
             )
         {
             this.Id = Id;
@@ -62,6 +64,7 @@ namespace Cauldron.Shared.MessagePackObjects
             this.CurrentMp = CurrentMp;
             this.IsFirst = IsFirst;
             this.AttackableCardIdList = AttackableCardIdList;
+            this.TurnCount = TurnCount;
         }
 
         /// <summary>

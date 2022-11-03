@@ -910,7 +910,10 @@ public class BattleSceneController : MonoBehaviour
             {
                 await this.AddActionLog(new ActionLog("ターン開始", gameContext.You.PublicPlayerInfo));
 
-                await this.startTurnMessage.Show(true, !this.isStartedGame);
+                await this.startTurnMessage.Show(true, !this.isStartedGame,
+                    gameContext.Opponent.TurnCount,
+                    gameContext.You.PublicPlayerInfo.TurnCount + 1
+                    );
 
                 this.youPlayerController.SetActiveTurn(true);
                 this.opponentPlayerController.SetActiveTurn(false);
@@ -918,15 +921,16 @@ public class BattleSceneController : MonoBehaviour
 
                 // awaitするとダメ
                 // サーバーとの通信終わるまでUI止まる
-#pragma warning disable CS4014 // この呼び出しは待機されなかったため、現在のメソッドの実行は呼び出しの完了を待たずに続行されます
-                this.Client.StartTurn();
-#pragma warning restore CS4014 // この呼び出しは待機されなかったため、現在のメソッドの実行は呼び出しの完了を待たずに続行されます
+                var _ = this.Client.StartTurn();
             }
             else
             {
                 await this.AddActionLog(new ActionLog("ターン開始", gameContext.Opponent));
 
-                await this.startTurnMessage.Show(false, !this.isStartedGame);
+                await this.startTurnMessage.Show(false, !this.isStartedGame,
+                    gameContext.You.PublicPlayerInfo.TurnCount,
+                    gameContext.Opponent.TurnCount + 1
+                    );
 
                 this.youPlayerController.SetActiveTurn(false);
                 this.opponentPlayerController.SetActiveTurn(true);

@@ -516,7 +516,10 @@ public class ReplaySceneController : MonoBehaviour
             {
                 await this.AddActionLog(new ActionLog("ターン開始", gameContext.You.PublicPlayerInfo));
 
-                await this.battleSceneController.startTurnMessage.Show(true, !this.isStartedGame);
+                await this.battleSceneController.startTurnMessage.Show(true, !this.isStartedGame,
+                    gameContext.Opponent.TurnCount,
+                    gameContext.You.PublicPlayerInfo.TurnCount + 1
+                    );
 
                 this.battleSceneController.youPlayerController.SetActiveTurn(true);
                 this.battleSceneController.opponentPlayerController.SetActiveTurn(false);
@@ -525,7 +528,10 @@ public class ReplaySceneController : MonoBehaviour
             {
                 await this.AddActionLog(new ActionLog("ターン開始", gameContext.Opponent));
 
-                await this.battleSceneController.startTurnMessage.Show(false, !this.isStartedGame);
+                await this.battleSceneController.startTurnMessage.Show(false, !this.isStartedGame,
+                    gameContext.You.PublicPlayerInfo.TurnCount,
+                    gameContext.Opponent.TurnCount + 1
+                    );
 
                 this.battleSceneController.youPlayerController.SetActiveTurn(false);
                 this.battleSceneController.opponentPlayerController.SetActiveTurn(true);

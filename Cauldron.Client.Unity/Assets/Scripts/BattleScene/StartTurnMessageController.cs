@@ -13,7 +13,7 @@ public class StartTurnMessageController : MonoBehaviour
     [SerializeField]
     private StartTurnMessageContainerController messageContainer2 = default;
 
-    public async UniTask Show(bool isYou, bool isStartGame)
+    public async UniTask Show(bool isYou, bool isStartGame, int endTurnCount, int startTurnCount)
     {
         if (isStartGame)
         {
@@ -21,31 +21,33 @@ public class StartTurnMessageController : MonoBehaviour
 
             if (isYou)
             {
-                this.messageContainer2.AsYou();
+                this.messageContainer2.AsYou(startTurnCount);
             }
             else
             {
-                this.messageContainer2.AsOpponent();
+                this.messageContainer2.AsOpponent(startTurnCount);
             }
         }
         else
         {
             if (isYou)
             {
-                this.messageContainer1.AsOpponent();
-                this.messageContainer2.AsYou();
+                this.messageContainer1.AsOpponent(endTurnCount);
+                this.messageContainer2.AsYou(startTurnCount);
             }
             else
             {
-                this.messageContainer1.AsYou();
-                this.messageContainer2.AsOpponent();
+                this.messageContainer1.AsYou(endTurnCount);
+                this.messageContainer2.AsOpponent(startTurnCount);
             }
         }
 
+        // 1つめのメッセージの場所を初期化
         this.messageContainer1.transform.localPosition = Vector3.zero;
 
         var w = this.messageContainer2.Width;
 
+        // 2つめのメッセージの場所を初期化
         this.messageContainer2.transform.localPosition = new Vector3(-w, 0);
 
         this.gameObject.SetActive(true);
@@ -54,6 +56,7 @@ public class StartTurnMessageController : MonoBehaviour
 
         await UniTask.Delay(messageStopTime);
 
+        // 2つのメッセージを右に移動
         var t1 = this.messageContainer1.transform
             .DOLocalMoveX(w, messageMoveTime)
             .ToUniTask();
