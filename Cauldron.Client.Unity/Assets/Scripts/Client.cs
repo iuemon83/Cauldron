@@ -112,7 +112,8 @@ public class Client
         var deckCardIds = this.ToDeckIdList(deck, cardDefs).ToArray();
 
         var reply = await this.magiconionClient.OpenNewRoom(
-            new OpenNewRoomRequest(ruleBook, this.PlayerName, message, deckCardIds));
+            new OpenNewRoomRequest(ruleBook, this.PlayerName, message, deckCardIds, LocalData.ClientId)
+            );
 
         this.GameId = reply.GameId;
         this.PlayerId = reply.PlayerId;
@@ -160,7 +161,9 @@ public class Client
 
         this.LogInfo($"EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
-        var reply = await this.magiconionClient.JoinRoom(new JoinRoomRequest(this.GameId, this.PlayerName, deckCardIds));
+        var reply = await this.magiconionClient.JoinRoom(
+            new JoinRoomRequest(this.GameId, this.PlayerName, deckCardIds, LocalData.ClientId)
+            );
 
         this.LogInfo($"response EnterGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
 
@@ -190,7 +193,7 @@ public class Client
     {
         this.LogInfo($"ReadyGame: {this.PlayerName}: {this.GameId}: {this.PlayerId}");
         await this.magiconionClient.ReadyGame(
-            new ReadyGameRequest(this.GameId, this.PlayerId, LocalData.ClientId)
+            new ReadyGameRequest(this.GameId, this.PlayerId)
             );
     }
 

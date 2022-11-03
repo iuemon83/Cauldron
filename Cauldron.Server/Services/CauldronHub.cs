@@ -66,9 +66,9 @@ namespace Cauldron.Server.Services
         private readonly ILogger<CauldronHub> _logger;
 
         private IGroup room;
-        private PlayerDef self;
+        private Client self;
         private GameId gameId;
-        private IInMemoryStorage<PlayerDef> storage;
+        private IInMemoryStorage<Client> storage;
 
         private SqliteConnection dbConnection;
 
@@ -92,7 +92,7 @@ namespace Cauldron.Server.Services
             // handle disconnection if needed.
             // on disconnecting, if automatically removed this connection from group.
 
-            this._logger.LogInformation("on disconnected {name}", this.self?.Name ?? "");
+            this._logger.LogInformation("on disconnected {name}", this.self?.PlayerDef.Name ?? "");
 
             await (this as ICauldronHub).LeaveRoom();
 
@@ -582,7 +582,8 @@ namespace Cauldron.Server.Services
 
             try
             {
-                var enterResult = await this.JoinRoom(this.gameId, request.OwnerName, request.DeckCardIdList, gameMaster);
+                var enterResult = await this.JoinRoom(
+                    this.gameId, request.ClientId, request.OwnerName, request.DeckCardIdList, gameMaster);
 
                 switch (enterResult.StatusCode)
                 {
@@ -607,7 +608,7 @@ namespace Cauldron.Server.Services
         [FromTypeFilter(typeof(LoggingAttribute))]
         async Task<bool> ICauldronHub.LeaveRoom()
         {
-            this._logger.LogInformation("leave game {name}", this.self?.Name ?? "");
+            this._logger.LogInformation("leave game {name}", this.self?.PlayerDef.Name ?? "");
 
             if (this.room == null)
             {
@@ -642,10 +643,12 @@ namespace Cauldron.Server.Services
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
             }
 
-            return await this.JoinRoom(request.GameId, request.PlayerName, request.DeckCardIdList, gameMaster);
+            return await this.JoinRoom(
+                request.GameId, request.ClientId, request.PlayerName, request.DeckCardIdList, gameMaster);
         }
 
-        private async Task<JoinRoomReply> JoinRoom(GameId gameId, string playerName, CardDefId[] deckCardIdList, GameMaster gameMaster)
+        private async Task<JoinRoomReply> JoinRoom(
+            GameId gameId, string clientId, string playerName, CardDefId[] deckCardIdList, GameMaster gameMaster)
         {
             var (status, newPlayerId) = gameMaster.CreateNewPlayer(
                 new PlayerId(this.ConnectionId),
@@ -660,7 +663,14 @@ namespace Cauldron.Server.Services
                     var success = false;
                     try
                     {
-                        this.self = gameMaster.PlayerDefsById[newPlayerId];
+                        var ip = this.Context.CallContext.GetHttpContext().Connection.RemoteIpAddress;
+
+                        this.self = new Client(
+                            clientId,
+                            ip,
+                            gameMaster.PlayerDefsById[newPlayerId]
+                            );
+
                         (success, room, storage) = await this.Group.TryAddAsync(
                             gameId.ToString(), 2, true, this.self);
                     }
@@ -715,7 +725,10 @@ namespace Cauldron.Server.Services
             this.Broadcast(this.room).OnStartGame();
 
             // 先行プレイヤーはランダムで選択する
-            var firstPlayerId = this.storage.AllValues.OrderBy(_ => Guid.NewGuid()).First().Id;
+            var firstPlayerId = this.storage.AllValues
+                .Select(c => c.PlayerDef)
+                .OrderBy(_ => Guid.NewGuid())
+                .First().Id;
 
             var (found, gameMaster) = gameMasterRepository.TryGetById(request.GameId);
             if (!found)
@@ -730,15 +743,20 @@ namespace Cauldron.Server.Services
 
                 await gameMaster.StartGame(firstPlayerId);
 
-                var logs = gameMaster.playerRepository.AllPlayers
-                    .Select(p =>
+                var logs = this.storage.AllValues
+                    .Select(c =>
                     {
+                        var p = c.PlayerDef;
+
                         var playOrder = firstPlayerId == p.Id ? 1 : 2;
-                        var cardNamesInDeck = p.Hands.AllCards.Concat(p.Deck.AllCards).Select(c => c.Name).ToArray();
-                        //var ip = this.Context.CallContext.GetHttpContext().Connection.RemoteIpAddress?.ToString() ?? "";
+                        var cardNamesInDeck = p.DeckIdList
+                            .Select(id => gameMaster.TryGet(id))
+                            .Where(x => x.Exists)
+                            .Select(x => x.CardDef.Name)
+                            .ToArray();
 
                         return new BattlePlayer(
-                            request.GameId, p.Id, request.ClientId,
+                            request.GameId, p.Id, c.Id,
                             p.Name, cardNamesInDeck, playOrder, ""
                             );
                     });
@@ -940,7 +958,7 @@ namespace Cauldron.Server.Services
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid game id"));
             }
 
-            return Task.FromResult(gameMaster.Surrender(this.self.Id));
+            return Task.FromResult(gameMaster.Surrender(this.self.PlayerDef.Id));
         }
     }
 }

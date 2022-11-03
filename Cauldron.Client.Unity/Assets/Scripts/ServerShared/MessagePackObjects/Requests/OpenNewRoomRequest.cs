@@ -9,13 +9,21 @@ namespace Cauldron.Shared.MessagePackObjects
         public string OwnerName { get; }
         public string Message { get; }
         public CardDefId[] DeckCardIdList { get; }
+        public string ClientId { get; }
 
-        public OpenNewRoomRequest(RuleBook ruleBook, string ownerName, string message, CardDefId[] deckCardIdList)
+        public OpenNewRoomRequest(
+            RuleBook ruleBook,
+            string ownerName,
+            string message,
+            CardDefId[] deckCardIdList,
+            string clientId
+            )
         {
             this.RuleBook = ruleBook;
             this.OwnerName = ownerName;
             this.Message = message;
             this.DeckCardIdList = deckCardIdList;
+            this.ClientId = clientId;
         }
     }
 }
