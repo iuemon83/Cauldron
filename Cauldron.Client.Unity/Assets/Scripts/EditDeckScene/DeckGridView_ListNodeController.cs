@@ -75,7 +75,7 @@ public class DeckGridView_ListNodeController : MonoBehaviour, IPointerClickHandl
             var actualRemoveNum = this.removeFromDeck(this.source.Id);
             if (actualRemoveNum > 0)
             {
-                AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Draw);
+                AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Draw);
             }
             this.displayCardDetail?.Invoke(this.source);
         }

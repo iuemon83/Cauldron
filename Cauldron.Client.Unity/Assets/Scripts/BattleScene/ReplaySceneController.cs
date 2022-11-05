@@ -585,7 +585,7 @@ public class ReplaySceneController : MonoBehaviour
 
             if (carddef.Type == CardType.Sorcery)
             {
-                await AudioController.CreateOrFind().PlayAudio(carddef?.Name ?? "", CardAudioCache.CardAudioType.Play);
+                await AudioController.CreateOrFind().PlaySe(carddef?.Name ?? "", CardAudioCache.CardAudioType.Play);
             }
             await this.DisplaySmallCardDetail(carddef);
         });
@@ -609,7 +609,7 @@ public class ReplaySceneController : MonoBehaviour
             switch (message.ToZone.ZoneName)
             {
                 case ZoneName.Hand:
-                    await AudioController.CreateOrFind().PlayAudio(card?.Name ?? "", CardAudioCache.CardAudioType.Draw);
+                    await AudioController.CreateOrFind().PlaySe(card?.Name ?? "", CardAudioCache.CardAudioType.Draw);
                     await UniTask.Delay(TimeSpan.FromSeconds(0.2));
 
                     if (message.ToZone.PlayerId == this.YouId)
@@ -619,7 +619,7 @@ public class ReplaySceneController : MonoBehaviour
                     break;
 
                 case ZoneName.Field:
-                    await AudioController.CreateOrFind().PlayAudio(card?.Name ?? "", CardAudioCache.CardAudioType.AddField);
+                    await AudioController.CreateOrFind().PlaySe(card?.Name ?? "", CardAudioCache.CardAudioType.AddField);
 
                     var fieldCardObj = this.GetOrCreateFieldCardObject(card, message.ToZone.PlayerId, message.Index);
                     await fieldCardObj.transform.DOScale(1.4f, 0);
@@ -650,7 +650,7 @@ public class ReplaySceneController : MonoBehaviour
                 new ActionLog($"{Utility.DisplayText(message.FromZone.ZoneName)}Å®èúäO", message.Card)
                 , message.EffectOwnerCard, message.EffectId);
 
-            await AudioController.CreateOrFind().PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Exclude);
+            await AudioController.CreateOrFind().PlaySe(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Exclude);
 
             if (this.fieldCardControllersByCardId.TryGetValue(message.Card.Id, out var fieldCardController)
                 && fieldCardController.Card.Type != CardType.Sorcery)
@@ -712,7 +712,7 @@ public class ReplaySceneController : MonoBehaviour
                     {
                         if (message.FromZone.ZoneName == ZoneName.Field)
                         {
-                            await AudioController.CreateOrFind().PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Destroy);
+                            await AudioController.CreateOrFind().PlaySe(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Destroy);
                         }
 
                         if (this.fieldCardControllersByCardId.TryGetValue(cardId, out var fieldCardController)
@@ -745,7 +745,7 @@ public class ReplaySceneController : MonoBehaviour
 
                 case ZoneName.Hand:
                     {
-                        await AudioController.CreateOrFind().PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Draw);
+                        await AudioController.CreateOrFind().PlaySe(message.Card?.Name ?? "", CardAudioCache.CardAudioType.Draw);
                         await UniTask.Delay(TimeSpan.FromSeconds(0.2));
 
                         if (this.fieldCardControllersByCardId.TryGetValue(cardId, out var fieldCardController)
@@ -764,7 +764,7 @@ public class ReplaySceneController : MonoBehaviour
 
                 case ZoneName.Field:
                     {
-                        await AudioController.CreateOrFind().PlayAudio(message.Card?.Name ?? "", CardAudioCache.CardAudioType.AddField);
+                        await AudioController.CreateOrFind().PlaySe(message.Card?.Name ?? "", CardAudioCache.CardAudioType.AddField);
 
                         var fieldCard = this.GetOrCreateFieldCardObject(message.Card, message.ToZone.PlayerId, message.Index);
                         await fieldCard.transform.DOScale(1.4f, 0);
@@ -857,7 +857,7 @@ public class ReplaySceneController : MonoBehaviour
             return;
         }
 
-        await AudioController.CreateOrFind().PlayAudio("", CardAudioCache.CardAudioType.Heal);
+        await AudioController.CreateOrFind().PlaySe("", CardAudioCache.CardAudioType.Heal);
         await playerController.HealEffect(diffHp);
     }
 
@@ -938,7 +938,7 @@ public class ReplaySceneController : MonoBehaviour
 
             if (fieldCardControllersByCardId.TryGetValue(message.AttackCardId, out var attackCardController))
             {
-                await AudioController.CreateOrFind().PlayAudio(attackCardController.Card?.Name ?? "", CardAudioCache.CardAudioType.Attack);
+                await AudioController.CreateOrFind().PlaySe(attackCardController.Card?.Name ?? "", CardAudioCache.CardAudioType.Attack);
 
                 if (message.GuardCardId == default)
                 {
@@ -1026,7 +1026,7 @@ public class ReplaySceneController : MonoBehaviour
 
             if (message.GuardCardId == default)
             {
-                await AudioController.CreateOrFind().PlayAudio("", CardAudioCache.CardAudioType.Damage);
+                await AudioController.CreateOrFind().PlaySe("", CardAudioCache.CardAudioType.Damage);
 
                 if (this.battleSceneController.youPlayerController.PlayerId == message.GuardPlayerId)
                 {
@@ -1041,7 +1041,7 @@ public class ReplaySceneController : MonoBehaviour
             {
                 if (fieldCardControllersByCardId.TryGetValue(message.GuardCardId, out var fieldCard))
                 {
-                    await AudioController.CreateOrFind().PlayAudio(fieldCard.Card?.Name ?? "", CardAudioCache.CardAudioType.Damage);
+                    await AudioController.CreateOrFind().PlaySe(fieldCard.Card?.Name ?? "", CardAudioCache.CardAudioType.Damage);
                     await fieldCard.DamageEffect(message.Damage);
                 }
             }

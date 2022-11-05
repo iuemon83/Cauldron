@@ -26,7 +26,7 @@ namespace Assets.Scripts.BattleScene
 
             var message = winOrLoseText + Environment.NewLine + reasonText;
 
-            AudioController.CreateOrFind().PlayAudio(isWin ? SeAudioCache.SeAudioType.Win : SeAudioCache.SeAudioType.Lose);
+            AudioController.CreateOrFind().PlaySe(isWin ? SeAudioCache.SeAudioType.Win : SeAudioCache.SeAudioType.Lose);
 
             dialog.Init(title, message, ConfirmDialogController.DialogType.Message,
                 onOkAction: onOkAction);

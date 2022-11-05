@@ -52,7 +52,7 @@ public class StartTurnMessageController : MonoBehaviour
 
         this.gameObject.SetActive(true);
 
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.EndTurn);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.EndTurn);
 
         await UniTask.Delay(messageStopTime);
 
@@ -67,7 +67,7 @@ public class StartTurnMessageController : MonoBehaviour
 
         await UniTask.WhenAll(new[] { t1, t2 });
 
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.StartTurn);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.StartTurn);
 
         await UniTask.Delay(messageStopTime);
 

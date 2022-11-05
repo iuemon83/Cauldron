@@ -38,7 +38,7 @@ public class TitleSceneController : MonoBehaviour
 
         this.ClearErrorMessage();
 
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
         var loadingView = Instantiate(this.loadingViewPrefab);
         loadingView.Show(this.canvas);
@@ -54,7 +54,7 @@ public class TitleSceneController : MonoBehaviour
             LocalData.ServerAddress = this.ipOrHostNameText.text;
             LocalData.PlayerName = this.playerNameText.text;
 
-            AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.ServerConnected);
+            AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.ServerConnected);
 
             await Utility.LoadAsyncScene(SceneNames.ListGameScene);
         }

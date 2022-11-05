@@ -81,7 +81,7 @@ public class ListGameSceneController : MonoBehaviour
 
     public void OnOpenNewGameButtonClick()
     {
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
         this.SelectDeckDialog.ShowNewRoomDialog(
             async (deck, message) =>
@@ -202,35 +202,35 @@ public class ListGameSceneController : MonoBehaviour
 
     public async void OnDeckButtonClick()
     {
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }
 
     public void OnSoloButtonClick()
     {
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
         this.SelectDeckDialog.ShowYouJoinRoomDialog(
             (myDeck, message) =>
             {
-                AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+                AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
                 this.SelectDeckDialog.ShowAiJoinRoomDialog(
                     (aiDeck, message) =>
                     {
-                        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+                        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
                         this.SoloBattle(myDeck, aiDeck);
                     },
                     () =>
                     {
-                        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Cancel);
+                        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Cancel);
                     });
             },
             () =>
             {
-                AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Cancel);
+                AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Cancel);
             });
     }
 

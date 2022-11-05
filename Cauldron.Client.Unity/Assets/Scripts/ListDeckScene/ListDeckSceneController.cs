@@ -51,14 +51,14 @@ public class ListDeckSceneController : MonoBehaviour
 
     public async void OnNewButtonClick()
     {
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
         await Utility.LoadAsyncScene(SceneNames.EditDeckScene);
     }
 
     public async void OnEditButtonClick()
     {
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
         await Utility.LoadAsyncScene(SceneNames.EditDeckScene, () =>
         {
@@ -69,7 +69,7 @@ public class ListDeckSceneController : MonoBehaviour
 
     public void OnDeleteButtonClick()
     {
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
         // 確認ダイアログ
         var title = "デッキの削除";

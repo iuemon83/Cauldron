@@ -109,7 +109,7 @@ public class EditDeckSceneController : MonoBehaviour
 
     public void OnSearchButtonClick()
     {
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
         this.RefleshCardPool();
     }
@@ -190,7 +190,7 @@ public class EditDeckSceneController : MonoBehaviour
 
     public async void OnSaveButtonClick()
     {
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
         var deckName = this.deckNameInputField.text;
         if (string.IsNullOrWhiteSpace(deckName))
@@ -221,7 +221,7 @@ public class EditDeckSceneController : MonoBehaviour
 
     public async void OnCancelButtonClick()
     {
-        AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Ok);
+        AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Ok);
 
         await Utility.LoadAsyncScene(SceneNames.ListDeckScene);
     }

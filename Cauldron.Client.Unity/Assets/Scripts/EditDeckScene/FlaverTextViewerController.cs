@@ -91,7 +91,7 @@ public class FlaverTextViewerController : MonoBehaviour
         do
         {
             done = await AudioController.CreateOrFind()
-                .PlayAudio2(this.source.Name, this.NextCardAudioType());
+                .PlaySe2(this.source.Name, this.NextCardAudioType());
         }
         while (!done && startIndex != this.CurrentCardAudioTypeIndex);
     }

@@ -79,7 +79,7 @@ public class CardPoolGridView_ListNodeController : MonoBehaviour, IPointerClickH
             var actualAddCount = this.addDeck?.Invoke(this.source) ?? 0;
             if (actualAddCount > 0)
             {
-                AudioController.CreateOrFind().PlayAudio(SeAudioCache.SeAudioType.Draw);
+                AudioController.CreateOrFind().PlaySe(SeAudioCache.SeAudioType.Draw);
             }
             this.displayCardDetail?.Invoke();
         }
