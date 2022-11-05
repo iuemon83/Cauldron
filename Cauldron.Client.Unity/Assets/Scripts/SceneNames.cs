@@ -9,5 +9,6 @@
         EditDeckScene,
         BattleScene,
         DisplayLicenseScene,
+        ConfigScene,
     }
 }

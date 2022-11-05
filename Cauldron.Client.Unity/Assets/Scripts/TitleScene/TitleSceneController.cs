@@ -72,6 +72,11 @@ public class TitleSceneController : MonoBehaviour
         await Utility.LoadAsyncScene(SceneNames.DisplayLicenseScene);
     }
 
+    public async void OnConfigButtonClick()
+    {
+        await Utility.LoadAsyncScene(SceneNames.ConfigScene);
+    }
+
     private async UniTask<bool> DoValidation()
     {
         if (string.IsNullOrWhiteSpace(this.playerNameText.text))
