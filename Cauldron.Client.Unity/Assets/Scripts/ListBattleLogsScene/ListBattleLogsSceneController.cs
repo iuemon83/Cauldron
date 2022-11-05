@@ -107,22 +107,24 @@ public class ListBattleLogsSceneController : MonoBehaviour
     {
         this.ClearReplaysList();
 
+        var i = 0;
         foreach (var replay in gameReplays.OrderByDescending(l => l.DateTime))
         {
-            this.AddListNode(replay);
+            this.AddListNode(i, replay);
+            i++;
         }
 
         this.battleLogList.verticalNormalizedPosition = 1;
     }
 
-    private void AddListNode(GameReplay gameReplay)
+    private void AddListNode(int index, GameReplay gameReplay)
     {
         var playerList = gameReplay.Players
             .Select(p => (p.Id, p.Name))
             .ToArray();
 
         var controller = Instantiate(this.listNodePrefab, this.battleLogList.content.transform);
-        controller.Set(gameReplay,
+        controller.Set(index, gameReplay,
             () =>
             {
                 var dialog = Instantiate(this.startBattleLogDialogController);
