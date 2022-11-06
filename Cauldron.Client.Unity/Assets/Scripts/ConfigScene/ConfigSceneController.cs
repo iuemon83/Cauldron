@@ -7,6 +7,7 @@ public class ConfigSceneController : MonoBehaviour
 {
     private static readonly (int w, int h)[] screenSizeList = new[] {
         (480, 272),
+        (720, 480),
         (1280, 720),
         (1366, 768),
         (1920, 1080),
